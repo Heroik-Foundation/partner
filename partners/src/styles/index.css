@@ -1,0 +1,27 @@
+@import url("./fonts/css/axiforma.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+.primary-box-shadow {
+  box-shadow: 2px 2px 0px 0px #37137f4d;
+}
+
+.primary-box-shadow-hidden {
+  box-shadow: none;
+}
