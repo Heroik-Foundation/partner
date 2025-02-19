@@ -39,7 +39,7 @@ export function Setting({ ...props }: SettingProps) {
         </div>
 
         {link && (
-          <Link href={link}>
+          <Link to={link}>
             <ChevronRight className="stroke-none fill-primary" />
           </Link>
         )}

@@ -6,7 +6,7 @@ import { WalletCards } from "lucide-react";
 export function Revenue() {
   return (
     <Link
-      href="/app"
+      to="/app"
       className={cn(
         buttonVariants({
           variant: "default",

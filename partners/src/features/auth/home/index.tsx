@@ -43,7 +43,7 @@ const Onboarding = () => {
               className: "w-full",
             })
           )}
-          href="/auth/login"
+          to="/auth/login"
         >
           Already have an account? Log In
         </Link>

@@ -56,7 +56,7 @@ const Login = () => {
           />
         </FormField>
         <Link
-          href="/auth/recovery"
+          to="/auth/recovery"
           className="text-sm font-axiforma font-bold float-right text-primary"
         >
           Forgot Password ?
