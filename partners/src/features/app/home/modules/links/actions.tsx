@@ -33,10 +33,15 @@ export function Actions() {
 
   return (
     <div className="absolute right-0 bottom-0 flex flex-col items-end space-y-5 z-10">
-      <div className=" flex flex-col items-end justify-center space-y-2.5">
-        <AnimatePresence mode="wait">
-          {extended &&
-            actions.map((action) => {
+      <AnimatePresence>
+        {extended && (
+          <motion.div
+            className="flex flex-col items-end justify-center space-y-2.5 backdrop-blur-sm rounded"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {actions.map((action) => {
               return (
                 <motion.div
                   initial={{
@@ -60,8 +65,8 @@ export function Actions() {
                     to={action.path}
                     className={cn(
                       buttonVariants({
-                        variant: "secondary",
-                        className: "rounded-full",
+                        variant: "accent",
+                        className: "rounded-full shadow",
                       })
                     )}
                   >
@@ -70,8 +75,9 @@ export function Actions() {
                 </motion.div>
               );
             })}
-        </AnimatePresence>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Button
         className={cn(

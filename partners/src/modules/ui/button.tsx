@@ -9,21 +9,25 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary hover:bg-primary/90 text-white primary-box-shadow",
+        default: "bg-primary text-white",
         destructive:
           "bg-red-500 text-zinc-50 hover:bg-red-500/90 dark:bg-red-900 dark:text-zinc-50 dark:hover:bg-red-900/90",
         outline:
           "border border-primary bg-white hover:bg-primary/10 text-primary",
-        secondary: "bg-accent text-white hover:bg-accent",
+        secondary: "bg-primary/10 text-primary",
+        accent: "bg-accent text-white hover:bg-accent",
         ghost:
           "hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50",
-        link: "text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-50",
+        link: "text-primary underline-offset-4 hover:underline dark:text-zinc-50",
       },
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-9  px-3",
         lg: "h-11  px-8",
         icon: "h-10 w-10",
+      },
+      shadow: {
+        separate: "primary-box-shadow",
       },
     },
     defaultVariants: {

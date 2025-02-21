@@ -1,15 +1,24 @@
 import { formatISODate } from "@/helpers/time";
-import { DetailProps, EventProps } from "@/modules/ui/units/card/event";
-import { Calendar, Clock, Pin } from "lucide-react";
+import { DetailProps, EventProps } from "@/modules/units/card/event";
+import { Calendar, Clock, MapPin, Ticket } from "lucide-react";
 import { Fragment } from "react/jsx-runtime";
 
 type HighlightProps = {
   members: number;
   avatars: string[];
+  availableTickets: number;
 } & Omit<EventProps, "price" | "nodeRef" | "id">;
 
 export const Highlight = (props: HighlightProps) => {
-  const { title, date, location, thumbnail, avatars, members } = props;
+  const {
+    title,
+    date,
+    location,
+    thumbnail,
+    avatars,
+    members,
+    availableTickets,
+  } = props;
   const { date: relativeDate, time: relativeTime } = formatISODate(date);
 
   return (
@@ -22,14 +31,14 @@ export const Highlight = (props: HighlightProps) => {
           />
         </div>
         <div className="p-4 bg-white text-primary absolute rounded-3xl space-y-2.5 left-0 right-0 top-40 shadow-lg mx-auto w-[90%] max-w-md">
-          <h1 className="font-bold text-sm">{title}</h1>
-          <EventDetail icon={Pin} content={location} />
+          <p className="font-bold text-sm first-letter:uppercase">{title}</p>
+          <EventDetail icon={MapPin} content={location} />
           <div className="flex space-x-2.5 justify-between">
             <EventDetail icon={Calendar} content={relativeDate} />
             <EventDetail icon={Clock} content={relativeTime} />
           </div>
-          <div className="w-full flex items-center justify-center">
-            <div className="bg-primary/15 p-2 rounded-full inline-flex space-x-2 items-center">
+          <div className="w-full flex items-center justify-between space-x-2.5">
+            <div className="bg-primary/15 py-2.5 px-5 rounded-full flex space-x-2 items-center justify-center w-full">
               <div className="flex -space-x-2">
                 {avatars.slice(0, 3).map((avatar, index) => (
                   <img
@@ -43,6 +52,12 @@ export const Highlight = (props: HighlightProps) => {
 
               <span className="text-xs font-bold">{members} Attending</span>
             </div>
+            <div className="flex items-start space-x-1 w-full">
+              <Ticket size={18} />{" "}
+              <span className="font-bold text-sm">
+                {availableTickets} Tickets available
+              </span>
+            </div>
           </div>
         </div>
         <div className="pb-64" />
@@ -53,8 +68,15 @@ export const Highlight = (props: HighlightProps) => {
 
 const EventDetail = (props: DetailProps) => {
   return (
-    <div className="flex items-center space-x-1 font-semibold text-sm">
-      <props.icon className="fill-primary stroke-gray-500" size="16" />
+    <div className="flex items-start space-x-1 font-semibold text-sm">
+      <div
+        style={{
+          width: "16px",
+          height: "16px",
+        }}
+      >
+        <props.icon className="fill-primary stroke-white" size="16" />
+      </div>
       <span>{props.content}</span>
     </div>
   );

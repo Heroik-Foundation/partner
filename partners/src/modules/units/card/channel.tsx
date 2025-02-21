@@ -21,7 +21,7 @@ export const Channel = (props: ChannelProps) => {
       params={{
         id,
       }}
-      className="flex items-start space-x-2.5 p-4 bg-primary rounded-2xl text-white my-1.5"
+      className="relative flex items-start space-x-2.5 p-2.5 bg-primary rounded-2xl text-white my-1.5"
       ref={nodeRef}
     >
       {thumbnail ? (
@@ -38,8 +38,8 @@ export const Channel = (props: ChannelProps) => {
       )}
       <div className="space-y-1">
         <h3 className="text-sm font-black">{title}</h3>
-        <p className="text-xs font-bold">{truncateText(description, 100)}</p>
-        <div className="bg-accent p-2 rounded-full inline-flex space-x-2 items-center">
+        <p className="text-xs font-semibold">{truncateText(description, 90)}</p>
+        <div className="bg-accent py-2 px-3.5 rounded-full inline-flex space-x-2 items-center absolute bottom-2">
           <div className="relative flex items-center">
             <div className="flex -space-x-2">
               {avatars.slice(0, 3).map((avatar, index) => (
@@ -65,8 +65,8 @@ export const ChannelSkeletonLoader = () => {
 
 export const ChannleNotFound = () => {
   return (
-    <div className="flex items-center justify-center bg-red-100 text-red-500 rounded-2xl h-28">
-      <span>Event Not Found</span>
+    <div className="flex items-center justify-center bg-red-100 text-red-500 rounded-xl h-28">
+      <span className="font-bold">Event Not Found</span>
     </div>
   );
 };

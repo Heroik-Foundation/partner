@@ -4,16 +4,13 @@ import { Actions } from "./modules/links/actions";
 import { Revenue } from "./modules/links/revenue";
 import { Stats } from "./modules/stats";
 import Content from "./modules/links/content";
-import { Event, EventSkeletonLoader } from "@/modules/ui/units/card/event";
+import { Event, EventSkeletonLoader } from "@/modules/units/card/event";
 import {
   useUserChannelsQuery,
   useUserEventsQuery,
   useUserPropertiesQuery,
 } from "../global/hooks/query";
-import {
-  Channel,
-  ChannelSkeletonLoader,
-} from "@/modules/ui/units/card/channel";
+import { Channel, ChannelSkeletonLoader } from "@/modules/units/card/channel";
 
 const Home = () => {
   const { data: user } = useUserPropertiesQuery();

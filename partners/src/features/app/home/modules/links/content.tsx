@@ -17,14 +17,14 @@ function ContentHeader({ type }: ContentType) {
       <Link
         className={cn(
           buttonVariants({
-            variant: "default",
+            variant: "link",
             size: "sm",
-            className: "text-xs",
+            className: "text-xs font-bold",
           })
         )}
         to={type === "channel" ? "/app/channels" : "/app/events"}
       >
-        <span> View all {type}s</span> <ChevronRight size="14" />
+        <span> All {type}s</span> <ChevronRight size="14" />
       </Link>
     </div>
   );

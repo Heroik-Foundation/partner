@@ -10,7 +10,7 @@ export function Revenue() {
       className={cn(
         buttonVariants({
           variant: "default",
-          className: "w-full h-14",
+          className: "w-full h-14 bg-accent",
           size: "lg",
         })
       )}

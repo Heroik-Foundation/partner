@@ -8,7 +8,7 @@ import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
 import { Textarea } from "@/modules/ui/textarea";
-import { ImageWithPreview } from "@/modules/ui/units/form/image";
+import { ImageWithPreview } from "@/modules/units/form/image";
 import { useState } from "react";
 import { useCreateChannelMutation } from "./hooks/mutation";
 import { toast } from "sonner";

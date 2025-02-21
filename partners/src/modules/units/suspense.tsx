@@ -1,10 +1,15 @@
 export const Fallback = () => {
   return (
-    <div className="fixed inset-0 w-full h-screen flex justify-center items-center bg-black/10 z-[9999]">
+    <div
+      style={{
+        margin: "0px",
+      }}
+      className="fixed inset-0 top-0 bottom-0 left-0 right-0 w-full h-screen flex justify-center items-center bg-black/10 z-[9999]"
+    >
       <div className="bg-gray-50 p-5 rounded-xl border">
         <svg
           aria-hidden="true"
-          className="inline w-8 h-8 text-primary animate-spin dark:text-gray-600 fill-gray-200"
+          className="inline w-8 h-8 text-primary animate-spin dark:text-gray-600 fill-gray-100"
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

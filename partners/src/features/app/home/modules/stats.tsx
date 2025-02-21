@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpenText, CalendarClock } from "lucide-react";
+import { BookCheck, BookImage } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   usePartnerStatsQuery,
@@ -16,13 +16,13 @@ export function Stats() {
     {
       label: "Total Pledges",
       value: formatCurrency(stats?.totalPledgeValue || 0),
-      icon: BookOpenText,
+      icon: BookCheck,
       bg: "bg-primary text-white",
     },
     {
       label: "Total Events",
       value: stats?.eventsCreated || 0,
-      icon: CalendarClock,
+      icon: BookImage,
       bg: "bg-secondary text-white",
     },
   ];
@@ -34,7 +34,7 @@ export function Stats() {
           <div
             className={cn(
               item.bg,
-              "p-4 rounded-2xl flex items-center justify-between shadow bg-center"
+              "p-3.5 rounded-xl flex items-center justify-between shadow bg-center"
             )}
             key={index}
           >
@@ -43,7 +43,7 @@ export function Stats() {
               <h2 className="text-2xl font-bold">{item.value}</h2>
             </div>
 
-            <div className="p-2 rounded-lg bg-white/20">
+            <div className="p-1.5 rounded-lg bg-white/20">
               <item.icon size="16" />
             </div>
           </div>

@@ -27,10 +27,10 @@ export function SupportLines() {
         <SupportIcon width={24} height={24} />
         <span className="text-sm font-bold text-primary">Contact Us On:</span>
       </div>
-      <ul className="px-5 space-y-5 pt-2.5">
+      <ul className="pr-5 pl-8 space-y-5 pt-2.5">
         {lines.map((line, index) => (
           <li key={index} className="flex items-center justify-between">
-            <p className="text-sm font-bold text-primary">{line.title}</p>
+            <p className="text-sm font-semibold text-primary">{line.title}</p>
 
             <line.icon />
           </li>

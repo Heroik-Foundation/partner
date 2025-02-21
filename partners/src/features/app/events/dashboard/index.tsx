@@ -4,7 +4,7 @@ import { Header } from "../../global/header";
 import { Fragment } from "react/jsx-runtime";
 import { Stats } from "./modules/stats";
 import { useEventStatsQuery } from "./hooks/query";
-import { Fallback } from "@/modules/ui/units/suspense";
+import { Fallback } from "@/modules/units/suspense";
 import { TicketSales } from "./modules/tickets";
 
 const EventDashboard = () => {

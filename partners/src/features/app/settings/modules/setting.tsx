@@ -5,6 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { Icons } from "./icons";
 import { UrlObject } from "url";
 import { Switch } from "@/modules/ui/switch";
+import { Fragment } from "react/jsx-runtime";
 
 export interface SettingProps {
   title: string;
@@ -18,12 +19,29 @@ export interface SettingProps {
   link?: UrlObject | any;
 }
 
-export function Setting({ ...props }: SettingProps) {
+export function Setting(props: SettingProps) {
+  return (
+    <Fragment>
+      {props.link ? (
+        <Link className="h-fit max-h-[380px] w-full" to={props.link}>
+          <div className="w-full p-4">
+            <SettingContent {...props} />
+          </div>
+        </Link>
+      ) : (
+        <div className="w-full p-4">
+          <SettingContent {...props} />
+        </div>
+      )}
+    </Fragment>
+  );
+}
+
+function SettingContent(props: SettingProps) {
   const { title, description, link, icon, toggles } = props;
   const SettingIcon = Icons[icon];
-
   return (
-    <div className="w-full p-4">
+    <Fragment>
       <div className="w-full flex justify-between items-center">
         <div className="flex items-start space-x-2">
           <SettingIcon className="mt-1" />
@@ -38,11 +56,7 @@ export function Setting({ ...props }: SettingProps) {
           </div>
         </div>
 
-        {link && (
-          <Link to={link}>
-            <ChevronRight className="stroke-none fill-primary" />
-          </Link>
-        )}
+        {link && <ChevronRight className="stroke-none fill-primary" />}
       </div>
 
       {toggles && (
@@ -62,6 +76,6 @@ export function Setting({ ...props }: SettingProps) {
           })}
         </ul>
       )}
-    </div>
+    </Fragment>
   );
 }

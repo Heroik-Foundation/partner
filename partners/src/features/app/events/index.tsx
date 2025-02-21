@@ -9,7 +9,7 @@ import {
   Event,
   EventNotFound,
   EventSkeletonLoader,
-} from "@/modules/ui/units/card/event";
+} from "@/modules/units/card/event";
 import { useIntersectionObserver } from "@/hooks/observer";
 
 const AllEvents = () => {

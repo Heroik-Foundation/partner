@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Calendar, Clock, Pin, type LucideIcon } from "lucide-react";
+import { Calendar, Clock, MapPin, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatISODate } from "@/helpers/time";
 import { formatCurrency } from "@/helpers/text";
@@ -34,6 +34,7 @@ export const Event = (props: EventProps) => {
         background: `url('${thumbnail}')`,
         backgroundPosition: "center",
         backgroundSize: "cover",
+        backgroundColor: "rgb(55 19 127 / 0.1)",
       }}
       ref={nodeRef}
     >
@@ -42,8 +43,8 @@ export const Event = (props: EventProps) => {
       </div>
 
       <div className="p-4 bg-white text-primary absolute rounded-xl space-y-2.5 left-0 right-0 bottom-5 mx-auto w-[90%]">
-        <h1 className="font-bold text-sm">{title}</h1>
-        <EventDetail icon={Pin} content={location} />
+        <p className="font-bold text-sm first-letter:uppercase">{title}</p>
+        <EventDetail icon={MapPin} content={location} />
         <div className="flex space-x-2.5">
           <EventDetail icon={Calendar} content={relativeDate} />
           <EventDetail icon={Clock} content={relativeTime} />
@@ -68,8 +69,15 @@ export const EventNotFound = () => {
 const EventDetail = ({ icon, content }: DetailProps) => {
   const Icon = icon;
   return (
-    <div className="flex items-center space-x-1 font-semibold text-xs">
-      <Icon size="16" />
+    <div className="flex items-start space-x-1 font-semibold text-xs">
+      <div
+        style={{
+          width: "16px",
+          height: "16px",
+        }}
+      >
+        <Icon className="fill-primary stroke-white" size={16} />
+      </div>
       <span>{content}</span>
     </div>
   );

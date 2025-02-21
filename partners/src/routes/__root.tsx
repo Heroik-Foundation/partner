@@ -1,6 +1,6 @@
 import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { ViewProvider } from "@/modules/ui/units/providers/view";
-import { QueryProvider } from "@/modules/logic/providers/tanstack";
+import { ViewProvider } from "@/modules/units/providers/view";
+import { QueryProvider } from "@/modules/units/providers/tanstack";
 import { Toaster } from "sonner";
 
 export const Route = createRootRoute({

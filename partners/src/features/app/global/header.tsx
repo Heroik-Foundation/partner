@@ -1,6 +1,6 @@
-import { PreviousButton } from "@/modules/ui/units/button";
-import type { Variants } from "@/modules/ui/units/button";
-import { QrCode, UserRound } from "lucide-react";
+import { PreviousButton } from "@/modules/units/button";
+import type { Variants } from "@/modules/units/button";
+import { UserRound } from "lucide-react";
 import { Fragment } from "react/jsx-runtime";
 import { Link } from "@tanstack/react-router";
 import { useUserPropertiesQuery } from "./hooks/query";
@@ -12,7 +12,6 @@ type HeaderProps = {
     position: "inline" | "stacked";
   };
   addOns?: {
-    scanner?: boolean;
     notification?: boolean;
     content?: React.ReactNode;
   };
@@ -69,16 +68,6 @@ export const Header = (props: HeaderProps) => {
           </Link>
         ) : (
           <div />
-        )}
-
-        {addOns?.scanner && !addOns.content && (
-          <Link
-            to="/app/tickets/scan"
-            className="bg-white text-primary text-sm font-bold flex items-center rounded p-2 space-x-2"
-          >
-            <span>Scan Tickets</span>
-            <QrCode size="16" />
-          </Link>
         )}
 
         {addOns?.content}

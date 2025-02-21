@@ -9,7 +9,7 @@ import {
   Channel,
   ChannelSkeletonLoader,
   ChannleNotFound,
-} from "@/modules/ui/units/card/channel";
+} from "@/modules/units/card/channel";
 import { useIntersectionObserver } from "@/hooks/observer";
 
 const AllChannels = () => {
@@ -33,7 +33,7 @@ const AllChannels = () => {
       <Header
         header={{
           position: "inline",
-          title: "My Channels",
+          title: "Channels",
         }}
       />
       <SearchInput
