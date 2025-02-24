@@ -2,7 +2,7 @@ import type { Post } from "@/features/app/global/types";
 import { getReadableTime } from "@/helpers/time";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
-import { Heart, MessageSquareQuote, Send, UserRound } from "lucide-react";
+import { Heart, MessageSquareQuote, UserRound } from "lucide-react";
 import {
   useCreatePostDislikeMutation,
   useCreatePostLikeMutation,

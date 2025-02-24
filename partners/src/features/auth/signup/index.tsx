@@ -2,7 +2,7 @@
 
 import { useAuthStore } from "@/stores/auth";
 import { Form, FormContent, FormField, FormFooter } from "../global/form";
-import { ImageWithPreview } from "@/modules/ui/units/form/image";
+import { ImageWithPreview } from "@/modules/units/form/image";
 import { Input } from "@/modules/ui/input";
 import { handleInputChangeEvent } from "../global/helpers/input";
 import { Label } from "@/modules/ui/label";
