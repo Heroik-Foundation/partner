@@ -1,33 +1,37 @@
-import { Header } from "../../global/header";
-import { Button } from "@/modules/ui/button";
-import { SendHorizonal } from "lucide-react";
-import { Fragment } from "react/jsx-runtime";
-import { Textarea } from "@/modules/ui/textarea";
-import { useParams } from "@tanstack/react-router";
 import { useState } from "react";
-import { useCreatePostMutation } from "./hooks/mutation";
+import { useParams } from "@tanstack/react-router";
+import { SendHorizonal } from "lucide-react";
 import { toast } from "sonner";
 
+import { Header } from "../../global/header";
+import { Button } from "@/modules/ui/button";
+import { Textarea } from "@/modules/ui/textarea";
+import { useCreatePostMutation } from "./hooks/mutation";
+import { cn } from "@/lib/utils";
+import { useAnnouncementStore } from "../hooks/store/post";
+
 const CreatePost = () => {
-  const { id } = useParams({
-    strict: false,
-  });
+  const { id } = useParams({ strict: false });
   const [content, setContent] = useState<string>("");
+  const { isAnnouncement } = useAnnouncementStore();
+
   const { mutate, isPending } = useCreatePostMutation({
     content,
     id,
   });
 
   const handlePostCreation = () => {
-    if (content !== "" && content.length > 3) {
+    if (content.trim().length > 3) {
       mutate();
     } else {
       toast.error("Post is too short");
     }
   };
 
+  const calculatedRows = Math.min(Math.ceil(content.length / 34), 20);
+
   return (
-    <Fragment>
+    <div className="space-y-5">
       <Header
         header={{
           title: "",
@@ -38,9 +42,10 @@ const CreatePost = () => {
             <Button
               onClick={handlePostCreation}
               isPending={isPending}
-              className="z-10"
+              className="z-10 rounded-full"
             >
-              <SendHorizonal /> <span>Publish Post</span>
+              <SendHorizonal className="fill-white stroke-primary" />
+              <span>Publish {isAnnouncement ? "Broadcast" : "Post"}</span>
             </Button>
           ),
         }}
@@ -48,9 +53,11 @@ const CreatePost = () => {
       <Textarea
         value={content}
         onChange={({ target }) => setContent(target.value)}
-        placeholder="What's on your mind ?"
+        placeholder="What's on your mind?"
+        rows={calculatedRows}
+        className={cn("max-h-96")}
       />
-    </Fragment>
+    </div>
   );
 };
 

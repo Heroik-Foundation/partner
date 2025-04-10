@@ -6,13 +6,13 @@ import { OnboardingCarousel } from "./carousel";
 
 const Onboarding = () => {
   return (
-    <div className="flex flex-col items-start relative h-screen">
+    <div className="flex flex-col items-start relative h-screen space-y-5 p-4">
       <FormContent className="flex flex-col items-center justify-center xs:pt-0">
         <img src="/logo/text.svg" alt="" width={100} height={100} />
         <OnboardingCarousel />
       </FormContent>
 
-      <FormFooter className="flex flex-col items-center space-y-2.5" absolute>
+      <FormFooter className="flex flex-col items-center space-y-2.5">
         <Link
           className={cn(
             buttonVariants({

@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useChannelDetailsQuery } from "../hooks/query";
 import { useEditChannelMutation } from "./hooks/mutation";
 import { toast } from "sonner";
+import { ActionDrawer } from "@/modules/units/page/action";
 
 const EditChannel = () => {
   const { id } = useParams({
@@ -25,7 +26,7 @@ const EditChannel = () => {
     description: channel?.description,
   });
   const [photo, setPhoto] = useState<File | null>(null);
-  const { mutate, isPending } = useEditChannelMutation({
+  const { mutate, isPending, isError, isSuccess } = useEditChannelMutation({
     name: String(form.name),
     description: String(form.description),
     id: id,
@@ -76,15 +77,33 @@ const EditChannel = () => {
           />
         </FormField>
       </FormContent>
-      <FormFooter absolute>
-        <Button
-          type="submit"
+      <FormFooter>
+        <ActionDrawer
+          trigger={
+            <Button
+              type="button"
+              isPending={isPending}
+              size="lg"
+              className="w-full"
+            >
+              Update Channel
+            </Button>
+          }
+          isError={isError}
           isPending={isPending}
-          size="lg"
-          className="w-full"
-        >
-          Update Channel
-        </Button>
+          isSuccess={isSuccess}
+          title={{
+            error: "Unable to Update Channel",
+            initial: "Update Channel",
+            pending: "Updating Your Channel",
+            success: "Channel Updated Successfully!",
+          }}
+          description="Are you sure you want to update this channel"
+          callback={{
+            fn: mutate,
+            title: "Yes, Proceed",
+          }}
+        />
       </FormFooter>
     </Form>
   );

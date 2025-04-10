@@ -19,6 +19,8 @@ import { SearchInput } from "../../global/form";
 import { useCreateEventMutation } from "./hooks/mutation";
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEventFormStore } from "../../global/hooks/logic";
+import { ActionDrawer } from "@/modules/units/page/action";
+import { useEffect } from "react";
 
 const CreateEvent = () => {
   const { formState, setPaid, setFundraiser, updateForm, reset } =
@@ -34,7 +36,7 @@ const CreateEvent = () => {
     charityPartners,
     ...rest
   } = formState;
-  const { mutate, isPending } = useCreateEventMutation({
+  const { mutate, isPending, isError, isSuccess } = useCreateEventMutation({
     privacy: "public",
     endTime: startDate,
     eventEndDate: endDate,
@@ -53,6 +55,12 @@ const CreateEvent = () => {
     }),
   });
 
+  useEffect(() => {
+    if (isSuccess) {
+      reset();
+    }
+  }, [isSuccess]);
+
   return (
     <Fragment>
       <Header
@@ -62,13 +70,7 @@ const CreateEvent = () => {
           subtitle: "Enter the required information below.",
         }}
       />
-      <Form
-        onSubmit={(event) => {
-          event.preventDefault();
-          mutate();
-          reset();
-        }}
-      >
+      <Form>
         <FormContent>
           <ImageWithPreview
             handleState={(file) => {
@@ -233,9 +235,35 @@ const CreateEvent = () => {
           )}
         </FormContent>
         <FormFooter>
-          <Button className="w-full" size="lg" isPending={isPending}>
-            Create Event
-          </Button>
+          <ActionDrawer
+            trigger={
+              <Button
+                className="w-full"
+                size="lg"
+                type="button"
+                isPending={isPending}
+              >
+                Create Event
+              </Button>
+            }
+            callback={{
+              title: "Create Event",
+              fn: () => {
+                mutate();
+                // reset();
+              },
+            }}
+            title={{
+              initial: "Create New Event",
+              pending: "Creating Your Event",
+              success: "Event Created Successfully!",
+              error: "Unable to Create Your Event",
+            }}
+            isError={isError}
+            isPending={isPending}
+            isSuccess={isSuccess}
+            description="Are you sure you want to create this new event?"
+          />
         </FormFooter>
       </Form>
     </Fragment>

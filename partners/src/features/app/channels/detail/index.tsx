@@ -1,8 +1,8 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { useChannelDetailsQuery } from "../hooks/query";
-import { Fallback } from "@/modules/units/suspense";
+import { SuspenseLoader } from "@/modules/units/page/suspense";
 import { Highlight } from "./modules/highlight";
-import { UserPost, UserPostLoader } from "./modules/posts";
+import { UserPost, UserPostLoader } from "./modules/post";
 import { useState } from "react";
 import { Button, buttonVariants } from "@/modules/ui/button";
 import { cn } from "@/lib/utils";
@@ -10,7 +10,7 @@ import { Post } from "../../global/types";
 import { useChannelPostsQuery } from "./hooks/query";
 import { Header } from "../../global/header";
 import { useUserPropertiesQuery } from "../../global/hooks/query";
-import { CreatePostLink } from "./modules/link";
+import { Actions } from "./modules/actions";
 
 type Tab = "posts" | "announcements";
 
@@ -55,7 +55,7 @@ const ChannelDetails = () => {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <g clip-path="url(#clip0_530_3185)">
+                <g clipPath="url(#clip0_530_3185)">
                   <path
                     d="M12 12.6667V15.8C12.4705 15.6387 12.8987 15.3735 13.2527 15.024L15.0233 13.252C15.3732 12.8985 15.6387 12.4705 15.8 12H12.6667C12.4899 12 12.3203 12.0702 12.1953 12.1953C12.0702 12.3203 12 12.4899 12 12.6667Z"
                     fill="#2E008B"
@@ -90,13 +90,14 @@ const ChannelDetails = () => {
           thumbnail={channel.photo}
         />
       )}
-      {!channel && <Fallback />}
+      {!channel && <SuspenseLoader />}
+
       <div className="w-full flex items-center justify-around space-x-5">
         {(["posts", "announcements"] as Tab[]).map((tab) => (
           <Button
             key={tab}
             size={"lg"}
-            className={cn("rounded-full w-fit")}
+            className={cn("rounded-full w-fit py-6 px-6")}
             variant={tab === currentTab ? "default" : "secondary"}
             onClick={() => setCurrentTab(tab)}
           >
@@ -122,7 +123,7 @@ const ChannelDetails = () => {
           <UserPostLoader /> <UserPostLoader />
         </>
       )}
-      {id && <CreatePostLink id={id} />}
+      <Actions id={id} />
     </div>
   );
 };

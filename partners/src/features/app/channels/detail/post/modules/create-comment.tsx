@@ -29,7 +29,7 @@ export const CreateComment = ({ id }: CreatCommentProps) => {
           onChange={({ target }) => {
             setContent(target.value);
           }}
-          className="w-full"
+          className="w-full pr-16"
         />
         <Button
           isPending={isPending}

@@ -3,6 +3,7 @@ import { authenticatedInstance } from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { useAnnouncementStore } from "../../hooks/store/post";
 
 type CreateChannelMutationProps = {
   name: string;
@@ -18,6 +19,7 @@ type CreatePostMutationProps = {
 export function useCreateChannelMutation(props: CreateChannelMutationProps) {
   const { name, description, photo } = props;
   const formData = new FormData();
+  const { navigate } = useRouter();
 
   if (photo) {
     formData.append("name", name);
@@ -35,7 +37,13 @@ export function useCreateChannelMutation(props: CreateChannelMutationProps) {
 
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      navigate({
+        to: "/app/channels/$id",
+        params: {
+          id: data.community._id,
+        },
+      });
       toast.success("Channel created successfully");
     },
     onError: (error: ErrorResponse) => {
@@ -47,12 +55,14 @@ export function useCreateChannelMutation(props: CreateChannelMutationProps) {
 export function useCreatePostMutation(props: CreatePostMutationProps) {
   const { history } = useRouter();
   const queryClient = useQueryClient();
+  const { isAnnouncement } = useAnnouncementStore();
   const { content, id } = props;
   return useMutation({
     mutationFn: async () => {
       const { data } = await authenticatedInstance.post("/posts", {
         content,
         communityId: id,
+        isAnnouncement,
       });
 
       return data;

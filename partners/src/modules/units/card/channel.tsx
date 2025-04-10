@@ -37,8 +37,8 @@ export const Channel = (props: ChannelProps) => {
         </div>
       )}
       <div className="space-y-1">
-        <h3 className="text-sm font-black">{title}</h3>
-        <p className="text-xs font-semibold">{truncateText(description, 90)}</p>
+        <h3 className="text-sm font-black">{truncateText(title, 27)}</h3>
+        <p className="text-xs font-semibold">{truncateText(description, 60)}</p>
         <div className="bg-accent py-2 px-3.5 rounded-full inline-flex space-x-2 items-center absolute bottom-2">
           <div className="relative flex items-center">
             <div className="flex -space-x-2">

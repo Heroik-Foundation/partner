@@ -53,7 +53,7 @@ export const Highlight = (props: HighlightProps) => {
         className="p-4 bg-primary text-white absolute rounded-3xl space-y-2.5 left-0 right-0 transform -translate-y-1/2 top-[304px] max-h-52 shadow-lg mx-auto w-[90%] max-w-md text-sm"
       >
         <h1 className="font-black text-2xl text-center">{title}</h1>
-        <p className="text-center font-semibold text-sm text-white/75">
+        <p className="text-center font-semibold text-xs text-white/75">
           {truncateText(description, 135)}
         </p>
 

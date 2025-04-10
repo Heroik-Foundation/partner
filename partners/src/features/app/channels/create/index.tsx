@@ -9,9 +9,10 @@ import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
 import { Textarea } from "@/modules/ui/textarea";
 import { ImageWithPreview } from "@/modules/units/form/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCreateChannelMutation } from "./hooks/mutation";
 import { toast } from "sonner";
+import { ActionDrawer } from "@/modules/units/page/action";
 
 const CreateChannel = () => {
   const [form, setForm] = useState({
@@ -19,11 +20,20 @@ const CreateChannel = () => {
     description: "",
   });
   const [photo, setPhoto] = useState<File | null>(null);
-  const { mutate, isPending } = useCreateChannelMutation({
+  const { mutate, isPending, isSuccess, isError } = useCreateChannelMutation({
     name: form.name,
     description: form.description,
     photo,
   });
+
+  useEffect(() => {
+    if (isSuccess) {
+      setForm({
+        name: "",
+        description: "",
+      });
+    }
+  }, [isSuccess]);
 
   return (
     <Form
@@ -69,15 +79,33 @@ const CreateChannel = () => {
           />
         </FormField>
       </FormContent>
-      <FormFooter absolute>
-        <Button
-          type="submit"
+      <FormFooter>
+        <ActionDrawer
+          trigger={
+            <Button
+              type="button"
+              isPending={isPending}
+              size="lg"
+              className="w-full"
+            >
+              Create New Channel
+            </Button>
+          }
+          isError={isError}
           isPending={isPending}
-          size="lg"
-          className="w-full"
-        >
-          Create New Channel
-        </Button>
+          isSuccess={isSuccess}
+          title={{
+            error: "Unable to create channel",
+            initial: "Create New Channel",
+            pending: "Creating Your Channel",
+            success: "Channel Created Successfully!",
+          }}
+          description="Are you sure you want to create this new channel?"
+          callback={{
+            fn: mutate,
+            title: "Yes, Proceed",
+          }}
+        />
       </FormFooter>
     </Form>
   );

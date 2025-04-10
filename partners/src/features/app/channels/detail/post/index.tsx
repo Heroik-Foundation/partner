@@ -1,7 +1,7 @@
 import { Header } from "@/features/app/global/header";
 import { useParams } from "@tanstack/react-router";
 import { usePostCommentsQuery, usePostDetailsQuery } from "./hooks/query";
-import { UserPost, UserPostLoader } from "../modules/posts";
+import { UserPost, UserPostLoader } from "../modules/post";
 import { useUserPropertiesQuery } from "@/features/app/global/hooks/query";
 import { UserComment, UserCommentLoader } from "./modules/comment";
 import { CreateComment } from "./modules/create-comment";

@@ -36,7 +36,7 @@ export function Actions() {
       <AnimatePresence>
         {extended && (
           <motion.div
-            className="flex flex-col items-end justify-center space-y-2.5 backdrop-blur-sm rounded"
+            className="flex flex-col items-end justify-center space-y-2.5 rounded"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -66,7 +66,8 @@ export function Actions() {
                     className={cn(
                       buttonVariants({
                         variant: "accent",
-                        className: "rounded-full shadow",
+                        className:
+                          "rounded-full px-5 h-12 shadow bg-accent-900",
                       })
                     )}
                   >
@@ -81,8 +82,8 @@ export function Actions() {
 
       <Button
         className={cn(
-          "rounded-full transition-all shadow-none primary-box-shadow-hidden w-12 h-12 z-10 bg-accent hover:bg-accent",
-          extended && "rotate-180"
+          "rounded-full transition-all shadow-none primary-box-shadow-hidden w-12 h-12 z-10",
+          extended ? "rotate-180 bg-rose-600" : "bg-accent"
         )}
         onClick={() => setExtended(!extended)}
         size="sm"

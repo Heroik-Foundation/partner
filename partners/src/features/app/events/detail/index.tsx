@@ -2,13 +2,14 @@ import { Fragment } from "react";
 import { Header } from "../../global/header";
 import { useEventDetailsQuery } from "../hooks/query";
 import { Highlight } from "./modules/highlight";
-import { Fallback } from "@/modules/units/suspense";
+
 import { Link, useParams } from "@tanstack/react-router";
 import Info from "./modules/info";
 import { Manage } from "./modules/manage";
 import { QrCode, Share2 } from "lucide-react";
 import { Button, buttonVariants } from "@/modules/ui/button";
 import { cn } from "@/lib/utils";
+import { SuspenseLoader } from "@/modules/units/page/suspense";
 
 const EventDetail = () => {
   const { id } = useParams({
@@ -48,7 +49,7 @@ const EventDetail = () => {
         }}
         previousButtonVariant="backlight"
       />
-      {!event && <Fallback />}
+      {!event && <SuspenseLoader />}
 
       {event && id && (
         <Fragment>

@@ -1,6 +1,6 @@
 import { useRouter } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { cn } from "@/lib/utils";
 
 export type Variants = "default" | "backlight" | "backlight-faded";
