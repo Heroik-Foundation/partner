@@ -90,6 +90,7 @@ const CreateEvent = () => {
       <Form>
         <FormContent className="space-y-8">
           <ImageWithPreview
+            state={formState.photo}
             handleState={(file) => {
               updateForm("photo", file);
             }}

@@ -1,11 +1,13 @@
 import { useAuthStore } from "@/stores/auth";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export const ImageWithPreview = ({
+  state,
   setState,
   initialPreview,
   handleState,
 }: {
+  state?: any;
   setState?: Dispatch<SetStateAction<any>>;
   initialPreview?: string;
   handleState?: (file: any) => void;
@@ -33,17 +35,27 @@ export const ImageWithPreview = ({
     }
 
     if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setPreview(previewUrl);
-
-      //@ts-ignore
-      const img = new Image();
-      img.onload = () => {
-        URL.revokeObjectURL(previewUrl);
-      };
-      img.src = previewUrl;
+      handlePreview(file);
     }
   };
+
+  const handlePreview = (file: File) => {
+    const previewUrl = URL.createObjectURL(file);
+    setPreview(previewUrl);
+
+    //@ts-ignore
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(previewUrl);
+    };
+    img.src = previewUrl;
+  };
+
+  useEffect(() => {
+    if (state) {
+      handlePreview(state);
+    }
+  }, []);
 
   return (
     <div className="flex flex-col items-center w-full relative">

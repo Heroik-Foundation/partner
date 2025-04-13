@@ -55,7 +55,7 @@ export function useCreateEventMutation(props: CreateEventMutation) {
       formData.append("address", address);
 
       if (subCategory) {
-        formData.append("subCategory", subCategory);
+        formData.append("subcategory", subCategory);
       }
 
       formData.append("signUpLimit", signUpLimit.toString());
