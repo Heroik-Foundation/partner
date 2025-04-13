@@ -14,8 +14,8 @@ import { Fragment } from "react/jsx-runtime";
 import { Header } from "../../global/header";
 import { Switch } from "@/modules/ui/switch";
 
-import { ChevronDown, XCircle } from "lucide-react";
-import { SearchInput } from "../../global/form";
+import { ChevronDown, PlusCircle, XCircle } from "lucide-react";
+import { InputWithPrefix } from "../../global/form";
 import { useCreateEventMutation } from "./hooks/mutation";
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEventFormStore } from "../../global/hooks/logic";
@@ -34,12 +34,16 @@ const CreateEvent = () => {
     minimumPledge,
     ticketPrice,
     charityPartners,
+    subCategory,
     ...rest
   } = formState;
   const { mutate, isPending, isError, isSuccess } = useCreateEventMutation({
     privacy: "public",
     endTime: startDate,
     eventEndDate: endDate,
+    ...(subCategory !== "" && {
+      subCategory,
+    }),
     ...rest,
     ...(isPaid && {
       eventTicket: {
@@ -49,7 +53,7 @@ const CreateEvent = () => {
       ...(isFundraiser && {
         eventPledge: {
           minimumPledge: Number(minimumPledge || 0),
-          organizations: charityPartners || [],
+          organizations: charityPartners.map((partner) => partner.id) || [],
         },
       }),
     }),
@@ -61,6 +65,19 @@ const CreateEvent = () => {
     }
   }, [isSuccess]);
 
+  const removeCharityOrganizationById = (id: string) => {
+    const currentPartners = formState.charityPartners as Array<{
+      id: string;
+      name: string;
+    }>;
+
+    const updatedPartners = currentPartners.filter(
+      (partner) => partner.id !== id
+    );
+
+    updateForm("charityPartners", updatedPartners);
+  };
+
   return (
     <Fragment>
       <Header
@@ -71,7 +88,7 @@ const CreateEvent = () => {
         }}
       />
       <Form>
-        <FormContent>
+        <FormContent className="space-y-8">
           <ImageWithPreview
             handleState={(file) => {
               updateForm("photo", file);
@@ -149,6 +166,7 @@ const CreateEvent = () => {
                 onChange={({ target }) => {
                   updateForm("startDate", target.value);
                 }}
+                className="text-primary border-none bg-primary/5"
                 type="date"
               />
             </FormField>
@@ -160,6 +178,7 @@ const CreateEvent = () => {
                 onChange={({ target }) => {
                   updateForm("endDate", target.value);
                 }}
+                className="text-primary border-none bg-primary/5"
                 type="date"
               />
             </FormField>
@@ -177,62 +196,75 @@ const CreateEvent = () => {
             <>
               <FormField>
                 <Label>Event Ticket Price</Label>
-                <Input
+                <InputWithPrefix
+                  prefixItem={<span className="font-bold">£</span>}
                   type="number"
                   value={String(formState.ticketPrice)}
                   onChange={({ target }) => {
                     updateForm("ticketPrice", Number(target.value));
                   }}
                   placeholder="0"
+                  className="pl-7"
                 />
               </FormField>
             </>
           )}
-          <div className="flex items-center justify-between">
-            <Label>Do you want to use the event for a fundraiser ?</Label>
-            <Switch
-              checked={isFundraiser}
-              onCheckedChange={() => {
-                setFundraiser(!isFundraiser);
-              }}
-            />
-          </div>
-          {isFundraiser && (
-            <div className="p-5 bg-primary rounded-xl text-white">
-              <FormField>
-                <div className="flex items-center justify-between">
-                  <Label className="text-white">Set Minimum Pledge</Label>
-                  <button onClick={() => setFundraiser(false)}>
-                    <XCircle className="stroke-primary fill-white" />
-                  </button>
-                </div>
-                <Input
-                  placeholder="0"
-                  value={Number(formState.minimumPledge)}
-                  onChange={({ target }) => {
-                    updateForm("minimumPledge", Number(target.value));
-                  }}
-                  className="bg-primary text-white border-white/50 ring-white"
-                />
-              </FormField>
-              <FormField>
-                <Label>Add Charity Partners</Label>
 
-                <SearchInput
-                  onFocus={() => {
-                    navigate({
-                      to: "/app/events/create/partners",
-                    });
-                  }}
-                  className="text-white border-white/50 bg-primary placeholder:text-white/50"
-                  readOnly
-                  value={formState.charityPartners.join(", ")}
-                  searchIconClassName="stroke-white"
-                  placeholder="Search Charity Partners"
-                />
-              </FormField>
+          <div className="p-5 bg-primary rounded-xl text-white space-y-5">
+            <div className="flex items-center justify-between">
+              <Label className="text-white">Set Minimum Pledge</Label>
+              <button onClick={() => setFundraiser(false)}>
+                <XCircle className="stroke-primary fill-white" />
+              </button>
             </div>
-          )}
+            <FormField>
+              <InputWithPrefix
+                prefixItem={<span>£</span>}
+                placeholder="0"
+                value={Number(formState.minimumPledge)}
+                onChange={({ target }) => {
+                  updateForm("minimumPledge", Number(target.value));
+                }}
+                className="bg-primary text-white border-white/50 ring-white border pl-7"
+              />
+            </FormField>
+            <FormField>
+              <div className="flex items-center space-x-2 overflow-x-auto">
+                {formState.charityPartners.map((partner, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center space-x-1.5 bg-white/30 py-2 px-3.5 rounded-full w-fit whitespace-nowrap"
+                  >
+                    <span className="text-white text-sm font-bold">
+                      {partner.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        removeCharityOrganizationById(partner.id);
+                      }}
+                    >
+                      <XCircle className="stroke-1 fill-white/60 stroke-primary" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <InputWithPrefix
+                prefixItem={
+                  <PlusCircle className="stroke-1 fill-white/60 stroke-primary" />
+                }
+                onFocus={() => {
+                  navigate({
+                    to: "/app/events/create/partners",
+                  });
+                }}
+                className="text-white border-white/50 border bg-primary placeholder:text-white font-normal text-sm"
+                readOnly
+                placeholder="Add Charity Partner"
+              />
+            </FormField>
+          </div>
         </FormContent>
         <FormFooter>
           <ActionDrawer

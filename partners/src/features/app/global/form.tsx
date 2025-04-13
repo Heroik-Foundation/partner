@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
 import { Input } from "@/modules/ui/input";
+
 import { Search, Settings2 } from "lucide-react";
-import { ComponentProps } from "react";
+import { ComponentProps, ReactNode } from "react";
 
 type SearchInputProps = {
   searchIconClassName?: string;
@@ -29,6 +30,22 @@ export const SearchInput = (props: SearchInputProps) => {
           searchIconClassName
         )}
         size={17}
+      />
+    </div>
+  );
+};
+
+export const InputWithPrefix = (
+  props: { prefixItem?: ReactNode } & ComponentProps<"input">
+) => {
+  const { className, prefixItem, ...rest } = props;
+
+  return (
+    <div className="w-full relative h-12">
+      <div className="absolute top-[25%] left-3">{prefixItem}</div>
+      <Input
+        {...rest}
+        className={cn("pl-10 border-primary/50 h-full", className)}
       />
     </div>
   );

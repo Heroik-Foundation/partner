@@ -255,7 +255,9 @@ export const ActionDialog = (props: DialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="w-full">{trigger}</DialogTrigger>
+      <DialogTrigger className="w-full" asChild>
+        {trigger}
+      </DialogTrigger>
       <DialogContent className="px-0 pb-0">
         <DialogHeader className="px-5">
           <DialogTitle className="font-extrabold text-primary">

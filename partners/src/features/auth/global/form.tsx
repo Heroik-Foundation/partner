@@ -77,7 +77,7 @@ export const FormField = (props: ComponentProps<"div">) => {
   return (
     <div
       {...rest}
-      className={cn("flex flex-col space-y-1.5 w-full text-start", className)}
+      className={cn("flex flex-col space-y-2 w-full text-start", className)}
     >
       {children}
     </div>

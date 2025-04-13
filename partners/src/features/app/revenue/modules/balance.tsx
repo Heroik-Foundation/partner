@@ -35,9 +35,9 @@ export const Balance = () => {
         </div>
 
         <div className="flex w-full justify-between">
-          {details.map((detail) => {
+          {details.map((detail, index) => {
             return (
-              <div>
+              <div key={index}>
                 <span className="text-[10px] text-white/75">
                   {detail.title}
                 </span>

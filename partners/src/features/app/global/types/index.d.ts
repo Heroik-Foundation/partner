@@ -356,6 +356,17 @@ export type WithdrawalLog = {
   createdAt: string;
 };
 
+export type Category = {
+  _id: string;
+  image: string;
+  name: string;
+  subcategories: {
+    _id: string;
+    image: string;
+    name: string;
+  }[];
+};
+
 export type NestedPaginatedResponse<T, K extends string = "name"> = {
   [key in K]: {
     currentPage: number;

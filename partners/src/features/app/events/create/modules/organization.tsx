@@ -1,5 +1,6 @@
 import { EventFormState } from "@/features/app/global/hooks/logic";
 import { truncateText } from "@/helpers/text";
+import { cn } from "@/lib/utils";
 import { Button } from "@/modules/ui/button";
 import { Building } from "lucide-react";
 
@@ -19,20 +20,23 @@ export type CharityOrganizationProps = {
 export const CharityOrganization = (props: CharityOrganizationProps) => {
   const { thumbnail, title, address, nodeRef, id, formState, updateForm } =
     props;
-  const isOrgPresent = formState.charityPartners.includes(id);
+  const isOrgPresent = formState.charityPartners.some(
+    (partner) => partner.id === id
+  );
 
   const handleOrgArrUpdates = () => {
     const initialData = formState.charityPartners;
 
     const newData = isOrgPresent
-      ? initialData.filter((orgId) => orgId !== id)
-      : [...initialData, id];
+      ? initialData.filter((partner) => partner.id !== id)
+      : [...initialData, { id, name: title }];
+
     updateForm("charityPartners", newData);
   };
 
   return (
     <div
-      className="w-full p-2.5 rounded-xl flex items-center justify-between shadow"
+      className="w-full p-2.5 rounded-xl flex items-center justify-between border-2 border-primary/5"
       ref={nodeRef}
     >
       <div className="flex items-center space-x-1.5">
@@ -44,19 +48,27 @@ export const CharityOrganization = (props: CharityOrganizationProps) => {
             className="rounded-md bg-primary/10 w-16 h-16 object-cover"
           />
         ) : (
-          <div className="w-16 h-16 flex items-center justify-center text-primary bg-primary/10 rounded-xl">
+          <div className="w-16 h-16 flex items-center justify-center text-primary bg-primary/10 rounded-md">
             <Building />
           </div>
         )}
-        <div>
+        <div className="space-y-1">
           <h4 className="text-sm font-extrabold">{truncateText(title, 14)}</h4>
-          {address && (
-            <p className="text-xs font-bold">{truncateText(address, 20)}</p>
-          )}
+
+          <p className="text-xs font-bold text-black/50">
+            {address ? truncateText(address, 16) : "-"}
+          </p>
         </div>
       </div>
 
-      <Button onClick={handleOrgArrUpdates} size="sm" variant="secondary">
+      <Button
+        onClick={handleOrgArrUpdates}
+        size="sm"
+        className={cn(
+          "transition-all rounded-full px-4 font-bold text-sm bg-accent",
+          isOrgPresent && "bg-rose-500"
+        )}
+      >
         {isOrgPresent ? "Unselect" : "Select"}
       </Button>
     </div>

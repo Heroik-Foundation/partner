@@ -20,6 +20,7 @@ type CreateEventMutation = {
   endTime: string;
   address: string;
   signUpLimit: number;
+  subCategory?: string;
   communityId?: string;
   photo: File | null;
 };
@@ -33,6 +34,7 @@ export function useCreateEventMutation(props: CreateEventMutation) {
     category,
     privacy,
     eventEndDate,
+    subCategory,
     endTime,
     address,
     signUpLimit,
@@ -51,6 +53,11 @@ export function useCreateEventMutation(props: CreateEventMutation) {
       formData.append("eventEndDate", new Date(eventEndDate).toISOString());
       formData.append("endTime", new Date(endTime).toISOString());
       formData.append("address", address);
+
+      if (subCategory) {
+        formData.append("subCategory", subCategory);
+      }
+
       formData.append("signUpLimit", signUpLimit.toString());
 
       if (communityId) {

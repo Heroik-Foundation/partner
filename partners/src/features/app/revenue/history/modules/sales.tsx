@@ -1,17 +1,88 @@
-// import { useIntersectionObserver } from "@/hooks/observer";
-// import { useTicketSalesListQuery } from "../hooks/query";
-// import { TicketSale } from "@/features/app/global/types";
+import { useIntersectionObserver } from "@/hooks/observer";
+import { useTicketSalesListQuery } from "../hooks/query";
+import { TicketSale } from "@/features/app/global/types";
+import { Fragment } from "react/jsx-runtime";
 
 export const Sales = () => {
-  // const {
-  //   data: salesLogs,
-  //   hasNextPage,
-  //   fetchNextPage,
-  // } = useTicketSalesListQuery();
+  const {
+    data: salesLogs,
+    hasNextPage,
+    fetchNextPage,
+    isPending,
+    isFetchingNextPage,
+  } = useTicketSalesListQuery();
 
-  // const lastSaleRef = useIntersectionObserver(fetchNextPage, [hasNextPage]);
+  const lastSaleRef = useIntersectionObserver<HTMLDivElement>(fetchNextPage, [
+    hasNextPage,
+  ]);
 
-  // const rows: TicketSale[] = salesLogs?.pages || [];
+  const rows: TicketSale[] = salesLogs?.pages || [];
 
-  return <div></div>;
+  return (
+    <div className="space-y-2.5">
+      {rows.map((sale, index, list) => {
+        const isLast = list.length - 1 === index;
+        return (
+          <div
+            ref={isLast ? lastSaleRef : undefined}
+            key={index}
+            className="flex items-center justify-between py-3.5"
+          >
+            <div className="flex items-center space-x-1.5">
+              <img
+                className="w-10 h-10 rounded-full object-cover object-center"
+                src={sale.event.photo}
+              />
+              <div className="flex flex-col space-y-0.5">
+                <h6 className="text-xs font-semibold text-primary">User</h6>
+                <span className="text-[10px] text-primary/50 font-extrabold">
+                  Event Name
+                </span>
+                <span className="text-[10px] text-primary/50 font-extrabold">
+                  No. Of Tickets: 0
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="text-sm text-emerald-500 font-extrabold">
+                £0
+              </span>
+              <span className="text-[10px] text-primary/50 font-extrabold">
+                -
+              </span>
+            </div>
+          </div>
+        );
+      })}
+
+      {(isPending || isFetchingNextPage) && (
+        <Fragment>
+          <SaleSkeletonLoader />
+          <SaleSkeletonLoader />
+        </Fragment>
+      )}
+    </div>
+  );
+};
+
+const SaleSkeletonLoader = () => {
+  return (
+    <div className="flex items-center justify-between animate-pulse">
+      <div className="flex items-center space-x-1.5">
+        <div className="w-10 h-10 rounded-full bg-gray-300" />
+
+        <div className="flex flex-col space-y-1">
+          <div className="h-3 w-24 bg-gray-300 rounded" />
+          <div className="h-2 w-20 bg-gray-200 rounded" />
+          <div className="h-2 w-24 bg-gray-200 rounded" />
+        </div>
+      </div>
+
+      <div className="flex flex-col items-end space-y-1">
+        <div className="h-4 w-16 bg-gray-300 rounded" />
+        <div className="h-2 w-20 bg-gray-200 rounded" />
+      </div>
+    </div>
+  );
 };
