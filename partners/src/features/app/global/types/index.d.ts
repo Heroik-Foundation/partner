@@ -162,6 +162,200 @@ export type Comment = {
   };
 };
 
+export type Member = {
+  _id: string;
+  fullname: string;
+  username: string;
+  phone: string;
+  photo: string;
+  birthDate: string; // ISO date string
+  callingCode: string;
+  isAdmin: boolean;
+  blocked: boolean;
+  isAccountSetup: boolean;
+  role: string;
+  loc: {
+    type: string;
+    coordinates: [number, number];
+  };
+  email: string;
+  blockedUsers: string[];
+  followers: string[];
+  following: string[];
+};
+
+export type Wallet = {
+  _id: string;
+  owner: {
+    name: string;
+    charityRegNumber: string;
+    email: string;
+    postalCode: string;
+    country: string;
+    city: string;
+    address: string;
+    pinSet: true;
+    loc: {
+      type: string;
+      coordinates: [number, number];
+    };
+    subcategories: string[];
+    description: string;
+    bankAccountName: string;
+    bankAccountNumber: string;
+    bankName: string;
+    sortCode: string;
+    fundRaised: string;
+    totalDonations: string;
+    incomeCategory: string;
+    annualIncome: string;
+    accountClaimed: boolean;
+    latitude: string;
+    longitude: string;
+  };
+  ownerType: string;
+  balance: number;
+};
+
+export type TicketSale = {
+  _id: string;
+  event: {
+    _id: string;
+    photo: string;
+    name: string;
+    description: string;
+    fundRaiser: {
+      fundRaised: number;
+      goalReached: boolean;
+      fundRaisingGoal: number;
+      organizations: string[];
+    };
+    eventTicket: {
+      totalTicket: number;
+      availableTickets: number;
+      ticketPrice: number;
+    };
+    eventPledge: {
+      minimumPledge: number;
+      totalPledgedAmount: number;
+      organizations: string[];
+    };
+    organization: string;
+    category: {
+      _id: string;
+      image: string;
+      name: string;
+      subcategories: {
+        _id: string;
+        image: string;
+        name: string;
+      }[];
+    };
+    subcategory: {
+      _id: string;
+      image: string;
+      name: string;
+    };
+    signUpLimit: string;
+    eventEndDate: string;
+    privacy: string;
+    endTime: string;
+    loc: {
+      type: "Point";
+      coordinates: [number, number];
+    };
+    members: string[];
+    community: {
+      _id: string;
+      members: string[];
+      invitees: string[];
+      moderators: string[];
+      name: string;
+      description: string;
+      privacy: string;
+      admin: {
+        _id: string;
+        fullname: string;
+        username: string;
+        phone: string;
+        photo: string;
+        birthDate: string;
+        callingCode: string;
+        isAdmin: boolean;
+        blocked: boolean;
+        isAccountSetup: boolean;
+        role: string;
+        loc: {
+          type: "Point";
+          coordinates: [number, number];
+        };
+        email: string;
+        blockedUsers: string[];
+        followers: string[];
+        following: string[];
+      };
+      posts: {
+        totalPosts: number;
+      }[];
+      totalMembers: number;
+      totalPosts: number;
+    };
+    admin: string;
+  };
+  user: string;
+  totalTickets: number;
+  tickets: string[];
+};
+
+export type WithdrawalLog = {
+  organization: {
+    name: string;
+    charityRegNumber: string;
+    email: string;
+    postalCode: string;
+    country: string;
+    city: string;
+    address: string;
+    loc: {
+      type: "Point";
+      coordinates: [number, number];
+    };
+    subcategories: string[];
+    description: string;
+    bankAccountName: string;
+    bankAccountNumber: string;
+    bankName: string;
+    sortCode: string;
+    fundRaised: string;
+    totalDonations: string;
+    incomeCategory: string;
+    annualIncome: string;
+    accountClaimed: boolean;
+    latitude: string;
+    longitude: string;
+    pinSet: boolean;
+  };
+  eventPartner: {
+    name: string;
+    logo: string;
+    address: string;
+    email: string;
+    bankAccountName: string;
+    bankAccountNumber: string;
+    bankName: string;
+    sortCode: string;
+    telephone: string;
+    eventsPerYear: number;
+    pinSet: boolean;
+  };
+  amount: number;
+  bankName: string;
+  bankAccountNumber: string;
+  bankAccountName: string;
+  sortCode: string;
+  createdAt: string;
+};
+
 export type NestedPaginatedResponse<T, K extends string = "name"> = {
   [key in K]: {
     currentPage: number;

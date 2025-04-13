@@ -1,108 +1,196 @@
 import { Fragment, useState } from "react";
-import { Check, AlertCircle, ChevronLeft } from "lucide-react";
+import { Check, AlertCircle, ChevronLeft, Loader2 } from "lucide-react";
 import { Label } from "@/modules/ui/label";
+import { useUpdateSecurityPinMutation } from "../../hooks/mutation";
 
-export const SecurityPinInput = () => {
+export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
   // Define PIN length as a constant
   const MAX_PIN_LENGTH = 4;
 
+  // Define all possible steps
+  type StepType = "create" | "confirm" | "enterOld" | "enterNew" | "confirmNew";
+
   const [input, setInput] = useState<string>("");
   const [confirmInput, setConfirmInput] = useState<string>("");
-  const [step, setStep] = useState<"create" | "confirm">("create");
+  const [oldPin, setOldPin] = useState<string>("");
+  const { mutate, isPending } = useUpdateSecurityPinMutation({
+    newPin: confirmInput,
+    ...(pinSet === true && { oldPin }),
+  });
+
+  const [step, setStep] = useState<StepType>(pinSet ? "enterOld" : "create");
   const [error, setError] = useState<string | null>(null);
 
-  // Create numpad array with numbers 1-9, then 0
   const numpad = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
-  // Handle number input with max length check
   const handleNumberInput = (number: number) => {
-    if (step === "create") {
-      setInput((prev) => {
-        // Prevent adding more digits if max length is reached
-        if (prev.length >= MAX_PIN_LENGTH) {
-          return prev;
-        }
-        const newInput = prev + number;
+    if (pinSet) {
+      // Handle input for existing PIN workflow
+      if (step === "enterOld") {
+        setOldPin((prev) => {
+          if (prev.length >= MAX_PIN_LENGTH) return prev;
 
-        // Automatically move to confirm step when first PIN is complete
-        if (newInput.length === MAX_PIN_LENGTH) {
-          setTimeout(() => {
-            setStep("confirm");
-          }, 300); // Small delay for better UX
-        }
+          const newInput = prev + number;
 
-        return newInput;
-      });
+          // Automatically move to next step when old PIN is complete
+          if (newInput.length === MAX_PIN_LENGTH) {
+            setTimeout(() => {
+              setStep("enterNew");
+            }, 300);
+          }
+
+          return newInput;
+        });
+      } else if (step === "enterNew") {
+        setInput((prev) => {
+          if (prev.length >= MAX_PIN_LENGTH) return prev;
+
+          const newInput = prev + number;
+
+          // Automatically move to confirm step when new PIN is complete
+          if (newInput.length === MAX_PIN_LENGTH) {
+            setTimeout(() => {
+              setStep("confirmNew");
+            }, 300);
+          }
+
+          return newInput;
+        });
+      } else {
+        // confirmNew step
+        setConfirmInput((prev) => {
+          if (prev.length >= MAX_PIN_LENGTH) return prev;
+          return prev + number;
+        });
+      }
     } else {
-      setConfirmInput((prev) => {
-        // Prevent adding more digits if max length is reached
-        if (prev.length >= MAX_PIN_LENGTH) {
-          return prev;
-        }
-        return prev + number;
-      });
+      // Original behavior for new PIN workflow
+      if (step === "create") {
+        setInput((prev) => {
+          if (prev.length >= MAX_PIN_LENGTH) return prev;
+
+          const newInput = prev + number;
+
+          if (newInput.length === MAX_PIN_LENGTH) {
+            setTimeout(() => {
+              setStep("confirm");
+            }, 300);
+          }
+
+          return newInput;
+        });
+      } else {
+        setConfirmInput((prev) => {
+          if (prev.length >= MAX_PIN_LENGTH) return prev;
+          return prev + number;
+        });
+      }
     }
   };
 
-  // Handle backspace
   const handleBackspace = () => {
-    if (step === "create") {
-      setInput((prev) => prev.slice(0, -1));
+    if (pinSet) {
+      if (step === "enterOld") {
+        setOldPin((prev) => prev.slice(0, -1));
+      } else if (step === "enterNew") {
+        setInput((prev) => prev.slice(0, -1));
+      } else {
+        setConfirmInput((prev) => prev.slice(0, -1));
+        setError(null);
+      }
     } else {
-      setConfirmInput((prev) => prev.slice(0, -1));
-      setError(null); // Clear error when user makes changes
+      if (step === "create") {
+        setInput((prev) => prev.slice(0, -1));
+      } else {
+        setConfirmInput((prev) => prev.slice(0, -1));
+        setError(null);
+      }
     }
   };
 
-  // Handle enter/submit
   const handleSubmit = () => {
-    if (step === "create") {
-      // Only process if PIN meets length requirement
-      if (input.length === MAX_PIN_LENGTH) {
-        setStep("confirm");
+    if (pinSet) {
+      if (step === "enterOld") {
+        if (oldPin.length === MAX_PIN_LENGTH) {
+          setStep("enterNew");
+        }
+      } else if (step === "enterNew") {
+        if (input.length === MAX_PIN_LENGTH) {
+          mutate();
+          setStep("confirmNew");
+        }
+      } else {
+        if (confirmInput.length === MAX_PIN_LENGTH) {
+          if (input === confirmInput) {
+            mutate();
+            setOldPin("");
+            setInput("");
+            setConfirmInput("");
+            setStep("enterOld");
+            setError(null);
+          } else {
+            setError("PINs don't match. Try again.");
+            setConfirmInput("");
+          }
+        }
       }
     } else {
-      // Verify confirmation PIN
-      if (confirmInput.length === MAX_PIN_LENGTH) {
-        if (input === confirmInput) {
-          // PINs match - successful confirmation
-          console.log("PIN confirmed:", input);
-          // Reset everything
-          setInput("");
-          setConfirmInput("");
-          setStep("create");
-          setError(null);
-        } else {
-          // PINs don't match - show error
-          setError("PINs don't match. Try again.");
-          setConfirmInput("");
+      if (step === "create") {
+        if (input.length === MAX_PIN_LENGTH) {
+          setStep("confirm");
+        }
+      } else {
+        if (confirmInput.length === MAX_PIN_LENGTH) {
+          if (input === confirmInput) {
+            console.log("PIN confirmed:", input);
+            setInput("");
+            setConfirmInput("");
+            setStep("create");
+            setError(null);
+          } else {
+            setError("PINs don't match. Try again.");
+            setConfirmInput("");
+          }
         }
       }
     }
   };
 
-  // Reset the form and start over
   const handleReset = () => {
+    setOldPin("");
     setInput("");
     setConfirmInput("");
-    setStep("create");
+    setStep(pinSet ? "enterOld" : "create");
     setError(null);
   };
 
-  // Determine current active input and length based on step
-  const activeInput = step === "create" ? input : confirmInput;
-  const isInputComplete =
-    step === "create"
-      ? input.length === MAX_PIN_LENGTH
-      : confirmInput.length === MAX_PIN_LENGTH;
+  const getActiveInput = () => {
+    if (pinSet) {
+      if (step === "enterOld") return oldPin;
+      if (step === "enterNew") return input;
+      return confirmInput;
+    } else {
+      return step === "create" ? input : confirmInput;
+    }
+  };
+
+  const activeInput = getActiveInput();
+  const isInputComplete = activeInput.length === MAX_PIN_LENGTH;
+
+  const getStepLabel = () => {
+    if (pinSet) {
+      if (step === "enterOld") return "Enter Old PIN";
+      if (step === "enterNew") return "Enter New PIN";
+      return "Confirm New PIN";
+    } else {
+      return step === "create" ? "Enter Security PIN" : "Confirm Security PIN";
+    }
+  };
 
   return (
     <div className="w-full max-w-md mx-auto space-y-10">
-      {/* PIN Display */}
       <div className="text-center space-y-5">
-        <Label>
-          {step === "create" ? "Enter Security PIN" : "Confirm Security PIN"}
-        </Label>
+        <Label>{getStepLabel()}</Label>
 
         {error && (
           <div className="flex items-center justify-center text-red-500 gap-2 mb-2">
@@ -125,7 +213,8 @@ export const SecurityPinInput = () => {
           ))}
         </div>
 
-        {step === "confirm" && (
+        {((pinSet && (step === "enterNew" || step === "confirmNew")) ||
+          (!pinSet && step === "confirm")) && (
           <button
             onClick={handleReset}
             className="text-sm text-primary underline mt-2"
@@ -135,14 +224,11 @@ export const SecurityPinInput = () => {
         )}
       </div>
 
-      {/* Numpad */}
       <div className="grid grid-cols-3 gap-5">
         {numpad.map((number, index) => {
-          // Special case for the last row (to place 0 in the middle)
           if (index === 9) {
             return (
               <Fragment key={number}>
-                {/* Backspace button on the left of 0 */}
                 <button
                   className="rounded-full h-16 w-16 mx-auto font-bold p-5 bg-red-100 text-red-600 flex items-center justify-center"
                   onClick={handleBackspace}
@@ -150,7 +236,6 @@ export const SecurityPinInput = () => {
                   <ChevronLeft size={20} />
                 </button>
 
-                {/* Number 0 in the middle */}
                 <button
                   className="rounded-full h-16 w-16 mx-auto font-bold p-5 bg-primary/10 text-primary"
                   key={number}
@@ -163,20 +248,22 @@ export const SecurityPinInput = () => {
                   {number}
                 </button>
 
-                {/* Enter button on the right of 0 */}
                 <button
                   className="rounded-full h-16 w-16 mx-auto font-bold p-5 bg-green-100 text-green-600 flex items-center justify-center"
                   onClick={handleSubmit}
-                  disabled={!isInputComplete}
+                  disabled={!isInputComplete || isPending}
                   style={{ opacity: isInputComplete ? 1 : 0.5 }}
                 >
-                  <Check size={20} />
+                  {isPending ? (
+                    <Loader2 className="animate-spin" size={20} />
+                  ) : (
+                    <Check size={20} />
+                  )}
                 </button>
               </Fragment>
             );
           }
 
-          // Numbers 1-9
           return (
             <button
               className="rounded-full h-16 w-16 mx-auto font-bold p-5 bg-primary/10 text-primary"

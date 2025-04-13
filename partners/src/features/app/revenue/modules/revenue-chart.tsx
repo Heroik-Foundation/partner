@@ -7,14 +7,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/modules/ui/chart";
-const chartData = [
-  { month: "January", amount: 186 },
-  { month: "February", amount: 305 },
-  { month: "March", amount: 237 },
-  { month: "April", amount: 73 },
-  { month: "May", amount: 209 },
-  { month: "June", amount: 214 },
-];
 
 const chartConfig = {
   desktop: {
@@ -23,10 +15,31 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+type MonthlyData = {
+  month: string;
+  amount: number;
+  count: number;
+};
+
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { useTicketSalesStatsQuery } from "../hooks/query";
+import { formatMonth } from "@/helpers/time";
 
 export const TicketRevenueChart = () => {
   const { navigate } = useRouter();
+  const { data } = useTicketSalesStatsQuery();
+  const stats: MonthlyData[] = data || [];
+
+  const chartData = stats
+    .map((item) => {
+      return {
+        month: formatMonth(item.month),
+        amount: Number(item.amount),
+      };
+    })
+    .sort((a, b) => new Date(b.month).getTime() - new Date(a.month).getTime()) // Sort descending
+    .slice(0, 6);
+
   return (
     <div className="w-full space-y-5 flex items-center justify-center flex-col">
       <Button

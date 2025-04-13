@@ -1,12 +1,13 @@
 import { Dispatch, SetStateAction } from "react";
-import { formatNumberSequence } from "../helpers/number";
+
 import { cn } from "@/lib/utils";
+import { formatNumberSequence } from "@/helpers/text";
 
 type Props = {
   name: string;
   account_number: string;
   selected: boolean;
-  setSelected: Dispatch<SetStateAction<boolean>>;
+  setSelected?: Dispatch<SetStateAction<boolean>>;
 };
 
 export const BankOption = (props: Props) => {
@@ -15,15 +16,19 @@ export const BankOption = (props: Props) => {
   return (
     <button
       onClick={() => {
-        setSelected(!selected);
+        if (setSelected) {
+          setSelected(!selected);
+        }
       }}
       className="w-full bg-primary rounded-xl p-5 text-white flex items-center justify-between"
     >
       <div className="flex items-center text-sm font-bold space-x-1">
         <span>{name}</span>
         <span>
-          {`(`}
-          {formatNumberSequence(account_number)}
+          {account_number !== "" && `(`}
+          {account_number === ""
+            ? "Not set"
+            : formatNumberSequence(account_number)}
         </span>
       </div>
 

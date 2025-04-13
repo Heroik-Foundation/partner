@@ -89,7 +89,10 @@ export const UserPost = ({
               </clipPath>
             </defs>
           </svg>
-          <PostMenu trigger={<MoreHorizontal className="stroke-primary" />} />
+          <PostMenu
+            id={_id}
+            trigger={<MoreHorizontal className="stroke-primary" />}
+          />
         </div>
       </div>
       <p className="font-medium text-sm text-primary">{content}</p>

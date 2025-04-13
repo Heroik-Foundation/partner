@@ -63,7 +63,7 @@ export const ChannelSkeletonLoader = () => {
   return <div className="h-28 w-full bg-gray-300 animate-pulse rounded-2xl" />;
 };
 
-export const ChannleNotFound = () => {
+export const ChannelNotFound = () => {
   return (
     <div className="flex items-center justify-center bg-red-100 text-red-500 rounded-xl h-28">
       <span className="font-bold">Event Not Found</span>

@@ -62,3 +62,13 @@ export function getReadableTime(isoString: string): string {
   const diffInYears = Math.floor(diffInMonths / 12);
   return `${diffInYears} years ago`;
 }
+
+export function timeInMinutes(minutes: number) {
+  return minutes * 60 * 1000;
+}
+
+export function formatMonth(dateString: string): string {
+  const [year, month] = dateString.split("-").map(Number);
+  const date = new Date(year, month - 1);
+  return date.toLocaleString("default", { month: "long" });
+}

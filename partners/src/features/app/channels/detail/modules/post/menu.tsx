@@ -5,13 +5,38 @@ import { ActionDialog } from "@/modules/units/page/action";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { ReactNode } from "@tanstack/react-router";
 import { Flag, Mic, Trash2 } from "lucide-react";
+import {
+  useDeletePostMutation,
+  useFlagPostMutation,
+  usePostToAnnouncementMutation,
+} from "../../hooks/mutation";
 
 type Props = {
   trigger: ReactNode;
+  id: string;
 };
 
 export const PostMenu = (props: Props) => {
-  const { trigger } = props;
+  const { trigger, id } = props;
+  const {
+    mutate: deletePost,
+    isPending: isDeletingPost,
+    isSuccess: deletedPost,
+  } = useDeletePostMutation({ id });
+  const {
+    mutate: flagPost,
+    isPending: isFlaggingPost,
+    isSuccess: flaggedPost,
+  } = useFlagPostMutation({
+    id,
+  });
+  const {
+    mutate: convertPostToAnnouncement,
+    isPending: isConvertingPostToAnnouncement,
+    isSuccess: convertedPostToAnnouncement,
+  } = usePostToAnnouncementMutation({
+    id,
+  });
 
   const options = [
     {
@@ -20,7 +45,11 @@ export const PostMenu = (props: Props) => {
       prompt: {
         title: "Flag User Post",
         description: "Are you sure you want to flag this user's post?",
-        callback: () => {},
+        callback: {
+          fn: flagPost,
+          isPending: isFlaggingPost,
+          isSuccess: flaggedPost,
+        },
       },
     },
     {
@@ -29,7 +58,11 @@ export const PostMenu = (props: Props) => {
       prompt: {
         title: "Delete User Post",
         description: "Are you sure you want to delete this user's post?",
-        callback: () => {},
+        callback: {
+          fn: deletePost,
+          isPending: isDeletingPost,
+          isSuccess: deletedPost,
+        },
       },
     },
     {
@@ -38,7 +71,11 @@ export const PostMenu = (props: Props) => {
       prompt: {
         title: "Broadcast Post",
         description: "Are you sure you want to broadcast this post?",
-        callback: () => {},
+        callback: {
+          fn: convertPostToAnnouncement,
+          isPending: isConvertingPostToAnnouncement,
+          isSuccess: convertedPostToAnnouncement,
+        },
       },
     },
   ];
@@ -58,7 +95,11 @@ export const PostMenu = (props: Props) => {
                 key={index}
                 title={prompt.title}
                 description={prompt.description}
-                callback={prompt.callback}
+                callback={{
+                  fn: prompt.callback.fn,
+                  isPending: prompt.callback.isPending,
+                  isSuccess: prompt.callback.isSuccess,
+                }}
                 trigger={
                   <button
                     key={index}

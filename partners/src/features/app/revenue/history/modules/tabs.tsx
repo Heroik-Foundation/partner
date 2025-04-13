@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { Sales } from "./sales";
+import { Withdrawals } from "./withdrawals";
 
 type Tab = "sales" | "withdrawals";
 
@@ -8,12 +10,12 @@ const tabs = [
   {
     value: "sales",
     title: "Ticket Sales",
-    component: <></>,
+    component: <Sales />,
   },
   {
     value: "withdrawals",
     title: "Withdrawals",
-    component: <></>,
+    component: <Withdrawals />,
   },
 ];
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "@tanstack/react-router";
+import { useParams, useSearch } from "@tanstack/react-router";
 import { SendHorizonal } from "lucide-react";
 import { toast } from "sonner";
 
@@ -8,16 +8,16 @@ import { Button } from "@/modules/ui/button";
 import { Textarea } from "@/modules/ui/textarea";
 import { useCreatePostMutation } from "./hooks/mutation";
 import { cn } from "@/lib/utils";
-import { useAnnouncementStore } from "../hooks/store/post";
 
 const CreatePost = () => {
+  const { broadcast } = useSearch({ strict: false });
   const { id } = useParams({ strict: false });
   const [content, setContent] = useState<string>("");
-  const { isAnnouncement } = useAnnouncementStore();
 
   const { mutate, isPending } = useCreatePostMutation({
     content,
     id,
+    isAnnouncement: Boolean(broadcast),
   });
 
   const handlePostCreation = () => {
@@ -45,7 +45,7 @@ const CreatePost = () => {
               className="z-10 rounded-full"
             >
               <SendHorizonal className="fill-white stroke-primary" />
-              <span>Publish {isAnnouncement ? "Broadcast" : "Post"}</span>
+              <span>Publish {Boolean(broadcast) ? "Broadcast" : "Post"}</span>
             </Button>
           ),
         }}

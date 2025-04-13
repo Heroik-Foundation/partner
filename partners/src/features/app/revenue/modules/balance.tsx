@@ -1,18 +1,24 @@
 import { Button } from "@/modules/ui/button";
 import { useRouter } from "@tanstack/react-router";
 import { Wallet2 } from "lucide-react";
+import { useWalletDetailsQuery } from "../hooks/query";
 
 export const Balance = () => {
   const { navigate } = useRouter();
+  const { data: wallet } = useWalletDetailsQuery();
+
+  const balance = wallet?.balance || 0;
+  const bankName = wallet?.owner?.bankName || "-";
+  const bankAccountNumber = wallet?.owner?.bankAccountNumber || "-";
 
   const details = [
     {
       title: "Bank Name",
-      value: "First National Bank",
+      value: bankName,
     },
     {
       title: "Bank Account",
-      value: "754158965214526",
+      value: bankAccountNumber,
     },
   ];
 
@@ -22,7 +28,7 @@ export const Balance = () => {
         <div className="flex items-center justify-between">
           <div>
             <span className="text-sm font-bold">Account balance</span>
-            <h1 className="text-xl font-semibold">£0</h1>
+            <h1 className="text-xl font-semibold">£{balance}</h1>
           </div>
 
           <Wallet2 className="stroke-white fill-white/10" />
@@ -51,7 +57,7 @@ export const Balance = () => {
             });
           }}
         >
-          Setup account
+          {bankName === "-" ? "Setup account" : "Manage Account"}
         </Button>
         <Button
           className="shadow-xl bg-white/30 disabled:opacity-30 text-sm font-semibold w-full"
@@ -60,6 +66,7 @@ export const Balance = () => {
               to: "/app/revenue/withdraw",
             });
           }}
+          disabled={bankAccountNumber === "-"}
         >
           Withdraw Funds
         </Button>

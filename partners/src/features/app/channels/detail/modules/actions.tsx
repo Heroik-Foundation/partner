@@ -1,26 +1,22 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/modules/ui/button";
 import { Link } from "@tanstack/react-router";
 import { Plus, X, Mic, MessageSquareText } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
-import { useAnnouncementStore } from "../../hooks/store/post";
 
 export function Actions({ id }: { id: string }) {
   const [extended, setExtended] = useState<boolean>(false);
-  const { setIsAnnouncement } = useAnnouncementStore();
 
   const actions = [
     {
-      path: "/app/channels/$id/post/create",
+      path: "/app/channels/$id/post/create?broadcast=false",
       title: "Add New Post",
       icon: MessageSquareText,
       id: 1,
     },
     {
-      path: "/app/channels/$id/post/create",
+      path: "/app/channels/$id/post/create?broadcast=true",
       title: "Add New Broadcast",
       icon: Mic,
       id: 2,
@@ -68,13 +64,6 @@ export function Actions({ id }: { id: string }) {
                     )}
                     params={{
                       id: id,
-                    }}
-                    onClick={() => {
-                      if (action.id === 1) {
-                        setIsAnnouncement(false);
-                      } else {
-                        setIsAnnouncement(true);
-                      }
                     }}
                   >
                     <action.icon /> <span>{action.title}</span>

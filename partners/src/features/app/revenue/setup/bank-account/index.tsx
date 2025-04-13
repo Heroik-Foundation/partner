@@ -7,55 +7,138 @@ import {
 import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
-import { useRouter } from "@tanstack/react-router";
+import { useWalletDetailsQuery } from "../../hooks/query";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useUpdateBankDetailsMutation } from "../hooks/mutation";
+
+type Form = {
+  bankName: string;
+  bankAccountName: string;
+  bankAccountNumber: string;
+  sortCode: string;
+};
 
 const SetupBankAccount = () => {
-  const { navigate } = useRouter();
-  return (
-    <div>
-      <Form
-        title="Update Bank Details"
-        description="update your bank details"
-        previousRoute={true}
-      >
-        <FormContent>
-          <FormField>
-            <Label>Bank Name</Label>
-            <Input />
-          </FormField>
-          <FormField>
-            <Label>Account Name</Label>
-            <Input />
-          </FormField>
-          <FormField>
-            <Label>Account Number</Label>
-            <Input />
-          </FormField>
-          <FormField>
-            <Label>Sort Code</Label>
-            <Input />
-          </FormField>
-          <FormField>
-            <Label>Other Notes</Label>
-            <Input />
-          </FormField>
-        </FormContent>
+  const { data: wallet } = useWalletDetailsQuery();
+  const [form, setForm] = useState<Form>({
+    bankName: "",
+    bankAccountName: "",
+    bankAccountNumber: "",
+    sortCode: "",
+  });
+  const { mutate, isPending } = useUpdateBankDetailsMutation(form);
 
-        <FormFooter absolute>
-          <Button
-            onClick={() => {
-              navigate({
-                to: "/app/revenue/setup-pin",
-              });
+  const pageTitle = wallet?.owner?.bankName
+    ? "Update Bank Details"
+    : "Setup Bank Account";
+
+  const handleBankDetails = useCallback(() => {
+    const bankName = wallet?.owner?.bankName || "";
+    const bankAccountName = wallet?.owner?.bankAccountName || "";
+    const bankAccountNumber = wallet?.owner?.bankAccountNumber || "";
+    const sortCode = wallet?.owner.sortCode || "";
+
+    const defaultBankDetails = {
+      bankName,
+      bankAccountName,
+      bankAccountNumber,
+      sortCode,
+    };
+
+    setForm(defaultBankDetails);
+  }, [wallet]);
+
+  useEffect(() => {
+    handleBankDetails();
+  }, []);
+
+  const handleSubmit = () => {
+    const { bankAccountName, bankAccountNumber, bankName, sortCode } = form;
+    if (
+      bankAccountName === "" ||
+      bankAccountNumber === "" ||
+      bankName === "" ||
+      sortCode === ""
+    ) {
+      toast.info("Please complete the form to continue");
+    } else {
+      mutate();
+    }
+  };
+
+  return (
+    <Form
+      title={pageTitle}
+      description="update your bank details"
+      previousRoute={true}
+      onSubmit={(event) => {
+        event.preventDefault();
+        handleSubmit();
+      }}
+    >
+      <FormContent>
+        <FormField>
+          <Label>Bank Name</Label>
+          <Input
+            required
+            value={form.bankName}
+            onChange={({ target }) => {
+              setForm((prev) => ({
+                ...prev,
+                bankName: target.value,
+              }));
             }}
-            size="lg"
-            className="w-full"
-          >
-            Save Bank Account
-          </Button>
-        </FormFooter>
-      </Form>
-    </div>
+          />
+        </FormField>
+        <FormField>
+          <Label>Account Name</Label>
+          <Input
+            required
+            value={form.bankAccountName}
+            onChange={({ target }) => {
+              setForm((prev) => ({
+                ...prev,
+                bankAccountName: target.value,
+              }));
+            }}
+          />
+        </FormField>
+        <FormField>
+          <Label>Account Number</Label>
+          <Input
+            required
+            type="number"
+            value={form.bankAccountNumber}
+            onChange={({ target }) => {
+              setForm((prev) => ({
+                ...prev,
+                bankAccountNumber: target.value,
+              }));
+            }}
+          />
+        </FormField>
+        <FormField>
+          <Label>Sort Code</Label>
+          <Input
+            required
+            value={form.sortCode}
+            onChange={({ target }) => {
+              setForm((prev) => ({
+                ...prev,
+                sortCode: target.value,
+              }));
+            }}
+          />
+        </FormField>
+      </FormContent>
+
+      <FormFooter absolute>
+        <Button isPending={isPending} size="lg" className="w-full">
+          Save Bank Account
+        </Button>
+      </FormFooter>
+    </Form>
   );
 };
 

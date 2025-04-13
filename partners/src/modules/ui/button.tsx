@@ -44,7 +44,7 @@ export interface ButtonProps
   isPending?: boolean;
 }
 
-const Loader = () => {
+export const Loader = () => {
   return (
     <div role="status">
       <svg

@@ -3,7 +3,6 @@ import { authenticatedInstance } from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useAnnouncementStore } from "../../hooks/store/post";
 
 type CreateChannelMutationProps = {
   name: string;
@@ -14,6 +13,7 @@ type CreateChannelMutationProps = {
 type CreatePostMutationProps = {
   content: string;
   id?: string;
+  isAnnouncement: boolean;
 };
 
 export function useCreateChannelMutation(props: CreateChannelMutationProps) {
@@ -55,8 +55,8 @@ export function useCreateChannelMutation(props: CreateChannelMutationProps) {
 export function useCreatePostMutation(props: CreatePostMutationProps) {
   const { history } = useRouter();
   const queryClient = useQueryClient();
-  const { isAnnouncement } = useAnnouncementStore();
-  const { content, id } = props;
+
+  const { content, id, isAnnouncement } = props;
   return useMutation({
     mutationFn: async () => {
       const { data } = await authenticatedInstance.post("/posts", {
@@ -71,6 +71,9 @@ export function useCreatePostMutation(props: CreatePostMutationProps) {
       toast.success("Post created successfully");
       queryClient.invalidateQueries({
         queryKey: ["channel-posts"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["channel-announcements"],
       });
       history.back();
     },

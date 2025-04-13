@@ -8,7 +8,7 @@ import { Header } from "../global/header";
 import {
   Channel,
   ChannelSkeletonLoader,
-  ChannleNotFound,
+  ChannelNotFound,
 } from "@/modules/units/card/channel";
 import { useIntersectionObserver } from "@/hooks/observer";
 
@@ -69,7 +69,7 @@ const AllChannels = () => {
         </Fragment>
       )}
       {channels && channels?.pages.length < 1 && !isFetching && (
-        <ChannleNotFound />
+        <ChannelNotFound />
       )}
     </div>
   );

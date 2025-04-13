@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/modules/ui/button";
+import { Button, Loader } from "@/modules/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -50,7 +50,11 @@ type DialogProps = {
   trigger: ReactNode;
   title: string;
   description: string;
-  callback: () => void;
+  callback: {
+    fn: () => void;
+    isPending: boolean;
+    isSuccess: boolean;
+  };
 };
 
 export const ActionDrawer = (props: DrawerProps) => {
@@ -239,9 +243,18 @@ export const ActionDrawer = (props: DrawerProps) => {
 };
 
 export const ActionDialog = (props: DialogProps) => {
-  const { trigger, title, description } = props;
+  const [open, setOpen] = useState(false);
+  const { trigger, title, description, callback } = props;
+  const { fn, isPending, isSuccess } = callback;
+
+  useEffect(() => {
+    if (isSuccess) {
+      setOpen(false);
+    }
+  }, [isSuccess]);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="w-full">{trigger}</DialogTrigger>
       <DialogContent className="px-0 pb-0">
         <DialogHeader className="px-5">
@@ -254,10 +267,15 @@ export const ActionDialog = (props: DialogProps) => {
         </DialogHeader>
         <div className="w-full flex border-t">
           <DialogClose asChild>
-            <button className="w-full text-rose-500 py-5">Cancel</button>
+            <button className="w-full text-rose-500 py-4">Cancel</button>
           </DialogClose>
-          <button className="w-full text-emerald-500 py-5 border-l">
-            Accept
+          <button
+            className="w-full text-emerald-500 py-4 border-l flex items-center justify-center"
+            onClick={() => {
+              fn();
+            }}
+          >
+            {isPending ? <Loader /> : "Accept"}
           </button>
         </div>
       </DialogContent>

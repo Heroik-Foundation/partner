@@ -1,4 +1,5 @@
 import { truncateText } from "@/helpers/text";
+import { Link } from "@tanstack/react-router";
 import { Hash } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
@@ -9,10 +10,11 @@ type HighlightProps = {
   description: string;
   members: number;
   avatars: string[];
+  id: string;
 };
 
 export const Highlight = (props: HighlightProps) => {
-  const { thumbnail, title, description, avatars, members } = props;
+  const { thumbnail, title, description, avatars, members, id } = props;
   const highlightContentRef = useRef<HTMLDivElement | null>(null);
   const [contentSpacing, setContentSpacing] = useState(0);
 
@@ -57,7 +59,13 @@ export const Highlight = (props: HighlightProps) => {
           {truncateText(description, 135)}
         </p>
 
-        <div className="w-full flex items-center justify-center">
+        <Link
+          to="/app/channels/$id/members"
+          params={{
+            id: id,
+          }}
+          className="w-full flex items-center justify-center"
+        >
           <div className="bg-secondary/25 p-2 rounded-full inline-flex space-x-2 items-center">
             <div className="flex -space-x-2">
               {avatars.slice(0, 3).map((avatar, index) => (
@@ -72,7 +80,7 @@ export const Highlight = (props: HighlightProps) => {
 
             <span className="text-xs font-bold">{members} Attending</span>
           </div>
-        </div>
+        </Link>
       </div>
       <div
         style={{

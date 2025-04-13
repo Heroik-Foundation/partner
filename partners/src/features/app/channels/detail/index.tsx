@@ -7,7 +7,10 @@ import { useState } from "react";
 import { Button, buttonVariants } from "@/modules/ui/button";
 import { cn } from "@/lib/utils";
 import { Post } from "../../global/types";
-import { useChannelPostsQuery } from "./hooks/query";
+import {
+  useChannelAnnouncementsQuery,
+  useChannelPostsQuery,
+} from "./hooks/query";
 import { Header } from "../../global/header";
 import { useUserPropertiesQuery } from "../../global/hooks/query";
 import { Actions } from "./modules/actions";
@@ -20,10 +23,10 @@ const ChannelDetails = () => {
   const [currentTab, setCurrentTab] = useState<Tab>("posts");
   const { data: channel } = useChannelDetailsQuery({ id });
   const { data: posts } = useChannelPostsQuery({ id });
+  const { data: announcements } = useChannelAnnouncementsQuery({ id });
 
-  const filteredPosts = posts?.pages.filter((post: Post) =>
-    currentTab === "announcements" ? post.isAnnouncement : true
-  );
+  const filteredPosts =
+    currentTab === "posts" ? posts?.pages : announcements?.pages;
 
   return (
     <div className="space-y-5 min-h-screen">
@@ -88,6 +91,7 @@ const ChannelDetails = () => {
           members={channel.members.length}
           avatars={channel.members.map((member) => member.photo)}
           thumbnail={channel.photo}
+          id={id}
         />
       )}
       {!channel && <SuspenseLoader />}

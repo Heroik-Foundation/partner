@@ -1,5 +1,5 @@
 import { authenticatedInstance } from "@/lib/axios";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import type {
   NestedPaginatedResponse,
   Post,
@@ -7,10 +7,6 @@ import type {
 
 type QueryProps = {
   id?: string;
-};
-
-type ChannelPostsQueryResponse = {
-  posts: Post[];
 };
 
 //Posts
@@ -47,15 +43,29 @@ export function useChannelPostsQuery(props: QueryProps) {
 
 export function useChannelAnnouncementsQuery(props: QueryProps) {
   const { id } = props;
-  return useQuery({
-    queryKey: ["channel-posts"],
-    queryFn: async () => {
-      const { data } =
-        await authenticatedInstance.get<ChannelPostsQueryResponse>(
-          `/posts/community/${id}`
-        );
+  return useInfiniteQuery({
+    queryKey: ["channel-announcements", id],
+    queryFn: async ({ pageParam = 1 }) => {
+      const { data } = await authenticatedInstance.get(
+        `/posts/community-announcements/${id}`,
+        {
+          params: {
+            page: pageParam,
+          },
+        }
+      );
 
       return data;
     },
+    initialPageParam: 1,
+    select: ({ pageParams, pages }) => ({
+      pageParams,
+      pages: pages[0].announcements.data.flat(),
+    }),
+    getNextPageParam: (lastPage) => {
+      const { currentPage, totalPages } = lastPage.announcements;
+      return currentPage < totalPages ? currentPage + 1 : undefined;
+    },
+    staleTime: 5 * 60 * 1000,
   });
 }
