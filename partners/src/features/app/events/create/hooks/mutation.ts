@@ -1,6 +1,8 @@
+import { Event } from "@/features/app/global/types";
 import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
 import { authenticatedInstance } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 type CreateEventMutation = {
@@ -41,7 +43,7 @@ export function useCreateEventMutation(props: CreateEventMutation) {
     communityId,
     photo,
   } = props;
-
+  const { navigate } = useRouter();
   return useMutation({
     mutationFn: async () => {
       const formData = new FormData();
@@ -104,8 +106,14 @@ export function useCreateEventMutation(props: CreateEventMutation) {
 
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data: { event: Event }) => {
       toast.success("Event created successfully");
+      navigate({
+        to: "/app/events/$id/success",
+        params: {
+          id: String(data.event._id),
+        },
+      });
     },
     onError: (error: ErrorResponse) => {
       handleUserResponseToError(error);

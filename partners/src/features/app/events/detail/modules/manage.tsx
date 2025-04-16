@@ -2,8 +2,15 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/modules/ui/button";
 import { Link } from "@tanstack/react-router";
 import { Trash, Edit } from "lucide-react";
+import { useEventTerminationByIDMutation } from "../hooks/mutation";
+import { ActionDrawer } from "@/modules/units/page/action";
 
 export const Manage = ({ id }: { id: string }) => {
+  const { mutate, isPending, isSuccess, isError } =
+    useEventTerminationByIDMutation({
+      id,
+    });
+
   return (
     <div className="space-y-2.5">
       <Link
@@ -22,10 +29,28 @@ export const Manage = ({ id }: { id: string }) => {
         <span className="mt-0.5">Edit Event</span>
       </Link>
 
-      <Button disabled size="lg" variant="destructive" className="w-full">
-        <Trash size="16" />
-        <span className="mt-0.5">Delete Event</span>
-      </Button>
+      <ActionDrawer
+        trigger={
+          <Button disabled size="lg" variant="destructive" className="w-full">
+            <Trash size="16" />
+            <span className="mt-0.5">Delete Event</span>
+          </Button>
+        }
+        callback={{
+          fn: mutate,
+          title: "Delete Event",
+        }}
+        title={{
+          error: "Unable To Delete Event",
+          initial: "Delete Event",
+          pending: "Deleting Event",
+          success: "Event Deleted",
+        }}
+        description="This action cannot be reversed, are you sure ?"
+        isSuccess={isSuccess}
+        isPending={isPending}
+        isError={isError}
+      />
     </div>
   );
 };

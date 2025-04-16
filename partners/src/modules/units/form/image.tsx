@@ -52,10 +52,12 @@ export const ImageWithPreview = ({
   };
 
   useEffect(() => {
-    if (state) {
+    if (initialPreview && !state) {
+      setPreview(initialPreview);
+    } else if ((initialPreview && state) || (!initialPreview && state)) {
       handlePreview(state);
     }
-  }, []);
+  }, [initialPreview]);
 
   return (
     <div className="flex flex-col items-center w-full relative">

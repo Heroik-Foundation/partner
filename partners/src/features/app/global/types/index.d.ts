@@ -367,6 +367,170 @@ export type Category = {
   }[];
 };
 
+export type Caller = {
+  name: string;
+  charityRegNumber: string;
+  email: string;
+  postalCode: string;
+  country: string;
+  city: string;
+  address: string;
+  loc: Location;
+  subcategories: string[];
+  description: string;
+  bankAccountName: string;
+  bankAccountNumber: string;
+  bankName: string;
+  sortCode: string;
+  fundRaised: string;
+  totalDonations: string;
+  incomeCategory: string;
+  annualIncome: string;
+  accountClaimed: boolean;
+  latitude: string;
+  longitude: string;
+  pinSet: boolean;
+};
+
+export type ScannedTicket = {
+  _id: string;
+  user: {
+    _id: string;
+    fullname: string;
+    username: string;
+    phone: string;
+    photo: string;
+    birthDate: string;
+    callingCode: string;
+    isAdmin: boolean;
+    blocked: boolean;
+    isAccountSetup: boolean;
+    role: string;
+    loc: Location;
+    email: string;
+    blockedUsers: string[];
+    followers: string[];
+    following: string[];
+  };
+  event: Event;
+  attendee: string;
+  callerType: string;
+  caller: Caller;
+};
+
+export type Conversation = {
+  _id: string;
+  lastMessage: string;
+  participants: {
+    event: {
+      _id: string;
+      photo: string;
+      name: string;
+      description: string;
+      fundRaiser: {
+        fundRaised: number;
+        goalReached: boolean;
+        fundRaisingGoal: number;
+        organizations: string[];
+      };
+      eventTicket: {
+        totalTicket: number;
+        availableTickets: number;
+        ticketPrice: number;
+      };
+      eventPledge: {
+        minimumPledge: number;
+        totalPledgedAmount: number;
+        organizations: string[];
+      };
+      organization: string;
+      category: {
+        _id: string;
+        image: string;
+        name: string;
+        subcategories: {
+          _id: string;
+          image: string;
+          name: string;
+        }[];
+      };
+      subcategory: {
+        _id: string;
+        image: string;
+        name: string;
+      };
+      signUpLimit: string;
+      eventEndDate: string;
+      privacy: string;
+      endTime: string;
+      loc: {
+        type: "Point";
+        coordinates: [number, number];
+      };
+      members: string[];
+      community: {
+        _id: string;
+        members: string[];
+        invitees: string[];
+        moderators: string[];
+        name: string;
+        description: string;
+        privacy: string;
+        admin: {
+          _id: string;
+          fullname: string;
+          username: string;
+          phone: string;
+          photo: string;
+          birthDate: string;
+          callingCode: string;
+          isAdmin: boolean;
+          blocked: boolean;
+          isAccountSetup: boolean;
+          role: string;
+          loc: {
+            type: "Point";
+            coordinates: [number, number];
+          };
+          email: string;
+          blockedUsers: string[];
+          followers: string[];
+          following: string[];
+        };
+        posts: {
+          totalPosts: number;
+        }[];
+        totalMembers: number;
+        totalPosts: number;
+      };
+      admin: string;
+    };
+    participant: {
+      _id: string;
+      fullname: string;
+      username: string;
+      phone: string;
+      photo: string;
+      birthDate: string;
+      callingCode: string;
+      isAdmin: boolean;
+      blocked: boolean;
+      isAccountSetup: boolean;
+      role: string;
+      loc: {
+        type: "Point";
+        coordinates: [number, number];
+      };
+      email: string;
+      blockedUsers: string[];
+      followers: string[];
+      following: string[];
+    };
+    participantType: "User" | "Organization" | "EventPartner";
+  }[];
+  unreadMessages: number;
+};
+
 export type NestedPaginatedResponse<T, K extends string = "name"> = {
   [key in K]: {
     currentPage: number;

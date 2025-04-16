@@ -1,55 +1,100 @@
-import { Link } from "@tanstack/react-router";
+import { useIntersectionObserver } from "@/hooks/observer";
+import { ItemNotFound } from "@/modules/units/card/not-found";
+import { Link, useParams } from "@tanstack/react-router";
+import { Fragment, useMemo } from "react";
+import { useConversationsQuery } from "../hooks/query";
 
-export const previews = [
-  {
-    id: 1,
-    image_url:
-      "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aHVtYW4lMjBmYWNlc3xlbnwwfHwwfHx8MA%3D%3D",
-    name: "Chris Doe",
-    latest_message: "Can we get this event started?",
-    relative_time: "28 mins ago",
-    unseen_messages: 4,
-  },
-];
+export const Previews = ({ searchQuery }: { searchQuery: string }) => {
+  const { id } = useParams({
+    strict: false,
+  });
+  const { data, isPending, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useConversationsQuery({
+      searchQuery,
+      eventId: id,
+    });
 
-export const Previews = () => {
+  const rows = useMemo(() => {
+    const result = data?.pages || [];
+
+    return result;
+  }, [data]);
+
+  const lastConversationRef = useIntersectionObserver<HTMLAnchorElement>(
+    fetchNextPage,
+    [hasNextPage]
+  );
+
+  const noConversationsFound =
+    rows.length < 1 && !isPending && !isFetchingNextPage;
+
   return (
     <div className="space-y-2.5">
-      {previews.map((preview, index) => (
-        <Link
-          to="/app/events/$id/messages/$id"
-          key={index}
-          className="flex items-center justify-between cursor-pointer"
-          params={{
-            id: String(preview.id),
-          }}
-        >
-          <div className="flex items-center space-x-2">
-            <img
-              src={preview.image_url}
-              alt={`${preview.name}'s Image`}
-              loading="eager"
-              className="w-10 h-10 rounded-full border-2 border-primary"
-            />
-            <div>
-              <h5 className="text-primary font-bold">{preview.name}</h5>
-              <p className="font-bold text-xs">{preview.latest_message}</p>
-            </div>
-          </div>
+      {rows.map((preview, index, list) => {
+        const participant = preview.participants[0];
 
-          <div className="flex flex-col items-end space-y-1">
-            <span className="font-extrabold text-[8px]">
-              {preview.relative_time}
-            </span>
-            <div className="w-5 h-5 rounded-full bg-primary shadow text-white flex items-center justify-center">
-              <span className="font-black text-xs">
-                {" "}
-                {preview.unseen_messages}
-              </span>
+        return (
+          <Link
+            to="/app/events/$id/messages/$id"
+            key={index}
+            className="flex items-center justify-between cursor-pointer"
+            params={{
+              id: String(preview._id),
+            }}
+            ref={list.length - 1 === index ? lastConversationRef : undefined}
+          >
+            <div className="flex items-center space-x-2">
+              <img
+                src={participant.participant.photo}
+                alt={`${participant.participant.fullname}'s Image`}
+                loading="eager"
+                className="w-10 h-10 rounded-full border-2 border-primary"
+              />
+              <div>
+                <h5 className="text-primary font-bold">
+                  {participant.participant.fullname}
+                </h5>
+                <p className="font-bold text-xs">{preview.lastMessage}</p>
+              </div>
             </div>
-          </div>
-        </Link>
-      ))}
+
+            <div className="flex flex-col items-end space-y-1">
+              <span className="font-extrabold text-[8px]"> - </span>
+              <div className="w-5 h-5 rounded-full bg-primary shadow text-white flex items-center justify-center">
+                <span className="font-black text-xs"> 1</span>
+              </div>
+            </div>
+          </Link>
+        );
+      })}
+      {(isPending || isFetchingNextPage) && (
+        <Fragment>
+          <ConversationPreviewSkeletonLoader />
+          <ConversationPreviewSkeletonLoader />
+        </Fragment>
+      )}
+      {noConversationsFound && (
+        <ItemNotFound message="No Conversations Found" />
+      )}
+    </div>
+  );
+};
+
+const ConversationPreviewSkeletonLoader = () => {
+  return (
+    <div className="flex items-center justify-between cursor-pointer animate-pulse p-2">
+      <div className="flex items-center space-x-2">
+        <div className="w-10 h-10 rounded-full bg-gray-300" />
+        <div>
+          <div className="h-3 w-24 bg-gray-300 rounded mb-1" />
+          <div className="h-2 w-32 bg-gray-200 rounded" />
+        </div>
+      </div>
+
+      <div className="flex flex-col items-end space-y-1">
+        <span className="font-extrabold text-[8px] text-gray-300">-</span>
+        <div className="w-5 h-5 rounded-full bg-gray-300 shadow flex items-center justify-center" />
+      </div>
     </div>
   );
 };
