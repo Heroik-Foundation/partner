@@ -61,9 +61,9 @@ export const Header = (props: HeaderProps) => {
                 </clipPath>
               </defs>
             </svg>
-            <div className="absolute bg-[#B00062] text-white w-5 h-5 rounded-full text-xs font-extrabold font-axiforma justify-center items-center flex -top-1.5 -right-1.5">
+            {/* <div className="absolute bg-[#B00062] text-white w-5 h-5 rounded-full text-xs font-extrabold font-axiforma justify-center items-center flex -top-1.5 -right-1.5">
               0
-            </div>
+            </div> */}
           </Link>
         ) : (
           <div />
@@ -92,7 +92,10 @@ export function HomeHeader() {
 
   return (
     <header className="w-full flex justify-between items-center py-2">
-      <div className="p-2.5 border-b bg-primary/10 rounded-xl">
+      <Link
+        to="/app/profile"
+        className="p-2.5 border-b bg-primary/10 rounded-xl"
+      >
         {profileImage ? (
           <img
             src={profileImage}
@@ -102,7 +105,7 @@ export function HomeHeader() {
         ) : (
           <UserRound className="fill-primary stroke-primary/10" />
         )}
-      </div>
+      </Link>
 
       <div className="flex items-center">
         <Link to="/app/messages">

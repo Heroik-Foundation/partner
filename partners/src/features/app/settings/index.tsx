@@ -1,5 +1,3 @@
-"use client";
-
 import { Header } from "../global/header";
 import { Setting, SettingProps } from "./modules/setting";
 
@@ -21,11 +19,11 @@ export const Settings = () => {
         },
       ],
     },
-    {
-      title: "Language",
-      icon: "language",
-      link: "/app/settings/contact",
-    },
+    // {
+    //   title: "Language",
+    //   icon: "language",
+    //   link: "/app/settings/contact",
+    // },
     {
       title: "Rate our platform",
       description: "Please give us your feedback",

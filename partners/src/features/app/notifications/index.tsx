@@ -1,4 +1,5 @@
 import { Header } from "../global/header";
+import { NotificationsList } from "./modules/notifications";
 
 const Notifications = () => {
   return (
@@ -7,8 +8,10 @@ const Notifications = () => {
         header={{
           title: "Notifications",
           position: "stacked",
+          subtitle: "View your notifications.",
         }}
       />
+      <NotificationsList />
     </div>
   );
 };

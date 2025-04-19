@@ -25,6 +25,7 @@ const AuthRecoveryIndexLazyImport = createFileRoute('/auth/recovery/')()
 const AuthLoginIndexLazyImport = createFileRoute('/auth/login/')()
 const AppSettingsIndexLazyImport = createFileRoute('/app/settings/')()
 const AppRevenueIndexLazyImport = createFileRoute('/app/revenue/')()
+const AppProfileIndexLazyImport = createFileRoute('/app/profile/')()
 const AppNotificationsIndexLazyImport = createFileRoute('/app/notifications/')()
 const AppMessagesIndexLazyImport = createFileRoute('/app/messages/')()
 const AppEventsIndexLazyImport = createFileRoute('/app/events/')()
@@ -71,6 +72,9 @@ const AppEventsCreateCategoryIndexLazyImport = createFileRoute(
 )()
 const AppEventsIdSuccessIndexLazyImport = createFileRoute(
   '/app/events/$id/success/',
+)()
+const AppEventsIdShareIndexLazyImport = createFileRoute(
+  '/app/events/$id/share/',
 )()
 const AppEventsIdMessagesIndexLazyImport = createFileRoute(
   '/app/events/$id/messages/',
@@ -146,6 +150,14 @@ const AppRevenueIndexLazyRoute = AppRevenueIndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() =>
   import('./routes/app/revenue/index.lazy').then((d) => d.Route),
+)
+
+const AppProfileIndexLazyRoute = AppProfileIndexLazyImport.update({
+  id: '/app/profile/',
+  path: '/app/profile/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/app/profile/index.lazy').then((d) => d.Route),
 )
 
 const AppNotificationsIndexLazyRoute = AppNotificationsIndexLazyImport.update({
@@ -345,6 +357,14 @@ const AppEventsIdSuccessIndexLazyRoute =
     import('./routes/app/events/$id/success/index.lazy').then((d) => d.Route),
   )
 
+const AppEventsIdShareIndexLazyRoute = AppEventsIdShareIndexLazyImport.update({
+  id: '/app/events/$id/share/',
+  path: '/app/events/$id/share/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/app/events/$id/share/index.lazy').then((d) => d.Route),
+)
+
 const AppEventsIdMessagesIndexLazyRoute =
   AppEventsIdMessagesIndexLazyImport.update({
     id: '/app/events/$id/messages/',
@@ -463,6 +483,13 @@ declare module '@tanstack/react-router' {
       path: '/app/notifications'
       fullPath: '/app/notifications'
       preLoaderRoute: typeof AppNotificationsIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/app/profile/': {
+      id: '/app/profile/'
+      path: '/app/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileIndexLazyImport
       parentRoute: typeof rootRoute
     }
     '/app/revenue/': {
@@ -640,6 +667,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEventsIdMessagesIndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/app/events/$id/share/': {
+      id: '/app/events/$id/share/'
+      path: '/app/events/$id/share'
+      fullPath: '/app/events/$id/share'
+      preLoaderRoute: typeof AppEventsIdShareIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/app/events/$id/success/': {
       id: '/app/events/$id/success/'
       path: '/app/events/$id/success'
@@ -694,6 +728,7 @@ export interface FileRoutesByFullPath {
   '/app/events': typeof AppEventsIndexLazyRoute
   '/app/messages': typeof AppMessagesIndexLazyRoute
   '/app/notifications': typeof AppNotificationsIndexLazyRoute
+  '/app/profile': typeof AppProfileIndexLazyRoute
   '/app/revenue': typeof AppRevenueIndexLazyRoute
   '/app/settings': typeof AppSettingsIndexLazyRoute
   '/auth/login': typeof AuthLoginIndexLazyRoute
@@ -719,6 +754,7 @@ export interface FileRoutesByFullPath {
   '/app/events/$id/dashboard': typeof AppEventsIdDashboardIndexLazyRoute
   '/app/events/$id/edit': typeof AppEventsIdEditIndexLazyRoute
   '/app/events/$id/messages': typeof AppEventsIdMessagesIndexLazyRoute
+  '/app/events/$id/share': typeof AppEventsIdShareIndexLazyRoute
   '/app/events/$id/success': typeof AppEventsIdSuccessIndexLazyRoute
   '/app/events/create/category': typeof AppEventsCreateCategoryIndexLazyRoute
   '/app/events/create/partners': typeof AppEventsCreatePartnersIndexLazyRoute
@@ -734,6 +770,7 @@ export interface FileRoutesByTo {
   '/app/events': typeof AppEventsIndexLazyRoute
   '/app/messages': typeof AppMessagesIndexLazyRoute
   '/app/notifications': typeof AppNotificationsIndexLazyRoute
+  '/app/profile': typeof AppProfileIndexLazyRoute
   '/app/revenue': typeof AppRevenueIndexLazyRoute
   '/app/settings': typeof AppSettingsIndexLazyRoute
   '/auth/login': typeof AuthLoginIndexLazyRoute
@@ -759,6 +796,7 @@ export interface FileRoutesByTo {
   '/app/events/$id/dashboard': typeof AppEventsIdDashboardIndexLazyRoute
   '/app/events/$id/edit': typeof AppEventsIdEditIndexLazyRoute
   '/app/events/$id/messages': typeof AppEventsIdMessagesIndexLazyRoute
+  '/app/events/$id/share': typeof AppEventsIdShareIndexLazyRoute
   '/app/events/$id/success': typeof AppEventsIdSuccessIndexLazyRoute
   '/app/events/create/category': typeof AppEventsCreateCategoryIndexLazyRoute
   '/app/events/create/partners': typeof AppEventsCreatePartnersIndexLazyRoute
@@ -775,6 +813,7 @@ export interface FileRoutesById {
   '/app/events/': typeof AppEventsIndexLazyRoute
   '/app/messages/': typeof AppMessagesIndexLazyRoute
   '/app/notifications/': typeof AppNotificationsIndexLazyRoute
+  '/app/profile/': typeof AppProfileIndexLazyRoute
   '/app/revenue/': typeof AppRevenueIndexLazyRoute
   '/app/settings/': typeof AppSettingsIndexLazyRoute
   '/auth/login/': typeof AuthLoginIndexLazyRoute
@@ -800,6 +839,7 @@ export interface FileRoutesById {
   '/app/events/$id/dashboard/': typeof AppEventsIdDashboardIndexLazyRoute
   '/app/events/$id/edit/': typeof AppEventsIdEditIndexLazyRoute
   '/app/events/$id/messages/': typeof AppEventsIdMessagesIndexLazyRoute
+  '/app/events/$id/share/': typeof AppEventsIdShareIndexLazyRoute
   '/app/events/$id/success/': typeof AppEventsIdSuccessIndexLazyRoute
   '/app/events/create/category/': typeof AppEventsCreateCategoryIndexLazyRoute
   '/app/events/create/partners/': typeof AppEventsCreatePartnersIndexLazyRoute
@@ -817,6 +857,7 @@ export interface FileRouteTypes {
     | '/app/events'
     | '/app/messages'
     | '/app/notifications'
+    | '/app/profile'
     | '/app/revenue'
     | '/app/settings'
     | '/auth/login'
@@ -842,6 +883,7 @@ export interface FileRouteTypes {
     | '/app/events/$id/dashboard'
     | '/app/events/$id/edit'
     | '/app/events/$id/messages'
+    | '/app/events/$id/share'
     | '/app/events/$id/success'
     | '/app/events/create/category'
     | '/app/events/create/partners'
@@ -856,6 +898,7 @@ export interface FileRouteTypes {
     | '/app/events'
     | '/app/messages'
     | '/app/notifications'
+    | '/app/profile'
     | '/app/revenue'
     | '/app/settings'
     | '/auth/login'
@@ -881,6 +924,7 @@ export interface FileRouteTypes {
     | '/app/events/$id/dashboard'
     | '/app/events/$id/edit'
     | '/app/events/$id/messages'
+    | '/app/events/$id/share'
     | '/app/events/$id/success'
     | '/app/events/create/category'
     | '/app/events/create/partners'
@@ -895,6 +939,7 @@ export interface FileRouteTypes {
     | '/app/events/'
     | '/app/messages/'
     | '/app/notifications/'
+    | '/app/profile/'
     | '/app/revenue/'
     | '/app/settings/'
     | '/auth/login/'
@@ -920,6 +965,7 @@ export interface FileRouteTypes {
     | '/app/events/$id/dashboard/'
     | '/app/events/$id/edit/'
     | '/app/events/$id/messages/'
+    | '/app/events/$id/share/'
     | '/app/events/$id/success/'
     | '/app/events/create/category/'
     | '/app/events/create/partners/'
@@ -936,6 +982,7 @@ export interface RootRouteChildren {
   AppEventsIndexLazyRoute: typeof AppEventsIndexLazyRoute
   AppMessagesIndexLazyRoute: typeof AppMessagesIndexLazyRoute
   AppNotificationsIndexLazyRoute: typeof AppNotificationsIndexLazyRoute
+  AppProfileIndexLazyRoute: typeof AppProfileIndexLazyRoute
   AppRevenueIndexLazyRoute: typeof AppRevenueIndexLazyRoute
   AppSettingsIndexLazyRoute: typeof AppSettingsIndexLazyRoute
   AuthLoginIndexLazyRoute: typeof AuthLoginIndexLazyRoute
@@ -961,6 +1008,7 @@ export interface RootRouteChildren {
   AppEventsIdDashboardIndexLazyRoute: typeof AppEventsIdDashboardIndexLazyRoute
   AppEventsIdEditIndexLazyRoute: typeof AppEventsIdEditIndexLazyRoute
   AppEventsIdMessagesIndexLazyRoute: typeof AppEventsIdMessagesIndexLazyRoute
+  AppEventsIdShareIndexLazyRoute: typeof AppEventsIdShareIndexLazyRoute
   AppEventsIdSuccessIndexLazyRoute: typeof AppEventsIdSuccessIndexLazyRoute
   AppEventsCreateCategoryIndexLazyRoute: typeof AppEventsCreateCategoryIndexLazyRoute
   AppEventsCreatePartnersIndexLazyRoute: typeof AppEventsCreatePartnersIndexLazyRoute
@@ -976,6 +1024,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppEventsIndexLazyRoute: AppEventsIndexLazyRoute,
   AppMessagesIndexLazyRoute: AppMessagesIndexLazyRoute,
   AppNotificationsIndexLazyRoute: AppNotificationsIndexLazyRoute,
+  AppProfileIndexLazyRoute: AppProfileIndexLazyRoute,
   AppRevenueIndexLazyRoute: AppRevenueIndexLazyRoute,
   AppSettingsIndexLazyRoute: AppSettingsIndexLazyRoute,
   AuthLoginIndexLazyRoute: AuthLoginIndexLazyRoute,
@@ -1001,6 +1050,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppEventsIdDashboardIndexLazyRoute: AppEventsIdDashboardIndexLazyRoute,
   AppEventsIdEditIndexLazyRoute: AppEventsIdEditIndexLazyRoute,
   AppEventsIdMessagesIndexLazyRoute: AppEventsIdMessagesIndexLazyRoute,
+  AppEventsIdShareIndexLazyRoute: AppEventsIdShareIndexLazyRoute,
   AppEventsIdSuccessIndexLazyRoute: AppEventsIdSuccessIndexLazyRoute,
   AppEventsCreateCategoryIndexLazyRoute: AppEventsCreateCategoryIndexLazyRoute,
   AppEventsCreatePartnersIndexLazyRoute: AppEventsCreatePartnersIndexLazyRoute,
@@ -1025,6 +1075,7 @@ export const routeTree = rootRoute
         "/app/events/",
         "/app/messages/",
         "/app/notifications/",
+        "/app/profile/",
         "/app/revenue/",
         "/app/settings/",
         "/auth/login/",
@@ -1050,6 +1101,7 @@ export const routeTree = rootRoute
         "/app/events/$id/dashboard/",
         "/app/events/$id/edit/",
         "/app/events/$id/messages/",
+        "/app/events/$id/share/",
         "/app/events/$id/success/",
         "/app/events/create/category/",
         "/app/events/create/partners/",
@@ -1075,6 +1127,9 @@ export const routeTree = rootRoute
     },
     "/app/notifications/": {
       "filePath": "app/notifications/index.lazy.tsx"
+    },
+    "/app/profile/": {
+      "filePath": "app/profile/index.lazy.tsx"
     },
     "/app/revenue/": {
       "filePath": "app/revenue/index.lazy.tsx"
@@ -1150,6 +1205,9 @@ export const routeTree = rootRoute
     },
     "/app/events/$id/messages/": {
       "filePath": "app/events/$id/messages/index.lazy.tsx"
+    },
+    "/app/events/$id/share/": {
+      "filePath": "app/events/$id/share/index.lazy.tsx"
     },
     "/app/events/$id/success/": {
       "filePath": "app/events/$id/success/index.lazy.tsx"

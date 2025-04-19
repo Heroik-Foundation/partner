@@ -73,6 +73,7 @@ const SetupPassword = () => {
       <FormFooter absolute>
         <Button
           className="w-full font-axiforma font-semibold text-sm"
+          disabled={!verificationCode}
           color="primary"
           size="lg"
         >

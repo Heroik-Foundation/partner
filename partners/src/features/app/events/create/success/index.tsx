@@ -54,7 +54,18 @@ const EventCreationSuccess = () => {
         >
           View Event
         </Button>
-        <Button size="lg" variant="outline">
+        <Button
+          onClick={() => {
+            navigate({
+              to: "/app/events/$id/share",
+              params: {
+                id: String(id),
+              },
+            });
+          }}
+          size="lg"
+          variant="outline"
+        >
           <span>Share Event </span>
           <Share />
         </Button>

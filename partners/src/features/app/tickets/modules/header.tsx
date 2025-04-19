@@ -6,11 +6,7 @@ import { FlashOffIcon, HistoryIcon } from "./icons";
 import { Link, useRouter } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
-type HeaderProps = {
-  environment: "dashboard" | "external";
-};
-
-export function Header(_: HeaderProps) {
+export function Header() {
   const { history } = useRouter();
 
   return (

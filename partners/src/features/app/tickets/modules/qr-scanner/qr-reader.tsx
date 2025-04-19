@@ -1,17 +1,20 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import QrScanner from "qr-scanner";
+import { useUserEventTicketVerificationMutation } from "../../hooks/mutation";
 
 const QrReader = ({ isScanning }: { isScanning: boolean }) => {
   const scannerRef = useRef<QrScanner | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isCameraAccessible, setIsCameraAccessible] = useState(true);
   const [scannedResult, setScannedResult] = useState<string | null>(null);
+  const { mutate, isPending } = useUserEventTicketVerificationMutation();
 
   const handleScanSuccess = (result: QrScanner.ScanResult) => {
     console.log("Scan successful:", result.data);
     setScannedResult(result.data);
+    mutate({
+      eventTicketId: result.data,
+    });
   };
 
   useEffect(() => {
@@ -82,13 +85,19 @@ const QrReader = ({ isScanning }: { isScanning: boolean }) => {
       </div>
 
       {!isCameraAccessible && (
-        <p className="text-red-600 text-center mt-4">
+        <p className="text-rose-600 text-sm font-bold text-center mt-4">
           Camera access is blocked. Please check your browser permissions.
         </p>
       )}
 
-      {scannedResult && (
-        <div className="absolute top-4 left-4 bg-black text-white text-sm rounded px-3 py-1 z-50">
+      {isPending && (
+        <div className="absolute top-4 left-4 bg-black text-white rounded px-3 py-1 z-50 text-sm font-bold">
+          Processing Result...
+        </div>
+      )}
+
+      {scannedResult && !isPending && (
+        <div className="absolute top-4 left-4 bg-black text-white rounded px-3 py-1 z-50 text-sm font-bold">
           Scanned Result: {scannedResult}
         </div>
       )}

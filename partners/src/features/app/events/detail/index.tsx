@@ -7,7 +7,7 @@ import { Link, useParams } from "@tanstack/react-router";
 import Info from "./modules/info";
 import { Manage } from "./modules/manage";
 import { QrCode, Share2 } from "lucide-react";
-import { Button, buttonVariants } from "@/modules/ui/button";
+import { buttonVariants } from "@/modules/ui/button";
 import { cn } from "@/lib/utils";
 import { SuspenseLoader } from "@/modules/units/page/suspense";
 
@@ -41,9 +41,20 @@ const EventDetail = () => {
                 <QrCode size="16" />
               </Link>
 
-              <Button>
+              <Link
+                to="/app/events/$id/share"
+                params={{
+                  id: String(id),
+                }}
+                className={cn(
+                  buttonVariants({
+                    variant: "default",
+                    className: "z-10",
+                  })
+                )}
+              >
                 <Share2 className="fill-white" />
-              </Button>
+              </Link>
             </div>
           ),
         }}

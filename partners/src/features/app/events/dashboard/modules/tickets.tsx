@@ -1,18 +1,21 @@
 "use client";
 
-import { EllipsisVertical } from "lucide-react";
+import { useEventMembersTicketPurchasesQuery } from "../hooks/query";
+import { useParams } from "@tanstack/react-router";
+import { Fragment } from "react";
+import { ItemNotFound } from "@/modules/units/card/not-found";
 
 export const TicketSales = () => {
-  const sales = [
-    {
-      image_url:
-        "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aHVtYW4lMjBmYWNlc3xlbnwwfHwwfHx8MA%3D%3D",
-      name: "Chris Doe",
-      tickets: 1,
-      relative_time: "24 days ago",
-      amount: 100,
-    },
-  ];
+  const { id } = useParams({
+    strict: false,
+  });
+
+  const { data, isPending, isFetchingNextPage } =
+    useEventMembersTicketPurchasesQuery({
+      eventId: String(id),
+    });
+
+  const rows = data?.pages || [];
 
   return (
     <div className="space-y-5 w-full">
@@ -23,35 +26,60 @@ export const TicketSales = () => {
             Event Tickets Sold So Far
           </p>
         </div>
-
-        <EllipsisVertical className="stroke-black/60" />
       </div>
 
-      <div>
-        {sales.map((sale, index) => (
-          <div key={index} className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <img
-                src={sale.image_url}
-                alt={`${sale.name}'s Image`}
-                loading="eager"
-                className="w-10 h-10 rounded-lg"
-              />
-              <div>
-                <h5 className="text-primary font-bold text-sm">{sale.name}</h5>
-                <p className="text-primary/50 font-bold text-xs">
-                  <span>{sale.relative_time}</span> |{" "}
-                  <span>Tickets: {sale.tickets}</span>
-                </p>
+      <div className="space-y-5">
+        {rows.map((sale, index) => {
+          return (
+            <div key={index} className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <img
+                  src={sale.event.community.admin.photo}
+                  loading="eager"
+                  className="w-10 h-10 rounded-lg"
+                />
+                <div>
+                  <h5 className="text-primary font-bold text-sm">User</h5>
+                  <p className="text-primary/50 font-bold text-xs">
+                    <span>Date Placeholder</span> |{" "}
+                    <span>Tickets: {sale.totalTickets}</span>
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <span className="font-extrabold text-primary">
-              £{sale.amount.toLocaleString()}
-            </span>
-          </div>
-        ))}
+              <span className="font-extrabold text-primary">
+                £{sale.event.eventTicket.ticketPrice.toLocaleString()}
+              </span>
+            </div>
+          );
+        })}
+
+        {(isPending || isFetchingNextPage) && (
+          <Fragment>
+            <TicketSaleSkeletonLoader />
+            <TicketSaleSkeletonLoader />
+          </Fragment>
+        )}
+
+        {!isPending && !isFetchingNextPage && rows.length < 1 && (
+          <ItemNotFound message="No sales record found" />
+        )}
       </div>
+    </div>
+  );
+};
+
+const TicketSaleSkeletonLoader = () => {
+  return (
+    <div className="flex items-center justify-between animate-pulse">
+      <div className="flex items-center space-x-2">
+        <div className="w-10 h-10 rounded-lg bg-gray-300 dark:bg-gray-700" />
+        <div className="space-y-1">
+          <div className="h-3 w-24 bg-gray-300 dark:bg-gray-700 rounded" />
+          <div className="h-2 w-32 bg-gray-200 dark:bg-gray-600 rounded" />
+        </div>
+      </div>
+      <div className="h-4 w-16 bg-gray-300 dark:bg-gray-700 rounded" />
     </div>
   );
 };

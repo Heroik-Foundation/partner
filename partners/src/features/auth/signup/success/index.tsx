@@ -9,7 +9,6 @@ const SignUpSuccess = () => {
     <Form
       onSubmit={(event) => {
         event.preventDefault();
-
         mutate();
       }}
     >
@@ -18,8 +17,9 @@ const SignUpSuccess = () => {
           Account Created <br /> Successfully!
         </h1>
         <p className="font-axiforma text-center font-semibold text-sm text-primary">
-          A verification link has been sent to your email. Please check your
-          inbox to verify your account.
+          Once your account is approved by the administrator, a verification
+          link will be sent to your email. Please check your inbox within a
+          couple of hours to complete the verification process.
         </p>
       </div>
 

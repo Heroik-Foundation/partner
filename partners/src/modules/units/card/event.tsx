@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Calendar, Clock, MapPin, type LucideIcon } from "lucide-react";
+import { Calendar, Clock, MapPin, Ticket, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatISODate } from "@/helpers/time";
 import { formatCurrency } from "@/helpers/text";
@@ -12,6 +12,8 @@ export type EventProps = {
   location: string;
   thumbnail: string;
   nodeRef?: any;
+  className?: string;
+  availableTickets?: number;
 };
 
 export type DetailProps = {
@@ -20,7 +22,17 @@ export type DetailProps = {
 };
 
 export const Event = (props: EventProps) => {
-  const { id, title, date, price, location, thumbnail, nodeRef } = props;
+  const {
+    id,
+    title,
+    date,
+    price,
+    location,
+    thumbnail,
+    nodeRef,
+    className,
+    availableTickets,
+  } = props;
   const { date: relativeDate, time: relativeTime } = formatISODate(date);
 
   return (
@@ -29,7 +41,7 @@ export const Event = (props: EventProps) => {
       params={{
         id,
       }}
-      className={cn("rounded-2xl bg-cover relative h-64")}
+      className={cn("rounded-2xl bg-cover relative h-64", className)}
       style={{
         background: `url('${thumbnail}')`,
         backgroundPosition: "center",
@@ -49,6 +61,12 @@ export const Event = (props: EventProps) => {
           <EventDetail icon={Calendar} content={relativeDate} />
           <EventDetail icon={Clock} content={relativeTime} />
         </div>
+        {availableTickets && (
+          <EventDetail
+            icon={Ticket}
+            content={`${availableTickets} Spots Available`}
+          />
+        )}
       </div>
     </Link>
   );

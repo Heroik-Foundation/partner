@@ -1,7 +1,7 @@
 import { useIntersectionObserver } from "@/hooks/observer";
 import { ItemNotFound } from "@/modules/units/card/not-found";
 import { Link, useParams } from "@tanstack/react-router";
-import { Fragment, useMemo } from "react";
+import { Fragment } from "react";
 import { useConversationsQuery } from "../hooks/query";
 
 export const Previews = ({ searchQuery }: { searchQuery: string }) => {
@@ -14,11 +14,7 @@ export const Previews = ({ searchQuery }: { searchQuery: string }) => {
       eventId: id,
     });
 
-  const rows = useMemo(() => {
-    const result = data?.pages || [];
-
-    return result;
-  }, [data]);
+  const rows = data?.pages || [];
 
   const lastConversationRef = useIntersectionObserver<HTMLAnchorElement>(
     fetchNextPage,

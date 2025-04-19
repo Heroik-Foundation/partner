@@ -86,7 +86,7 @@ export default function Info(props: InfoProps) {
   );
 }
 
-const SemiCircleProgressBar = ({
+export const SemiCircleProgressBar = ({
   value,
   size = 120,
   children,

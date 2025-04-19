@@ -5,8 +5,9 @@ export type Event = {
   admin: {
     _id: string;
     email: string;
-    fullname: string;
+    name: string;
     photo: string;
+    address: string;
   };
   adminType: string;
   category: string;
@@ -69,7 +70,7 @@ export type Channel = {
   __v: number;
 };
 
-export type UserLocation = {
+export type Location = {
   type: string;
   coordinates: [number, number];
 };
@@ -529,6 +530,170 @@ export type Conversation = {
     participantType: "User" | "Organization" | "EventPartner";
   }[];
   unreadMessages: number;
+};
+
+export type EventTicket = {
+  _id: string;
+  event: {
+    _id: string;
+    photo: string;
+    name: string;
+    description: string;
+    fundRaiser: {
+      fundRaised: number;
+      goalReached: boolean;
+      fundRaisingGoal: number;
+      organizations: string[];
+    };
+    eventTicket: {
+      totalTicket: number;
+      availableTickets: number;
+      ticketPrice: number;
+    };
+    eventPledge: {
+      minimumPledge: number;
+      totalPledgedAmount: number;
+      organizations: string[];
+    };
+    organization: string;
+    category: {
+      _id: string;
+      image: string;
+      name: string;
+      subcategories: {
+        _id: string;
+        image: string;
+        name: string;
+      }[];
+    };
+    subcategory: {
+      _id: string;
+      image: string;
+      name: string;
+    };
+    signUpLimit: string;
+    eventEndDate: string;
+    privacy: string;
+    endTime: string;
+    loc: {
+      type: "Point";
+      coordinates: [number, number];
+    };
+    members: string[];
+    community: {
+      _id: string;
+      members: string[];
+      invitees: string[];
+      moderators: string[];
+      name: string;
+      description: string;
+      privacy: string;
+      admin: {
+        _id: string;
+        fullname: string;
+        username: string;
+        phone: string;
+        photo: string;
+        birthDate: string;
+        callingCode: string;
+        isAdmin: boolean;
+        blocked: boolean;
+        isAccountSetup: boolean;
+        role: string;
+        loc: {
+          type: "Point";
+          coordinates: [number, number];
+        };
+        email: string;
+        blockedUsers: string[];
+        followers: string[];
+        following: string[];
+      };
+      posts: {
+        totalPosts: number;
+      }[];
+      totalMembers: number;
+      totalPosts: number;
+    };
+    admin: string;
+  };
+  user: string;
+  totalTickets: number;
+  tickets: string[];
+};
+
+export type EventMessageUser = {
+  _id: string;
+  fullname: string;
+  username: string;
+  phone: string;
+  photo: string;
+  birthDate: string;
+  callingCode: string;
+  isAdmin: boolean;
+  blocked: boolean;
+  isAccountSetup: boolean;
+  role: string;
+  loc: Location;
+  email: string;
+  blockedUsers: string[];
+  followers: string[];
+  following: string[];
+};
+
+export interface Message {
+  _id: string;
+  sender: EventMessageUser;
+  senderType: string;
+  recipient: EventMessageUser;
+  recipientType: string;
+  conversation: Conversation;
+  message: string;
+  attachment: string;
+  replying: string;
+  status: string;
+}
+
+export type Notification = {
+  _id: string;
+  recipient: {
+    _id: string;
+    fullname: string;
+    username: string;
+    phone: string;
+    photo: string;
+    birthDate: string;
+    callingCode: string;
+    isAdmin: boolean;
+    blocked: boolean;
+    isAccountSetup: boolean;
+    role: string;
+    loc: Location;
+    email: string;
+    blockedUsers: string[];
+    followers: string[];
+    following: string[];
+  };
+  message: string;
+  title: string;
+  type:
+    | "FOLLOW"
+    | "EVENT_INVITE"
+    | "EVENT_UPDATE"
+    | "EVENT_STARTED"
+    | "COMMUNITY_INVITE"
+    | "NEW_LIKE"
+    | "NEW_COMMENT"
+    | "POST_REPORT"
+    | "COMMUNITY_REPORT"
+    | "NEW_PAYMENT"
+    | "NEW_CHAT"
+    | "NEW_DONATION"
+    | "NEW_POST";
+  actionId: string;
+  isRead: boolean;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type NestedPaginatedResponse<T, K extends string = "name"> = {

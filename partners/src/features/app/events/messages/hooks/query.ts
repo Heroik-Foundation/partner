@@ -1,17 +1,22 @@
 import {
   Conversation,
+  Message,
   NestedPaginatedResponse,
 } from "@/features/app/global/types";
 import { timeInMinutes } from "@/helpers/time";
 import { authenticatedInstance } from "@/lib/axios";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
-type QueryProps = {
+type ConversationQueryProps = {
   searchQuery?: string;
   eventId?: string;
 };
 
-export function useConversationsQuery(props: QueryProps) {
+type ConversationMessagesQueryProps = {
+  conversationId?: string;
+};
+
+export function useConversationsQuery(props: ConversationQueryProps) {
   const { eventId, searchQuery } = props;
 
   return useInfiniteQuery({
@@ -38,5 +43,20 @@ export function useConversationsQuery(props: QueryProps) {
       return currentPage < totalPages ? currentPage + 1 : undefined;
     },
     staleTime: timeInMinutes(5),
+  });
+}
+
+export function useConversationMessagesQuery({
+  conversationId,
+}: ConversationMessagesQueryProps) {
+  return useQuery({
+    queryKey: ["conversation-messages-by-id", conversationId],
+    queryFn: async () => {
+      const { data } = await authenticatedInstance.get(
+        `/conversations/${conversationId}/messages`
+      );
+
+      return data.message as Message[];
+    },
   });
 }
