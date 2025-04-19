@@ -16,7 +16,7 @@ import { useCallback, useEffect } from "react";
 import { useUpdateUserDetailsMutation } from "./hooks/mutation";
 
 const Profile = () => {
-  const { form, setForm } = useAuthStore();
+  const { form, setForm, resetForm } = useAuthStore();
   const { data: user } = useUserPropertiesQuery();
   const { mutate, isPending } = useUpdateUserDetailsMutation({
     name: form.name,
@@ -42,6 +42,10 @@ const Profile = () => {
 
   useEffect(() => {
     handleInitialData();
+
+    return () => {
+      resetForm();
+    };
   }, []);
 
   return (

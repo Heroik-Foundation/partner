@@ -49,10 +49,9 @@ export const NotificationsList = () => {
               ? pledge
               : calendar;
         return (
-          <Drawer>
+          <Drawer key={index}>
             <DrawerTrigger asChild>
               <div
-                key={index}
                 className="py-2.5 flex items-start justify-between w-full"
                 ref={
                   list.length - 1 === index ? lastNotificationRef : undefined

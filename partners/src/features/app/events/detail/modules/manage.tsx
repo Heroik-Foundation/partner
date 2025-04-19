@@ -4,12 +4,12 @@ import { Link } from "@tanstack/react-router";
 import { Trash, Edit } from "lucide-react";
 import { useEventTerminationByIDMutation } from "../hooks/mutation";
 import { ActionDrawer } from "@/modules/units/page/action";
+import { toast } from "sonner";
 
 export const Manage = ({ id }: { id: string }) => {
-  const { mutate, isPending, isSuccess, isError } =
-    useEventTerminationByIDMutation({
-      id,
-    });
+  const { isPending, isSuccess, isError } = useEventTerminationByIDMutation({
+    id,
+  });
 
   return (
     <div className="space-y-2.5">
@@ -31,13 +31,15 @@ export const Manage = ({ id }: { id: string }) => {
 
       <ActionDrawer
         trigger={
-          <Button disabled size="lg" variant="destructive" className="w-full">
+          <Button size="lg" variant="destructive" className="w-full">
             <Trash size="16" />
             <span className="mt-0.5">Delete Event</span>
           </Button>
         }
         callback={{
-          fn: mutate,
+          fn: () => {
+            toast.info("Unauthorized to perform this action");
+          },
           title: "Delete Event",
         }}
         title={{

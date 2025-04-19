@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { SearchInput } from "../../global/form";
 import { Header } from "../../global/header";
+import { Messages } from "./modules/messages";
 
 const EventMessages = () => {
   const [query, setQuery] = useState("");
+
   return (
-    <div>
+    <div className="space-y-5">
       <Header
         header={{
           position: "inline",
@@ -19,6 +21,7 @@ const EventMessages = () => {
           setQuery(target.value);
         }}
       />
+      <Messages searchQuery={query} />
     </div>
   );
 };

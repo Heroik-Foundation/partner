@@ -530,6 +530,8 @@ export type Conversation = {
     participantType: "User" | "Organization" | "EventPartner";
   }[];
   unreadMessages: number;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type EventTicket = {

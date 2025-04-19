@@ -1,8 +1,8 @@
+import { useConversationsQuery } from "@/features/app/global/hooks/query";
 import { useIntersectionObserver } from "@/hooks/observer";
 import { ItemNotFound } from "@/modules/units/card/not-found";
 import { Link, useParams } from "@tanstack/react-router";
 import { Fragment } from "react";
-import { useConversationsQuery } from "../hooks/query";
 
 export const Previews = ({ searchQuery }: { searchQuery: string }) => {
   const { id } = useParams({

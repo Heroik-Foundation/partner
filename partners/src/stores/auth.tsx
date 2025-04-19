@@ -18,7 +18,7 @@ interface AuthStore {
   resetForm: () => void;
 }
 
-const initialValues = {
+export const initialValues = {
   name: "",
   image: null,
   address: "",
