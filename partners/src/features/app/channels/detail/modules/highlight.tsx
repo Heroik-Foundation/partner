@@ -78,7 +78,7 @@ export const Highlight = (props: HighlightProps) => {
               ))}
             </div>
 
-            <span className="text-xs font-bold">{members} Attending</span>
+            <span className="text-xs font-bold">{members} Members</span>
           </div>
         </Link>
       </div>

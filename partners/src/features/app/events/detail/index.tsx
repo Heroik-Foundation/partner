@@ -69,7 +69,7 @@ const EventDetail = () => {
             title={event.name}
             thumbnail={event.photo}
             members={event.members.length}
-            date={event.eventEndDate}
+            date={event.endTime}
             avatars={event.members.map((member) => member.photo)}
             location={event.address}
           />

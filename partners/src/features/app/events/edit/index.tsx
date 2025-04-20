@@ -12,7 +12,7 @@ import { Textarea } from "@/modules/ui/textarea";
 import { ImageWithPreview } from "@/modules/units/form/image";
 import { Fragment } from "react/jsx-runtime";
 import { Header } from "../../global/header";
-import { Switch } from "@/modules/ui/switch";
+
 import { ChevronDown, PlusCircle, XCircle } from "lucide-react";
 import { InputWithPrefix } from "../../global/form";
 import { Link, useParams, useRouter } from "@tanstack/react-router";
@@ -30,11 +30,10 @@ const CreateEvent = () => {
   const { data: event } = useEventDetailsQuery({
     id,
   });
-  const { formState, setPaid, setFundraiser, updateForm, setFormState } =
+  const { formState, setFundraiser, updateForm, setFormState } =
     useEventFormStore();
   const { navigate } = useRouter();
   const {
-    isPaid,
     isFundraiser,
     startDate,
     endDate,
@@ -42,28 +41,29 @@ const CreateEvent = () => {
     ticketPrice,
     charityPartners,
     subCategory,
+    category,
     ...rest
   } = formState;
   const { mutate, isPending, isSuccess, isError } = useUpdateEventMutation({
     privacy: "public",
     endTime: startDate,
     eventEndDate: endDate,
-    ...(subCategory !== "" && {
-      subCategory,
+    ...(subCategory.id !== "" && {
+      subCategory: subCategory.id,
     }),
-    ...rest,
-    ...(isPaid && {
-      eventTicket: {
-        ticketPrice: Number(ticketPrice || 0),
-        totalTicket: Number(rest.signUpLimit || 0),
+
+    ...(isFundraiser && {
+      eventPledge: {
+        minimumPledge: Number(minimumPledge || 0),
+        organizations: charityPartners.map((partner) => partner.id) || [],
       },
-      ...(isFundraiser && {
-        eventPledge: {
-          minimumPledge: Number(minimumPledge || 0),
-          organizations: charityPartners.map((partner) => partner.id) || [],
-        },
-      }),
     }),
+    eventTicket: {
+      ticketPrice: Number(ticketPrice || 0),
+      totalTicket: Number(rest.signUpLimit || 0),
+    },
+    category: category.id,
+    ...rest,
   });
 
   useEffect(() => {
@@ -165,7 +165,9 @@ const CreateEvent = () => {
               className="bg-primary text-white h-14 rounded-xl font-bold ring-primary flex items-center justify-between p-2.5"
             >
               <span className="text-sm font-semibold">
-                {formState.category || "Event Category"}
+                {formState.subCategory.name ||
+                  formState.category.name ||
+                  "Event Category"}
               </span>
               <ChevronDown size={14} />
             </Link>
@@ -196,32 +198,20 @@ const CreateEvent = () => {
               />
             </FormField>
           </div>
-          <div className="flex items-center justify-between">
-            <Label>Is this a Paid ticketed event?</Label>
-            <Switch
-              checked={isPaid}
-              onCheckedChange={() => {
-                setPaid(!isPaid);
+
+          <FormField>
+            <Label>Event Ticket Price</Label>
+            <InputWithPrefix
+              prefixItem={<span className="font-bold">£</span>}
+              type="number"
+              value={String(formState.ticketPrice)}
+              onChange={({ target }) => {
+                updateForm("ticketPrice", Number(target.value));
               }}
+              placeholder="0"
+              className="pl-7"
             />
-          </div>
-          {isPaid && (
-            <>
-              <FormField>
-                <Label>Event Ticket Price</Label>
-                <InputWithPrefix
-                  prefixItem={<span className="font-bold">£</span>}
-                  type="number"
-                  value={String(formState.ticketPrice)}
-                  onChange={({ target }) => {
-                    updateForm("ticketPrice", Number(target.value));
-                  }}
-                  placeholder="0"
-                  className="pl-7"
-                />
-              </FormField>
-            </>
-          )}
+          </FormField>
 
           <div className="p-5 bg-primary rounded-xl text-white space-y-5">
             <div className="flex items-center justify-between">
@@ -243,24 +233,25 @@ const CreateEvent = () => {
             </FormField>
             <FormField>
               <div className="flex items-center space-x-2 overflow-x-auto">
-                {formState.charityPartners.map((partner, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center space-x-1.5 bg-white/30 py-2 px-3.5 rounded-full w-fit whitespace-nowrap"
-                  >
-                    <span className="text-white text-sm font-bold">
-                      {partner.name}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        removeCharityOrganizationById(partner.id);
-                      }}
+                {formState.charityPartners.length >= 1 &&
+                  formState.charityPartners.map((partner, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-1.5 bg-white/30 py-2 px-3.5 rounded-full w-fit whitespace-nowrap"
                     >
-                      <XCircle className="stroke-1 fill-white/60 stroke-primary" />
-                    </button>
-                  </div>
-                ))}
+                      <span className="text-white text-sm font-bold">
+                        {partner.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          removeCharityOrganizationById(partner.id);
+                        }}
+                      >
+                        <XCircle className="stroke-1 fill-white/60 stroke-primary" />
+                      </button>
+                    </div>
+                  ))}
               </div>
 
               <InputWithPrefix

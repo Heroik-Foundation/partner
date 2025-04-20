@@ -125,7 +125,7 @@ const Profile = () => {
 
       <FormFooter>
         <Button isPending={isPending} className="w-full" size="lg">
-          Sign Up
+          Update Profile
         </Button>
       </FormFooter>
     </Form>

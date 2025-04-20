@@ -6,14 +6,19 @@ interface BaseEventFormData {
   description: string;
   address: string;
   signUpLimit: number;
-  category: string;
-  subCategory: string;
+  category: {
+    name: string;
+    id: string;
+  };
+  subCategory: {
+    name: string;
+    id: string;
+  };
   startDate: string;
   endDate: string;
 }
 
 export interface EventFormState extends BaseEventFormData {
-  isPaid: boolean;
   isFundraiser: boolean;
   ticketPrice: number | null;
   minimumPledge: number | null;
@@ -26,11 +31,16 @@ const defaultValue: EventFormState = {
   description: "",
   address: "",
   signUpLimit: 0,
-  category: "",
-  subCategory: "",
+  category: {
+    name: "",
+    id: "",
+  },
+  subCategory: {
+    name: "",
+    id: "",
+  },
   startDate: "",
   endDate: "",
-  isPaid: false,
   isFundraiser: true,
   ticketPrice: null,
   minimumPledge: null,
@@ -41,7 +51,6 @@ type StaticEventFormStore = {
   formState: EventFormState;
   setFormState: (state: EventFormState) => void;
   reset: () => void;
-  setPaid: (isPaid: boolean) => void;
   setFundraiser: (isFundraiser: boolean) => void;
   updateForm: <K extends keyof EventFormState>(
     field: K,
@@ -53,14 +62,6 @@ export const useEventFormStore = create<StaticEventFormStore>((set) => ({
   formState: defaultValue,
   setFormState: (state) => set(() => ({ formState: state })),
   reset: () => set(() => ({ formState: defaultValue })),
-  setPaid: (isPaid) =>
-    set((state) => ({
-      formState: {
-        ...state.formState,
-        isPaid,
-        ticketPrice: isPaid ? (state.formState.ticketPrice ?? 0) : null,
-      },
-    })),
   setFundraiser: (isFundraiser) =>
     set((state) => ({
       formState: {

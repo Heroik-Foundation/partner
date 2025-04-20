@@ -55,7 +55,7 @@ export const Highlight = (props: HighlightProps) => {
             <div className="flex items-start space-x-1 w-full">
               <Ticket size={18} />{" "}
               <span className="font-bold text-sm">
-                {availableTickets} Tickets available
+                {availableTickets} Spots available
               </span>
             </div>
           </div>

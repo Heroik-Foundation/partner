@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/modules/ui/button";
 import { Link } from "@tanstack/react-router";
-import { Plus, X, Mic, MessageSquareText } from "lucide-react";
+import { Plus, X, Mic } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 
@@ -9,12 +9,12 @@ export function Actions({ id }: { id: string }) {
   const [extended, setExtended] = useState<boolean>(false);
 
   const actions = [
-    {
-      path: "/app/channels/$id/post/create?broadcast=false",
-      title: "Add New Post",
-      icon: MessageSquareText,
-      id: 1,
-    },
+    // {
+    //   path: "/app/channels/$id/post/create?broadcast=false",
+    //   title: "Add New Post",
+    //   icon: MessageSquareText,
+    //   id: 1,
+    // },
     {
       path: "/app/channels/$id/post/create?broadcast=true",
       title: "Add New Broadcast",

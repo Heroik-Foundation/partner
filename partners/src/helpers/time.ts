@@ -15,6 +15,7 @@ export function formatISODate(isoString: string): {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
+    timeZone: "UTC", // Add this to show UTC time instead of local time
   };
 
   const formattedDate = new Intl.DateTimeFormat("en-US", dateOptions).format(

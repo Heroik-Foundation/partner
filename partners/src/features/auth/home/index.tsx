@@ -12,7 +12,7 @@ const Onboarding = () => {
         <OnboardingCarousel />
       </FormContent>
 
-      <FormFooter className="flex flex-col items-center space-y-2.5">
+      <FormFooter className="flex flex-col items-center space-y-2.5 pb-10">
         <Link
           className={cn(
             buttonVariants({

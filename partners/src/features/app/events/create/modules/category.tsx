@@ -21,15 +21,24 @@ export const EventCategory = (props: EventCategoryProps) => {
 
   const handleCategoryClick = () => {
     if (!hasSubcategories) {
-      updateForm("category", _id);
+      updateForm("category", {
+        id: _id,
+        name,
+      });
     } else {
       setIsOpen(!isOpen);
     }
   };
 
-  const handleSubcategoryClick = (id: string) => {
-    updateForm("category", _id);
-    updateForm("subCategory", id);
+  const handleSubcategoryClick = (id: string, subCategoryName: string) => {
+    updateForm("category", {
+      id: _id,
+      name,
+    });
+    updateForm("subCategory", {
+      id,
+      name: subCategoryName,
+    });
     setIsOpen(false);
   };
 
@@ -38,7 +47,7 @@ export const EventCategory = (props: EventCategoryProps) => {
       <motion.button
         className={cn(
           "w-full flex items-center justify-between py-5 px-1 transition-colors duration-200",
-          formState.category === _id &&
+          formState.category.id === _id &&
             !hasSubcategories &&
             "bg-primary/10 hover:bg-primary/15"
         )}
@@ -62,7 +71,7 @@ export const EventCategory = (props: EventCategoryProps) => {
         >
           {hasSubcategories ? (
             <ChevronDown size={18} className="stroke-primary" />
-          ) : formState.category === _id ? (
+          ) : formState.category.id === _id ? (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -90,10 +99,12 @@ export const EventCategory = (props: EventCategoryProps) => {
                 key={subcategory._id}
                 className={cn(
                   "w-full flex items-center justify-between py-3.5 pl-7 transition-colors duration-150",
-                  formState.subCategory === subcategory._id &&
+                  formState.subCategory.id === subcategory._id &&
                     "bg-primary/5 hover:bg-primary/10"
                 )}
-                onClick={() => handleSubcategoryClick(subcategory._id)}
+                onClick={() =>
+                  handleSubcategoryClick(subcategory._id, subcategory.name)
+                }
                 whileHover={{ x: 2 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -108,7 +119,7 @@ export const EventCategory = (props: EventCategoryProps) => {
                   </span>
                 </div>
 
-                {formState.subCategory === subcategory._id && (
+                {formState.subCategory.id === subcategory._id && (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
