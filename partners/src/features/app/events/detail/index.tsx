@@ -7,15 +7,33 @@ import { Link, useParams } from "@tanstack/react-router";
 import Info from "./modules/info";
 import { Manage } from "./modules/manage";
 import { QrCode, Share2 } from "lucide-react";
-import { buttonVariants } from "@/modules/ui/button";
+import { Button, buttonVariants } from "@/modules/ui/button";
 import { cn } from "@/lib/utils";
 import { SuspenseLoader } from "@/modules/units/page/suspense";
+import { toast } from "sonner";
 
 const EventDetail = () => {
   const { id } = useParams({
     strict: false,
   });
   const { data: event } = useEventDetailsQuery({ id });
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: event?.name,
+          text: event?.description,
+          url: `partners.hiroek.io/share/${id}`,
+        });
+        console.log("Shared successfully");
+      } catch (error) {
+        toast.error("Error sharing");
+      }
+    } else {
+      toast.error("Web Share API is not supported in this browser.");
+    }
+  };
 
   return (
     <div className="space-y-5">
@@ -41,20 +59,9 @@ const EventDetail = () => {
                 <QrCode size="16" />
               </Link>
 
-              <Link
-                to="/app/events/$id/share"
-                params={{
-                  id: String(id),
-                }}
-                className={cn(
-                  buttonVariants({
-                    variant: "default",
-                    className: "z-10",
-                  })
-                )}
-              >
+              <Button className="z-10" onClick={handleShare}>
                 <Share2 className="fill-white" />
-              </Link>
+              </Button>
             </div>
           ),
         }}

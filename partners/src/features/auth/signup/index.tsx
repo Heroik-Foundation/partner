@@ -60,6 +60,7 @@ const SignUp = () => {
 
         <FormField>
           <Label htmlFor="email">Email Address</Label>
+
           <Input
             name="email"
             placeholder="example@gmail.com"
