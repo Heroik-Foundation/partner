@@ -1,3 +1,14 @@
+export type EventOrganization = {
+  fundRaised: number;
+  totalDonations: number;
+  _id: string;
+  name: string;
+  charityRegNumber: string;
+  email: string;
+  description: string;
+  logo: string;
+};
+
 export type Event = {
   __v: number;
   _id: string;
@@ -16,15 +27,16 @@ export type Event = {
   endTime: string;
   eventEndDate: string;
   eventPledge: {
-    organizations: string[];
+    organizations: EventOrganization[];
     totalPledgedAmount: number;
+    minimumPledge: number;
   };
   eventTicket: {
     availableTickets: number;
     ticketPrice: number;
   };
   fundRaiser: {
-    organizations: string[];
+    organizations: EventOrganization[];
     fundRaised: number;
     goalReached: boolean;
   };
@@ -34,7 +46,7 @@ export type Event = {
     fullname: string;
     photo: string;
   }>;
-  minimumPledge: number;
+
   name: string;
   photo: string;
   privacy: string;
@@ -421,117 +433,36 @@ export type ScannedTicket = {
 
 export type Conversation = {
   _id: string;
-  lastMessage: string;
   participants: {
-    event: {
-      _id: string;
-      photo: string;
-      name: string;
-      description: string;
-      fundRaiser: {
-        fundRaised: number;
-        goalReached: boolean;
-        fundRaisingGoal: number;
-        organizations: string[];
-      };
-      eventTicket: {
-        totalTicket: number;
-        availableTickets: number;
-        ticketPrice: number;
-      };
-      eventPledge: {
-        minimumPledge: number;
-        totalPledgedAmount: number;
-        organizations: string[];
-      };
-      organization: string;
-      category: {
-        _id: string;
-        image: string;
-        name: string;
-        subcategories: {
-          _id: string;
-          image: string;
-          name: string;
-        }[];
-      };
-      subcategory: {
-        _id: string;
-        image: string;
-        name: string;
-      };
-      signUpLimit: string;
-      eventEndDate: string;
-      privacy: string;
-      endTime: string;
-      loc: {
-        type: "Point";
-        coordinates: [number, number];
-      };
-      members: string[];
-      community: {
-        _id: string;
-        members: string[];
-        invitees: string[];
-        moderators: string[];
-        name: string;
-        description: string;
-        privacy: string;
-        admin: {
-          _id: string;
-          fullname: string;
-          username: string;
-          phone: string;
-          photo: string;
-          birthDate: string;
-          callingCode: string;
-          isAdmin: boolean;
-          blocked: boolean;
-          isAccountSetup: boolean;
-          role: string;
-          loc: {
-            type: "Point";
-            coordinates: [number, number];
-          };
-          email: string;
-          blockedUsers: string[];
-          followers: string[];
-          following: string[];
-        };
-        posts: {
-          totalPosts: number;
-        }[];
-        totalMembers: number;
-        totalPosts: number;
-      };
-      admin: string;
-    };
+    participantType: "User" | "EventPartner";
+    event?: Event;
     participant: {
       _id: string;
-      fullname: string;
-      username: string;
-      phone: string;
-      photo: string;
-      birthDate: string;
-      callingCode: string;
-      isAdmin: boolean;
-      blocked: boolean;
-      isAccountSetup: boolean;
-      role: string;
-      loc: {
-        type: "Point";
-        coordinates: [number, number];
-      };
-      email: string;
-      blockedUsers: string[];
-      followers: string[];
-      following: string[];
+      createdAt: string;
+      name?: string;
+      photo?: string;
+      name?: string;
+      logo?: string;
     };
-    participantType: "User" | "Organization" | "EventPartner";
+    name: string;
   }[];
-  unreadMessages: number;
   createdAt: string;
   updatedAt: string;
+  __v: number;
+  lastMessage: {
+    senderType: "User" | "EventPartner";
+    recipientType: "User" | "EventPartner";
+    status: "unread" | "read";
+    _id: string;
+    conversation: string;
+    message: string;
+    sender: string;
+    recipient: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  };
+  unreadMessages: number;
 };
 
 export type EventTicket = {

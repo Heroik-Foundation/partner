@@ -73,3 +73,15 @@ export function formatMonth(dateString: string): string {
   const date = new Date(year, month - 1);
   return date.toLocaleString("default", { month: "long" });
 }
+
+export function getTimeFromISO(
+  isoString: string,
+  useUTC: boolean = false
+): string {
+  const date = new Date(isoString);
+
+  const hours = useUTC ? date.getUTCHours() : date.getHours();
+  const minutes = useUTC ? date.getUTCMinutes() : date.getMinutes();
+
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+}

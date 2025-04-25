@@ -12,11 +12,11 @@ export const Join = () => {
   const links = [
     {
       image: playstore,
-      link: "",
+      link: "https://play.google.com/store/apps/details?id=com.hiroek.app.hiroek",
     },
     {
       image: appstore,
-      link: "",
+      link: "https://apps.apple.com/ng/app/hiroek/id6474194083",
     },
   ];
 

@@ -31,7 +31,7 @@ export const Manage = ({ id }: { id: string }) => {
 
       <ActionDrawer
         trigger={
-          <Button size="lg" variant="destructive" className="w-full">
+          <Button disabled size="lg" variant="destructive" className="w-full">
             <Trash size="16" />
             <span className="mt-0.5">Delete Event</span>
           </Button>

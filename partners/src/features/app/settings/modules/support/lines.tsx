@@ -1,18 +1,18 @@
 "use client";
 
-import { SupportIcon, PhoneSupport, EmailSupport, LiveChat } from "../icons";
+import { SupportIcon, LiveChat } from "../icons";
 
 const lines = [
-  {
-    title: "Phone Support",
-    icon: PhoneSupport,
-    link: "",
-  },
-  {
-    title: "Email Support",
-    icon: EmailSupport,
-    link: "",
-  },
+  // {
+  //   title: "Phone Support",
+  //   icon: PhoneSupport,
+  //   link: "",
+  // },
+  // {
+  //   title: "Email Support",
+  //   icon: EmailSupport,
+  //   link: "",
+  // },
   {
     title: "Live Chat",
     icon: LiveChat,

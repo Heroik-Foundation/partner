@@ -23,53 +23,58 @@ export const Messages = ({ searchQuery }: { searchQuery: string }) => {
   );
 
   const noConversationsFound =
-    rows.length < 1 && !isPending && !isFetchingNextPage;
+    (rows || []).filter(
+      (message) => typeof message.participants[0].event?._id !== "undefined"
+    ).length < 1 &&
+    !isPending &&
+    !isFetchingNextPage;
 
   return (
     <div>
       {rows.map((message, index, list) => {
-        const eventId = message.participants[0].event._id;
-        const eventName = message.participants[0].event.name;
-        const eventLogo = message.participants[0].event.photo;
-
-        return (
-          <div
-            ref={list.length - 1 === index ? lastConversationRef : undefined}
-            className="flex items-center py-4 justify-between"
-            key={index}
-          >
-            <div className="space-x-1.5 flex items-center">
-              <img
-                src={eventLogo}
-                className="w-8 h-8 rounded-full object-cover object-center"
-              />
-              <div className="flex flex-col items-center">
-                <span className="text-primary text-xs font-bold">
-                  {truncateText(eventName, 15)}
-                </span>
-                <span className="text-primary/50 text-[10px] font-bold">
-                  {getReadableTime(message.createdAt)}
-                </span>
-              </div>
-            </div>
-
-            <Button
-              className="rounded-full"
-              variant="secondary"
-              onClick={() => {
-                navigate({
-                  to: "/app/events/$id/messages",
-                  params: {
-                    id: String(eventId),
-                  },
-                });
-              }}
-              size="sm"
+        if (message.participants[0].event) {
+          const eventId = message.participants[0].event._id;
+          const eventName = message.participants[0].event.name;
+          const eventLogo = message.participants[0].event.photo;
+          return (
+            <div
+              ref={list.length - 1 === index ? lastConversationRef : undefined}
+              className="flex items-center py-4 justify-between"
+              key={index}
             >
-              View Chats
-            </Button>
-          </div>
-        );
+              <div className="space-x-1.5 flex items-center">
+                <img
+                  src={eventLogo}
+                  className="w-8 h-8 rounded-full object-cover object-center"
+                />
+                <div className="flex flex-col items-center">
+                  <span className="text-primary text-xs font-bold">
+                    {truncateText(eventName, 15)}
+                  </span>
+                  <span className="text-primary/50 text-[10px] font-bold">
+                    {getReadableTime(message.createdAt)}
+                  </span>
+                </div>
+              </div>
+
+              <Button
+                className="rounded-full"
+                variant="secondary"
+                onClick={() => {
+                  navigate({
+                    to: "/app/events/$id/messages",
+                    params: {
+                      id: String(eventId),
+                    },
+                  });
+                }}
+                size="sm"
+              >
+                View Chats
+              </Button>
+            </div>
+          );
+        }
       })}
       {(isPending || isFetchingNextPage) && (
         <Fragment>

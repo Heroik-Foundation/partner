@@ -83,8 +83,11 @@ const EventDetail = () => {
           <Info
             description={event.description}
             id={id}
+            organizations={event.eventPledge.organizations.map(
+              (organization) => organization.name
+            )}
             percentage={event.eventPledge.totalPledgedAmount}
-            minimumPledge={event.minimumPledge}
+            minimumPledge={event.eventPledge.minimumPledge}
           />
           <Manage id={id} />
         </Fragment>

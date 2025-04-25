@@ -7,7 +7,7 @@ export function truncateText(text: string, length: number = 100): string {
 }
 
 export function formatCurrency(amount: number): string {
-  const value = amount ? amount : 0;
+  const value = amount ? Number(amount) / 100 : 0;
   return value.toLocaleString("en-GB", {
     style: "currency",
     currency: "GBP",

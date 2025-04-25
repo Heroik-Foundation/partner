@@ -36,6 +36,7 @@ export function useChannelPostsQuery(props: QueryProps) {
       return currentPage < totalPages ? currentPage + 1 : undefined;
     },
     staleTime: 5 * 60 * 1000,
+    enabled: false,
   });
 }
 

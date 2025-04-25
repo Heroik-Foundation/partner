@@ -21,7 +21,7 @@ export const Channel = (props: ChannelProps) => {
       params={{
         id,
       }}
-      className="relative flex items-start space-x-2.5 p-2.5 bg-primary rounded-2xl text-white my-1.5"
+      className="relative h-[120px] flex items-start space-x-2.5 p-2.5 bg-primary rounded-2xl text-white my-1.5"
       ref={nodeRef}
     >
       {thumbnail ? (
@@ -37,7 +37,7 @@ export const Channel = (props: ChannelProps) => {
         </div>
       )}
       <div className="space-y-1">
-        <h3 className="text-sm font-black">{truncateText(title, 27)}</h3>
+        <h3 className="text-sm font-black">{truncateText(title, 20)}</h3>
         <p className="text-xs font-semibold">{truncateText(description, 60)}</p>
         <div className="bg-accent py-2 px-3.5 rounded-full inline-flex space-x-2 items-center absolute bottom-2">
           <div className="relative flex items-center">

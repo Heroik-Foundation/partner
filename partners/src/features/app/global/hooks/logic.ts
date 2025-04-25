@@ -10,6 +10,7 @@ interface BaseEventFormData {
     name: string;
     id: string;
   };
+  time: string;
   subCategory: {
     name: string;
     id: string;
@@ -20,6 +21,7 @@ interface BaseEventFormData {
 
 export interface EventFormState extends BaseEventFormData {
   isFundraiser: boolean;
+  isPaid: boolean;
   ticketPrice: number | null;
   minimumPledge: number | null;
   charityPartners: { name: string; id: string }[];
@@ -29,6 +31,7 @@ const defaultValue: EventFormState = {
   photo: null,
   name: "",
   description: "",
+  time: "",
   address: "",
   signUpLimit: 0,
   category: {
@@ -41,6 +44,7 @@ const defaultValue: EventFormState = {
   },
   startDate: "",
   endDate: "",
+  isPaid: false,
   isFundraiser: true,
   ticketPrice: null,
   minimumPledge: null,

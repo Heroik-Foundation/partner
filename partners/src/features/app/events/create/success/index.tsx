@@ -12,8 +12,8 @@ const EventCreationSuccess = () => {
   const { data: event } = useEventDetailsQuery({ id });
 
   return (
-    <div className="space-y-20 pt-10">
-      <div className="space-y-5">
+    <div className="space-y-20 pt-10 relative">
+      <div className="space-y-5 flex flex-col">
         <div className="text-primary space-y-1.5 text-center">
           <h2 className="text-2xl font-black">🎉 Cheers 🎉</h2>
           <p className="font-medium text-xl">
@@ -22,21 +22,20 @@ const EventCreationSuccess = () => {
           <h1 className="text-xl font-black">{event?.name || "Event Name"}</h1>
         </div>
 
-        <div>
-          {event ? (
-            <Event
-              key={event._id}
-              id={event._id}
-              thumbnail={event.photo}
-              title={event.name}
-              date={event.endTime}
-              price={event.minimumPledge || 0}
-              location={event.address}
-            />
-          ) : (
-            <EventSkeletonLoader />
-          )}
-        </div>
+        {event ? (
+          <Event
+            className="block"
+            key={event._id}
+            id={event._id}
+            thumbnail={event.photo}
+            title={event.name}
+            date={event.endTime}
+            price={event.minimumPledge || 0}
+            location={event.address}
+          />
+        ) : (
+          <EventSkeletonLoader />
+        )}
       </div>
 
       <div className="flex flex-col space-y-2.5">
@@ -57,7 +56,7 @@ const EventCreationSuccess = () => {
         <Button
           onClick={() => {
             navigate({
-              to: "/app/events/$id/share",
+              to: "/share/$id",
               params: {
                 id: String(id),
               },

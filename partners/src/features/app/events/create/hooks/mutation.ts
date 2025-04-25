@@ -8,7 +8,8 @@ import { toast } from "sonner";
 type CreateEventMutation = {
   name: string;
   description: string;
-  eventTicket?: {
+  time: string;
+  eventTicket: {
     totalTicket: number;
     ticketPrice: number;
   };
@@ -41,6 +42,7 @@ export function useCreateEventMutation(props: CreateEventMutation) {
     address,
     signUpLimit,
     communityId,
+    time,
     photo,
   } = props;
   const { navigate } = useRouter();
@@ -52,8 +54,14 @@ export function useCreateEventMutation(props: CreateEventMutation) {
       formData.append("description", description);
       formData.append("category", category);
       formData.append("privacy", privacy);
-      formData.append("eventEndDate", new Date(eventEndDate).toISOString());
-      formData.append("endTime", new Date(endTime).toISOString());
+      formData.append(
+        "eventEndDate",
+        new Date(`${eventEndDate}T${time}:00Z`).toISOString()
+      );
+      formData.append(
+        "endTime",
+        new Date(`${endTime}T${time}:00Z`).toISOString()
+      );
       formData.append("address", address);
 
       if (subCategory) {
@@ -66,18 +74,15 @@ export function useCreateEventMutation(props: CreateEventMutation) {
         formData.append("communityId", communityId);
       }
 
-      if (eventTicket?.totalTicket) {
-        formData.append(
-          "eventTicket[totalTicket]",
-          eventTicket.totalTicket.toString()
-        );
-      }
-      if (eventTicket?.ticketPrice) {
-        formData.append(
-          "eventTicket[ticketPrice]",
-          (eventTicket.ticketPrice * 100).toString()
-        );
-      }
+      formData.append(
+        "eventTicket[totalTicket]",
+        eventTicket.totalTicket.toString()
+      );
+
+      formData.append(
+        "eventTicket[ticketPrice]",
+        (eventTicket.ticketPrice * 100).toString()
+      );
 
       if (eventPledge?.minimumPledge) {
         formData.append(

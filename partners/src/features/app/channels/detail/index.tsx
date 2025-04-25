@@ -20,7 +20,7 @@ type Tab = "posts" | "announcements";
 const ChannelDetails = () => {
   const { id } = useParams({ strict: false }) as { id: string };
   const { data: user } = useUserPropertiesQuery();
-  const [currentTab, setCurrentTab] = useState<Tab>("posts");
+  const [currentTab, setCurrentTab] = useState<Tab>("announcements");
   const { data: channel } = useChannelDetailsQuery({ id });
   const { data: posts } = useChannelPostsQuery({ id });
   const { data: announcements } = useChannelAnnouncementsQuery({ id });
@@ -97,7 +97,7 @@ const ChannelDetails = () => {
       {!channel && <SuspenseLoader />}
 
       <div className="w-full flex items-center justify-around space-x-5">
-        {(["posts", "announcements"] as Tab[]).map((tab) => (
+        {(["announcements"] as Tab[]).map((tab) => (
           <Button
             key={tab}
             size={"lg"}
