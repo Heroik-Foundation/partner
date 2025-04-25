@@ -38,7 +38,7 @@ export const Highlight = (props: HighlightProps) => {
             <EventDetail icon={Clock} content={relativeTime} />
           </div>
           <div className="w-full flex items-center justify-between space-x-2.5">
-            <div className="bg-primary/15 py-2.5 px-5 rounded-full flex space-x-2 items-center justify-center w-full">
+            <div className="bg-primary/15 py-2.5 px-4 rounded-full flex space-x-2 items-center justify-center w-full">
               <div className="flex -space-x-2">
                 {avatars.slice(0, 3).map((avatar, index) => (
                   <img
@@ -53,8 +53,8 @@ export const Highlight = (props: HighlightProps) => {
               <span className="text-xs font-bold">{members} Attending</span>
             </div>
             <div className="flex items-start space-x-1 w-full">
-              <Ticket size={18} />{" "}
-              <span className="font-bold text-sm">
+              <Ticket size={14} />{" "}
+              <span className="font-extrabold text-xs whitespace-nowrap">
                 {availableTickets} Spots available
               </span>
             </div>

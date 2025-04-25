@@ -66,6 +66,8 @@ const CreateEvent = () => {
     }
   }, [isSuccess]);
 
+  console.log(formState.endDate);
+
   const removeCharityOrganizationById = (id: string) => {
     const currentPartners = formState.charityPartners as Array<{
       id: string;

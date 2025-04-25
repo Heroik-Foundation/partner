@@ -54,14 +54,18 @@ export function useCreateEventMutation(props: CreateEventMutation) {
       formData.append("description", description);
       formData.append("category", category);
       formData.append("privacy", privacy);
-      formData.append(
-        "eventEndDate",
-        new Date(`${eventEndDate}T${time}:00Z`).toISOString()
-      );
-      formData.append(
-        "endTime",
-        new Date(`${endTime}T${time}:00Z`).toISOString()
-      );
+
+      if (time && endTime && eventEndDate) {
+        const combinedEventEndDate = new Date(`${eventEndDate}T${time}:00`);
+        const combinedEndTime = new Date(`${endTime}T${time}:00`);
+
+        formData.append("eventEndDate", combinedEventEndDate.toISOString());
+        formData.append("endTime", combinedEndTime.toISOString());
+      } else {
+        toast.error("Invalid date, please select another date");
+        throw new Error("Invalid date");
+      }
+
       formData.append("address", address);
 
       if (subCategory) {
