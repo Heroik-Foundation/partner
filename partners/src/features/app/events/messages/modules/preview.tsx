@@ -42,15 +42,17 @@ export const Previews = ({ searchQuery }: { searchQuery: string }) => {
             <div className="flex items-center space-x-2">
               <img
                 src={participant.participant.photo}
-                alt={`${participant.participant.fullname}'s Image`}
+                alt={`${participant.participant.name}'s Image`}
                 loading="eager"
                 className="w-10 h-10 rounded-full border-2 border-primary"
               />
               <div>
                 <h5 className="text-primary font-bold">
-                  {participant.participant.fullname}
+                  {participant.participant.name}
                 </h5>
-                <p className="font-bold text-xs">{preview.lastMessage}</p>
+                <p className="font-bold text-xs">
+                  {preview.lastMessage.message}
+                </p>
               </div>
             </div>
 

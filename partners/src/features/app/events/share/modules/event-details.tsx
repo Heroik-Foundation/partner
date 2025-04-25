@@ -52,7 +52,7 @@ export const EventDetails = () => {
               thumbnail={event.photo}
               title={event.name}
               date={event.endTime}
-              price={event.minimumPledge || 0}
+              price={event.eventPledge.minimumPledge || 0}
               location={event.address}
             />
             <div className="flex flex-col items-center justify-center space-y-2.5">
@@ -81,7 +81,7 @@ export const EventDetails = () => {
                   size={300}
                 >
                   <h2 className="text-2xl font-bold text-primary">
-                    {formatCurrency(event.minimumPledge)}
+                    {formatCurrency(event.eventPledge.minimumPledge)}
                   </h2>
                   <span className="text-sm px-2.5 py-1 rounded-lg bg-teal-500/15 text-teal-600 font-semibold inline-flex">
                     {event.eventPledge.totalPledgedAmount}%
