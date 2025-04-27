@@ -4,12 +4,8 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/modules/ui/drawer";
 import { ActionDialog } from "@/modules/units/page/action";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { ReactNode } from "@tanstack/react-router";
-import { Flag, Mic, Trash2 } from "lucide-react";
-import {
-  useDeletePostMutation,
-  useFlagPostMutation,
-  usePostToAnnouncementMutation,
-} from "../../hooks/mutation";
+import { Trash2 } from "lucide-react";
+import { useDeletePostMutation } from "../../hooks/mutation";
 
 type Props = {
   trigger: ReactNode;
@@ -23,35 +19,35 @@ export const PostMenu = (props: Props) => {
     isPending: isDeletingPost,
     isSuccess: deletedPost,
   } = useDeletePostMutation({ id });
-  const {
-    mutate: flagPost,
-    isPending: isFlaggingPost,
-    isSuccess: flaggedPost,
-  } = useFlagPostMutation({
-    id,
-  });
-  const {
-    mutate: convertPostToAnnouncement,
-    isPending: isConvertingPostToAnnouncement,
-    isSuccess: convertedPostToAnnouncement,
-  } = usePostToAnnouncementMutation({
-    id,
-  });
+  // const {
+  //   mutate: flagPost,
+  //   isPending: isFlaggingPost,
+  //   isSuccess: flaggedPost,
+  // } = useFlagPostMutation({
+  //   id,
+  // });
+  // const {
+  //   mutate: convertPostToAnnouncement,
+  //   isPending: isConvertingPostToAnnouncement,
+  //   isSuccess: convertedPostToAnnouncement,
+  // } = usePostToAnnouncementMutation({
+  //   id,
+  // });
 
   const options = [
-    {
-      title: "Flag Post",
-      icon: Flag,
-      prompt: {
-        title: "Flag User Post",
-        description: "Are you sure you want to flag this user's post?",
-        callback: {
-          fn: flagPost,
-          isPending: isFlaggingPost,
-          isSuccess: flaggedPost,
-        },
-      },
-    },
+    // {
+    //   title: "Flag Post",
+    //   icon: Flag,
+    //   prompt: {
+    //     title: "Flag User Post",
+    //     description: "Are you sure you want to flag this user's post?",
+    //     callback: {
+    //       fn: flagPost,
+    //       isPending: isFlaggingPost,
+    //       isSuccess: flaggedPost,
+    //     },
+    //   },
+    // },
     {
       title: "Delete Post",
       icon: Trash2,
@@ -65,19 +61,19 @@ export const PostMenu = (props: Props) => {
         },
       },
     },
-    {
-      title: "Make Post Announcement",
-      icon: Mic,
-      prompt: {
-        title: "Broadcast Post",
-        description: "Are you sure you want to broadcast this post?",
-        callback: {
-          fn: convertPostToAnnouncement,
-          isPending: isConvertingPostToAnnouncement,
-          isSuccess: convertedPostToAnnouncement,
-        },
-      },
-    },
+    // {
+    //   title: "Make Post Announcement",
+    //   icon: Mic,
+    //   prompt: {
+    //     title: "Broadcast Post",
+    //     description: "Are you sure you want to broadcast this post?",
+    //     callback: {
+    //       fn: convertPostToAnnouncement,
+    //       isPending: isConvertingPostToAnnouncement,
+    //       isSuccess: convertedPostToAnnouncement,
+    //     },
+    //   },
+    // },
   ];
 
   return (
