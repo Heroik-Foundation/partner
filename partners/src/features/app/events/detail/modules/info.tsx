@@ -15,6 +15,8 @@ type InfoProps = {
   organizations: string[];
 };
 
+const isLongText = (text: string) => text.length > 20;
+
 export default function Info(props: InfoProps) {
   const { id, description, percentage, minimumPledge, organizations } = props;
 
@@ -65,29 +67,26 @@ export default function Info(props: InfoProps) {
             <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex">
               Charity Partner (s)
             </h5>
-            <div className="grid grid-cols-2 gap-3">
-              {organizations.map((item, index) => {
-                const isLongText = item.length > 10;
-
-                return (
+            <div className="flex flex-wrap gap-2">
+              {organizations.length > 0 ? (
+                organizations.map((item, index) => (
                   <div
-                    className={cn(
-                      "bg-primary py-2 px-5",
-                      isLongText ? "col-span-2 rounded-xl" : "rounded-full"
-                    )}
                     key={index}
+                    className={`
+                flex-shrink-0 
+                py-2 px-5 
+                bg-primary 
+                ${isLongText(item) ? "w-full rounded-xl" : "rounded-full"}
+              `}
                   >
-                    <span
-                      className={`font-semibold text-sm ${isLongText ? "rounded-xl" : "rounded-full"} text-white`}
-                    >
+                    <span className="font-semibold text-sm text-white">
                       {item}
                     </span>
                   </div>
-                );
-              })}
-              {organizations.length < 1 && (
-                <div className="col-span-2">
-                  <span className="font-semibold text-sm rounded-full bg-primary py-2 px-5 text-white">
+                ))
+              ) : (
+                <div className="w-full">
+                  <span className="font-semibold text-sm rounded-full bg-blue-600 py-2 px-5 text-white">
                     No Partner(s)
                   </span>
                 </div>
