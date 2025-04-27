@@ -63,7 +63,7 @@ const Login = () => {
           Forgot Password ?
         </Link>
 
-        <AutoCompleteInput />
+        {/* <AutoCompleteInput /> */}
       </FormContent>
       <FormFooter absolute>
         <Button
