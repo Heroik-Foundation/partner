@@ -16,7 +16,7 @@ const lines = [
   {
     title: "Live Chat",
     icon: LiveChat,
-    link: "",
+    link: "https://tawk.to/chat/680611b92a762a1910951e8f/1ipbrafch",
   },
 ];
 
@@ -29,11 +29,15 @@ export function SupportLines() {
       </div>
       <ul className="pr-5 pl-8 space-y-5 pt-2.5">
         {lines.map((line, index) => (
-          <li key={index} className="flex items-center justify-between">
+          <a
+            href={line.link}
+            key={index}
+            className="flex items-center justify-between"
+          >
             <p className="text-sm font-semibold text-primary">{line.title}</p>
 
             <line.icon />
-          </li>
+          </a>
         ))}
       </ul>
     </div>
