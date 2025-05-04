@@ -45,7 +45,7 @@ const defaultValue: EventFormState = {
   startDate: "",
   endDate: "",
   isPaid: false,
-  isFundraiser: true,
+  isFundraiser: false,
   ticketPrice: null,
   minimumPledge: null,
   charityPartners: [],

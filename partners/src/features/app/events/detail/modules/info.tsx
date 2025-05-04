@@ -6,21 +6,53 @@ import { MessageCircle, Table } from "lucide-react";
 import { formatCurrency } from "@/helpers/text";
 import { cn } from "@/lib/utils";
 import { Fragment } from "react/jsx-runtime";
+import { useCountdown } from "../../share/hooks/logic";
 
 type InfoProps = {
   id: string;
   description: string;
   percentage: number;
   minimumPledge: number;
+  startDate: string;
   organizations: string[];
 };
 
 const isLongText = (text: string) => text.length > 20;
 
 export default function Info(props: InfoProps) {
-  const { id, description, percentage, minimumPledge, organizations } = props;
+  const {
+    id,
+    description,
+    percentage,
+    minimumPledge,
+    organizations,
+    startDate,
+  } = props;
+
+  console.log(props);
 
   const isFundraiser = Number(minimumPledge) > 0 && organizations.length >= 1;
+
+  const { days, hours, minutes, seconds } = useCountdown(startDate);
+
+  const countdown = [
+    {
+      title: "Days",
+      data: days,
+    },
+    {
+      title: "Hours",
+      data: hours,
+    },
+    {
+      title: "Minutes",
+      data: minutes,
+    },
+    {
+      title: "Seconds",
+      data: seconds,
+    },
+  ];
 
   return (
     <div className="space-y-5 w-full">
@@ -55,14 +87,15 @@ export default function Info(props: InfoProps) {
           <span className="mt-0.5">Event Messages</span>
         </Link>
       </div>
+      <div className="space-y-2">
+        <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex">
+          About Event
+        </h5>
+        <p className="text-sm font-semibold text-primary">{description}</p>
+      </div>
+
       {isFundraiser && (
         <Fragment>
-          <div className="space-y-2">
-            <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex">
-              About Event
-            </h5>
-            <p className="text-sm font-semibold text-primary">{description}</p>
-          </div>
           <div className="space-y-2.5">
             <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex">
               Charity Partner (s)
@@ -109,6 +142,36 @@ export default function Info(props: InfoProps) {
                   Minimum Pledge
                 </span>{" "}
               </SemiCircleProgressBar>
+            </div>
+          </div>
+        </Fragment>
+      )}
+
+      {!isFundraiser && (
+        <Fragment>
+          <div className="flex flex-col items-start justify-center space-y-2.5">
+            <span className="py-2 px-5 bg-primary/15 text-primary text-xs font-extrabold rounded-lg">
+              Event Countdown
+            </span>
+
+            <div className="flex items-center space-x-2.5 w-full">
+              {countdown.map((measure, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="space-y-2.5 flex flex-col justify-center items-center w-full"
+                  >
+                    <div className="bg-primary/30 p-2.5 rounded-lg w-full">
+                      <h1 className="text-[44px] font-black text-primary text-center w-full">
+                        {measure.data}
+                      </h1>
+                    </div>
+                    <span className="text-xs font-black text-primary">
+                      {measure.title}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </Fragment>

@@ -81,6 +81,7 @@ const EventDetail = () => {
             location={event.address}
           />
           <Info
+            startDate={event.endTime}
             description={event.description}
             id={id}
             organizations={event.eventPledge.organizations.map(
