@@ -29,8 +29,6 @@ export default function Info(props: InfoProps) {
     startDate,
   } = props;
 
-  console.log(props);
-
   const isFundraiser = Number(minimumPledge) > 0 && organizations.length >= 1;
 
   const { days, hours, minutes, seconds } = useCountdown(startDate);
