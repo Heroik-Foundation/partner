@@ -9,6 +9,7 @@ import { Label } from "@/modules/ui/label";
 import { Button } from "@/modules/ui/button";
 import { useSignUpMutation } from "./hooks/mutation";
 import { toast } from "sonner";
+import PlaceAutocomplete from "@/modules/units/form/address";
 
 const SignUp = () => {
   const { form, setForm } = useAuthStore();
@@ -44,17 +45,25 @@ const SignUp = () => {
           <Input
             required
             name="name"
+            placeholder="Enter your name"
             value={form.name}
             onChange={(event) => handleInputChangeEvent(event, form, setForm)}
           />
         </FormField>
         <FormField>
           <Label>Address</Label>
-          <Input
+          <PlaceAutocomplete
             required
-            name="address"
-            value={form.address}
-            onChange={(event) => handleInputChangeEvent(event, form, setForm)}
+            callback={(value) => {
+              const event: any = {
+                target: {
+                  value: value.formatted_address,
+                  name: "address",
+                },
+              };
+
+              handleInputChangeEvent(event, form, setForm);
+            }}
           />
         </FormField>
 

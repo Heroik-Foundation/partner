@@ -52,6 +52,7 @@ const CreateChannel = () => {
     >
       <FormContent>
         <ImageWithPreview setState={setPhoto} />
+
         <FormField>
           <Label>Channel Name</Label>
           <Input

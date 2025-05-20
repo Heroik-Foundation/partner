@@ -42,3 +42,27 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: transparent;
   display: none;
 }
+
+/* Global override for Google Maps Autocomplete */
+.pac-container {
+  border-radius: 0.75rem !important; /* matches Tailwind's rounded-xl */
+  box-shadow: 0 4px 14px rgba(55, 19, 127, 0.1); /* themed drop shadow */
+  border: 2px solid rgba(55, 19, 127, 0.15); /* primary/15 */
+  font-family: inherit;
+}
+
+.pac-item {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #37137f;
+}
+
+.pac-item:hover {
+  background-color: rgba(136, 61, 207, 0.1);
+}
+
+.pac-item-query {
+  font-weight: 700;
+  color: #b00062;
+}

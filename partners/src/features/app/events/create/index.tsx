@@ -21,6 +21,7 @@ import { useEventFormStore } from "../../global/hooks/logic";
 import { ActionDrawer } from "@/modules/units/page/action";
 import { useEffect } from "react";
 import { Switch } from "@/modules/ui/switch";
+import PlaceAutocomplete from "@/modules/units/form/address";
 
 const CreateEvent = () => {
   const { formState, setFundraiser, updateForm, reset } = useEventFormStore();
@@ -65,8 +66,6 @@ const CreateEvent = () => {
       reset();
     }
   }, [isSuccess]);
-
-  console.log(formState.endDate);
 
   const removeCharityOrganizationById = (id: string) => {
     const currentPartners = formState.charityPartners as Array<{
@@ -122,12 +121,11 @@ const CreateEvent = () => {
           </FormField>
           <FormField>
             <Label>Event Venue</Label>
-            <Input
+            <PlaceAutocomplete
               required
               placeholder="Type Event/Address here"
-              value={formState.address}
-              onChange={({ target }) => {
-                updateForm("address", target.value);
+              callback={(value) => {
+                updateForm("address", String(value.formatted_address));
               }}
             />
           </FormField>

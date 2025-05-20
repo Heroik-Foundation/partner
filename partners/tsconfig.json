@@ -6,6 +6,7 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
+    "types": ["@types/google.maps"],
     "paths": {
       "@/*": ["./src/*"],
       "@features/*": ["./src/features/*"]
