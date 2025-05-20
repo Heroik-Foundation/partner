@@ -60,7 +60,7 @@ export const Messages = ({ searchQuery }: { searchQuery: string }) => {
             className="w-8 h-8 rounded-full object-cover object-center"
             alt={eventName}
           />
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-start">
             <span className="text-xs font-bold text-primary">
               {truncateText(eventName, 15)}
             </span>
