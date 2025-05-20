@@ -1,45 +1,69 @@
 import { Input } from "@/modules/ui/input";
 import { useEffect, useRef, useState, useCallback } from "react";
 
-const GMAPS_SCRIPT_URL = `https://maps.googleapis.com/maps/api/js?key=${
-  import.meta.env.VITE_GMAPS_API_KEY
-}&libraries=places`;
+const GMAPS_SCRIPT_URL = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GMAPS_API_KEY}&libraries=places`;
+
+let scriptLoadPromise: any = null;
 
 const loadGoogleMapsScript = (): Promise<typeof google> => {
+  // Return existing promise if script is already loading
+  if (scriptLoadPromise) {
+    return scriptLoadPromise;
+  }
+
+  // Return immediately if the API is already loaded
   if (window.google?.maps?.places) {
     return Promise.resolve(window.google);
   }
 
-  return new Promise((resolve, reject) => {
+  // Create new promise for script loading
+  scriptLoadPromise = new Promise((resolve, reject) => {
+    // Check if script already exists
+    const existingScript = document.querySelector(
+      `script[src^="https://maps.googleapis.com/maps/api/js"]`
+    );
+
+    if (existingScript) {
+      // Script exists but Google object not ready yet, wait for it
+      const checkInterval = setInterval(() => {
+        if (window.google?.maps?.places) {
+          clearInterval(checkInterval);
+          resolve(window.google);
+        }
+      }, 100);
+      return;
+    }
+
     const script = document.createElement("script");
     script.src = GMAPS_SCRIPT_URL;
     script.async = true;
     script.defer = true;
-    script.onerror = () =>
-      reject(new Error("Failed to load Google Maps script"));
 
-    const cleanup = () => {
-      clearTimeout(timeoutId);
-      document.head.removeChild(script);
+    script.onerror = () => {
+      scriptLoadPromise = null;
+      reject(new Error("Failed to load Google Maps script"));
     };
 
     const timeoutId = setTimeout(() => {
-      cleanup();
+      scriptLoadPromise = null;
+      document.head.removeChild(script);
       reject(new Error("Google Maps script loading timeout"));
-    }, 5000);
+    }, 10000);
 
     script.onload = () => {
       const checkInterval = setInterval(() => {
         if (window.google?.maps?.places) {
-          cleanup();
+          clearTimeout(timeoutId);
           clearInterval(checkInterval);
           resolve(window.google);
         }
-      }, 50);
+      }, 100);
     };
 
     document.head.appendChild(script);
   });
+
+  return scriptLoadPromise;
 };
 
 type Props = {
@@ -58,7 +82,7 @@ const PlaceAutocomplete = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedPlace, setSelectedPlace] =
     useState<google.maps.places.PlaceResult | null>(null);
-  const autocompleteRef = useRef<google.maps.places.Autocomplete>();
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const handlePlaceChanged = useCallback(() => {
     if (!autocompleteRef.current) return;
@@ -67,21 +91,35 @@ const PlaceAutocomplete = ({
   }, []);
 
   useEffect(() => {
-    let mounted = true;
-    let autocomplete: google.maps.places.Autocomplete | undefined;
+    let isMounted = true;
 
     const initializeAutocomplete = async () => {
       try {
         await loadGoogleMapsScript();
-        if (!mounted || !inputRef.current) return;
 
-        autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-          types: ["geocode"],
-          componentRestrictions: { country: countryRestriction },
-        });
+        if (!isMounted || !inputRef.current) return;
 
-        autocomplete.addListener("place_changed", handlePlaceChanged);
+        if (autocompleteRef.current) {
+          google.maps.event.clearInstanceListeners(autocompleteRef.current);
+        }
+
+        const autocomplete = new google.maps.places.Autocomplete(
+          inputRef.current,
+          {
+            types: ["geocode"],
+            componentRestrictions: {
+              country: countryRestriction,
+            },
+          }
+        );
+
         autocompleteRef.current = autocomplete;
+
+        google.maps.event.addListener(
+          autocomplete,
+          "place_changed",
+          handlePlaceChanged
+        );
       } catch (err) {
         console.error("Google Maps initialization error:", err);
       }
@@ -90,9 +128,11 @@ const PlaceAutocomplete = ({
     initializeAutocomplete();
 
     return () => {
-      mounted = false;
-      if (autocomplete) {
-        google.maps.event.clearInstanceListeners(autocomplete);
+      isMounted = false;
+
+      if (autocompleteRef.current) {
+        google.maps.event.clearInstanceListeners(autocompleteRef.current);
+        autocompleteRef.current = null;
       }
     };
   }, [countryRestriction, handlePlaceChanged]);
