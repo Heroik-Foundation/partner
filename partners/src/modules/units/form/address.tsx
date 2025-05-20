@@ -1,38 +1,43 @@
 import { Input } from "@/modules/ui/input";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
-const apiKey: string = import.meta.env.VITE_GMAPS_API_KEY;
+const GMAPS_SCRIPT_URL = `https://maps.googleapis.com/maps/api/js?key=${
+  import.meta.env.VITE_GMAPS_API_KEY
+}&libraries=places`;
 
 const loadGoogleMapsScript = (): Promise<typeof google> => {
-  return new Promise((resolve, reject) => {
-    if (window.google && window.google.maps && window.google.maps.places) {
-      return resolve(window.google);
-    }
+  if (window.google?.maps?.places) {
+    return Promise.resolve(window.google);
+  }
 
+  return new Promise((resolve, reject) => {
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+    script.src = GMAPS_SCRIPT_URL;
     script.async = true;
     script.defer = true;
+    script.onerror = () =>
+      reject(new Error("Failed to load Google Maps script"));
+
+    const cleanup = () => {
+      clearTimeout(timeoutId);
+      document.head.removeChild(script);
+    };
+
+    const timeoutId = setTimeout(() => {
+      cleanup();
+      reject(new Error("Google Maps script loading timeout"));
+    }, 5000);
 
     script.onload = () => {
-      // Wait until google.maps.places is available
-      const interval = setInterval(() => {
-        if (window.google && window.google.maps && window.google.maps.places) {
-          clearInterval(interval);
+      const checkInterval = setInterval(() => {
+        if (window.google?.maps?.places) {
+          cleanup();
+          clearInterval(checkInterval);
           resolve(window.google);
         }
       }, 50);
-
-      // Timeout fallback after 5s
-      setTimeout(() => {
-        clearInterval(interval);
-        reject(
-          new Error("Google Maps script loaded but 'places' is still undefined")
-        );
-      }, 5000);
     };
 
-    script.onerror = (err) => reject(err);
     document.head.appendChild(script);
   });
 };
@@ -41,56 +46,70 @@ type Props = {
   callback?: (selectedPlace: google.maps.places.PlaceResult) => void;
   placeholder?: string;
   required?: boolean;
+  countryRestriction?: string | string[];
 };
 
-const PlaceAutocomplete = (props: Props) => {
-  const { callback, placeholder, required } = props;
-  const inputRef = useRef<HTMLInputElement | null>(null);
+const PlaceAutocomplete = ({
+  callback,
+  placeholder = "Enter a location",
+  required = false,
+  countryRestriction = "gb",
+}: Props) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [selectedPlace, setSelectedPlace] =
     useState<google.maps.places.PlaceResult | null>(null);
+  const autocompleteRef = useRef<google.maps.places.Autocomplete>();
+
+  const handlePlaceChanged = useCallback(() => {
+    if (!autocompleteRef.current) return;
+    const place = autocompleteRef.current.getPlace();
+    setSelectedPlace(place);
+  }, []);
 
   useEffect(() => {
-    let autocomplete: google.maps.places.Autocomplete;
+    let mounted = true;
+    let autocomplete: google.maps.places.Autocomplete | undefined;
 
-    loadGoogleMapsScript()
-      .then((google) => {
-        if (!inputRef.current) return;
+    const initializeAutocomplete = async () => {
+      try {
+        await loadGoogleMapsScript();
+        if (!mounted || !inputRef.current) return;
 
         autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
           types: ["geocode"],
-          componentRestrictions: { country: "gb" },
+          componentRestrictions: { country: countryRestriction },
         });
 
-        autocomplete.addListener("place_changed", () => {
-          const place = autocomplete.getPlace();
-          setSelectedPlace(place);
-          console.log("Selected Place:", place);
-        });
-      })
-      .catch((err) => {
-        console.error("Failed to load Google Maps script:", err);
-      });
+        autocomplete.addListener("place_changed", handlePlaceChanged);
+        autocompleteRef.current = autocomplete;
+      } catch (err) {
+        console.error("Google Maps initialization error:", err);
+      }
+    };
+
+    initializeAutocomplete();
 
     return () => {
+      mounted = false;
       if (autocomplete) {
         google.maps.event.clearInstanceListeners(autocomplete);
       }
     };
-  }, []);
+  }, [countryRestriction, handlePlaceChanged]);
 
   useEffect(() => {
     if (selectedPlace && callback) {
       callback(selectedPlace);
     }
-  }, [selectedPlace]);
+  }, [selectedPlace, callback]);
 
   return (
     <div className="place-autocomplete">
       <Input
-        required={required || false}
+        required={required}
         ref={inputRef}
         type="text"
-        placeholder={placeholder || "Enter a location"}
+        placeholder={placeholder}
       />
     </div>
   );
