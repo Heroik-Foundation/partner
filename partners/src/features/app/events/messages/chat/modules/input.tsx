@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useConversationMessageInitMutation } from "../../hooks/mutation";
-import { EventMessageUser } from "@/features/app/global/types";
 import { Loader } from "@/modules/ui/button";
 
 type Props = {
-  recipient: EventMessageUser;
+  recipientId: string;
   conversationId: string;
 };
 
@@ -13,7 +12,7 @@ export const MessageInputBox = (props: Props) => {
   const { mutate, isPending } = useConversationMessageInitMutation({
     message: messageInput,
     conversationId: props.conversationId,
-    replying: props.recipient._id,
+    replying: props.recipientId,
   });
 
   return (

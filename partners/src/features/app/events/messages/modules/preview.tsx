@@ -1,4 +1,5 @@
 import { useConversationsQuery } from "@/features/app/global/hooks/query";
+import { getReadableTime } from "@/helpers/time";
 import { useIntersectionObserver } from "@/hooks/observer";
 import { ItemNotFound } from "@/modules/units/card/not-found";
 import { Link, useParams } from "@tanstack/react-router";
@@ -42,13 +43,13 @@ export const Previews = ({ searchQuery }: { searchQuery: string }) => {
             <div className="flex items-center space-x-2">
               <img
                 src={participant.participant.photo}
-                alt={`${participant.participant.name}'s Image`}
+                alt={`${participant.participant.fullname}'s Image`}
                 loading="eager"
-                className="w-10 h-10 rounded-full border-2 border-primary"
+                className="w-10 h-10 rounded-full border-2 border-primary object-cover object-center"
               />
               <div>
                 <h5 className="text-primary font-bold">
-                  {participant.participant.name}
+                  {participant.participant.fullname}
                 </h5>
                 <p className="font-bold text-xs">
                   {preview.lastMessage.message}
@@ -57,7 +58,10 @@ export const Previews = ({ searchQuery }: { searchQuery: string }) => {
             </div>
 
             <div className="flex flex-col items-end space-y-1">
-              <span className="font-extrabold text-[8px]"> - </span>
+              <span className="font-extrabold text-[8px]">
+                {" "}
+                {getReadableTime(preview.updatedAt)}{" "}
+              </span>
               <div className="w-5 h-5 rounded-full bg-primary shadow text-white flex items-center justify-center">
                 <span className="font-black text-xs"> 1</span>
               </div>

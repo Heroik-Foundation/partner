@@ -439,7 +439,7 @@ export type Conversation = {
     participant: {
       _id: string;
       createdAt: string;
-      name?: string;
+      fullname?: string;
       photo?: string;
       name?: string;
       logo?: string;

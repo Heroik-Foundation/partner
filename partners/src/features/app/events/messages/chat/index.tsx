@@ -3,44 +3,40 @@ import { ChatHeader } from "./modules/header";
 import { MessageInputBox } from "./modules/input";
 import { Message } from "./modules/message";
 import { useConversationMessagesQuery } from "../hooks/query";
-import { useUserPropertiesQuery } from "@/features/app/global/hooks/query";
-import { Fragment, useMemo } from "react";
+
 import { SuspenseLoader } from "@/modules/units/page/suspense";
+import { Fragment } from "react/jsx-runtime";
+import { useMemo } from "react";
+import { useUserPropertiesQuery } from "@/features/app/global/hooks/query";
 
 const Chat = () => {
   const { id } = useParams({
     strict: false,
   });
 
-  const { data } = useConversationMessagesQuery({
+  const { data, isPending } = useConversationMessagesQuery({
     conversationId: String(id),
   });
+
   const { data: user } = useUserPropertiesQuery();
 
-  const rows = data || [];
+  const rows = useMemo(() => {
+    const valid = data || [];
 
-  const recipient = useMemo(() => {
-    if (data) {
-      const initialMessage = rows[0];
-      const currentUserId = user?._id;
-      const messageRecipientId = initialMessage.recipient._id;
+    return valid;
+  }, [data]);
 
-      const recipientData =
-        messageRecipientId !== currentUserId
-          ? initialMessage.recipient
-          : initialMessage.sender;
-
-      return recipientData;
-    } else {
-      return undefined;
-    }
-  }, [id]);
+  const sender = {
+    fullname: rows[0]?.sender?.fullname || "Unknown",
+    photo: rows[0]?.sender?.photo || "",
+    id: rows[0]?.sender?._id || "",
+  };
 
   return (
     <div>
-      {recipient ? (
+      {data && sender && (
         <Fragment>
-          <ChatHeader user={recipient} />
+          <ChatHeader user={sender} />
           <div className="mt-20 space-y-2.5">
             {rows.map((conversation, index) => {
               const message = conversation.message;
@@ -49,11 +45,14 @@ const Chat = () => {
               return <Message key={index} content={message} author={author} />;
             })}
           </div>
-          <MessageInputBox conversationId={String(id)} recipient={recipient} />
+          <MessageInputBox
+            conversationId={String(id)}
+            recipientId={sender.id}
+          />
         </Fragment>
-      ) : (
-        <SuspenseLoader />
       )}
+
+      {isPending && <SuspenseLoader />}
     </div>
   );
 };

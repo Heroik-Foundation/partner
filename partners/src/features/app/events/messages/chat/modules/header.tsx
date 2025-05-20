@@ -1,4 +1,3 @@
-import { EventMessageUser } from "@/features/app/global/types";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -10,7 +9,10 @@ import { PreviousButton } from "@/modules/units/page/button";
 import { MoreVertical, User } from "lucide-react";
 
 type Props = {
-  user: EventMessageUser;
+  user: {
+    fullname: string;
+    photo: string;
+  };
 };
 
 export const ChatHeader = (props: Props) => {
@@ -24,12 +26,16 @@ export const ChatHeader = (props: Props) => {
         <div className="flex items-center space-x-2.5">
           <div
             className={cn(
-              "min-w-10 min-h-10 rounded-full border/20 border-primary flex items-center justify-center",
+              "w-10 h-10 rounded-full border/20 border-primary flex items-center justify-center",
               !user?.photo && "bg-primary/10"
             )}
           >
             {user.photo ? (
-              <img src={user.photo} className="h-full w-full" alt="" />
+              <img
+                src={user.photo}
+                className="h-full w-full rounded-full object-cover object-center"
+                alt=""
+              />
             ) : (
               <User className="stroke-primary" />
             )}

@@ -17,7 +17,7 @@ export function useConversationMessagesQuery({
         `/conversations/${conversationId}/messages`
       );
 
-      return data.message as Message[];
+      return data.messages.data as Message[];
     },
   });
 }

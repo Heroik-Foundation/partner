@@ -171,7 +171,7 @@ export function useCharityOrganizationsQuery(
 }
 
 export function useConversationsQuery(props: ConversationQueryProps) {
-  const { eventId, searchQuery } = props;
+  const { eventId, searchQuery = "" } = props;
 
   return useInfiniteQuery({
     queryKey: ["user-events", searchQuery, eventId],
