@@ -10,8 +10,8 @@ import { MoreVertical, User } from "lucide-react";
 
 type Props = {
   user: {
-    fullname: string;
-    photo: string;
+    fullname?: string;
+    photo?: string;
   };
 };
 

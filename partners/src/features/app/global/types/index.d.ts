@@ -585,6 +585,8 @@ export interface Message {
   attachment: string;
   replying: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type Notification = {

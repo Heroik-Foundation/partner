@@ -48,7 +48,7 @@ export const Previews = ({ searchQuery }: { searchQuery: string }) => {
                 className="w-10 h-10 rounded-full border-2 border-primary object-cover object-center"
               />
               <div>
-                <h5 className="text-primary font-bold">
+                <h5 className="text-primary font-bold text-sm">
                   {participant.participant.fullname}
                 </h5>
                 <p className="font-bold text-xs">

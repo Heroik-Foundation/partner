@@ -59,6 +59,7 @@ export const Messages = ({ searchQuery }: { searchQuery: string }) => {
             src={eventLogo}
             className="w-8 h-8 rounded-full object-cover object-center"
             alt={eventName}
+            loading="eager"
           />
           <div className="flex flex-col items-start">
             <span className="text-xs font-bold text-primary">
