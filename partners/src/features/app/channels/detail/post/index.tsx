@@ -4,7 +4,6 @@ import { usePostCommentsQuery, usePostDetailsQuery } from "./hooks/query";
 import { UserPost, UserPostLoader } from "../modules/post";
 import { useUserPropertiesQuery } from "@/features/app/global/hooks/query";
 import { UserComment, UserCommentLoader } from "./modules/comment";
-import { CreateComment } from "./modules/create-comment";
 
 const PostDetails = () => {
   const { id, postId } = useParams({
@@ -25,7 +24,7 @@ const PostDetails = () => {
           title: "",
         }}
       />
-      <CreateComment id={postId} />
+      {/* <CreateComment id={postId} /> */}
       {post && <UserPost {...post} userId={user?._id} channelId={id} />}
       {isPending && <UserPostLoader />}
       {comments && (

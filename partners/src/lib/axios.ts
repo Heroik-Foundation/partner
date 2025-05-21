@@ -1,5 +1,6 @@
 import axios from "axios";
 import { deleteTokens, getTokens } from "./session";
+import { toast } from "sonner";
 
 /**
  * @component @name baseInstance
@@ -78,6 +79,9 @@ authenticatedInstance.interceptors.response.use(
         location.pathname !== "/login"
       ) {
         location.replace("/auth/login");
+        toast.error("Authentication error: Kindly login and try again", {
+          id: "authentication-error",
+        });
       }
 
       return Promise.reject(originalRequest);

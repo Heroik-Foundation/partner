@@ -1,12 +1,15 @@
-import { getPlatform } from "@/helpers/platform";
+import { Button } from "@/modules/ui/button";
 import { Header } from "../global/header";
 import { Setting, SettingProps } from "./modules/setting";
+import { deleteTokens } from "@/lib/session";
+import { toast } from "sonner";
+import { useRouter } from "@tanstack/react-router";
 
 export const Settings = () => {
-  const appLink =
-    getPlatform() === "iOS" || getPlatform() === "macOS"
-      ? "https://apps.apple.com/ng/app/hiroek/id6474194083"
-      : "https://play.google.com/store/apps/details?id=com.hiroek.app.hiroek";
+  // const appLink =
+  //   getPlatform() === "iOS" || getPlatform() === "macOS"
+  //     ? "https://apps.apple.com/ng/app/hiroek/id6474194083"
+  //     : "https://play.google.com/store/apps/details?id=com.hiroek.app.hiroek";
 
   const settings: SettingProps[] = [
     // {
@@ -30,12 +33,12 @@ export const Settings = () => {
     //   icon: "language",
     //   link: "/app/settings/contact",
     // },
-    {
-      title: "Rate our platform",
-      description: "Please give us your feedback",
-      icon: "thumbs",
-      link: appLink,
-    },
+    // {
+    //   title: "Rate our platform",
+    //   description: "Please give us your feedback",
+    //   icon: "thumbs",
+    //   link: appLink,
+    // },
     {
       title: "Contact Support",
       description: "Please give us your feedback",
@@ -48,6 +51,8 @@ export const Settings = () => {
     //   icon: "delete",
     // },
   ];
+
+  const { navigate } = useRouter();
 
   return (
     <div>
@@ -66,6 +71,22 @@ export const Settings = () => {
           <Setting {...setting} key={index} />
         ))}
       </div>
+
+      <div className="my-10" />
+
+      <Button
+        className="w-full"
+        onClick={() => {
+          deleteTokens();
+          toast.success("Logged out successfully");
+          navigate({
+            to: "/auth/login",
+          });
+        }}
+        variant="destructive"
+      >
+        Log out
+      </Button>
     </div>
   );
 };

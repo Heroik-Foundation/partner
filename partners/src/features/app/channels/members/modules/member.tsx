@@ -1,10 +1,4 @@
 import { Member } from "@/features/app/global/types";
-import { Button } from "@/modules/ui/button";
-import {
-  useAddChannelModeratorMutation,
-  useRemoveChannelModeratorMutation,
-} from "../hooks/mutation";
-import { useParams } from "@tanstack/react-router";
 
 type Props = {
   nodeRef: any;
@@ -12,17 +6,16 @@ type Props = {
 } & Member;
 
 export const ChannelMember = (props: Props) => {
-  const { id } = useParams({ strict: false });
-  const { _id: userId, fullname, nodeRef, isModerator, photo } = props;
-  const mutationData = {
-    id: String(id),
-    userId,
-    username: fullname,
-  };
-  const { mutate: addModerator, isPending: isAddingModerator } =
-    useAddChannelModeratorMutation(mutationData);
-  const { mutate: removeModerator, isPending: isRemovingModerator } =
-    useRemoveChannelModeratorMutation(mutationData);
+  const { fullname, nodeRef, photo } = props;
+  // const mutationData = {
+  //   id: String(id),
+  //   userId,
+  //   username: fullname,
+  // };
+  // const { mutate: addModerator, isPending: isAddingModerator } =
+  //   useAddChannelModeratorMutation(mutationData);
+  // const { mutate: removeModerator, isPending: isRemovingModerator } =
+  //   useRemoveChannelModeratorMutation(mutationData);
 
   return (
     <div className="w-full flex items-center justify-between" ref={nodeRef}>
@@ -34,7 +27,7 @@ export const ChannelMember = (props: Props) => {
         <span className="text-primary font-semibold text-sm">{fullname}</span>
       </div>
 
-      <div className="">
+      {/* <div className="">
         {isModerator ? (
           <Button
             className="rounded-full"
@@ -58,7 +51,7 @@ export const ChannelMember = (props: Props) => {
             Add Moderator
           </Button>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
