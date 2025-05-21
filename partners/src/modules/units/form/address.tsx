@@ -1,30 +1,25 @@
 import { Input } from "@/modules/ui/input";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 const GMAPS_SCRIPT_URL = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GMAPS_API_KEY}&libraries=places`;
 
 let scriptLoadPromise: any = null;
 
 const loadGoogleMapsScript = (): Promise<typeof google> => {
-  // Return existing promise if script is already loading
   if (scriptLoadPromise) {
     return scriptLoadPromise;
   }
 
-  // Return immediately if the API is already loaded
   if (window.google?.maps?.places) {
     return Promise.resolve(window.google);
   }
 
-  // Create new promise for script loading
   scriptLoadPromise = new Promise((resolve, reject) => {
-    // Check if script already exists
     const existingScript = document.querySelector(
       `script[src^="https://maps.googleapis.com/maps/api/js"]`
     );
 
     if (existingScript) {
-      // Script exists but Google object not ready yet, wait for it
       const checkInterval = setInterval(() => {
         if (window.google?.maps?.places) {
           clearInterval(checkInterval);
@@ -80,14 +75,18 @@ const PlaceAutocomplete = ({
   countryRestriction = "gb",
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [selectedPlace, setSelectedPlace] =
-    useState<google.maps.places.PlaceResult | null>(null);
+
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const handlePlaceChanged = useCallback(() => {
     if (!autocompleteRef.current) return;
     const place = autocompleteRef.current.getPlace();
-    setSelectedPlace(place);
+
+    if (place && place.place_id) {
+      if (callback) {
+        callback(place);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -136,12 +135,6 @@ const PlaceAutocomplete = ({
       }
     };
   }, [countryRestriction, handlePlaceChanged]);
-
-  useEffect(() => {
-    if (selectedPlace && callback) {
-      callback(selectedPlace);
-    }
-  }, [selectedPlace, callback]);
 
   return (
     <div className="place-autocomplete">

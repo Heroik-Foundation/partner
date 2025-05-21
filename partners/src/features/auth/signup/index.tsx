@@ -15,6 +15,8 @@ const SignUp = () => {
   const { form, setForm } = useAuthStore();
   const { mutate, isPending } = useSignUpMutation();
 
+  console.log(form.address);
+
   return (
     <Form
       title="Sign Up"
