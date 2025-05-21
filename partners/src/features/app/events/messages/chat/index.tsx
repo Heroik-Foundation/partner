@@ -1,10 +1,10 @@
 import { useParams } from "@tanstack/react-router";
 import { ChatHeader } from "./modules/header";
 import { MessageInputBox } from "./modules/input";
-import { Message } from "./modules/message";
+import { Message, Messages } from "./modules/message";
 import { useConversationMessagesQuery } from "../hooks/query";
 import { SuspenseLoader } from "@/modules/units/page/suspense";
-
+import { motion, AnimatePresence } from "motion/react";
 import { useMemo } from "react";
 import { useUserPropertiesQuery } from "@/features/app/global/hooks/query";
 import type { Message as MessageItem } from "@/features/app/global/types";
@@ -33,11 +33,22 @@ const Chat = () => {
         ? firstMessage.recipient
         : firstMessage.sender;
     return {
-      fullname: senderData.fullname || senderData.fullname || "Unknown",
-      photo: senderData.photo || senderData.photo || "",
+      fullname: senderData.fullname || "Unknown",
+      photo: senderData.photo || "",
       id: senderData._id,
     };
   }, [sortedMessages, user?._id]);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.12,
+      },
+    },
+  };
 
   if (isPending) return <SuspenseLoader />;
   if (!data || !sender)
@@ -49,27 +60,38 @@ const Chat = () => {
             photo: sender?.photo,
           }}
         />
-
         <ItemNotFound message="Conversation Not Found" />
       </div>
     );
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <ChatHeader user={sender} />
-      <div className="mt-20 space-y-2.5">
-        {sortedMessages.map((message: MessageItem) => {
-          const author =
-            message.sender._id === user?._id ? "sender" : "receiver";
-          return (
-            <Message
-              key={`${message._id}-${message.createdAt}`}
-              content={message.message}
-              author={author}
-            />
-          );
-        })}
-      </div>
+
+      <motion.div
+        className="flex-1 overflow-y-auto px-4"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <Messages>
+          <AnimatePresence>
+            {sortedMessages.map((message: MessageItem, index: number) => {
+              const author =
+                message.sender._id === user?._id ? "sender" : "receiver";
+              return (
+                <Message
+                  key={`${message._id}-${message.createdAt}`}
+                  content={message.message}
+                  author={author}
+                  index={index}
+                />
+              );
+            })}
+          </AnimatePresence>
+        </Messages>
+      </motion.div>
+
       <MessageInputBox conversationId={String(id)} recipientId={sender.id} />
     </div>
   );
