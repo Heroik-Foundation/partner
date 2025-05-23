@@ -76,11 +76,15 @@ export function usePartnerStatsQuery({ userId }: PartnerStatsProps) {
 
 // Infinite Queries
 
-export function useUserEventsQuery(props: QueryProps) {
-  const { userId, searchQuery } = props;
+export function useUserEventsQuery(
+  props: QueryProps & {
+    eventFilter?: string;
+  }
+) {
+  const { userId, searchQuery, eventFilter } = props;
 
   return useInfiniteQuery({
-    queryKey: ["user-events", searchQuery, userId],
+    queryKey: ["user-events", searchQuery, userId, eventFilter],
     queryFn: async ({ pageParam = 1 }) => {
       const { data } = await authenticatedInstance.get<
         NestedPaginatedResponse<Event, "events">
@@ -88,6 +92,7 @@ export function useUserEventsQuery(props: QueryProps) {
         params: {
           page: pageParam,
           searchQuery,
+          eventFilter,
         },
       });
       return data;

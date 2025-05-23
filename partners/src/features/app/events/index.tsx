@@ -11,9 +11,13 @@ import {
   EventSkeletonLoader,
 } from "@/modules/units/card/event";
 import { useIntersectionObserver } from "@/hooks/observer";
+import { Button } from "@/modules/ui/button";
 
 const AllEvents = () => {
   const [query, setQuery] = useState<string>("");
+  const [filter, setFilter] = useState<"past" | "present" | "future">(
+    "present"
+  );
   const { data: user } = useUserPropertiesQuery();
   const {
     data: events,
@@ -23,6 +27,7 @@ const AllEvents = () => {
   } = useUserEventsQuery({
     searchQuery: query.toLowerCase(),
     userId: user?._id,
+    eventFilter: filter,
   });
 
   const lastEventRef = useIntersectionObserver(fetchNextPage, [hasNextPage]);
@@ -42,6 +47,24 @@ const AllEvents = () => {
           setQuery(target.value);
         }}
       />
+
+      <div className="space-x-2.5">
+        {["past", "present", "future"].map((value, index) => {
+          const isActive = filter === value;
+          return (
+            <Button
+              variant={isActive ? "default" : "outline"}
+              key={index}
+              onClick={() => {
+                setFilter(value as any);
+              }}
+            >
+              <p className="first-letter:uppercase">{value}</p>
+            </Button>
+          );
+        })}
+      </div>
+
       {events && (
         <div className="space-y-5 flex flex-col">
           {events.pages.map((event, index, all_events) => (

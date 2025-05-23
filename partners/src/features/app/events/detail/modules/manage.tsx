@@ -5,8 +5,9 @@ import { Trash, Edit } from "lucide-react";
 import { useEventTerminationByIDMutation } from "../hooks/mutation";
 import { ActionDrawer } from "@/modules/units/page/action";
 import { toast } from "sonner";
+import { isPastDate } from "@/helpers/time";
 
-export const Manage = ({ id }: { id: string }) => {
+export const Manage = ({ id, endDate }: { id: string; endDate: string }) => {
   const { isPending, isSuccess, isError } = useEventTerminationByIDMutation({
     id,
   });
@@ -14,7 +15,7 @@ export const Manage = ({ id }: { id: string }) => {
   return (
     <div className="space-y-2.5">
       <Link
-        to="/app/events/$id/edit"
+        to={isPastDate(endDate) ? "/app/events/$id" : "/app/events/$id/edit"}
         className={cn(
           buttonVariants({
             size: "lg",
@@ -23,6 +24,11 @@ export const Manage = ({ id }: { id: string }) => {
         )}
         params={{
           id,
+        }}
+        onClick={() => {
+          if (isPastDate(endDate)) {
+            toast.error("You can't edit a past event");
+          }
         }}
       >
         <Edit size="16" />

@@ -85,3 +85,9 @@ export function getTimeFromISO(
 
   return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
 }
+
+export function isPastDate(dateString: string): boolean {
+  const inputDate = new Date(dateString);
+  const now = new Date();
+  return inputDate < now;
+}

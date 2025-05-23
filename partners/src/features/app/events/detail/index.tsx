@@ -90,7 +90,7 @@ const EventDetail = () => {
             percentage={event.eventPledge.totalPledgedAmount}
             minimumPledge={event.eventPledge.minimumPledge}
           />
-          <Manage id={id} />
+          <Manage id={id} endDate={event.endTime} />
         </Fragment>
       )}
     </div>
