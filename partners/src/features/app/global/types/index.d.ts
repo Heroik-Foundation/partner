@@ -106,7 +106,13 @@ export type User = {
 export type Post = {
   __v: number;
   _id: string;
-  attachments: string[];
+  attachments: {
+    createdAt: string;
+    image: string;
+    updatedAt: string;
+    __v: number;
+    _id: string;
+  }[];
   comments: string[];
   community: {
     adminType: string;

@@ -15,6 +15,7 @@ export type ChannelProps = {
 export const Channel = (props: ChannelProps) => {
   const { id, title, description, thumbnail, avatars, members, nodeRef } =
     props;
+
   return (
     <Link
       to="/app/channels/$id"

@@ -3,30 +3,22 @@ import { useChannelDetailsQuery } from "../hooks/query";
 import { SuspenseLoader } from "@/modules/units/page/suspense";
 import { Highlight } from "./modules/highlight";
 import { UserPost, UserPostLoader } from "./modules/post";
-import { useState } from "react";
 import { Button, buttonVariants } from "@/modules/ui/button";
 import { cn } from "@/lib/utils";
 import { Post } from "../../global/types";
-import {
-  useChannelAnnouncementsQuery,
-  useChannelPostsQuery,
-} from "./hooks/query";
+import { useChannelAnnouncementsQuery } from "./hooks/query";
 import { Header } from "../../global/header";
 import { useUserPropertiesQuery } from "../../global/hooks/query";
 import { Actions } from "./modules/actions";
 
-type Tab = "posts" | "announcements";
-
 const ChannelDetails = () => {
   const { id } = useParams({ strict: false }) as { id: string };
   const { data: user } = useUserPropertiesQuery();
-  const [currentTab, setCurrentTab] = useState<Tab>("announcements");
   const { data: channel } = useChannelDetailsQuery({ id });
-  const { data: posts } = useChannelPostsQuery({ id });
+
   const { data: announcements } = useChannelAnnouncementsQuery({ id });
 
-  const filteredPosts =
-    currentTab === "posts" ? posts?.pages : announcements?.pages;
+  const filteredPosts = announcements?.pages || [];
 
   return (
     <div className="space-y-5 min-h-screen">
@@ -97,19 +89,9 @@ const ChannelDetails = () => {
       {!channel && <SuspenseLoader />}
 
       <div className="w-full flex items-center justify-around space-x-5">
-        {(["announcements"] as Tab[]).map((tab) => (
-          <Button
-            key={tab}
-            size={"lg"}
-            className={cn("rounded-full w-fit py-6 px-6")}
-            variant={tab === currentTab ? "default" : "secondary"}
-            onClick={() => setCurrentTab(tab)}
-          >
-            {tab === "announcements"
-              ? tab.charAt(0).toUpperCase() + tab.slice(1)
-              : "Recent Posts"}
-          </Button>
-        ))}
+        <Button size={"lg"} className={cn("rounded-full w-fit py-6 px-6")}>
+          Announcements
+        </Button>
       </div>
       <div className="space-y-10">
         {filteredPosts &&

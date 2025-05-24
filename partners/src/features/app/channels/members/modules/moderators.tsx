@@ -4,6 +4,7 @@ import { useIntersectionObserver } from "@/hooks/observer";
 import { ChannelMember, ChannelMemberLoader } from "./member";
 import { Fragment } from "react/jsx-runtime";
 import { Member } from "@/features/app/global/types";
+import { useUserPropertiesQuery } from "@/features/app/global/hooks/query";
 
 export const ChannelModerators = () => {
   const { id } = useParams({ strict: false });
@@ -12,8 +13,19 @@ export const ChannelModerators = () => {
       id: String(id),
     });
 
+  const { data: user } = useUserPropertiesQuery();
+
   const lastMemberRef = useIntersectionObserver(fetchNextPage, [hasNextPage]);
   const rows: Member[] = data?.pages || [];
+
+  if (user) {
+    const userModeratorData: any = {
+      photo: user.logo,
+      fullname: user.name,
+    };
+
+    rows.push(userModeratorData);
+  }
 
   return (
     <div className="space-y-3.5">

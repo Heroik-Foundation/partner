@@ -6,11 +6,13 @@ export const ImageWithPreview = ({
   setState,
   initialPreview,
   handleState,
+  buttonText = "Upload logo",
 }: {
   state?: any;
   setState?: Dispatch<SetStateAction<any>>;
   initialPreview?: string;
   handleState?: (file: any) => void;
+  buttonText?: string;
 }) => {
   const { form, setForm } = useAuthStore();
   const [preview, setPreview] = useState(
@@ -93,7 +95,7 @@ export const ImageWithPreview = ({
           bg-violet-50 text-primary
           hover:bg-violet-100"
         >
-          Upload logo
+          {buttonText}
         </button>
       </label>
     </div>

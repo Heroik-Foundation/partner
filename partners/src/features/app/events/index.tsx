@@ -12,6 +12,7 @@ import {
 } from "@/modules/units/card/event";
 import { useIntersectionObserver } from "@/hooks/observer";
 import { Button } from "@/modules/ui/button";
+import { cn } from "@/lib/utils";
 
 const AllEvents = () => {
   const [query, setQuery] = useState<string>("");
@@ -49,17 +50,23 @@ const AllEvents = () => {
       />
 
       <div className="space-x-2.5">
-        {["past", "present", "future"].map((value, index) => {
+        {["past", "present"].map((value, index) => {
           const isActive = filter === value;
           return (
             <Button
+              className={cn(
+                "transition-all",
+                !isActive && "border-2 border-primary/50"
+              )}
               variant={isActive ? "default" : "outline"}
               key={index}
               onClick={() => {
                 setFilter(value as any);
               }}
             >
-              <p className="first-letter:uppercase">{value}</p>
+              <p className="first-letter:uppercase">
+                {value === "present" ? "Ongoing" : value}
+              </p>
             </Button>
           );
         })}

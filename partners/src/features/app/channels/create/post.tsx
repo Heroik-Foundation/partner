@@ -8,16 +8,19 @@ import { Button } from "@/modules/ui/button";
 import { Textarea } from "@/modules/ui/textarea";
 import { useCreatePostMutation } from "./hooks/mutation";
 import { cn } from "@/lib/utils";
+import { ImageWithPreview } from "@/modules/units/form/image";
 
 const CreatePost = () => {
   const { broadcast } = useSearch({ strict: false });
   const { id } = useParams({ strict: false });
   const [content, setContent] = useState<string>("");
+  const [file, setFile] = useState();
 
   const { mutate, isPending } = useCreatePostMutation({
     content,
     id,
     isAnnouncement: Boolean(broadcast),
+    file,
   });
 
   const handlePostCreation = () => {
@@ -49,6 +52,12 @@ const CreatePost = () => {
             </Button>
           ),
         }}
+      />
+
+      <ImageWithPreview
+        state={file}
+        setState={setFile}
+        buttonText="Upload Image"
       />
       <Textarea
         value={content}

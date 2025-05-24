@@ -25,6 +25,7 @@ export const UserPost = ({
   userId,
   channelId,
   nodeRef,
+  attachments,
 }: PostProps) => {
   const [likes, setLikes] = useState<string[]>(initialLikes);
   const [isLiked, setIsLiked] = useState<boolean>(
@@ -61,6 +62,8 @@ export const UserPost = ({
     }
   };
 
+  console.log(attachments);
+
   return (
     <div className="w-full space-y-2.5" ref={nodeRef}>
       <div className="flex items-center justify-between">
@@ -95,7 +98,17 @@ export const UserPost = ({
           />
         </div>
       </div>
-      <p className="font-medium text-sm text-primary">{content}</p>
+      <div className="space-y-2.5">
+        {/* @ts-ignore  */}
+        {attachments && attachments[0] && attachments[0].image && (
+          <img
+            className="rounded-xl object-fill object-center"
+            src={attachments[0].image}
+            alt=""
+          />
+        )}
+        <p className="font-medium text-sm text-primary">{content}</p>
+      </div>
       <PostActions
         likes={likes}
         isLiked={isLiked}

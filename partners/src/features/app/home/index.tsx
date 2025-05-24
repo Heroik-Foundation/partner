@@ -11,13 +11,18 @@ import {
   useUserPropertiesQuery,
 } from "../global/hooks/query";
 import { Channel, ChannelSkeletonLoader } from "@/modules/units/card/channel";
+import { Carousel, CarouselContent, CarouselItem } from "@/modules/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 const Home = () => {
   const { data: user } = useUserPropertiesQuery();
-  const { data: events } = useUserEventsQuery({ userId: user?._id });
+  const { data: events } = useUserEventsQuery({
+    userId: user?._id,
+    eventFilter: "present",
+  });
   const { data: channels } = useUserChannelsQuery({ userId: user?._id });
 
-  const event = events && events.pages[0];
+  const events_list = events ? events.pages.slice(0, 6) : undefined;
   const channel = channels && channels.pages[0];
 
   return (
@@ -27,15 +32,31 @@ const Home = () => {
       <Revenue />
       <Actions />
       <Content type="event">
-        {event ? (
-          <Event
-            id={event._id}
-            thumbnail={event.photo}
-            title={event.name}
-            date={event.endTime}
-            price={event.eventTicket.ticketPrice || 0}
-            location={event.address}
-          />
+        {events_list ? (
+          <Carousel
+            plugins={[
+              Autoplay({
+                delay: 2000,
+              }),
+            ]}
+            className="w-full"
+          >
+            <CarouselContent className="w-full -ml-0">
+              {events_list.map((event, index) => (
+                <CarouselItem className="w-full basis-full pl-0.5">
+                  <Event
+                    key={index}
+                    id={event._id}
+                    thumbnail={event.photo}
+                    title={event.name}
+                    date={event.endTime}
+                    price={event.eventTicket.ticketPrice || 0}
+                    location={event.address}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         ) : (
           <EventSkeletonLoader />
         )}
