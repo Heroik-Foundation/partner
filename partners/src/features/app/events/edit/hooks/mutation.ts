@@ -52,11 +52,11 @@ export function useUpdateEventMutation(props: CreateEventMutation) {
       formData.append("privacy", privacy);
       formData.append(
         "eventEndDate",
-        new Date(`${eventEndDate}T${time}:00Z`).toISOString()
+        new Date(`${eventEndDate}T${time}:00`).toISOString()
       );
       formData.append(
         "endTime",
-        new Date(`${endTime}T${time}:00Z`).toISOString()
+        new Date(`${endTime}T${time}:00`).toISOString()
       );
       formData.append("address", address);
       formData.append("signUpLimit", signUpLimit.toString());
