@@ -50,7 +50,7 @@ const AllEvents = () => {
       />
 
       <div className="space-x-2.5">
-        {["past", "present"].map((value, index) => {
+        {["past", "present", "future"].map((value, index) => {
           const isActive = filter === value;
           return (
             <Button
@@ -65,7 +65,11 @@ const AllEvents = () => {
               }}
             >
               <p className="first-letter:uppercase">
-                {value === "present" ? "Ongoing" : value}
+                {value === "present"
+                  ? "Ongoing"
+                  : value === "future"
+                    ? "Upcoming"
+                    : value}
               </p>
             </Button>
           );

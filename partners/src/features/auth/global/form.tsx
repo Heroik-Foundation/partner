@@ -122,7 +122,7 @@ export const FormCounter = (props: FormCounterProps) => {
       </Button>
       <Input
         {...rest}
-        type="number"
+        type="text"
         placeholder="0"
         className={cn("px-10 text-center", className)}
       />

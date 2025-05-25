@@ -22,6 +22,7 @@ import { ActionDrawer } from "@/modules/units/page/action";
 import { useEffect } from "react";
 import { Switch } from "@/modules/ui/switch";
 import PlaceAutocomplete from "@/modules/units/form/address";
+import { handleNumericInput } from "@/helpers/text";
 
 const CreateEvent = () => {
   const { formState, setFundraiser, updateForm, reset } = useEventFormStore();
@@ -134,8 +135,9 @@ const CreateEvent = () => {
             <FormCounter
               required
               value={formState.signUpLimit}
-              onChange={({ target }) => {
-                updateForm("signUpLimit", Number(target.value));
+              onChange={(event) => {
+                //@ts-ignore
+                updateForm("signUpLimit", handleNumericInput(event));
               }}
               increment={() => {
                 updateForm("signUpLimit", formState.signUpLimit + 1);

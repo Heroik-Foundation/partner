@@ -150,8 +150,9 @@ const CreateEvent = () => {
             <FormCounter
               required
               value={formState.signUpLimit}
-              onChange={({ target }) => {
-                updateForm("signUpLimit", Number(target.value));
+              onChange={(event) => {
+                //@ts-ignore
+                updateForm("signUpLimit", handleNumericInput(event));
               }}
               increment={() => {
                 updateForm("signUpLimit", formState.signUpLimit + 1);

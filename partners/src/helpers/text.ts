@@ -1,3 +1,5 @@
+import { ChangeEvent } from "react";
+
 export function truncateText(text: string, length: number = 100): string {
   if (text.length <= length) {
     return text;
@@ -33,4 +35,16 @@ export function formatNumberSequence(sequence: string): string {
   formattedString += cleanedSequence.slice(-4);
 
   return formattedString;
+}
+
+export function handleNumericInput(
+  e: ChangeEvent<HTMLInputElement>
+): number | undefined {
+  const value = e.target.value;
+
+  if (/^\d+$/.test(value)) {
+    return Number(value);
+  }
+
+  return undefined;
 }
