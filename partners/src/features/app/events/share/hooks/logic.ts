@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 
 function getTimeRemaining(targetDate: string) {
-  const total = Date.parse(targetDate) - Date.now();
+  const adjustedTarget = Date.parse(targetDate) - 3600000;
+  const total = adjustedTarget - Date.now();
+
   const seconds = Math.max(Math.floor((total / 1000) % 60), 0);
   const minutes = Math.max(Math.floor((total / 1000 / 60) % 60), 0);
   const hours = Math.max(Math.floor((total / (1000 * 60 * 60)) % 24), 0);

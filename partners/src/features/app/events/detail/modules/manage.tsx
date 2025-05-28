@@ -27,7 +27,7 @@ export const Manage = ({ id, endDate }: { id: string; endDate: string }) => {
         }}
         onClick={() => {
           if (isPastDate(endDate)) {
-            toast.error("You can't edit a past event");
+            toast.error("You can't edit an ongoing or past event");
           }
         }}
       >
