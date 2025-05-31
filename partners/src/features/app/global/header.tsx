@@ -2,7 +2,8 @@ import { PreviousButton } from "@/modules/units/page/button";
 import type { Variants } from "@/modules/units/page/button";
 import { UserRound } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { useUserPropertiesQuery } from "./hooks/query";
+import { useConversationsQuery, useUserPropertiesQuery } from "./hooks/query";
+import { useUserNotificationsQuery } from "../notifications/hooks/query";
 
 type HeaderProps = {
   header: {
@@ -20,6 +21,12 @@ type HeaderProps = {
 export const Header = (props: HeaderProps) => {
   const { title, position, subtitle } = props.header;
   const { previousButtonVariant = "default", addOns } = props;
+  const { data: notifications } = useUserNotificationsQuery();
+
+  const unSeenNotifications =
+    notifications?.pages
+      .flat()
+      .map((notification) => notification.isRead === false).length || 0;
 
   return (
     <header>
@@ -61,9 +68,11 @@ export const Header = (props: HeaderProps) => {
                 </clipPath>
               </defs>
             </svg>
-            {/* <div className="absolute bg-[#B00062] text-white w-5 h-5 rounded-full text-xs font-extrabold font-axiforma justify-center items-center flex -top-1.5 -right-1.5">
-              0
-            </div> */}
+            {unSeenNotifications >= 1 && (
+              <div className="absolute bg-accent text-white w-5 h-5 rounded-full text-xs font-extrabold font-axiforma justify-center items-center flex -top-1.5 -right-1.5">
+                {unSeenNotifications}
+              </div>
+            )}
           </Link>
         ) : (
           <div />
@@ -88,7 +97,14 @@ export const Header = (props: HeaderProps) => {
 
 export function HomeHeader() {
   const { data: user } = useUserPropertiesQuery();
+  const { data: messages } = useConversationsQuery({});
+
   const profileImage = user && user.logo ? user.logo : undefined;
+
+  const unreadMessages =
+    messages?.pages
+      .flat()
+      .map((message) => message.lastMessage.status === "unread").length || 0;
 
   return (
     <header className="w-full flex justify-between items-center py-2">
@@ -108,7 +124,7 @@ export function HomeHeader() {
       </Link>
 
       <div className="flex items-center">
-        <Link to="/app/messages">
+        <Link className="relative" to="/app/messages">
           <svg
             width="24"
             height="24"
@@ -121,6 +137,12 @@ export function HomeHeader() {
               fill="#37137F"
             />
           </svg>
+
+          {unreadMessages >= 1 && (
+            <span className="absolute h-4 w-4 bg-accent rounded-full text-xs font-semibold -top-1.5 -right-1.5 flex text-center items-center justify-center text-white">
+              {unreadMessages}
+            </span>
+          )}
         </Link>
 
         <Link to="/app/settings" className="rounded-xl text-primary p-2.5 ">
