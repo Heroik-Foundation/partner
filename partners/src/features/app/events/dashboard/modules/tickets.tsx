@@ -4,6 +4,7 @@ import { useEventMembersTicketPurchasesQuery } from "../hooks/query";
 import { useParams } from "@tanstack/react-router";
 import { Fragment } from "react";
 import { ItemNotFound } from "@/modules/units/card/not-found";
+import { getReadableTime } from "@/helpers/time";
 
 export const TicketSales = () => {
   const { id } = useParams({
@@ -34,14 +35,16 @@ export const TicketSales = () => {
             <div key={index} className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <img
-                  src={sale.event.community.admin.photo}
+                  src={sale.user.photo}
                   loading="eager"
-                  className="w-10 h-10 rounded-lg"
+                  className="w-10 h-10 rounded-lg object-cover object-center"
                 />
                 <div>
-                  <h5 className="text-primary font-bold text-sm">User</h5>
+                  <h5 className="text-primary font-bold text-sm">
+                    {sale.user.fullname || "Name"}
+                  </h5>
                   <p className="text-primary/50 font-bold text-xs">
-                    <span>Date Placeholder</span> |{" "}
+                    <span>{getReadableTime(sale.updatedAt)}</span> |{" "}
                     <span>Tickets: {sale.totalTickets}</span>
                   </p>
                 </div>

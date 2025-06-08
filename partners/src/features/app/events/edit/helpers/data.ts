@@ -4,8 +4,6 @@ import { getTimeFromISO } from "@/helpers/time";
 export const getInitialEventState = (eventData: any) => {
   const time = eventData?.endTime ? getTimeFromISO(eventData.endTime) : "";
 
-  console.log(eventData);
-
   console.log(eventData?.eventPledge?.totalPledgedAmount);
   return {
     photo: eventData?.photo || "",

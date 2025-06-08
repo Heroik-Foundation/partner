@@ -1,4 +1,5 @@
 import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
+import { convertDateTimeInputToISOString } from "@/helpers/time";
 import { authenticatedInstance } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -52,19 +53,19 @@ export function useUpdateEventMutation(props: CreateEventMutation) {
       formData.append("privacy", privacy);
       formData.append(
         "eventEndDate",
-        new Date(`${eventEndDate}T${time}:00`).toISOString()
+        convertDateTimeInputToISOString(eventEndDate, time)
       );
       formData.append(
         "endTime",
-        new Date(`${endTime}T${time}:00`).toISOString()
+        convertDateTimeInputToISOString(endTime, time)
       );
       formData.append("address", address);
       formData.append("signUpLimit", signUpLimit.toString());
 
-      formData.append(
-        "eventTicket[totalTicket]",
-        eventTicket.totalTicket.toString()
-      );
+      // formData.append(
+      //   "eventTicket[totalTicket]",
+      //   eventTicket.totalTicket.toString()
+      // );
 
       formData.append(
         "eventTicket[ticketPrice]",

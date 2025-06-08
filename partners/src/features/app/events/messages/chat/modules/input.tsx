@@ -1,19 +1,30 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useConversationMessageInitMutation } from "../../hooks/mutation";
 import { Loader } from "@/modules/ui/button";
 
 type Props = {
-  recipientId: string;
+  lastMessageId?: string;
   conversationId: string;
 };
 
 export const MessageInputBox = (props: Props) => {
   const [messageInput, setMessageInput] = useState("");
-  const { mutate, isPending } = useConversationMessageInitMutation({
-    message: messageInput,
-    conversationId: props.conversationId,
-    replying: props.recipientId,
-  });
+  const { mutate, isPending, isSuccess, reset } =
+    useConversationMessageInitMutation({
+      message: messageInput,
+      conversationId: props.conversationId,
+    });
+
+  const handleSuccess = useCallback(() => {
+    if (isSuccess) {
+      setMessageInput("");
+      reset();
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    handleSuccess();
+  }, [isSuccess]);
 
   return (
     <div className="fixed bottom-0 w-full left-0 right-0 p-2 bg-background">

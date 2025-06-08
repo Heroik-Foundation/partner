@@ -92,7 +92,7 @@ const Chat = () => {
         </Messages>
       </motion.div>
 
-      <MessageInputBox conversationId={String(id)} recipientId={sender.id} />
+      <MessageInputBox conversationId={String(id)} />
     </div>
   );
 };

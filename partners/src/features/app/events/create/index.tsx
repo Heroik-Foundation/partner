@@ -40,6 +40,7 @@ const CreateEvent = () => {
     time,
     ...rest
   } = formState;
+
   const { mutate, isPending, isError, isSuccess } = useCreateEventMutation({
     privacy: "public",
     endTime: startDate,
@@ -125,6 +126,7 @@ const CreateEvent = () => {
             <PlaceAutocomplete
               required
               placeholder="Type Event/Address here"
+              initialValue={formState.address}
               callback={(value) => {
                 updateForm("address", String(value.formatted_address));
               }}

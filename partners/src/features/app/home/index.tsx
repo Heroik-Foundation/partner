@@ -39,7 +39,7 @@ const Home = () => {
       <Revenue />
       <Actions />
       <Content type="event">
-        {events_list ? (
+        {events_list && events_list.length >= 1 ? (
           <Carousel
             plugins={[
               Autoplay({

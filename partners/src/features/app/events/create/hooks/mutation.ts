@@ -1,5 +1,6 @@
 import { Event } from "@/features/app/global/types";
 import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
+import { convertDateTimeInputToISOString } from "@/helpers/time";
 import { authenticatedInstance } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
@@ -56,11 +57,14 @@ export function useCreateEventMutation(props: CreateEventMutation) {
       formData.append("privacy", privacy);
 
       if (time && endTime && eventEndDate) {
-        const combinedEventEndDate = new Date(`${eventEndDate}T${time}:00`);
-        const combinedEndTime = new Date(`${endTime}T${time}:00`);
-
-        formData.append("eventEndDate", combinedEventEndDate.toISOString());
-        formData.append("endTime", combinedEndTime.toISOString());
+        formData.append(
+          "eventEndDate",
+          convertDateTimeInputToISOString(eventEndDate, time)
+        );
+        formData.append(
+          "endTime",
+          convertDateTimeInputToISOString(endTime, time)
+        );
       } else {
         toast.error("Invalid date, please select another date");
         throw new Error("Invalid date");
@@ -78,10 +82,10 @@ export function useCreateEventMutation(props: CreateEventMutation) {
         formData.append("communityId", communityId);
       }
 
-      formData.append(
-        "eventTicket[totalTicket]",
-        eventTicket.totalTicket.toString()
-      );
+      // formData.append(
+      //   "eventTicket[totalTicket]",
+      //   eventTicket.totalTicket.toString()
+      // );
 
       formData.append(
         "eventTicket[ticketPrice]",

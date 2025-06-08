@@ -91,3 +91,19 @@ export function isPastDate(dateString: string): boolean {
   const now = new Date();
   return inputDate < now;
 }
+
+export function convertDateTimeInputToISOString(
+  date: string,
+  time: string
+): string {
+  if (!date || !time) return "";
+
+  const [year, month, day] = date.split("-").map(Number);
+  const [hour, minute] = time.split(":").map(Number);
+
+  const dateTime = new Date(Date.UTC(year, month - 1, day, hour, minute));
+
+  if (isNaN(dateTime.getTime())) return "";
+
+  return dateTime.toISOString();
+}

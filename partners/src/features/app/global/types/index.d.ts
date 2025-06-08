@@ -527,27 +527,7 @@ export type EventTicket = {
       name: string;
       description: string;
       privacy: string;
-      admin: {
-        _id: string;
-        fullname: string;
-        username: string;
-        phone: string;
-        photo: string;
-        birthDate: string;
-        callingCode: string;
-        isAdmin: boolean;
-        blocked: boolean;
-        isAccountSetup: boolean;
-        role: string;
-        loc: {
-          type: "Point";
-          coordinates: [number, number];
-        };
-        email: string;
-        blockedUsers: string[];
-        followers: string[];
-        following: string[];
-      };
+
       posts: {
         totalPosts: number;
       }[];
@@ -556,9 +536,15 @@ export type EventTicket = {
     };
     admin: string;
   };
-  user: string;
+  user: {
+    _id: string;
+    photo: string;
+    fullname: string;
+  };
   totalTickets: number;
   tickets: string[];
+  updatedAt: string;
+  createdAt: string;
 };
 
 export type EventMessageUser = {

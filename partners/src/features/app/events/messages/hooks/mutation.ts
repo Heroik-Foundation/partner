@@ -5,11 +5,11 @@ import { AxiosError } from "axios";
 type Props = {
   conversationId: string;
   message: string;
-  replying: string;
+  replying?: string;
 };
 
 export function useConversationMessageInitMutation(props: Props) {
-  const { invalidateQueries } = useQueryClient();
+  const queryClient = useQueryClient();
   const { conversationId, ...rest } = props;
   return useMutation({
     mutationFn: async () => {
@@ -21,13 +21,13 @@ export function useConversationMessageInitMutation(props: Props) {
       return data;
     },
     onSuccess: () => {
-      invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ["conversation-messages-by-id"],
       });
     },
     onError: (error: AxiosError) => {
       console.log(error);
-      invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ["conversation-messages-by-id"],
       });
     },

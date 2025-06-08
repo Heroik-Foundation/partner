@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Link } from "@tanstack/react-router";
-import { Heart, MessageSquareQuote } from "lucide-react";
+import { Heart } from "lucide-react";
 
 type PostActionsProps = {
   likes: string[];
@@ -14,10 +13,8 @@ type PostActionsProps = {
 export const PostActions = ({
   likes,
   isLiked,
-  commentCount,
+
   onLikeToggle,
-  postId,
-  channelId,
 }: PostActionsProps): JSX.Element => (
   <div className="flex space-x-5">
     <button className="flex items-center space-x-1" onClick={onLikeToggle}>
@@ -32,7 +29,7 @@ export const PostActions = ({
         {likes.length}
       </span>
     </button>
-    <Link
+    {/* <Link
       to="/app/channels/$id/post/$postId"
       params={{
         id: String(channelId),
@@ -44,6 +41,6 @@ export const PostActions = ({
       <span className="text-primary font-extrabold text-sm">
         {commentCount}
       </span>
-    </Link>
+    </Link> */}
   </div>
 );
