@@ -42,6 +42,7 @@ const EventDetail = () => {
           title: "",
           position: "inline",
         }}
+        previousButtonRoute={`/app/events`}
         addOns={{
           content: (
             <div className="flex items-center space-x-1">

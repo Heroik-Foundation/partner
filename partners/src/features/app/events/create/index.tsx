@@ -236,7 +236,7 @@ const CreateEvent = () => {
 
           {isFundraiser === false && (
             <div className="w-full flex justify-between items-center">
-              <Label>Is this a Fundraiser Event?</Label>
+              <Label>Do You Want To Use This Event For A Fundraiser?</Label>
               <Switch
                 checked={isPaid}
                 onCheckedChange={() => {

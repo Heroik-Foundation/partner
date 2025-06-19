@@ -16,11 +16,16 @@ type HeaderProps = {
     content?: React.ReactNode;
   };
   previousButtonVariant?: Variants;
+  previousButtonRoute?: string;
 };
 
 export const Header = (props: HeaderProps) => {
   const { title, position, subtitle } = props.header;
-  const { previousButtonVariant = "default", addOns } = props;
+  const {
+    previousButtonVariant = "default",
+    addOns,
+    previousButtonRoute,
+  } = props;
   const { data: notifications } = useUserNotificationsQuery();
 
   const unSeenNotifications =
@@ -31,7 +36,10 @@ export const Header = (props: HeaderProps) => {
   return (
     <header>
       <div className="flex justify-between items-center py-2 relative z-10">
-        <PreviousButton variant={previousButtonVariant} />
+        <PreviousButton
+          variant={previousButtonVariant}
+          route={previousButtonRoute}
+        />
         {position === "inline" && (
           <div className="font-black text-primary text-base font-axiforma absolute inset-0 flex items-center justify-center">
             <span>{title}</span>

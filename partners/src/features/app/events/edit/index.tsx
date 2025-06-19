@@ -51,6 +51,7 @@ const CreateEvent = () => {
   const { mutate, isPending, isSuccess, isError } = useUpdateEventMutation({
     privacy: "public",
     endTime: startDate,
+    eventId: id,
     eventEndDate: endDate,
     ...(subCategory.id !== "" && {
       subCategory: subCategory.id,
@@ -246,7 +247,7 @@ const CreateEvent = () => {
 
           {isFundraiser === false && (
             <div className="w-full flex justify-between items-center">
-              <Label>Is this a Fundraiser Event?</Label>
+              <Label>Do You Want To Use This Event For A Fundraiser?</Label>
               <Switch
                 checked={isPaid}
                 onCheckedChange={() => {

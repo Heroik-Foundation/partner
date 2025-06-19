@@ -101,7 +101,7 @@ export function convertDateTimeInputToISOString(
   const [year, month, day] = date.split("-").map(Number);
   const [hour, minute] = time.split(":").map(Number);
 
-  const dateTime = new Date(Date.UTC(year, month - 1, day, hour, minute));
+  const dateTime = new Date(year, month - 1, day, hour, minute);
 
   if (isNaN(dateTime.getTime())) return "";
 

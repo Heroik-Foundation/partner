@@ -7,10 +7,11 @@ export type Variants = "default" | "backlight" | "backlight-faded";
 
 type Props = {
   variant?: Variants;
+  route?: string;
 };
 
-export const PreviousButton = ({ variant }: Props) => {
-  const { history } = useRouter();
+export const PreviousButton = ({ variant, route }: Props) => {
+  const { history, navigate } = useRouter();
 
   return (
     <Button
@@ -21,7 +22,13 @@ export const PreviousButton = ({ variant }: Props) => {
         variant === "backlight-faded" && "bg-white/40 hover:bg-white/40"
       )}
       onClick={() => {
-        history.back();
+        if (route) {
+          navigate({
+            to: route,
+          });
+        } else {
+          history.back();
+        }
       }}
     >
       <ChevronLeft
