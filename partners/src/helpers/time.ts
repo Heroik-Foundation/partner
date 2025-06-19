@@ -15,7 +15,6 @@ export function formatISODate(isoString: string): {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
-    timeZone: "UTC", // Add this to show UTC time instead of local time
   };
 
   const formattedDate = new Intl.DateTimeFormat("en-US", dateOptions).format(
@@ -74,14 +73,11 @@ export function formatMonth(dateString: string): string {
   return date.toLocaleString("default", { month: "long" });
 }
 
-export function getTimeFromISO(
-  isoString: string,
-  useUTC: boolean = false
-): string {
+export function getTimeFromISO(isoString: string): string {
   const date = new Date(isoString);
 
-  const hours = useUTC ? date.getUTCHours() : date.getHours();
-  const minutes = useUTC ? date.getUTCMinutes() : date.getMinutes();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
 
   return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
 }
@@ -98,12 +94,5 @@ export function convertDateTimeInputToISOString(
 ): string {
   if (!date || !time) return "";
 
-  const [year, month, day] = date.split("-").map(Number);
-  const [hour, minute] = time.split(":").map(Number);
-
-  const dateTime = new Date(year, month - 1, day, hour, minute);
-
-  if (isNaN(dateTime.getTime())) return "";
-
-  return dateTime.toISOString();
+  return `${date}T${time}:00`;
 }

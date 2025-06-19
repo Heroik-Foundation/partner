@@ -51,7 +51,7 @@ export const TicketSales = () => {
               </div>
 
               <span className="font-extrabold text-primary">
-                £{sale.event.eventTicket.ticketPrice.toLocaleString()}
+                £{Number(sale.event.eventTicket.ticketPrice) / 100}
               </span>
             </div>
           );
