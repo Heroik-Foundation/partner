@@ -23,59 +23,97 @@ export const Highlight = (props: HighlightProps) => {
 
   return (
     <Fragment>
-      <Fragment>
-        <div className="absolute -top-20 rounded-b-xl  w-full left-0 right-0 max-w-lg mx-auto">
-          <img
-            className="w-full h-[350px] rounded-b-2xl object-cover"
-            src={thumbnail}
-          />
+      <div
+        className="absolute -top-20 rounded-b-xl w-full left-0 right-0 max-w-lg mx-auto
+        md:-top-24 md:max-w-2xl
+        lg:-top-28 lg:max-w-4xl
+        xl:-top-32 xl:max-w-6xl"
+      >
+        <img
+          className="w-full h-[350px] rounded-b-2xl object-cover
+            md:h-[400px]
+            lg:h-[450px]
+            xl:h-[500px]"
+          src={thumbnail}
+          alt={title}
+        />
+      </div>
+      <div
+        className="p-4 bg-white text-primary absolute rounded-3xl space-y-2.5 left-0 right-0 top-40 shadow-lg mx-auto w-[90%] max-w-md
+        md:top-48 md:max-w-xl
+        lg:top-56 lg:max-w-2xl
+        xl:top-64 xl:max-w-3xl"
+      >
+        <p
+          className="font-bold text-sm first-letter:uppercase
+          md:text-base
+          lg:text-lg"
+        >
+          {title}
+        </p>
+        <EventDetail icon={MapPin} content={location} />
+        <div className="flex space-x-2.5 justify-between">
+          <EventDetail icon={Calendar} content={relativeDate} />
+          <EventDetail icon={Clock} content={relativeTime} />
         </div>
-        <div className="p-4 bg-white text-primary absolute rounded-3xl space-y-2.5 left-0 right-0 top-40 shadow-lg mx-auto w-[90%] max-w-md">
-          <p className="font-bold text-sm first-letter:uppercase">{title}</p>
-          <EventDetail icon={MapPin} content={location} />
-          <div className="flex space-x-2.5 justify-between">
-            <EventDetail icon={Calendar} content={relativeDate} />
-            <EventDetail icon={Clock} content={relativeTime} />
+        <div
+          className="w-full flex items-center justify-between space-x-2.5
+          md:space-x-4"
+        >
+          <div
+            className="bg-primary/15 py-2.5 px-4 rounded-full flex space-x-2 items-center justify-center w-full
+            md:py-3 md:px-5"
+          >
+            <div className="flex -space-x-2">
+              {avatars.slice(0, 3).map((avatar, index) => (
+                <img
+                  key={index}
+                  src={avatar}
+                  alt="Avatar"
+                  className="w-5 h-5 rounded-full object-fill border-2 border-white
+                    md:w-6 md:h-6"
+                />
+              ))}
+            </div>
+            <span
+              className="text-xs font-bold
+              md:text-sm"
+            >
+              {members} Attending
+            </span>
           </div>
-          <div className="w-full flex items-center justify-between space-x-2.5">
-            <div className="bg-primary/15 py-2.5 px-4 rounded-full flex space-x-2 items-center justify-center w-full">
-              <div className="flex -space-x-2">
-                {avatars.slice(0, 3).map((avatar, index) => (
-                  <img
-                    key={index}
-                    src={avatar}
-                    alt="Avatar"
-                    className="w-5 h-5 rounded-full object-fill border-2 border-white"
-                  />
-                ))}
-              </div>
-
-              <span className="text-xs font-bold">{members} Attending</span>
-            </div>
-            <div className="flex items-start space-x-1 w-full">
-              <Ticket size={14} />{" "}
-              <span className="font-extrabold text-xs whitespace-nowrap">
-                {availableTickets > 0 ? availableTickets : ""} Spots available
-              </span>
-            </div>
+          <div className="flex items-start space-x-1 w-full">
+            <Ticket size={14} className="md:w-4 md:h-4" />
+            <span
+              className="font-extrabold text-xs whitespace-nowrap
+              md:text-sm"
+            >
+              {availableTickets > 0 ? availableTickets : ""} Spots available
+            </span>
           </div>
         </div>
-        <div className="pb-64" />
-      </Fragment>
+      </div>
+      <div
+        className="pb-64
+        md:pb-72
+        lg:pb-80
+        xl:pb-96"
+      />
     </Fragment>
   );
 };
 
 const EventDetail = (props: DetailProps) => {
   return (
-    <div className="flex items-start space-x-1 font-semibold text-sm">
+    <div
+      className="flex items-start space-x-1 font-semibold text-sm
+      md:space-x-2 md:text-base"
+    >
       <div
-        style={{
-          width: "16px",
-          height: "16px",
-        }}
+        className="w-4 h-4
+        md:w-5 md:h-5"
       >
-        <props.icon className="fill-primary stroke-white" size="16" />
+        <props.icon className="fill-primary stroke-white" size="100%" />
       </div>
       <span>{props.content}</span>
     </div>
