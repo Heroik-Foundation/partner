@@ -9,12 +9,14 @@ export function formatISODate(isoString: string): {
     day: "numeric",
     month: "long",
     year: "numeric",
+    timeZone: "UTC",
   };
 
   const timeOptions: Intl.DateTimeFormatOptions = {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
+    timeZone: "UTC",
   };
 
   const formattedDate = new Intl.DateTimeFormat("en-US", dateOptions).format(
@@ -76,8 +78,8 @@ export function formatMonth(dateString: string): string {
 export function getTimeFromISO(isoString: string): string {
   const date = new Date(isoString);
 
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
+  const hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
 
   return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
 }
