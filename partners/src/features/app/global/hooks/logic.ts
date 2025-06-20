@@ -10,7 +10,8 @@ interface BaseEventFormData {
     name: string;
     id: string;
   };
-  time: string;
+  startTime: string;
+  endTime: string;
   subCategory: {
     name: string;
     id: string;
@@ -31,7 +32,8 @@ const defaultValue: EventFormState = {
   photo: null,
   name: "",
   description: "",
-  time: "",
+  startTime: "",
+  endTime: "",
   address: "",
   signUpLimit: 0,
   category: {

@@ -37,13 +37,12 @@ const CreateEvent = () => {
     charityPartners,
     subCategory,
     category,
-    time,
     ...rest
   } = formState;
 
   const { mutate, isPending, isError, isSuccess } = useCreateEventMutation({
     privacy: "public",
-    endTime: startDate,
+    endDate: startDate,
     eventEndDate: endDate,
     ...(subCategory.name !== "" && {
       subCategory: subCategory.id,
@@ -59,7 +58,6 @@ const CreateEvent = () => {
       totalTicket: Number(rest.signUpLimit || 0),
     },
     category: category.id,
-    time,
     ...rest,
   });
 
@@ -191,18 +189,32 @@ const CreateEvent = () => {
               />
             </FormField>
           </div>
-          <FormField>
-            <Label>Time</Label>
-            <Input
-              required
-              className="text-primary border-none bg-primary/5"
-              type="time"
-              value={time}
-              onChange={({ target }) => {
-                updateForm("time", target.value);
-              }}
-            />
-          </FormField>
+          <div className="w-full space-x-5 flex items-center justify-between">
+            <FormField>
+              <Label>Start Time</Label>
+              <Input
+                required
+                className="text-primary border-none bg-primary/5"
+                type="time"
+                value={formState.startTime}
+                onChange={({ target }) => {
+                  updateForm("startTime", target.value);
+                }}
+              />
+            </FormField>
+            <FormField>
+              <Label>End Time</Label>
+              <Input
+                required
+                className="text-primary border-none bg-primary/5"
+                type="time"
+                value={formState.endTime}
+                onChange={({ target }) => {
+                  updateForm("endTime", target.value);
+                }}
+              />
+            </FormField>
+          </div>
 
           <div className="w-full flex justify-between items-center">
             <Label>Is this a Paid ticketed event?</Label>

@@ -7,7 +7,8 @@ import { toast } from "sonner";
 type CreateEventMutation = {
   name: string;
   description: string;
-  time: string;
+  startTime: string;
+  endTime: string;
   eventTicket: {
     totalTicket: number;
     ticketPrice: number;
@@ -19,7 +20,7 @@ type CreateEventMutation = {
   category: string;
   privacy: string;
   eventEndDate: string;
-  endTime: string;
+  endDate: string;
   address: string;
   signUpLimit: number;
   eventId?: string;
@@ -40,7 +41,8 @@ export function useUpdateEventMutation(props: CreateEventMutation) {
     signUpLimit,
     photo,
     eventId,
-    time,
+    startTime,
+    endDate,
   } = props;
 
   return useMutation({
@@ -51,14 +53,18 @@ export function useUpdateEventMutation(props: CreateEventMutation) {
       formData.append("description", description);
       formData.append("category", category);
       formData.append("privacy", privacy);
-      formData.append(
-        "eventEndDate",
-        convertDateTimeInputToISOString(eventEndDate, time)
-      );
+      //Start date
       formData.append(
         "endTime",
-        convertDateTimeInputToISOString(endTime, time)
+        convertDateTimeInputToISOString(endDate, startTime)
       );
+
+      //End date
+      formData.append(
+        "eventEndDate",
+        convertDateTimeInputToISOString(eventEndDate, endTime)
+      );
+
       formData.append("address", address);
       formData.append("signUpLimit", signUpLimit.toString());
 

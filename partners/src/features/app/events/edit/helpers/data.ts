@@ -2,13 +2,16 @@ import { EventOrganization } from "@/features/app/global/types";
 import { getTimeFromISO } from "@/helpers/time";
 
 export const getInitialEventState = (eventData: any) => {
-  const time = eventData?.endTime ? getTimeFromISO(eventData.endTime) : "";
+  const startTime = eventData?.endTime ? getTimeFromISO(eventData.endTime) : "";
+  const endTime = eventData?.endTime
+    ? getTimeFromISO(eventData.eventEndDate)
+    : "";
 
-  console.log(eventData?.eventPledge?.totalPledgedAmount);
   return {
     photo: eventData?.photo || "",
     name: eventData?.name || "",
-    time,
+    startTime,
+    endTime,
     description: eventData?.description || "",
     address: eventData?.address || "",
     subCategory: {

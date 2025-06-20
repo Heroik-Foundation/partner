@@ -9,7 +9,8 @@ import { toast } from "sonner";
 type CreateEventMutation = {
   name: string;
   description: string;
-  time: string;
+  startTime: string;
+  endTime: string;
   eventTicket: {
     totalTicket: number;
     ticketPrice: number;
@@ -21,7 +22,7 @@ type CreateEventMutation = {
   category: string;
   privacy: string;
   eventEndDate: string;
-  endTime: string;
+  endDate: string;
   address: string;
   signUpLimit: number;
   subCategory?: string;
@@ -38,12 +39,13 @@ export function useCreateEventMutation(props: CreateEventMutation) {
     category,
     privacy,
     eventEndDate,
-    subCategory,
+    endDate,
+    startTime,
     endTime,
+    subCategory,
     address,
     signUpLimit,
     communityId,
-    time,
     photo,
   } = props;
   const { navigate } = useRouter();
@@ -56,14 +58,17 @@ export function useCreateEventMutation(props: CreateEventMutation) {
       formData.append("category", category);
       formData.append("privacy", privacy);
 
-      if (time && endTime && eventEndDate) {
-        formData.append(
-          "eventEndDate",
-          convertDateTimeInputToISOString(eventEndDate, time)
-        );
+      if (startTime && endTime && endTime && eventEndDate) {
+        //Start date
         formData.append(
           "endTime",
-          convertDateTimeInputToISOString(endTime, time)
+          convertDateTimeInputToISOString(endDate, startTime)
+        );
+
+        //End date
+        formData.append(
+          "eventEndDate",
+          convertDateTimeInputToISOString(eventEndDate, endTime)
         );
       } else {
         toast.error("Invalid date, please select another date");
