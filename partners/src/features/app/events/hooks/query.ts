@@ -22,6 +22,5 @@ export function useEventDetailsQuery({ id }: EventDetailsQueryProps) {
       return data.event;
     },
     enabled: id !== undefined,
-    staleTime: 3 * 60 * 1000,
   });
 }
