@@ -11,12 +11,18 @@ import { Button, buttonVariants } from "@/modules/ui/button";
 import { cn } from "@/lib/utils";
 import { SuspenseLoader } from "@/modules/units/page/suspense";
 import { toast } from "sonner";
+import { useRouteStore } from "@/hooks/router";
 
 const EventDetail = () => {
   const { id } = useParams({
     strict: false,
   });
   const { data: event } = useEventDetailsQuery({ id });
+
+  const { previousPath } = useRouteStore();
+  const backRoute = previousPath?.toLowerCase().includes("success")
+    ? `/app/`
+    : undefined;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -42,7 +48,7 @@ const EventDetail = () => {
           title: "",
           position: "inline",
         }}
-        previousButtonRoute={`/app/events`}
+        previousButtonRoute={backRoute}
         addOns={{
           content: (
             <div className="flex items-center space-x-1">
