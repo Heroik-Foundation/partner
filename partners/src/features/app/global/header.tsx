@@ -31,7 +31,7 @@ export const Header = (props: HeaderProps) => {
   const unSeenNotifications =
     notifications?.pages
       .flat()
-      .map((notification) => notification.isRead === false).length || 0;
+      .filter((notification) => notification.isRead === false).length || 0;
 
   return (
     <header>
@@ -112,7 +112,7 @@ export function HomeHeader() {
   const unreadMessages =
     messages?.pages
       .flat()
-      .map((message) => message.lastMessage.status === "unread").length || 0;
+      .filter((message) => message.lastMessage.status === "unread").length || 0;
 
   return (
     <header className="w-full flex justify-between items-center py-2">

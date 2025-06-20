@@ -20,6 +20,7 @@ import {
   DrawerTrigger,
 } from "@/modules/ui/drawer";
 import { Button } from "@/modules/ui/button";
+import { useWebSocket } from "@/hooks/web-socket";
 
 export const NotificationsList = () => {
   const { data, isPending, isFetchingNextPage, hasNextPage, fetchNextPage } =
@@ -31,6 +32,8 @@ export const NotificationsList = () => {
     fetchNextPage,
     [hasNextPage]
   );
+
+  const { markNotificationsAsRead } = useWebSocket();
 
   return (
     <div className="w-full">
@@ -50,7 +53,12 @@ export const NotificationsList = () => {
               : calendar;
         return (
           <Drawer key={index}>
-            <DrawerTrigger asChild>
+            <DrawerTrigger
+              asChild
+              onClick={() => {
+                markNotificationsAsRead(notification._id);
+              }}
+            >
               <div
                 className="py-2.5 flex items-start justify-between w-full"
                 ref={

@@ -1,6 +1,7 @@
 import { useConversationsQuery } from "@/features/app/global/hooks/query";
 import { getReadableTime } from "@/helpers/time";
 import { useIntersectionObserver } from "@/hooks/observer";
+import { cn } from "@/lib/utils";
 import { ItemNotFound } from "@/modules/units/card/not-found";
 import { Link, useParams } from "@tanstack/react-router";
 import { Fragment } from "react";
@@ -30,6 +31,8 @@ export const Previews = ({ searchQuery }: { searchQuery: string }) => {
       {rows.map((preview, index, list) => {
         const participant = preview.participants[0];
 
+        const seen = preview.lastMessage.status === "read";
+
         return (
           <Link
             to="/app/events/$id/messages/$id"
@@ -51,7 +54,7 @@ export const Previews = ({ searchQuery }: { searchQuery: string }) => {
                 <h5 className="text-primary font-bold text-sm">
                   {participant.participant.fullname}
                 </h5>
-                <p className="font-bold text-xs">
+                <p className={cn("font-bold text-xs")}>
                   {preview.lastMessage.message}
                 </p>
               </div>
@@ -62,9 +65,11 @@ export const Previews = ({ searchQuery }: { searchQuery: string }) => {
                 {" "}
                 {getReadableTime(preview.updatedAt)}{" "}
               </span>
-              <div className="w-5 h-5 rounded-full bg-primary shadow text-white flex items-center justify-center">
-                <span className="font-black text-xs"> 1</span>
-              </div>
+              {!seen && (
+                <div className="w-5 h-5 rounded-full bg-primary shadow text-white flex items-center justify-center">
+                  <span className="font-black text-xs">1</span>
+                </div>
+              )}
             </div>
           </Link>
         );

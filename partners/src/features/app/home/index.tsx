@@ -50,9 +50,8 @@ const Home = () => {
           >
             <CarouselContent className="w-full -ml-0">
               {events_list.map((event, index) => (
-                <CarouselItem className="w-full basis-full pl-0.5">
+                <CarouselItem key={index} className="w-full basis-full pl-0.5">
                   <Event
-                    key={index}
                     id={event._id}
                     thumbnail={event.photo}
                     title={event.name}

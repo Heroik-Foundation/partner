@@ -179,7 +179,7 @@ export function useConversationsQuery(props: ConversationQueryProps) {
   const { eventId, searchQuery = "" } = props;
 
   return useInfiniteQuery({
-    queryKey: ["user-events", searchQuery, eventId],
+    queryKey: ["user-event-conversations", searchQuery, eventId],
     queryFn: async ({ pageParam = 1 }) => {
       const { data } = await authenticatedInstance.get<
         NestedPaginatedResponse<Conversation, "conversations">

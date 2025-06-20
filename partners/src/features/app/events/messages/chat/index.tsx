@@ -5,10 +5,11 @@ import { Message, Messages } from "./modules/message";
 import { useConversationMessagesQuery } from "../hooks/query";
 import { SuspenseLoader } from "@/modules/units/page/suspense";
 import { motion, AnimatePresence } from "motion/react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useUserPropertiesQuery } from "@/features/app/global/hooks/query";
 import type { Message as MessageItem } from "@/features/app/global/types";
 import { ItemNotFound } from "@/modules/units/card/not-found";
+import { useWebSocket } from "@/hooks/web-socket";
 
 const Chat = () => {
   const { id } = useParams({ strict: false });
@@ -16,6 +17,7 @@ const Chat = () => {
     conversationId: String(id),
   });
   const { data: user } = useUserPropertiesQuery();
+  const { markConversationAsRead } = useWebSocket();
 
   const sortedMessages = useMemo(() => {
     if (!data) return [];
@@ -49,6 +51,12 @@ const Chat = () => {
       },
     },
   };
+
+  useEffect(() => {
+    if (id) {
+      markConversationAsRead(String(id));
+    }
+  }, [id]);
 
   if (isPending) return <SuspenseLoader />;
   if (!data || !sender)
