@@ -12,7 +12,7 @@ type EventDetailsQueryResponse = {
 
 export function useEventDetailsQuery({ id }: EventDetailsQueryProps) {
   return useQuery({
-    queryKey: ["event-detail", id],
+    queryKey: ["event-details", id],
     queryFn: async () => {
       const { data } =
         await authenticatedInstance.get<EventDetailsQueryResponse>(
