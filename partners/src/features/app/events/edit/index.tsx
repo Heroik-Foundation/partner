@@ -71,10 +71,10 @@ const CreateEvent = () => {
   });
 
   useEffect(() => {
-    if (event && formState.name === "") {
+    if (event && (formState.name === "" || formState.name !== event.name)) {
       setFormState(getInitialEventState(event));
     }
-  }, [event]);
+  }, [event, id]);
 
   const removeCharityOrganizationById = (id: string) => {
     const currentPartners = formState.charityPartners as Array<{

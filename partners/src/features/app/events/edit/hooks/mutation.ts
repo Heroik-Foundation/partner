@@ -1,7 +1,7 @@
 import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
 import { convertDateTimeInputToISOString } from "@/helpers/time";
 import { authenticatedInstance } from "@/lib/axios";
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 type CreateEventMutation = {
@@ -45,7 +45,7 @@ export function useUpdateEventMutation(props: CreateEventMutation) {
     endDate,
   } = props;
 
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
@@ -110,6 +110,9 @@ export function useUpdateEventMutation(props: CreateEventMutation) {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["event-details", eventId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user-events"],
       });
       toast.success("Event updated successfully");
     },

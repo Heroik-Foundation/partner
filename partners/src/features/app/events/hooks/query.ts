@@ -1,6 +1,7 @@
 import { authenticatedInstance } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { Event } from "../../global/types";
+import { timeInMinutes } from "@/helpers/time";
 
 type EventDetailsQueryProps = {
   id?: string;
@@ -22,5 +23,6 @@ export function useEventDetailsQuery({ id }: EventDetailsQueryProps) {
       return data.event;
     },
     enabled: id !== undefined,
+    staleTime: timeInMinutes(5),
   });
 }
