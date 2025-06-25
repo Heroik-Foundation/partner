@@ -52,7 +52,7 @@ export function useUserPropertiesQuery() {
 
       return data.eventPartner;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: timeInMinutes(5),
     retry: 5,
   });
 }
@@ -68,7 +68,7 @@ export function usePartnerStatsQuery({ userId }: PartnerStatsProps) {
 
       return data.stats;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: timeInMinutes(5),
     retry: 5,
     enabled: userId !== undefined,
   });

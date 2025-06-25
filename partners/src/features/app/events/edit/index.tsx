@@ -74,6 +74,10 @@ const CreateEvent = () => {
     if (event && (formState.name === "" || formState.name !== event.name)) {
       setFormState(getInitialEventState(event));
     }
+
+    return () => {
+      setFormState(getInitialEventState(event));
+    };
   }, [event, id]);
 
   const removeCharityOrganizationById = (id: string) => {

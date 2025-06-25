@@ -12,8 +12,6 @@ export function Stats() {
   const { data: user } = useUserPropertiesQuery();
   const { data: stats } = usePartnerStatsQuery({ userId: user?._id });
 
-  console.log(stats);
-
   const detail = [
     {
       label: "Total Pledges",
