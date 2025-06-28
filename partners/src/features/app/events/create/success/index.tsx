@@ -56,7 +56,7 @@ const EventCreationSuccess = () => {
         <Button
           onClick={() => {
             navigate({
-              to: "/share/$id",
+              to: "/event/$id",
               params: {
                 id: String(id),
               },

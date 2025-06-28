@@ -30,7 +30,7 @@ const EventDetail = () => {
         await navigator.share({
           title: event?.name,
           text: event?.description,
-          url: `partners.hiroek.io/share/${id}`,
+          url: `partners.hiroek.io/event/${id}`,
         });
         console.log("Shared successfully");
       } catch (error) {
