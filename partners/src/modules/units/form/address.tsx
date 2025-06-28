@@ -59,6 +59,7 @@ const loadGoogleMapsScript = (): Promise<typeof google> => {
 
 type Props = {
   callback?: (selectedPlace: google.maps.places.PlaceResult) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   initialValue?: string;
   required?: boolean;
@@ -67,6 +68,7 @@ type Props = {
 
 const PlaceAutocomplete = ({
   callback,
+  onChange,
   placeholder = "Enter a location",
   required = false,
   countryRestriction = "gb",
@@ -129,6 +131,7 @@ const PlaceAutocomplete = ({
         ref={inputRef}
         type="text"
         placeholder={placeholder}
+        onChange={onChange}
       />
     </div>
   );

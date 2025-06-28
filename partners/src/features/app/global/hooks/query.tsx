@@ -107,7 +107,6 @@ export function useUserEventsQuery(
       const { currentPage, totalPages } = lastPage.events;
       return currentPage < totalPages ? currentPage + 1 : undefined;
     },
-    staleTime: timeInMinutes(5),
   });
 }
 

@@ -108,13 +108,12 @@ export function useUpdateEventMutation(props: CreateEventMutation) {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["event-details", eventId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["user-events"],
-      });
       toast.success("Event updated successfully");
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey.includes("event-details") ||
+          query.queryKey.includes("user-events"),
+      });
     },
     onError: (error: ErrorResponse) => {
       handleUserResponseToError(error);

@@ -65,6 +65,10 @@ const CreateEvent = () => {
     if (isSuccess) {
       reset();
     }
+
+    return () => {
+      reset();
+    };
   }, [isSuccess]);
 
   const removeCharityOrganizationById = (id: string) => {
@@ -127,6 +131,9 @@ const CreateEvent = () => {
               initialValue={formState.address}
               callback={(value) => {
                 updateForm("address", String(value.formatted_address));
+              }}
+              onChange={(value) => {
+                updateForm("address", String(value.target.value));
               }}
             />
           </FormField>

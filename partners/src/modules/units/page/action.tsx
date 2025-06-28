@@ -142,7 +142,7 @@ export const ActionDrawer = (props: DrawerProps) => {
           variants={contentVariants}
         >
           <DrawerHeader>
-            <DrawerTitle className="text-primary text-lg font-extrabold">
+            <DrawerTitle className="text-primary text-lg font-extrabold text-center">
               {getCurrentTitle()}
             </DrawerTitle>
             <AnimatePresence>
@@ -154,7 +154,7 @@ export const ActionDrawer = (props: DrawerProps) => {
                   exit="exit"
                   variants={contentVariants}
                 >
-                  <DrawerDescription className="text-primary/50 text-sm font-semibold">
+                  <DrawerDescription className="text-primary/50 text-sm font-semibold text-center">
                     {description}
                   </DrawerDescription>
                 </motion.div>

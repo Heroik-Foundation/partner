@@ -88,7 +88,7 @@ const AllEvents = () => {
               thumbnail={event.photo}
               title={event.name}
               date={event.endTime}
-              price={event.eventPledge.minimumPledge || 0}
+              price={event.eventTicket.ticketPrice || 0}
               location={event.address}
             />
           ))}

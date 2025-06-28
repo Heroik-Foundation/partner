@@ -41,7 +41,10 @@ export const Event = (props: EventProps) => {
       params={{
         id,
       }}
-      className={cn("rounded-2xl bg-cover relative block min-h-64", className)}
+      className={cn(
+        "rounded-2xl bg-cover relative block min-h-64 sm:min-h-80",
+        className
+      )}
       style={{
         background: `url('${thumbnail}')`,
         backgroundPosition: "center",
