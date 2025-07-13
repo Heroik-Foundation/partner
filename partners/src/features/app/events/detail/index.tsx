@@ -10,8 +10,8 @@ import { QrCode, Share2 } from "lucide-react";
 import { Button, buttonVariants } from "@/modules/ui/button";
 import { cn } from "@/lib/utils";
 import { SuspenseLoader } from "@/modules/units/page/suspense";
-import { toast } from "sonner";
 import { useRouteStore } from "@/hooks/router";
+import { ShareDialog } from "@/modules/units/page/share";
 
 const EventDetail = () => {
   const { id } = useParams({
@@ -23,23 +23,6 @@ const EventDetail = () => {
   const backRoute = previousPath?.toLowerCase().includes("success")
     ? `/app/`
     : undefined;
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: event?.name,
-          text: event?.description,
-          url: `partners.hiroek.io/event/${id}`,
-        });
-        console.log("Shared successfully");
-      } catch (error) {
-        toast.error("Error sharing");
-      }
-    } else {
-      toast.error("Web Share API is not supported in this browser.");
-    }
-  };
 
   return (
     <div className="space-y-5">
@@ -66,9 +49,15 @@ const EventDetail = () => {
                 <QrCode size="16" />
               </Link>
 
-              <Button className="z-10" onClick={handleShare}>
-                <Share2 className="fill-white" />
-              </Button>
+              <ShareDialog
+                title={event?.name}
+                description={event?.description}
+                url={`https://partners.hiroek.io/channel/${event?._id}`}
+              >
+                <Button className="z-10">
+                  <Share2 className="fill-white" />
+                </Button>
+              </ShareDialog>
             </div>
           ),
         }}

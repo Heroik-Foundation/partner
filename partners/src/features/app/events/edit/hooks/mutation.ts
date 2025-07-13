@@ -9,6 +9,8 @@ type CreateEventMutation = {
   description: string;
   startTime: string;
   endTime: string;
+  longitude: number;
+  latitude: number;
   eventTicket: {
     totalTicket: number;
     ticketPrice: number;
@@ -43,6 +45,8 @@ export function useUpdateEventMutation(props: CreateEventMutation) {
     eventId,
     startTime,
     endDate,
+    latitude,
+    longitude,
   } = props;
 
   const queryClient = useQueryClient();
@@ -55,6 +59,9 @@ export function useUpdateEventMutation(props: CreateEventMutation) {
       formData.append("description", description);
       formData.append("category", category);
       formData.append("privacy", privacy);
+      formData.append("longitude", String(longitude));
+      formData.append("latitude", String(latitude));
+
       //Start date
       formData.append(
         "endTime",

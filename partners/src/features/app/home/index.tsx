@@ -1,7 +1,6 @@
 import { HomeHeader } from "../global/header";
 
 import { Actions } from "./modules/links/actions";
-import { Revenue } from "./modules/links/revenue";
 import { Stats } from "./modules/stats";
 import Content from "./modules/links/content";
 import { Event, EventSkeletonLoader } from "@/modules/units/card/event";
@@ -36,7 +35,6 @@ const Home = () => {
     <div className="space-y-5 relative min-h-screen pb-16">
       <HomeHeader />
       <Stats />
-      <Revenue />
       <Actions />
       <Content type="event">
         {events_list && events_list.length >= 1 ? (

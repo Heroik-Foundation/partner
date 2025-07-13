@@ -77,7 +77,7 @@ const AllEvents = () => {
       </div>
 
       {events && (
-        <div className="space-y-5 flex flex-col">
+        <div className="gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {events.pages.map((event, index, all_events) => (
             <Event
               {...(all_events.length - 1 === index && {
@@ -92,14 +92,16 @@ const AllEvents = () => {
               location={event.address}
             />
           ))}
+
+          {isFetching && (
+            <Fragment>
+              <EventSkeletonLoader />
+              <EventSkeletonLoader />
+            </Fragment>
+          )}
         </div>
       )}
-      {isFetching && (
-        <Fragment>
-          <EventSkeletonLoader />
-          <EventSkeletonLoader />
-        </Fragment>
-      )}
+
       {events && events?.pages.length < 1 && !isFetching && <EventNotFound />}
     </div>
   );

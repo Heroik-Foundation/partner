@@ -54,12 +54,13 @@ export default function Info(props: InfoProps) {
 
   return (
     <div className="space-y-5 w-full">
-      <div className="w-full flex flex-col items-center min-[385px]:flex-row space-y-2.5 min-[385px]:space-y-0 min-[385px]:space-x-2.5">
+      <div className="w-full flex flex-col items-center sm:flex-row space-y-2.5 sm:space-y-0 sm:space-x-2.5">
         <Link
           className={cn(
             buttonVariants({
               variant: "default",
               className: "w-full",
+              size: "lg",
             })
           )}
           to="/app/events/$id/dashboard"
@@ -75,6 +76,7 @@ export default function Info(props: InfoProps) {
             buttonVariants({
               variant: "default",
               className: "w-full",
+              size: "lg",
             })
           )}
           params={{

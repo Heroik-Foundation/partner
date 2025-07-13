@@ -6,7 +6,7 @@ import appstore from "../assets/share-appstore.svg";
 
 import { cn } from "@/lib/utils";
 
-export const Join = () => {
+export const Join = ({ message = "Join Event" }) => {
   const [show, setShow] = useState(false);
 
   const links = [
@@ -53,7 +53,7 @@ export const Join = () => {
               className="rounded-full w-full"
               size="lg"
             >
-              Join Event
+              {message}
             </Button>
           </motion.div>
         ) : (

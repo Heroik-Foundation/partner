@@ -76,7 +76,9 @@ export const Event = (props: EventProps) => {
 };
 
 export const EventSkeletonLoader = () => {
-  return <div className="w-full h-64 rounded-2xl bg-gray-300 animate-pulse" />;
+  return (
+    <div className="w-full min-h-64 sm:min-h-80 rounded-2xl bg-gray-300 animate-pulse" />
+  );
 };
 
 export const EventNotFound = () => {

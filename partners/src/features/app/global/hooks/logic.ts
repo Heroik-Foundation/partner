@@ -6,6 +6,8 @@ interface BaseEventFormData {
   description: string;
   address: string;
   signUpLimit: number;
+  latitude: number;
+  longitude: number;
   category: {
     name: string;
     id: string;
@@ -36,6 +38,8 @@ const defaultValue: EventFormState = {
   endTime: "",
   address: "",
   signUpLimit: 0,
+  latitude: 0,
+  longitude: 0,
   category: {
     name: "",
     id: "",

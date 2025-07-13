@@ -324,6 +324,7 @@ export type TicketSale = {
   user: string;
   totalTickets: number;
   tickets: string[];
+  createdAt: string;
 };
 
 export type WithdrawalLog = {

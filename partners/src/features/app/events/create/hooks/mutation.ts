@@ -11,6 +11,8 @@ type CreateEventMutation = {
   description: string;
   startTime: string;
   endTime: string;
+  longitude: number;
+  latitude: number;
   eventTicket: {
     totalTicket: number;
     ticketPrice: number;
@@ -47,6 +49,8 @@ export function useCreateEventMutation(props: CreateEventMutation) {
     signUpLimit,
     communityId,
     photo,
+    latitude,
+    longitude,
   } = props;
   const { navigate } = useRouter();
   return useMutation({
@@ -57,6 +61,8 @@ export function useCreateEventMutation(props: CreateEventMutation) {
       formData.append("description", description);
       formData.append("category", category);
       formData.append("privacy", privacy);
+      formData.append("longitude", String(longitude));
+      formData.append("latitude", String(latitude));
 
       if (startTime && endTime && endTime && eventEndDate) {
         //Start date

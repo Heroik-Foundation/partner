@@ -35,7 +35,7 @@ export const Header = (props: HeaderProps) => {
 
   return (
     <header>
-      <div className="flex justify-between items-center py-2 relative z-10">
+      <div className="flex justify-between items-center py-2 relative z-10 px-1">
         <PreviousButton
           variant={previousButtonVariant}
           route={previousButtonRoute}

@@ -131,9 +131,8 @@ const CreateEvent = () => {
               initialValue={formState.address}
               callback={(value) => {
                 updateForm("address", String(value.formatted_address));
-              }}
-              onChange={(value) => {
-                updateForm("address", String(value.target.value));
+                updateForm("longitude", value.longitude);
+                updateForm("latitude", value.latitude);
               }}
             />
           </FormField>

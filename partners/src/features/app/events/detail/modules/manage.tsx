@@ -13,7 +13,7 @@ export const Manage = ({ id, endDate }: { id: string; endDate: string }) => {
   });
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-2.5 sm:space-y-0 flex flex-col sm:flex-row items-center sm:space-x-2.5">
       <Link
         to={isPastDate(endDate) ? "/app/events/$id" : "/app/events/$id/edit"}
         className={cn(

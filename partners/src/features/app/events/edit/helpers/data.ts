@@ -14,6 +14,8 @@ export const getInitialEventState = (eventData: any) => {
     endTime,
     description: eventData?.description || "",
     address: eventData?.address || "",
+    longitude: eventData?.longitude || 0,
+    latitude: eventData?.latitude || 0,
     subCategory: {
       id: eventData.subcategory._id,
       name: eventData.subcategory.name,

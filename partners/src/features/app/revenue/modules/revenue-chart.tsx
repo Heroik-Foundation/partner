@@ -43,7 +43,7 @@ export const TicketRevenueChart = () => {
   return (
     <div className="w-full space-y-5 flex items-center justify-center flex-col">
       <Button
-        className="w-full text-sm font-semibold"
+        className="w-full text-sm font-semibold sm:h-20"
         onClick={() => {
           navigate({
             to: "/app/revenue/history",

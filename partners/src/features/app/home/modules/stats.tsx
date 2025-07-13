@@ -1,12 +1,14 @@
 "use client";
 
-import { BookCheck, BookImage } from "lucide-react";
+import { BookCheck, BookImage, WalletCards } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   usePartnerStatsQuery,
   useUserPropertiesQuery,
 } from "../../global/hooks/query";
 import { formatCurrency } from "@/helpers/text";
+import { buttonVariants } from "@/modules/ui/button";
+import { Link } from "@tanstack/react-router";
 
 export function Stats() {
   const { data: user } = useUserPropertiesQuery();
@@ -34,7 +36,7 @@ export function Stats() {
           <div
             className={cn(
               item.bg,
-              "p-3.5 rounded-xl flex items-center justify-between shadow bg-center"
+              "p-3.5 sm:p-5 rounded-xl flex items-center justify-between shadow bg-center"
             )}
             key={index}
           >
@@ -49,6 +51,20 @@ export function Stats() {
           </div>
         );
       })}
+
+      <Link
+        to="/app/revenue"
+        className={cn(
+          buttonVariants({
+            variant: "default",
+            className: "w-full h-14 sm:h-20 bg-accent rounded-xl col-span-2",
+            size: "lg",
+          })
+        )}
+      >
+        <WalletCards />
+        <p className="font-bold">Event Revenue</p>
+      </Link>
     </div>
   );
 }

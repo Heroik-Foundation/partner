@@ -41,21 +41,24 @@ export const Highlight = (props: HighlightProps) => {
 
   return (
     <Fragment>
-      <div className="absolute -top-20 w-full h-96 left-0 right-0 max-w-lg mx-auto">
+      <div className="absolute -top-20 w-full h-96 left-0 right-0 max-w-full mx-auto px-4">
         {thumbnail ? (
-          <img className="w-full h-full object-cover" src={thumbnail} />
+          <img
+            className="w-full h-full object-cover rounded-b-2xl"
+            src={thumbnail}
+          />
         ) : (
-          <div className="w-full h-full bg-secondary text-primary flex items-center justify-center">
+          <div className="w-full h-full bg-secondary text-primary flex items-center justify-center rounded-lg">
             <Hash size={32} />
           </div>
         )}
       </div>
       <div
         ref={highlightContentRef}
-        className="p-4 bg-primary text-white absolute rounded-3xl space-y-2.5 left-0 right-0 transform -translate-y-1/2 top-[304px] max-h-52 shadow-lg mx-auto w-[90%] max-w-md text-sm"
+        className="p-4 bg-primary text-white absolute rounded-3xl space-y-2.5 left-0 right-0 transform -translate-y-1/2 top-[304px] max-h-52 shadow-lg mx-auto w-[85%] md:max-w-xl lg:max-w-2xl text-sm"
       >
         <h1 className="font-black text-2xl text-center">{title}</h1>
-        <p className="text-center font-semibold text-xs text-white/75">
+        <p className="text-center font-semibold text-xs sm:text-sm text-white/75">
           {truncateText(description, 135)}
         </p>
 
@@ -73,12 +76,14 @@ export const Highlight = (props: HighlightProps) => {
                   key={index}
                   src={avatar}
                   alt="Avatar"
-                  className="w-5 h-5 rounded-full object-fill border-2 border-white"
+                  className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-fill border-2 border-white"
                 />
               ))}
             </div>
 
-            <span className="text-xs font-bold">{members} Members</span>
+            <span className="text-xs sm:text-sm font-bold">
+              {members} Members
+            </span>
           </div>
         </Link>
       </div>

@@ -62,8 +62,6 @@ export const UserPost = ({
     }
   };
 
-  console.log(attachments);
-
   return (
     <div className="w-full space-y-2.5" ref={nodeRef}>
       <div className="flex items-center justify-between">
@@ -102,7 +100,7 @@ export const UserPost = ({
         {/* @ts-ignore  */}
         {attachments && attachments[0] && attachments[0].image && (
           <img
-            className="rounded-xl object-fill object-center"
+            className="rounded-xl object-cover object-center w-28 h-28"
             src={attachments[0].image}
             alt=""
           />

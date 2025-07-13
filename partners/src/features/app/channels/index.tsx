@@ -43,9 +43,9 @@ const AllChannels = () => {
           setQuery(target.value);
         }}
       />
+      <h2 className="text-primary font-extrabold text-sm">All Channels</h2>
       {channels && (
-        <div className="space-y-5 flex flex-col">
-          <h2 className="text-primary font-extrabold text-sm">All Channels</h2>
+        <div className="gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {channels.pages.map((channel, index, all_channels) => (
             <Channel
               {...(all_channels.length - 1 === index && {
@@ -60,13 +60,13 @@ const AllChannels = () => {
               avatars={channel.members.map((member) => member.photo)}
             />
           ))}
+          {isFetching && (
+            <Fragment>
+              <ChannelSkeletonLoader />
+              <ChannelSkeletonLoader />
+            </Fragment>
+          )}
         </div>
-      )}
-      {isFetching && (
-        <Fragment>
-          <ChannelSkeletonLoader />
-          <ChannelSkeletonLoader />
-        </Fragment>
       )}
       {channels && channels?.pages.length < 1 && !isFetching && (
         <ChannelNotFound />

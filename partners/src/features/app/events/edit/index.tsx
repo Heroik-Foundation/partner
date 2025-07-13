@@ -23,6 +23,7 @@ import { useEffect } from "react";
 import { getInitialEventState } from "./helpers/data";
 import { ActionDrawer } from "@/modules/units/page/action";
 import { Switch } from "@/modules/ui/switch";
+import PlaceAutocomplete from "@/modules/units/form/address";
 
 const CreateEvent = () => {
   const { id } = useParams({
@@ -139,12 +140,14 @@ const CreateEvent = () => {
           </FormField>
           <FormField>
             <Label>Event Venue</Label>
-            <Input
+            <PlaceAutocomplete
               required
               placeholder="Type Event/Address here"
-              value={formState.address}
-              onChange={({ target }) => {
-                updateForm("address", target.value);
+              initialValue={formState.address}
+              callback={(value) => {
+                updateForm("address", String(value.formatted_address));
+                updateForm("longitude", value.longitude);
+                updateForm("latitude", value.latitude);
               }}
             />
           </FormField>
