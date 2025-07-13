@@ -34,7 +34,7 @@ export const columns: ColumnDef<Donation>[] = [
     header: () => <div className="text-start">Donor</div>,
     cell: ({ row }) => {
       const donation = row.original;
-      const name = donation.user.fullname || donation.user.username || "-";
+      const name = donation.user?.fullname || donation.user?.username || "-";
 
       return (
         <div className="text-start ">

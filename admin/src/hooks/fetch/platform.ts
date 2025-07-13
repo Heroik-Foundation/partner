@@ -12,8 +12,7 @@ export function useContacts() {
   return useInfiniteQuery({
     queryKey: ["contacts"],
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await api(`/contacts?page=${pageParam}`, {
-        method: "GET",
+      const { data } = await api.get(`/contacts?page=${pageParam}`, {
         admin: true,
         authenticated: true,
       });
@@ -49,10 +48,13 @@ export function useAppVersion({ platform }: { platform: "ios" | "android" }) {
   return useQuery({
     queryKey: ["app-version", platform],
     queryFn: async () => {
-      const { data } = await api(`/users/app-versions?platform=${platform}`, {
-        authenticated: true,
-        admin: false,
-      });
+      const { data } = await api.get(
+        `/users/app-versions?platform=${platform}`,
+        {
+          authenticated: true,
+          admin: false,
+        }
+      );
 
       return data.versions.data as AppVersion[];
     },
@@ -63,7 +65,7 @@ export function useAppVersionDetails({ id }: { id: string }) {
   return useQuery({
     queryKey: ["get-app-version-details", id],
     queryFn: async () => {
-      const { data } = await api(`/users/get-app-version-by-id/${id}`, {
+      const { data } = await api.get(`/users/get-app-version-by-id/${id}`, {
         authenticated: true,
         admin: false,
       });

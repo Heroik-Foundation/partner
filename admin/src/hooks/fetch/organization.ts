@@ -27,12 +27,11 @@ export function useAllOrganizations({
   return useInfiniteQuery({
     queryKey: ["organizations-list", filter],
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await api(
+      const { data } = await api.get(
         `/organizations?page=${pageParam}&sort=${filter}`,
         {
           admin: false,
           authenticated: true,
-          method: "GET",
         }
       );
 
@@ -69,10 +68,9 @@ export function useOrganizationDetails({ id }: { id: string }) {
   return useQuery({
     queryKey: ["organization"],
     queryFn: async () => {
-      const { data } = await api(`/organizations/${id}`, {
+      const { data } = await api.get(`/organizations/${id}`, {
         admin: false,
         authenticated: true,
-        method: "GET",
       });
 
       return data.organization as CharityOrganization;
@@ -85,7 +83,7 @@ export function useOrganizationEvents({ id }: { id: string }) {
   return useInfiniteQuery({
     queryKey: ["organization-events", id],
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await api(
+      const { data } = await api.get(
         `/organizations/organization-events/${id}?page=${pageParam}`,
         {
           method: "GET",
@@ -128,7 +126,7 @@ export function useOrganizationWithdrawalLogs({ id }: { id: string }) {
   return useInfiniteQuery({
     queryKey: ["organization-logs", id],
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await api(
+      const { data } = await api.get(
         `/organizations/withdrawal-logs/${id}?page=${pageParam}`,
         {
           method: "GET",
@@ -178,10 +176,9 @@ export function useOrganizationDonations({
     queryKey: ["organization-donations-list"],
     queryFn: async ({ pageParam = 1 }) => {
       if (type === "direct") {
-        const { data } = await api(
+        const { data } = await api.get(
           `/organizations/direct-donation-history/${id}?page=${pageParam}`,
           {
-            method: "GET",
             admin: false,
             authenticated: true,
           }
@@ -189,10 +186,9 @@ export function useOrganizationDonations({
 
         return data.donations;
       } else {
-        const { data } = await api(
+        const { data } = await api.get(
           `/organizations/indirect-donation-history/${id}?page=${pageParam}`,
           {
-            method: "GET",
             admin: false,
             authenticated: true,
           }
@@ -233,8 +229,7 @@ export function useInterests() {
   return useInfiniteQuery({
     queryKey: ["interests-list"],
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await api(`/interests?page=${pageParam}`, {
-        method: "GET",
+      const { data } = await api.get(`/interests?page=${pageParam}`, {
         admin: true,
         authenticated: true,
       });
@@ -271,7 +266,7 @@ export function useOrganizationStats({ id }: { id: string | undefined }) {
   return useQuery({
     queryKey: ["organization-stats"],
     queryFn: async () => {
-      const { data } = await api(`/organizations/stats/${id}`, {
+      const { data } = await api.get(`/organizations/stats/${id}`, {
         admin: false,
         authenticated: true,
         method: "GET",

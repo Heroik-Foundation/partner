@@ -9,10 +9,9 @@ export function useEventDeleteMutation({ id }: { id: string }) {
   const { navigate } = useRouter();
   return useMutation({
     mutationFn: async () => {
-      const { data } = await api(`/events/${id}`, {
+      const { data } = await api.delete(`/events/${id}`, {
         admin: false,
         authenticated: true,
-        method: "DELETE",
       });
 
       return data;

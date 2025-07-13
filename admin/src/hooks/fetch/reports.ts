@@ -25,10 +25,9 @@ export function useReports() {
         data,
       }: {
         data: Statistics;
-      } = await api("/report", {
+      } = await api.get("/report", {
         authenticated: true,
         admin: true,
-        method: "GET",
       });
 
       const {
@@ -37,10 +36,9 @@ export function useReports() {
         data: {
           report: FinancialReports;
         };
-      } = await api("/financial-report", {
+      } = await api.get("/financial-report", {
         authenticated: true,
         admin: true,
-        method: "GET",
       });
 
       return {

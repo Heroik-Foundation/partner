@@ -24,3 +24,7 @@ export function formatDate(isoDate: string): string {
 
   return `${day}-${month}-${year} ${hours}:${minutes}`;
 }
+
+export function timeInMinutes(minutes: number) {
+  return minutes * 60 * 1000;
+}

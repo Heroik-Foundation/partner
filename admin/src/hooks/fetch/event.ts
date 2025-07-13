@@ -13,10 +13,9 @@ export function useAllEvents({ time }: { time: TimeFrame }) {
   return useInfiniteQuery({
     queryKey: ["all-events", time],
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await api(
+      const { data } = await api.get(
         `/events/all-events?page=${pageParam}&timeFilter=${time}`,
         {
-          method: "GET",
           admin: false,
           authenticated: true,
         }
@@ -54,11 +53,13 @@ export function useEventDonations({ id }: { id: string }) {
   return useInfiniteQuery({
     queryKey: ["event-donations", id],
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await api(`/events/${id}/donations?page=${pageParam}`, {
-        method: "GET",
-        admin: false,
-        authenticated: true,
-      });
+      const { data } = await api.get(
+        `/events/${id}/donations?page=${pageParam}`,
+        {
+          admin: false,
+          authenticated: true,
+        }
+      );
 
       return data.event;
     },
@@ -91,8 +92,7 @@ export function useEventById({ id }: { id: string }) {
   return useQuery({
     queryKey: ["event", id],
     queryFn: async () => {
-      const { data } = await api(`/events/${id}`, {
-        method: "GET",
+      const { data } = await api.get(`/events/${id}`, {
         admin: false,
         authenticated: true,
       });

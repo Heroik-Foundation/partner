@@ -5,10 +5,9 @@ export function useEventPartnersLists() {
   return useQuery({
     queryKey: ["event-partners"],
     queryFn: async () => {
-      const { data } = await api("/event-partners", {
+      const { data } = await api.get("/event-partners", {
         authenticated: true,
         admin: false,
-        method: "GET",
       });
 
       return data;

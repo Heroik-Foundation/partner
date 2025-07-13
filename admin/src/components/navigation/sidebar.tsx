@@ -13,6 +13,7 @@ export type Path =
   | "/dashboard/manage"
   | "/dashboard/reports"
   | "/dashboard/update-logs"
+  | "/dashboard/categories"
   | "/dashboard/users"
   | "/dashboard"
   | "/";
@@ -63,7 +64,7 @@ export const links: Links[] = [
   {
     name: "Update logs",
     path: "/dashboard/update-logs",
-    svg: "users",
+    svg: "logs",
   },
   {
     name: "Manage admin",
@@ -74,6 +75,11 @@ export const links: Links[] = [
     name: "Reports",
     path: "/dashboard/reports",
     svg: "reports",
+  },
+  {
+    name: "Categories",
+    path: "/dashboard/categories",
+    svg: "categories",
   },
   {
     name: "Logout",
@@ -108,8 +114,6 @@ export function LinkorButton({ ...props }: Links) {
   const { navigate } = useRouter();
   const pathname = location.pathname;
 
-  const size = "20";
-
   if (props.callback) {
     return (
       <button
@@ -122,7 +126,12 @@ export function LinkorButton({ ...props }: Links) {
           });
         }}
       >
-        <Icon width={size} height={size} title={props.svg} />
+        <div className="w-5 flex items-center justify-center">
+          <Icon
+            title={props.svg}
+            className={cn("stroke-black/50 fill-[#999999]")}
+          />
+        </div>
         <span>{props.name}</span>
       </button>
     );
@@ -137,15 +146,17 @@ export function LinkorButton({ ...props }: Links) {
             : "border-transparent"
         )}
       >
-        <Icon
-          width={size}
-          height={size}
-          className={cn(
-            pathname === props.path ? "fill-[#4A16CD]" : "fill-[#999999]",
-            props.svg === "users" && "-mx-1"
-          )}
-          title={props.svg}
-        />
+        <div className="w-5 flex items-center justify-center">
+          <Icon
+            className={cn(
+              pathname === props.path
+                ? "stroke-[#4A16CD] fill-[#4A16CD]/10"
+                : "stroke-black/50 fill-[#999999]"
+            )}
+            title={props.svg}
+          />
+        </div>
+
         <span>{props.name}</span>
       </Link>
     );

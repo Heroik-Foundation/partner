@@ -15,15 +15,17 @@ export function useSignIn({ email, password }: ISignIn) {
   return useMutation({
     mutationKey: ["sign-in"],
     mutationFn: async () => {
-      const { data } = await api("/signin", {
-        authenticated: false,
-        admin: true,
-        method: "POST",
-        data: {
+      const { data } = await api.post(
+        "/signin",
+        {
           email: email,
           password: password,
         },
-      });
+        {
+          authenticated: false,
+          admin: true,
+        }
+      );
 
       setSessionToken(data.token);
 

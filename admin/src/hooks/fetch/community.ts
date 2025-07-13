@@ -6,8 +6,7 @@ export function useAllCommunities() {
   return useInfiniteQuery({
     queryKey: ["community"],
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await api(`/communities?page=${pageParam}`, {
-        method: "GET",
+      const { data } = await api.get(`/communities?page=${pageParam}`, {
         admin: true,
         authenticated: true,
       });
@@ -38,5 +37,3 @@ export function useAllCommunities() {
     initialPageParam: 1,
   });
 }
-
-

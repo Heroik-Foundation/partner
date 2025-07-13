@@ -6,10 +6,9 @@ export function useAllDonations() {
   return useInfiniteQuery({
     queryKey: ["all-platform-donations"],
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await api(
+      const { data } = await api.get(
         `/donations/all-donation-history?page=${pageParam}`,
         {
-          method: "GET",
           admin: false,
           authenticated: true,
         }
@@ -43,5 +42,3 @@ export function useAllDonations() {
     initialPageParam: 1,
   });
 }
-
-

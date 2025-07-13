@@ -10,10 +10,7 @@ export function useCreateOrganizationMutation() {
 
   return useMutation({
     mutationFn: async (formData: FormData) => {
-      const { data } = await api("/organizations", {
-        method: "POST",
-        headers: { "Content-Type": "multipart/form-data" },
-        data: formData,
+      const { data } = await api.post("/organizations", formData, {
         authenticated: true,
       });
 
@@ -46,11 +43,9 @@ export function useEditOrganizationMutation() {
       id: string;
       formData: FormData;
     }) => {
-      const { data } = await api(`/organizations/${id}`, {
+      const { data } = await api.patch(`/organizations/${id}`, formData, {
         authenticated: true,
         admin: true,
-        method: "PATCH",
-        data: formData,
       });
 
       return data;

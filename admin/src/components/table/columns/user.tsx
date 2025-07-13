@@ -50,6 +50,7 @@ export const columns: ColumnDef<User>[] = [
     header: "Name",
     cell: ({ row }) => {
       const user = row.original;
+
       return (
         <>
           {user.fullname ? (
