@@ -28,11 +28,7 @@ function Page() {
 
   async function getSearchRequest() {
     if (searchValue !== "") {
-      const { data } = await api(`/users?query=${searchValue}`, {
-        method: "GET",
-        authenticated: true,
-        admin: true,
-      });
+      const { data } = await api.get(`/users?query=${searchValue}`);
 
       setSearchedRow(data.data);
     }

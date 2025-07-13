@@ -33,10 +33,12 @@ function Page() {
 
   async function getSearchRequest() {
     if (searchValue !== "") {
-      const { data } = await api(`/organizations?searchQuery=${searchValue}`, {
-        method: "GET",
-        authenticated: true,
-      });
+      const { data } = await api.get(
+        `/organizations?searchQuery=${searchValue}`,
+        {
+          admin: false,
+        }
+      );
 
       setSearchedRow(data.data);
     }
