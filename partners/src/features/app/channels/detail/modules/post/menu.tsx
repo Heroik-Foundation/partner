@@ -3,7 +3,7 @@ import { DialogHeader } from "@/modules/ui/dialog";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/modules/ui/drawer";
 import { ActionDialog } from "@/modules/units/page/action";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import { ReactNode } from "@tanstack/react-router";
+import { ReactNode } from "react";
 import { Trash2 } from "lucide-react";
 import { useDeletePostMutation } from "../../hooks/mutation";
 

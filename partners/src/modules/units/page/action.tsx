@@ -20,7 +20,7 @@ import {
   DialogClose,
 } from "@/modules/ui/dialog";
 
-import { ReactNode } from "@tanstack/react-router";
+import { ReactNode } from "react";
 import { CheckCircle, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
