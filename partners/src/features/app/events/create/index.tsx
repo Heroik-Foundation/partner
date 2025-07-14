@@ -65,10 +65,6 @@ const CreateEvent = () => {
     if (isSuccess) {
       reset();
     }
-
-    return () => {
-      reset();
-    };
   }, [isSuccess]);
 
   const removeCharityOrganizationById = (id: string) => {

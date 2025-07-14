@@ -21,6 +21,7 @@ const SelectEventCategory = () => {
           title: "Select your Preferred Category for The Event",
         }}
       />
+
       {rows.map((category, index) => (
         <EventCategory
           formState={formState}
