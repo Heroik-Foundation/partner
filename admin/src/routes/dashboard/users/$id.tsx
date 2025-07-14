@@ -10,6 +10,7 @@ import { PageTitle } from "@/components/layout/page-title";
 import { Link } from "@tanstack/react-router";
 import placeholder from "@/assets/dashboard/placeholder.jpg";
 import { cn } from "@/lib/utils";
+import { CreateNotificationDialog } from "@/features/users/modules/create-notifcation";
 
 export const Route = createFileRoute("/dashboard/users/$id")({
   component: Layout,
@@ -62,7 +63,11 @@ function Layout() {
   return (
     <div className="space-y-5">
       <div className="space-y-5">
-        <PageTitle title="Users" subTitle="View all users" />
+        <PageTitle
+          title="Users"
+          subTitle="View all users"
+          rightContent={<CreateNotificationDialog id={String(id)} />}
+        />
         <div className="w-full bg-white p-5 rounded lg:h-[364px] shadow flex flex-col items-start lg:flex-row lg:space-x-10 space-y-5 lg:space-y-0">
           <img
             src={placeholder}
