@@ -18,9 +18,8 @@ const fetchGlobalSuggestions = async (input: string): Promise<Suggestion[]> => {
           input,
           types: "(regions)",
           key: apiKey,
-          // Removed all region restrictions
-          language: "en", // Optional: set preferred language
-          components: "country:*", // Search globally
+          language: "en",
+          components: "country:*",
         },
         timeout: 30000,
       }

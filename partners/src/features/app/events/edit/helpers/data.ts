@@ -28,7 +28,10 @@ export const getInitialEventState = (eventData: any) => {
     startDate: eventData?.endTime.split("T")[0] || "",
     endDate: eventData?.eventEndDate.split("T")[0] || "",
     isPaid: Number(eventData?.eventTicket.ticketPrice || 0) > 0,
-    isFundraiser: true,
+    isFundraiser:
+      eventData &&
+      eventData.eventPledge.totalPledgedAmount > 0 &&
+      eventData.eventPledge.organizations.length,
     ticketPrice: Number(Number(eventData?.eventTicket.ticketPrice || 0) / 100),
     minimumPledge: Number(
       Number(eventData?.eventPledge?.minimumPledge || 0) / 100

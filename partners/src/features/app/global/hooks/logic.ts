@@ -30,7 +30,7 @@ export interface EventFormState extends BaseEventFormData {
   charityPartners: { name: string; id: string }[];
 }
 
-const defaultValue: EventFormState = {
+export const defaultValue: EventFormState = {
   photo: null,
   name: "",
   description: "",
