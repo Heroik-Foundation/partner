@@ -19,6 +19,7 @@ function Page() {
         subTitle="View all categories"
         rightContent={
           <CategoryForm
+            triggerTitle="Category"
             onSubmit={(data) => {
               if (data.file && data.name) {
                 mutate({

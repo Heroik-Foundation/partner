@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 export interface User {
   _id: string;
@@ -64,7 +65,7 @@ export const columns: ColumnDef<User>[] = [
               </div>
             </div>
           ) : (
-            ""
+            <Badge variant="outline">Pending Input</Badge>
           )}
         </>
       );
@@ -88,8 +89,12 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => (
-      <div className="lowercase">
-        {row.getValue("email") ? row.getValue("email") : ""}
+      <div>
+        {row.getValue("email") ? (
+          <p className="lowercase">{row.getValue("email")}</p>
+        ) : (
+          <Badge variant="outline">Pending Input</Badge>
+        )}
       </div>
     ),
   },

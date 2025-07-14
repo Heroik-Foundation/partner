@@ -1,6 +1,6 @@
+import { Badge } from "@/components/ui/badge";
 import { formatDate, formatReadableDate } from "@/helpers/date-time";
 import { ColumnDef } from "@tanstack/react-table";
-import { UnavailableMarker } from "./markers";
 
 export interface Community {
   _id: string;
@@ -35,7 +35,11 @@ export const columns: ColumnDef<Community>[] = [
     header: () => <div className="text-start">Community Name</div>,
     cell: ({ row }) => (
       <div className="text-start">
-        {row.getValue("name") ? row.getValue("name") : <UnavailableMarker />}
+        {row.getValue("name") ? (
+          row.getValue("name")
+        ) : (
+          <Badge variant={"destructive"}>Not found</Badge>
+        )}
       </div>
     ),
   },
@@ -45,7 +49,7 @@ export const columns: ColumnDef<Community>[] = [
     cell: () => {
       return (
         <div className="text-center">
-          <UnavailableMarker />
+          <Badge variant={"destructive"}>Not found</Badge>
         </div>
       );
     },
@@ -71,11 +75,11 @@ export const columns: ColumnDef<Community>[] = [
     cell: ({ row }) => {
       const community = row.original;
 
-      const admin = community.admin.fullname;
+      const admin = community.admin.fullname || undefined;
 
       return (
         <div className="text-start">
-          {row.getValue("admin") ? admin : <UnavailableMarker />}
+          {admin ? admin : <Badge variant={"destructive"}>Not found</Badge>}
         </div>
       );
     },
@@ -85,9 +89,11 @@ export const columns: ColumnDef<Community>[] = [
     header: () => <div className="text-start">Created on</div>,
     cell: ({ row }) => (
       <div className="text-start">
-        {row.getValue("createdAt")
-          ? formatReadableDate(row.getValue("createdAt"))
-          : "-"}
+        {row.getValue("createdAt") ? (
+          formatReadableDate(row.getValue("createdAt"))
+        ) : (
+          <Badge variant={"destructive"}>Not found</Badge>
+        )}
       </div>
     ),
   },
@@ -107,7 +113,7 @@ export const user_columns: ColumnDef<Community>[] = [
     cell: () => {
       return (
         <div className="text-center">
-          <UnavailableMarker />
+          <Badge variant={"destructive"}>Not found</Badge>
         </div>
       );
     },
@@ -117,7 +123,11 @@ export const user_columns: ColumnDef<Community>[] = [
     header: () => <div className="text-start">Community Name</div>,
     cell: ({ row }) => (
       <div className="text-start ">
-        {row.getValue("name") ? row.getValue("name") : <UnavailableMarker />}
+        {row.getValue("name") ? (
+          row.getValue("name")
+        ) : (
+          <Badge variant={"destructive"}>Not found</Badge>
+        )}
       </div>
     ),
   },
@@ -127,9 +137,11 @@ export const user_columns: ColumnDef<Community>[] = [
     header: () => <div className="text-start">Joined/Created on</div>,
     cell: ({ row }) => (
       <div className="text-start ">
-        {row.getValue("createdAt")
-          ? formatDate(row.getValue("createdAt"))
-          : "-"}
+        {row.getValue("createdAt") ? (
+          formatDate(row.getValue("createdAt"))
+        ) : (
+          <Badge variant={"destructive"}>Not found</Badge>
+        )}
       </div>
     ),
   },

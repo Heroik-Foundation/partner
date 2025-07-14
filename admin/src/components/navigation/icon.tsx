@@ -192,6 +192,82 @@ const Logout: React.FC<React.SVGProps<SVGSVGElement>> = ({ ...props }) => {
   );
 };
 
+const Contact: React.FC<React.SVGProps<SVGSVGElement>> = ({ ...props }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      {...props}
+    >
+      <path d="M2 6h4" />
+      <path d="M2 10h4" />
+      <path d="M2 14h4" />
+      <path d="M2 18h4" />
+      <rect width="16" height="20" x="4" y="2" rx="2" />
+      <path d="M15 2v20" />
+      <path d="M15 7h5" />
+      <path d="M15 12h5" />
+      <path d="M15 17h5" />
+    </svg>
+  );
+};
+
+const Community: React.FC<React.SVGProps<SVGSVGElement>> = ({ ...props }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      {...props}
+    >
+      <path d="M19.07 4.93A10 10 0 0 0 6.99 3.34" />
+      <path d="M4 6h.01" />
+      <path d="M2.29 9.62A10 10 0 1 0 21.31 8.35" />
+      <path d="M16.24 7.76A6 6 0 1 0 8.23 16.67" />
+      <path d="M12 18h.01" />
+      <path d="M17.99 11.66A6 6 0 0 1 15.77 16.67" />
+      <circle cx="12" cy="12" r="2" />
+      <path d="m13.41 10.59 5.66-5.66" />
+    </svg>
+  );
+};
+
+const Partner: React.FC<React.SVGProps<SVGSVGElement>> = ({ ...props }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      {...props}
+    >
+      <path d="m11 17 2 2a1 1 0 1 0 3-3" />
+      <path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" />
+      <path d="m21 3 1 11h-2" />
+      <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" />
+      <path d="M3 4h8" />
+    </svg>
+  );
+};
+
 export type IconNames =
   | "dashboard"
   | "categories"
@@ -201,7 +277,10 @@ export type IconNames =
   | "charities"
   | "reports"
   | "logs"
-  | "logout";
+  | "logout"
+  | "partner"
+  | "contact"
+  | "community";
 
 interface Icon extends React.SVGProps<SVGSVGElement> {
   title: IconNames;
@@ -217,6 +296,9 @@ const SelectedIcon = {
   logout: Logout,
   categories: Categories,
   logs: Logs,
+  partner: Partner,
+  community: Community,
+  contact: Contact,
 };
 
 export function Icon({ title, ...props }: Icon) {

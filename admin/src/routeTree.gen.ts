@@ -25,6 +25,9 @@ const DashboardUpdateLogsIndexLazyRouteImport = createFileRoute(
 const DashboardReportsIndexLazyRouteImport = createFileRoute(
   '/dashboard/reports/',
 )()
+const DashboardPartnersIndexLazyRouteImport = createFileRoute(
+  '/dashboard/partners/',
+)()
 const DashboardManageIndexLazyRouteImport =
   createFileRoute('/dashboard/manage/')()
 const DashboardEventsIndexLazyRouteImport =
@@ -115,6 +118,14 @@ const DashboardReportsIndexLazyRoute =
     getParentRoute: () => DashboardRoute,
   } as any).lazy(() =>
     import('./routes/dashboard/reports/index.lazy').then((d) => d.Route),
+  )
+const DashboardPartnersIndexLazyRoute =
+  DashboardPartnersIndexLazyRouteImport.update({
+    id: '/partners/',
+    path: '/partners/',
+    getParentRoute: () => DashboardRoute,
+  } as any).lazy(() =>
+    import('./routes/dashboard/partners/index.lazy').then((d) => d.Route),
   )
 const DashboardManageIndexLazyRoute =
   DashboardManageIndexLazyRouteImport.update({
@@ -290,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/donations': typeof DashboardDonationsIndexLazyRoute
   '/dashboard/events': typeof DashboardEventsIndexLazyRoute
   '/dashboard/manage': typeof DashboardManageIndexLazyRoute
+  '/dashboard/partners': typeof DashboardPartnersIndexLazyRoute
   '/dashboard/reports': typeof DashboardReportsIndexLazyRoute
   '/dashboard/update-logs': typeof DashboardUpdateLogsIndexLazyRoute
   '/dashboard/users': typeof DashboardUsersIndexLazyRoute
@@ -315,6 +327,7 @@ export interface FileRoutesByTo {
   '/dashboard/donations': typeof DashboardDonationsIndexLazyRoute
   '/dashboard/events': typeof DashboardEventsIndexLazyRoute
   '/dashboard/manage': typeof DashboardManageIndexLazyRoute
+  '/dashboard/partners': typeof DashboardPartnersIndexLazyRoute
   '/dashboard/reports': typeof DashboardReportsIndexLazyRoute
   '/dashboard/update-logs': typeof DashboardUpdateLogsIndexLazyRoute
   '/dashboard/users': typeof DashboardUsersIndexLazyRoute
@@ -344,6 +357,7 @@ export interface FileRoutesById {
   '/dashboard/donations/': typeof DashboardDonationsIndexLazyRoute
   '/dashboard/events/': typeof DashboardEventsIndexLazyRoute
   '/dashboard/manage/': typeof DashboardManageIndexLazyRoute
+  '/dashboard/partners/': typeof DashboardPartnersIndexLazyRoute
   '/dashboard/reports/': typeof DashboardReportsIndexLazyRoute
   '/dashboard/update-logs/': typeof DashboardUpdateLogsIndexLazyRoute
   '/dashboard/users/': typeof DashboardUsersIndexLazyRoute
@@ -374,6 +388,7 @@ export interface FileRouteTypes {
     | '/dashboard/donations'
     | '/dashboard/events'
     | '/dashboard/manage'
+    | '/dashboard/partners'
     | '/dashboard/reports'
     | '/dashboard/update-logs'
     | '/dashboard/users'
@@ -399,6 +414,7 @@ export interface FileRouteTypes {
     | '/dashboard/donations'
     | '/dashboard/events'
     | '/dashboard/manage'
+    | '/dashboard/partners'
     | '/dashboard/reports'
     | '/dashboard/update-logs'
     | '/dashboard/users'
@@ -427,6 +443,7 @@ export interface FileRouteTypes {
     | '/dashboard/donations/'
     | '/dashboard/events/'
     | '/dashboard/manage/'
+    | '/dashboard/partners/'
     | '/dashboard/reports/'
     | '/dashboard/update-logs/'
     | '/dashboard/users/'
@@ -490,6 +507,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/dashboard/reports'
       preLoaderRoute: typeof DashboardReportsIndexLazyRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/partners/': {
+      id: '/dashboard/partners/'
+      path: '/partners'
+      fullPath: '/dashboard/partners'
+      preLoaderRoute: typeof DashboardPartnersIndexLazyRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/manage/': {
@@ -678,6 +702,7 @@ interface DashboardRouteChildren {
   DashboardDonationsIndexLazyRoute: typeof DashboardDonationsIndexLazyRoute
   DashboardEventsIndexLazyRoute: typeof DashboardEventsIndexLazyRoute
   DashboardManageIndexLazyRoute: typeof DashboardManageIndexLazyRoute
+  DashboardPartnersIndexLazyRoute: typeof DashboardPartnersIndexLazyRoute
   DashboardReportsIndexLazyRoute: typeof DashboardReportsIndexLazyRoute
   DashboardUpdateLogsIndexLazyRoute: typeof DashboardUpdateLogsIndexLazyRoute
   DashboardUsersIndexLazyRoute: typeof DashboardUsersIndexLazyRoute
@@ -698,6 +723,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardDonationsIndexLazyRoute: DashboardDonationsIndexLazyRoute,
   DashboardEventsIndexLazyRoute: DashboardEventsIndexLazyRoute,
   DashboardManageIndexLazyRoute: DashboardManageIndexLazyRoute,
+  DashboardPartnersIndexLazyRoute: DashboardPartnersIndexLazyRoute,
   DashboardReportsIndexLazyRoute: DashboardReportsIndexLazyRoute,
   DashboardUpdateLogsIndexLazyRoute: DashboardUpdateLogsIndexLazyRoute,
   DashboardUsersIndexLazyRoute: DashboardUsersIndexLazyRoute,

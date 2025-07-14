@@ -66,7 +66,6 @@ export function TableBase<TData>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const paginationButtons: any[] = [];
 
   const table = useReactTable({
     data,
@@ -88,26 +87,66 @@ export function TableBase<TData>({
     autoResetPageIndex: false,
   });
 
-  let start = table.getState().pagination.pageIndex;
-  let end = Math.min(start + 5, table.getPageCount());
+  const currentPage = table.getState().pagination.pageIndex;
+  const pageCount = table.getPageCount();
+  const canPreviousPage = table.getCanPreviousPage();
+  const canNextPage = table.getCanNextPage();
 
+  // Preload next 3 pages when we're getting close to the end
+  React.useEffect(() => {
+    if (callback?.hasNextPage && !callback.isFetchingNextPage) {
+      // Calculate how many pages ahead we should preload (up to 3)
+      const pagesFromEnd = pageCount - currentPage;
+
+      // Start preloading when we're within 4 pages of the current end
+      if (pagesFromEnd <= 4) {
+        // Trigger multiple fetches to get 3 pages ahead
+        const fetchNext = async () => {
+          for (let i = 0; i < 3 && callback.hasNextPage; i++) {
+            if (!callback.isFetchingNextPage) {
+              callback.nextPage();
+            }
+          }
+        };
+        fetchNext();
+      }
+    }
+  }, [currentPage, pageCount, callback]);
+
+  // Generate pagination buttons
+  const paginationButtons: React.ReactNode[] = [];
+  let start = Math.max(0, currentPage - 2);
+  let end = Math.min(start + 5, pageCount);
+
+  // Adjust start if we don't have enough pages at the end
   if (end - start < 5) {
     start = Math.max(0, end - 5);
   }
 
   for (let i = start; i < end; i++) {
     paginationButtons.push(
-      <PaginationItem
-        key={i}
-        onMouseEnter={() => {
-          callback?.nextPage();
-        }}
-      >
+      <PaginationItem key={i}>
         <Button
-          variant={"outline"}
+          variant={i === currentPage ? "default" : "outline"}
           onClick={() => {
             table.setPageIndex(i);
+            // Preload next 3 pages if we're getting close to the end
+            if (callback?.hasNextPage && !callback.isFetchingNextPage) {
+              const pagesFromEnd = pageCount - i;
+              if (pagesFromEnd <= 4) {
+                const fetchNext = async () => {
+                  for (let j = 0; j < 3 && callback.hasNextPage; j++) {
+                    if (!callback.isFetchingNextPage) {
+                      callback.nextPage();
+                      await new Promise((resolve) => setTimeout(resolve, 50));
+                    }
+                  }
+                };
+                fetchNext();
+              }
+            }
           }}
+          className="cursor-pointer"
         >
           {i + 1}
         </Button>
@@ -204,35 +243,85 @@ export function TableBase<TData>({
                 <PaginationPrevious
                   size={"default"}
                   onClick={() => table.previousPage()}
-                  isActive={!table.getCanPreviousPage()}
-                  className="cursor-pointer"
+                  className={`cursor-pointer ${
+                    !canPreviousPage ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  style={{
+                    pointerEvents: !canPreviousPage ? "none" : "auto",
+                  }}
                 />
               </PaginationItem>
+
               <div className="flex space-x-2">
-                {paginationButtons.map((u) => u)}
-                {table.getCanNextPage() && (
+                {paginationButtons}
+                {(canNextPage || callback?.hasNextPage) && pageCount > 5 && (
                   <PaginationItem>
                     <PaginationEllipsis />
                   </PaginationItem>
                 )}
               </div>
+
               <PaginationItem>
-                {callback?.hasNextPage && (
-                  <PaginationNext
-                    size={"default"}
-                    onMouseEnter={() => {
-                      callback?.nextPage();
-                    }}
-                    onClick={() => {
+                <PaginationNext
+                  size={"default"}
+                  onClick={() => {
+                    if (canNextPage) {
                       table.nextPage();
-                      if (callback) {
-                        callback.nextPage();
+
+                      if (
+                        callback?.hasNextPage &&
+                        !callback.isFetchingNextPage
+                      ) {
+                        const pagesFromEnd = pageCount - (currentPage + 1);
+                        if (pagesFromEnd <= 4) {
+                          const fetchNext = async () => {
+                            for (
+                              let i = 0;
+                              i < 3 && callback.hasNextPage;
+                              i++
+                            ) {
+                              if (!callback.isFetchingNextPage) {
+                                callback.nextPage();
+                                await new Promise((resolve) =>
+                                  setTimeout(resolve, 50)
+                                );
+                              }
+                            }
+                          };
+                          fetchNext();
+                        }
                       }
-                    }}
-                    isActive={!table.getCanNextPage() && callback?.hasNextPage}
-                    className="cursor-pointer"
-                  />
-                )}
+                    }
+                  }}
+                  onMouseEnter={() => {
+                    // Preload on hover for even smoother experience
+                    if (callback?.hasNextPage && !callback.isFetchingNextPage) {
+                      const pagesFromEnd = pageCount - currentPage;
+                      if (pagesFromEnd <= 5) {
+                        const fetchNext = async () => {
+                          for (let i = 0; i < 2 && callback.hasNextPage; i++) {
+                            if (!callback.isFetchingNextPage) {
+                              callback.nextPage();
+                              await new Promise((resolve) =>
+                                setTimeout(resolve, 50)
+                              );
+                            }
+                          }
+                        };
+                        fetchNext();
+                      }
+                    }
+                  }}
+                  className={`cursor-pointer ${
+                    !canNextPage && !callback?.hasNextPage
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  style={{
+                    pointerEvents:
+                      !canNextPage && !callback?.hasNextPage ? "none" : "auto",
+                  }}
+                />
               </PaginationItem>
             </PaginationContent>
           </Pagination>

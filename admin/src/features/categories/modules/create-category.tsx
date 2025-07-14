@@ -82,7 +82,11 @@ export default function CategoryForm({
     <div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button size="sm" className="flex items-center gap-2">
+          <Button
+            isLoading={isPending}
+            size="sm"
+            className="flex items-center gap-2"
+          >
             <Plus className="w-4 h-4" />
             {triggerTitle || "Create Category"}
           </Button>
@@ -162,7 +166,7 @@ export default function CategoryForm({
                 onClick={handleSubmit}
                 disabled={!categoryName.trim()}
               >
-                {triggerTitle || "Create Category"}
+                Continue
               </Button>
             </div>
           </div>

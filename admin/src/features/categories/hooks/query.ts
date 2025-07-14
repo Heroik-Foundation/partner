@@ -14,7 +14,7 @@ export type Category = {
   }[];
 };
 
-type NestedPaginatedResponse<T, K extends string = "name"> = {
+export type NestedPaginatedResponse<T, K extends string = "name"> = {
   [key in K]: {
     currentPage: number;
     data: T[];

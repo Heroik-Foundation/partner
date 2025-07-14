@@ -14,6 +14,7 @@ export type Path =
   | "/dashboard/reports"
   | "/dashboard/update-logs"
   | "/dashboard/categories"
+  | "/dashboard/partners"
   | "/dashboard/users"
   | "/dashboard"
   | "/";
@@ -54,27 +55,32 @@ export const links: Links[] = [
   {
     name: "Communities",
     path: "/dashboard/communities",
-    svg: "users",
+    svg: "community",
   },
   {
     name: "Contacts",
     path: "/dashboard/contacts",
-    svg: "users",
+    svg: "contact",
   },
   {
     name: "Update logs",
     path: "/dashboard/update-logs",
     svg: "logs",
   },
+  // {
+  //   name: "Manage admin",
+  //   path: "/dashboard/manage",
+  //   svg: "users",
+  // },
+  // {
+  //   name: "Reports",
+  //   path: "/dashboard/reports",
+  //   svg: "reports",
+  // },
   {
-    name: "Manage admin",
-    path: "/dashboard/manage",
-    svg: "users",
-  },
-  {
-    name: "Reports",
-    path: "/dashboard/reports",
-    svg: "reports",
+    name: "Partners",
+    path: "/dashboard/partners",
+    svg: "partner",
   },
   {
     name: "Categories",

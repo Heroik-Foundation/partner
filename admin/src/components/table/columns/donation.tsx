@@ -1,8 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { UnavailableMarker, SuccessMarker } from "./markers";
 import { User } from "./user";
 import { CharityOrganization } from "./charities";
 import { formatDate } from "@/helpers/date-time";
+import { Badge } from "@/components/ui/badge";
+import { BadgeCheck, XCircle } from "lucide-react";
 
 export interface Donation {
   _id: string;
@@ -24,9 +25,7 @@ export const columns: ColumnDef<Donation>[] = [
     accessorKey: "SN",
     header: "SN",
     cell: ({ row }) => (
-      <div className="text-muted-foreground text-center">
-        {Number(row.index) + 1}
-      </div>
+      <div className="text-muted-foreground">{Number(row.index) + 1}</div>
     ),
   },
   {
@@ -34,11 +33,12 @@ export const columns: ColumnDef<Donation>[] = [
     header: () => <div className="text-start">Donor</div>,
     cell: ({ row }) => {
       const donation = row.original;
-      const name = donation.user?.fullname || donation.user?.username || "-";
+      const name = donation.user?.fullname || donation.user?.username;
 
       return (
         <div className="text-start ">
-          {name !== "" ? name : <UnavailableMarker />}
+          {name && name}
+          {!name && <Badge variant="destructive">Not found</Badge>}
         </div>
       );
     },
@@ -47,7 +47,7 @@ export const columns: ColumnDef<Donation>[] = [
     accessorKey: "amount",
     header: () => <div className="text-start">Amount</div>,
     cell: ({ row }) => (
-      <div className="text-center">
+      <div>
         {row.getValue("amount")
           ? `£${Number(row.getValue("amount")) / 100}`
           : 0}
@@ -61,9 +61,13 @@ export const columns: ColumnDef<Donation>[] = [
       return (
         <div className="text-start">
           {row.original.status === "success" ? (
-            <SuccessMarker />
+            <Badge variant="success" className="space-x-1">
+              <span>Success</span> <BadgeCheck size={12} />
+            </Badge>
           ) : (
-            <UnavailableMarker />
+            <Badge variant="destructive" className="space-x-1">
+              <span>Failed</span> <XCircle size={12} />
+            </Badge>
           )}
         </div>
       );
@@ -77,7 +81,11 @@ export const columns: ColumnDef<Donation>[] = [
 
       return (
         <div className="text-start">
-          {row.getValue("organization") ? donation.organization.name : "-"}
+          {row.getValue("organization") ? (
+            donation.organization.name
+          ) : (
+            <Badge variant="destructive">Not found</Badge>
+          )}
         </div>
       );
     },
@@ -112,9 +120,13 @@ export const user_columns: ColumnDef<Donation>[] = [
       return (
         <div className="text-start">
           {row.original.status === "success" ? (
-            <SuccessMarker />
+            <Badge variant="success" className="space-x-1">
+              <span>Success</span> <BadgeCheck size={12} />
+            </Badge>
           ) : (
-            <UnavailableMarker />
+            <Badge variant="destructive" className="space-x-1">
+              <span>Failed</span> <XCircle size={12} />
+            </Badge>
           )}
         </div>
       );

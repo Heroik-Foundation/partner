@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CalendarRange, MoreVertical, Pencil } from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
+import { Badge } from "@/components/ui/badge";
 
 export interface Member {
   fullname: string;
@@ -93,8 +94,12 @@ export const columns: ColumnDef<Event>[] = [
     accessorKey: "name",
     header: () => <div className="text-start">Event Name</div>,
     cell: ({ row }) => (
-      <div className="text-start">
-        {row.getValue("name") ? row.getValue("name") : "-"}
+      <div>
+        {row.getValue("name") ? (
+          row.getValue("name")
+        ) : (
+          <Badge variant={"destructive"}>Not found</Badge>
+        )}
       </div>
     ),
   },
@@ -119,7 +124,11 @@ export const columns: ColumnDef<Event>[] = [
 
       return (
         <div className="text-start">
-          {row.getValue("organization") ? event.organization?.name : "-"}
+          {row.getValue("organization") ? (
+            event.organization?.name
+          ) : (
+            <Badge variant={"destructive"}>Not found</Badge>
+          )}
         </div>
       );
     },
@@ -192,7 +201,11 @@ export const member_columns: ColumnDef<Member>[] = [
     header: () => <div className="text-start">Member</div>,
     cell: ({ row }) => (
       <div className="text-start">
-        {row.getValue("fullname") ? row.getValue("fullname") : "-"}
+        {row.getValue("fullname") ? (
+          row.getValue("fullname")
+        ) : (
+          <Badge variant={"destructive"}>Not found</Badge>
+        )}
       </div>
     ),
   },
@@ -206,7 +219,7 @@ export const member_columns: ColumnDef<Member>[] = [
           {row.getValue("photo") ? (
             <img src={member.photo} className="w-5 h-5 rounded-full" alt="" />
           ) : (
-            "-"
+            <Badge variant={"destructive"}>Not found</Badge>
           )}
         </div>
       );
@@ -239,7 +252,15 @@ export const donation_columns: ColumnDef<Donation>[] = [
     cell: ({ row }) => {
       const user = row.original.user;
 
-      return <div className="text-start">{user ? user.fullname : "-"}</div>;
+      return (
+        <div className="text-start">
+          {user ? (
+            user.fullname
+          ) : (
+            <Badge variant={"destructive"}>Not found</Badge>
+          )}
+        </div>
+      );
     },
   },
   {
@@ -247,9 +268,11 @@ export const donation_columns: ColumnDef<Donation>[] = [
     header: () => <div className="text-start">Date/time</div>,
     cell: ({ row }) => (
       <div className="text-start">
-        {row.getValue("createdAt")
-          ? formatReadableDate(new Date(row.getValue("createdAt")))
-          : "-"}
+        {row.getValue("createdAt") ? (
+          formatReadableDate(new Date(row.getValue("createdAt")))
+        ) : (
+          <Badge variant={"destructive"}>Not found</Badge>
+        )}
       </div>
     ),
   },
@@ -282,7 +305,11 @@ export const user_columns: ColumnDef<Event>[] = [
     header: () => <div className="text-start">Event Name</div>,
     cell: ({ row }) => (
       <div className="text-start">
-        {row.getValue("name") ? row.getValue("name") : "-"}
+        {row.getValue("name") ? (
+          row.getValue("name")
+        ) : (
+          <Badge variant={"destructive"}>Not found</Badge>
+        )}
       </div>
     ),
   },
@@ -295,7 +322,11 @@ export const user_columns: ColumnDef<Event>[] = [
 
       return (
         <div className="text-start">
-          {row.getValue("organization") ? event.organization?.name : "-"}
+          {row.getValue("organization") ? (
+            event.organization?.name
+          ) : (
+            <Badge variant={"destructive"}>Not found</Badge>
+          )}
         </div>
       );
     },
