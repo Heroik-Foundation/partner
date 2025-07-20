@@ -50,9 +50,10 @@ const EventDetail = () => {
               </Link>
 
               <ShareDialog
+                dialogTitle="Share this event"
                 title={event?.name}
                 description={event?.description}
-                url={`https://partners.hiroek.io/channel/${event?._id}`}
+                url={`https://partners.hiroek.io/event/${event?._id}`}
               >
                 <Button className="z-10">
                   <Share2 className="fill-white" />

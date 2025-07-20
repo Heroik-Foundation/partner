@@ -20,6 +20,7 @@ import copy from "copy-to-clipboard";
 
 interface ShareDialogProps {
   url: string;
+  dialogTitle?: string;
   title?: string;
   description?: string;
   children: React.ReactNode;
@@ -30,6 +31,7 @@ export const ShareDialog = ({
   title,
   description,
   children,
+  dialogTitle = "Share this channel",
 }: ShareDialogProps) => {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -91,7 +93,7 @@ export const ShareDialog = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Share this channel</DialogTitle>
+          <DialogTitle>{dialogTitle}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           {/* Native Share (if available) */}
