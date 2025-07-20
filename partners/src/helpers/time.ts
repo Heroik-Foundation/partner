@@ -9,14 +9,14 @@ export function formatISODate(isoString: string): {
     day: "numeric",
     month: "long",
     year: "numeric",
-    timeZone: "UTC",
+    // timeZone: "UTC",
   };
 
   const timeOptions: Intl.DateTimeFormatOptions = {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
-    timeZone: "UTC",
+    // timeZone: "UTC",
   };
 
   const formattedDate = new Intl.DateTimeFormat("en-US", dateOptions).format(
