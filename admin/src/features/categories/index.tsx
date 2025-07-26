@@ -153,8 +153,9 @@ export default function CategoryList() {
                   src={category.image}
                   alt={category.name}
                   className="w-10 h-10 rounded object-cover object-center"
-                  loading="eager"
+                  // loading="eager"
                 />
+
                 <span className="font-medium">{category.name}</span>
               </div>
               <div className="flex items-center space-x-1">
@@ -175,7 +176,7 @@ export default function CategoryList() {
                 )}
 
                 <CategoryForm
-                  title="Create Category"
+                  title="Create Sub Category"
                   triggerTitle="Sub Category"
                   onSubmit={(data) =>
                     handleCreateSubCategory(category._id, data)

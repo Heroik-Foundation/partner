@@ -145,7 +145,7 @@ export default function CategoryForm({
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".png,.jpg,.jpeg"
+                accept=".png,.jpg,.jpeg,.svg"
                 onChange={handleImageChange}
                 className="hidden"
               />
