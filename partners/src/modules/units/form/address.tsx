@@ -79,7 +79,7 @@ const PlaceAutocomplete = ({
   callback,
   placeholder = "Enter a location",
   required = false,
-  countryRestriction = ["gb", "je", "gg", "im"],
+  countryRestriction = [],
   initialValue,
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
