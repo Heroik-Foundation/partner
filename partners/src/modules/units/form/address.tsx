@@ -130,7 +130,6 @@ const MapLocationPicker = ({
       const autocomplete = new google.maps.places.Autocomplete(
         searchInputRef.current,
         {
-          types: ["geocode"],
           fields: ["place_id", "formatted_address", "name", "geometry"],
         }
       );
@@ -140,7 +139,7 @@ const MapLocationPicker = ({
         if (place.geometry && place.geometry.location) {
           const lat = place.geometry.location.lat();
           const lng = place.geometry.location.lng();
-          const address = place.formatted_address || place.name || "";
+          const address = place.name || place.formatted_address || "";
 
           const locationResult = { address, lat, lng };
           setLocation(locationResult);
