@@ -25,6 +25,10 @@ export const EventCategory = (props: EventCategoryProps) => {
         id: _id,
         name,
       });
+      updateForm("subCategory", {
+        name: "",
+        id: "",
+      });
     } else {
       setIsOpen(!isOpen);
     }
@@ -58,7 +62,7 @@ export const EventCategory = (props: EventCategoryProps) => {
           <img
             src={image}
             alt="icon"
-            className="w-5 h-5 rounded-full object-cover object-center"
+            className="w-5 h-5 object-fit object-center"
           />
 
           <span className="text-sm font-bold text-primary">{name}</span>
@@ -112,7 +116,7 @@ export const EventCategory = (props: EventCategoryProps) => {
                   <img
                     src={subcategory.image}
                     alt="icon"
-                    className="w-5 h-5 rounded-full object-cover object-center"
+                    className="w-5 h-5 object-fit object-center"
                   />
                   <span className="text-xs font-bold text-primary">
                     {subcategory.name}

@@ -25,7 +25,7 @@ import { ActionDrawer } from "@/modules/units/page/action";
 import { Switch } from "@/modules/ui/switch";
 import PlaceAutocomplete from "@/modules/units/form/address";
 
-const CreateEvent = () => {
+const EditEvent = () => {
   const { id } = useParams({
     strict: false,
   });
@@ -145,9 +145,9 @@ const CreateEvent = () => {
               placeholder="Type Event/Address here"
               initialValue={formState.address}
               callback={(value) => {
-                updateForm("address", String(value.formatted_address));
-                updateForm("longitude", value.longitude);
-                updateForm("latitude", value.latitude);
+                updateForm("address", String(value.address));
+                updateForm("longitude", value.lng);
+                updateForm("latitude", value.lat);
               }}
             />
           </FormField>
@@ -371,4 +371,4 @@ const CreateEvent = () => {
   );
 };
 
-export default CreateEvent;
+export default EditEvent;

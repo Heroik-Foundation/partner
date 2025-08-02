@@ -23,9 +23,11 @@ import { useEffect } from "react";
 import { Switch } from "@/modules/ui/switch";
 import PlaceAutocomplete from "@/modules/units/form/address";
 import { handleNumericInput } from "@/helpers/text";
+import { useMapStore } from "@/stores/maps";
 
 const CreateEvent = () => {
   const { formState, setFundraiser, updateForm, reset } = useEventFormStore();
+  const { resetStore } = useMapStore();
   const { navigate } = useRouter();
   const {
     isFundraiser,
@@ -64,6 +66,7 @@ const CreateEvent = () => {
   useEffect(() => {
     if (isSuccess) {
       reset();
+      resetStore();
     }
   }, [isSuccess]);
 
@@ -126,9 +129,9 @@ const CreateEvent = () => {
               placeholder="Type Event/Address here"
               initialValue={formState.address}
               callback={(value) => {
-                updateForm("address", String(value.formatted_address));
-                updateForm("longitude", value.longitude);
-                updateForm("latitude", value.latitude);
+                updateForm("address", String(value.address));
+                updateForm("longitude", value.lng);
+                updateForm("latitude", value.lat);
               }}
             />
           </FormField>
