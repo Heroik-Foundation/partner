@@ -27,7 +27,7 @@ import { useMapStore } from "@/stores/maps";
 
 const CreateEvent = () => {
   const { formState, setFundraiser, updateForm, reset } = useEventFormStore();
-  const { resetStore } = useMapStore();
+  const { resetStore, clearLocation } = useMapStore();
   const { navigate } = useRouter();
   const {
     isFundraiser,
@@ -67,6 +67,7 @@ const CreateEvent = () => {
     if (isSuccess) {
       reset();
       resetStore();
+      clearLocation();
     }
   }, [isSuccess]);
 
