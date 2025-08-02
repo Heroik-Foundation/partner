@@ -59,7 +59,7 @@ const SignUp = () => {
             callback={(value) => {
               const event: any = {
                 target: {
-                  value: value.formatted_address,
+                  value: value.address,
                   name: "address",
                 },
               };
