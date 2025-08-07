@@ -15,10 +15,8 @@ interface LocationResult {
 interface MapState {
   selectedLocation: LocationResult | null;
   markerPosition: LatLngLiteral | null;
-
   setLocation: (location: LocationResult) => void;
   setMarkerPosition: (position: LatLngLiteral | null) => void;
-  clearLocation: () => void;
   resetStore: () => void;
 }
 
@@ -41,17 +39,11 @@ export const useMapStore = create<MapState>()(
       setMarkerPosition: (position: LatLngLiteral | null) =>
         set({ markerPosition: position }),
 
-      clearLocation: () =>
-        set({
-          selectedLocation: null,
-          markerPosition: null,
-        }),
+      resetStore: () => {
+        localStorage.removeItem("map-location-storage");
 
-      resetStore: () =>
-        set({
-          selectedLocation: null,
-          markerPosition: null,
-        }),
+        set(initialState);
+      },
     }),
     {
       name: "map-location-storage",
@@ -64,8 +56,3 @@ export const useMapStore = create<MapState>()(
     }
   )
 );
-
-export const resetMapStore = () => {
-  localStorage.removeItem("map-location-storage");
-  useMapStore.setState(initialState);
-};

@@ -53,13 +53,8 @@ const MapLocationPicker = ({
   showResetButton = true,
 }: Props) => {
   // Zustand store
-  const {
-    selectedLocation,
-    markerPosition,
-    setLocation,
-    clearLocation,
-    resetStore,
-  } = useMapStore();
+  const { selectedLocation, markerPosition, setLocation, resetStore } =
+    useMapStore();
 
   // Modal state
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -193,30 +188,14 @@ const MapLocationPicker = ({
     }
   }, [disabled]);
 
-  const handleClearLocation = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      clearLocation();
-      // Force re-render by clearing search value
-      setSearchValue("");
-    },
-    [clearLocation]
-  );
-
   const handleResetStore = useCallback(
     async (e: React.MouseEvent) => {
       e.stopPropagation();
 
-      // Call the reset function
       resetStore();
 
-      // Clear local state as well
       setSearchValue("");
 
-      // Small delay to ensure persistence is cleared
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      // Force refresh if needed
       if (callback) {
         callback({ address: "", lat: 0, lng: 0 });
       }
@@ -436,14 +415,6 @@ const MapLocationPicker = ({
                   <RotateCcw className="w-3 h-3 text-gray-400 hover:text-gray-600" />
                 </button>
               )}
-              <button
-                type="button"
-                onClick={handleClearLocation}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                title="Clear location"
-              >
-                <X className="w-4 h-4 text-gray-400 hover:text-gray-600" />
-              </button>
             </>
           )}
           <MapPin
