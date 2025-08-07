@@ -15,6 +15,10 @@ import Autoplay from "embla-carousel-autoplay";
 
 const Home = () => {
   const { data: user } = useUserPropertiesQuery();
+  const { data: pastEvents } = useUserEventsQuery({
+    userId: user?._id,
+    eventFilter: "past",
+  });
   const { data: presentEvents } = useUserEventsQuery({
     userId: user?._id,
     eventFilter: "present",
@@ -26,8 +30,12 @@ const Home = () => {
   const { data: channels } = useUserChannelsQuery({ userId: user?._id });
 
   const events_list =
-    presentEvents && futureEvents
-      ? [...presentEvents.pages, ...futureEvents.pages].slice(0, 6)
+    presentEvents && futureEvents && pastEvents
+      ? [
+          ...presentEvents.pages,
+          ...futureEvents.pages,
+          ...pastEvents.pages,
+        ].slice(0, 6)
       : undefined;
   const channel = channels && channels.pages[0];
 

@@ -139,7 +139,10 @@ const MapLocationPicker = ({
         if (place.geometry && place.geometry.location) {
           const lat = place.geometry.location.lat();
           const lng = place.geometry.location.lng();
-          const address = place.name || place.formatted_address || "";
+          const address =
+            place.name && place.formatted_address
+              ? `${place.name} - ${place.formatted_address}`
+              : place.name || place.formatted_address || "";
 
           const locationResult = { address, lat, lng };
           setLocation(locationResult);
