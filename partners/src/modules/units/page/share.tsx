@@ -7,166 +7,157 @@ import {
   DialogTrigger,
 } from "@/modules/ui/dialog";
 import { Button } from "@/modules/ui/button";
-import {
-  Copy,
-  Facebook,
-  Twitter,
-  Linkedin,
-  MessageCircle,
-  Check,
-} from "lucide-react";
+import { Copy, MessageCircle, Check } from "lucide-react";
 import { toast } from "sonner";
 import copy from "copy-to-clipboard";
+
+// Social icons
+import facebookIcon from "@/assets/socials/facebook-logo.svg";
+import instagramIcon from "@/assets/socials/instagram-logo.svg";
+import XIcon from "@/assets/socials/twitter-x-logo.svg";
+import linkedInIcon from "@/assets/socials/linkedin-logo.svg";
+import whatsappIcon from "@/assets/socials/whatsapp-logo.svg";
 
 interface ShareDialogProps {
   url: string;
   dialogTitle?: string;
   title?: string;
   description?: string;
-  children: React.ReactNode;
+  trigger: React.ReactNode;
 }
 
-export const ShareDialog = ({
+const socials = [
+  {
+    name: "Facebook",
+    icon: facebookIcon,
+    url: (url: string, _: string) =>
+      `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+  },
+  {
+    name: "Whatsapp",
+    icon: whatsappIcon,
+    url: (url: string, title: string) =>
+      `https://api.whatsapp.com/send?text=${title}%20${url}`,
+  },
+  {
+    name: "Instagram",
+    icon: instagramIcon,
+    // Instagram has no web-share API → fallback
+    url: () => `https://www.instagram.com/`,
+  },
+  {
+    name: "Twitter(X)",
+    icon: XIcon,
+    url: (url: string, title: string) =>
+      `https://twitter.com/share?url=${url}&text=${title}`,
+  },
+  {
+    name: "LinkedIn",
+    icon: linkedInIcon,
+    url: (url: string, title: string) =>
+      `https://www.linkedin.com/shareArticle?url=${url}&title=${title}`,
+  },
+];
+
+export function ShareDialog({
   url,
   title,
   description,
-  children,
+  trigger,
   dialogTitle = "Share this channel",
-}: ShareDialogProps) => {
+}: ShareDialogProps) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const copyToClipboard = async () => {
+  const encodedUrl = encodeURIComponent(url);
+  const encodedTitle = encodeURIComponent(title || "");
+
+  const copyToClipboard = () => {
     try {
       copy(url);
       setCopied(true);
-      toast.success("Link copied to clipboard!");
+      toast.success("Link copied!");
       setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
+    } catch {
       toast.error("Failed to copy link");
     }
   };
 
-  const shareToSocial = (
-    platform: "facebook" | "twitter" | "linkedin" | "whatsapp"
-  ) => {
-    const encodedUrl = encodeURIComponent(url);
-    const encodedTitle = encodeURIComponent(title || "");
-
-    const shareUrls: Record<string, string> = {
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-      twitter: `https://twitter.com/share?url=${encodedUrl}&text=${encodedTitle}`,
-      linkedin: `https://www.linkedin.com/shareArticle?url=${encodedUrl}&title=${encodedTitle}`,
-      whatsapp: `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`,
-    };
-
-    if (shareUrls[platform]) {
-      window.open(
-        shareUrls[platform],
-        "share-dialog",
-        "width=600,height=400,scrollbars=yes,resizable=yes"
-      );
-      setOpen(false);
-    }
+  const shareToSocial = (getUrl: (url: string, title: string) => string) => {
+    const shareUrl = getUrl(encodedUrl, encodedTitle);
+    window.open(
+      shareUrl,
+      "share-dialog",
+      "width=600,height=400,scrollbars=yes,resizable=yes"
+    );
+    setOpen(false);
   };
 
   const handleNativeShare = async () => {
-    if (navigator.share && typeof navigator.share === "function") {
+    if (navigator.share) {
       try {
         await navigator.share({
-          title: title,
+          title: title || dialogTitle,
           text: description,
-          url: url,
+          url,
         });
         setOpen(false);
-      } catch (error) {
-        const err = error as Error;
-        if (err.name !== "AbortError") {
-          toast.error("Error sharing");
-        }
+      } catch (err: any) {
+        if (err?.name !== "AbortError") toast.error("Error sharing");
       }
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogTitle className="text-center font-extrabold text-primary">
+            {dialogTitle}
+          </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          {/* Native Share (if available) */}
-          {navigator.share && typeof navigator.share === "function" && (
+
+        <div className="space-y-5 pt-2.5">
+          {/* Native share + copy link */}
+          <div className="flex items-center space-x-2.5">
             <Button
-              variant="outline"
               className="w-full justify-start"
               onClick={handleNativeShare}
             >
               <MessageCircle className="w-4 h-4 mr-2" />
               Share via system
             </Button>
-          )}
-
-          {/* Copy Link */}
-          <Button
-            variant="outline"
-            className="w-full justify-start"
-            onClick={copyToClipboard}
-          >
-            {copied ? (
-              <Check className="w-4 h-4 mr-2 text-green-500" />
-            ) : (
-              <Copy className="w-4 h-4 mr-2" />
-            )}
-            {copied ? "Copied!" : "Copy Link"}
-          </Button>
-
-          {/* Social Platforms */}
-          <div className="space-y-2">
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              onClick={() => shareToSocial("facebook")}
-            >
-              <Facebook className="w-4 h-4 mr-2 text-blue-600" />
-              Share on Facebook
-            </Button>
 
             <Button
-              variant="outline"
+              variant="secondary"
               className="w-full justify-start"
-              onClick={() => shareToSocial("twitter")}
+              onClick={copyToClipboard}
             >
-              <Twitter className="w-4 h-4 mr-2 text-sky-500" />
-              Share on Twitter
-            </Button>
-
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              onClick={() => shareToSocial("linkedin")}
-            >
-              <Linkedin className="w-4 h-4 mr-2 text-blue-700" />
-              Share on LinkedIn
-            </Button>
-
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              onClick={() => shareToSocial("whatsapp")}
-            >
-              <MessageCircle className="w-4 h-4 mr-2 text-green-600" />
-              Share on WhatsApp
+              {copied ? (
+                <Check className="w-4 h-4 mr-2 text-green-500" />
+              ) : (
+                <Copy className="w-4 h-4 mr-2" />
+              )}
+              {copied ? "Copied!" : "Copy Link"}
             </Button>
           </div>
 
-          {/* URL Display */}
-          <div className="mt-4 p-3 bg-gray-50 rounded-md">
-            <p className="text-sm text-gray-600 break-all">{url}</p>
+          {/* Socials */}
+          <div className="flex items-center justify-between">
+            {socials.map((s) => (
+              <button
+                key={s.name}
+                className="flex flex-col items-center space-y-2"
+                onClick={() => shareToSocial(s.url)}
+              >
+                <img src={s.icon} alt={s.name} className="w-11 h-11" />
+                <span className="text-xs font-bold text-primary">{s.name}</span>
+              </button>
+            ))}
           </div>
         </div>
       </DialogContent>
     </Dialog>
   );
-};
+}

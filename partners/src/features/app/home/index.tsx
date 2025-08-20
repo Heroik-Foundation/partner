@@ -12,18 +12,21 @@ import {
 import { Channel, ChannelSkeletonLoader } from "@/modules/units/card/channel";
 import { Carousel, CarouselContent, CarouselItem } from "@/modules/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { ItemNotFound } from "@/modules/units/card/not-found";
 
 const Home = () => {
   const { data: user } = useUserPropertiesQuery();
 
-  const { data: presentEvents } = useUserEventsQuery({
-    userId: user?._id,
-    eventFilter: "present",
-  });
-  const { data: futureEvents } = useUserEventsQuery({
-    userId: user?._id,
-    eventFilter: "future",
-  });
+  const { data: presentEvents, isPending: isFetchingPresentEvents } =
+    useUserEventsQuery({
+      userId: user?._id,
+      eventFilter: "present",
+    });
+  const { data: futureEvents, isPending: isFetchingFutureEvents } =
+    useUserEventsQuery({
+      userId: user?._id,
+      eventFilter: "future",
+    });
   const { data: channels } = useUserChannelsQuery({ userId: user?._id });
 
   const events_list =
@@ -38,7 +41,7 @@ const Home = () => {
       <Stats />
       <Actions />
       <Content type="event">
-        {events_list && events_list.length >= 1 ? (
+        {events_list && events_list.length >= 1 && (
           <Carousel
             plugins={[
               Autoplay({
@@ -62,9 +65,21 @@ const Home = () => {
               ))}
             </CarouselContent>
           </Carousel>
-        ) : (
+        )}
+
+        {(isFetchingFutureEvents || isFetchingPresentEvents) && (
           <EventSkeletonLoader />
         )}
+
+        {events_list &&
+          events_list.length < 1 &&
+          !isFetchingFutureEvents &&
+          !isFetchingPresentEvents && (
+            <ItemNotFound
+              message="No present or future event found"
+              className="min-h-64 sm:min-h-80"
+            />
+          )}
       </Content>
       <Content type="channel">
         {channel ? (

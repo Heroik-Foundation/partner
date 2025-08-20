@@ -11,7 +11,7 @@ import {
   EventSkeletonLoader,
 } from "@/modules/units/card/event";
 import { useIntersectionObserver } from "@/hooks/observer";
-import { Button } from "@/modules/ui/button";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 const AllEvents = () => {
@@ -49,29 +49,35 @@ const AllEvents = () => {
         }}
       />
 
-      <div className="space-x-2.5">
-        {["past", "present", "future"].map((value, index) => {
+      <div className="flex items-center justify-between w-full bg-primary/10 rounded-xl p-0.5">
+        {["present", "future", "past"].map((value, index) => {
           const isActive = filter === value;
           return (
-            <Button
+            <button
               className={cn(
-                "transition-all",
-                !isActive && "border-2 border-primary/50"
+                "relative w-full p-4 text-primary transition-all",
+                isActive && "text-white"
               )}
-              variant={isActive ? "default" : "outline"}
               key={index}
               onClick={() => {
                 setFilter(value as any);
               }}
             >
-              <p className="first-letter:uppercase">
+              <p className="first-letter:uppercase relative z-10 font-semibold">
                 {value === "present"
                   ? "Ongoing"
                   : value === "future"
                     ? "Upcoming"
                     : value}
               </p>
-            </Button>
+
+              {isActive && (
+                <motion.div
+                  layoutId="active-event-tab-pill"
+                  className="absolute inset-0 bg-primary rounded-xl"
+                />
+              )}
+            </button>
           );
         })}
       </div>

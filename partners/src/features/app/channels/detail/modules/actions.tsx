@@ -58,8 +58,7 @@ export function Actions({ id }: { id: string }) {
                     className={cn(
                       buttonVariants({
                         variant: "accent",
-                        className:
-                          "rounded-full px-5 h-12 shadow bg-accent-900",
+                        className: "rounded-full px-5 h-12 shadow bg-primary",
                       })
                     )}
                     params={{
@@ -78,12 +77,12 @@ export function Actions({ id }: { id: string }) {
       <Button
         className={cn(
           "rounded-full transition-all shadow-none primary-box-shadow-hidden w-12 h-12 z-10",
-          extended ? "rotate-180 bg-rose-600" : "bg-accent"
+          extended ? "rotate-180 bg-rose-600" : "bg-primary"
         )}
         onClick={() => setExtended(!extended)}
         size="sm"
       >
-        {extended ? <X /> : <Plus />}
+        {extended ? <X size={18} /> : <Plus size={18} />}
       </Button>
     </div>
   );

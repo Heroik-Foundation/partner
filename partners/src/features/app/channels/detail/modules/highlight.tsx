@@ -1,66 +1,31 @@
-import { truncateText } from "@/helpers/text";
+import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
-import { Hash } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Fragment } from "react/jsx-runtime";
 
 type HighlightProps = {
   thumbnail: string;
   title: string;
-  description: string;
+
   members: number;
   avatars: string[];
   id: string;
 };
 
 export const Highlight = (props: HighlightProps) => {
-  const { thumbnail, title, description, avatars, members, id } = props;
-  const highlightContentRef = useRef<HTMLDivElement | null>(null);
-  const [contentSpacing, setContentSpacing] = useState(0);
-
-  const handleContentSpacing = useCallback(() => {
-    if (highlightContentRef.current) {
-      const height =
-        highlightContentRef.current.getBoundingClientRect().height + 150;
-      setContentSpacing(height);
-    }
-  }, [highlightContentRef.current]);
-
-  useEffect(() => {
-    const resizeObserver = new ResizeObserver(handleContentSpacing);
-    if (highlightContentRef.current) {
-      resizeObserver.observe(highlightContentRef.current);
-    }
-
-    return () => {
-      if (highlightContentRef.current) {
-        resizeObserver.unobserve(highlightContentRef.current);
-      }
-    };
-  }, [highlightContentRef.current]);
+  const { thumbnail, title, avatars, members, id } = props;
 
   return (
-    <Fragment>
-      <div className="absolute -top-20 w-full h-96 left-0 right-0 max-w-full mx-auto px-4">
-        {thumbnail ? (
-          <img
-            className="w-full h-full object-cover rounded-b-2xl"
-            src={thumbnail}
-          />
-        ) : (
-          <div className="w-full h-full bg-secondary text-primary flex items-center justify-center rounded-lg">
-            <Hash size={32} />
-          </div>
-        )}
-      </div>
+    <div
+      style={{
+        backgroundImage: `url('${thumbnail}')`,
+      }}
+      className="px-4 py-10 rounded-3xl bg-no-repeat bg-cover"
+    >
       <div
-        ref={highlightContentRef}
-        className="p-4 bg-primary text-white absolute rounded-3xl space-y-2.5 left-0 right-0 transform -translate-y-1/2 top-[304px] max-h-52 shadow-lg mx-auto w-[85%] md:max-w-xl lg:max-w-2xl text-sm"
+        className={cn(
+          "p-4 bg-primary text-white rounded-2xl space-y-2.5 left-0 right-0 max-h-52 shadow-lg mx-auto w-[85%] md:max-w-xl lg:max-w-2xl text-sm"
+        )}
       >
-        <h1 className="font-black text-2xl text-center">{title}</h1>
-        <p className="text-center font-semibold text-xs sm:text-sm text-white/75">
-          {truncateText(description, 135)}
-        </p>
+        <h1 className="font-extrabold text-lg text-center">{title}</h1>
 
         <Link
           to="/app/channels/$id/members"
@@ -87,11 +52,6 @@ export const Highlight = (props: HighlightProps) => {
           </div>
         </Link>
       </div>
-      <div
-        style={{
-          paddingBottom: `${contentSpacing}px`,
-        }}
-      />
-    </Fragment>
+    </div>
   );
 };

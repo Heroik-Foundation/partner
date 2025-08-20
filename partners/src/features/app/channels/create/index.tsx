@@ -13,11 +13,13 @@ import { useEffect, useState } from "react";
 import { useCreateChannelMutation } from "./hooks/mutation";
 import { toast } from "sonner";
 import { ActionDrawer } from "@/modules/units/page/action";
+import { Switch } from "@/modules/ui/switch";
 
 const CreateChannel = () => {
   const [form, setForm] = useState({
     name: "",
     description: "",
+    private: false,
   });
   const [photo, setPhoto] = useState<File | null>(null);
   const { mutate, isPending, isSuccess, isError } = useCreateChannelMutation({
@@ -26,12 +28,17 @@ const CreateChannel = () => {
     photo,
   });
 
+  const resetForm = () => {
+    setForm({
+      name: "",
+      description: "",
+      private: false,
+    });
+  };
+
   useEffect(() => {
     if (isSuccess) {
-      setForm({
-        name: "",
-        description: "",
-      });
+      resetForm();
     }
   }, [isSuccess]);
 
@@ -63,7 +70,7 @@ const CreateChannel = () => {
                 name: target.value,
               }));
             }}
-            placeholder="Type Channel Name here ..."
+            placeholder="Type channel name here ..."
           />
         </FormField>
         <FormField>
@@ -76,11 +83,23 @@ const CreateChannel = () => {
                 description: target.value,
               }));
             }}
-            placeholder="Type Channel Name here ..."
+            placeholder="Type channel description here ..."
+          />
+        </FormField>
+        <FormField className="flex flex-row items-center w-full justify-between space-y-0">
+          <Label>Private Channel</Label>
+          <Switch
+            checked={form.private}
+            onCheckedChange={(checked) => {
+              setForm({
+                ...form,
+                private: checked,
+              });
+            }}
           />
         </FormField>
       </FormContent>
-      <FormFooter>
+      <FormFooter absolute>
         <ActionDrawer
           trigger={
             <Button

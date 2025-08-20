@@ -54,11 +54,12 @@ const EventDetail = () => {
                 title={event?.name}
                 description={event?.description}
                 url={`https://partners.hiroek.io/event/${event?._id}`}
-              >
-                <Button className="z-10">
-                  <Share2 className="fill-white" />
-                </Button>
-              </ShareDialog>
+                trigger={
+                  <Button className="z-10">
+                    <Share2 className="fill-white" />
+                  </Button>
+                }
+              />
             </div>
           ),
         }}
