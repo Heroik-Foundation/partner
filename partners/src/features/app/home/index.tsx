@@ -3,7 +3,11 @@ import { HomeHeader } from "../global/header";
 import { Actions } from "./modules/links/actions";
 import { Stats } from "./modules/stats";
 import Content from "./modules/links/content";
-import { Event, EventSkeletonLoader } from "@/modules/units/card/event";
+import {
+  Event,
+  EventNotFound,
+  EventSkeletonLoader,
+} from "@/modules/units/card/event";
 import {
   useUserChannelsQuery,
   useUserEventsQuery,
@@ -74,12 +78,7 @@ const Home = () => {
         {events_list &&
           events_list.length < 1 &&
           !isFetchingFutureEvents &&
-          !isFetchingPresentEvents && (
-            <ItemNotFound
-              message="No present or future event found"
-              className="min-h-64 sm:min-h-80"
-            />
-          )}
+          !isFetchingPresentEvents && <EventNotFound />}
       </Content>
       <Content type="channel">
         {channel ? (

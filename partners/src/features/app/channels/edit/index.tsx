@@ -15,6 +15,7 @@ import { useChannelDetailsQuery } from "../hooks/query";
 import { useEditChannelMutation } from "./hooks/mutation";
 import { toast } from "sonner";
 import { ActionDrawer } from "@/modules/units/page/action";
+import { Switch } from "@/modules/ui/switch";
 
 const EditChannel = () => {
   const { id } = useParams({
@@ -24,6 +25,7 @@ const EditChannel = () => {
   const [form, setForm] = useState({
     name: channel?.name,
     description: channel?.description,
+    private: false,
   });
   const [photo, setPhoto] = useState<File | null>(null);
   const { mutate, isPending, isError, isSuccess } = useEditChannelMutation({
@@ -74,6 +76,18 @@ const EditChannel = () => {
               }));
             }}
             placeholder="Type Channel Name here ..."
+          />
+        </FormField>
+        <FormField className="flex flex-row items-center w-full justify-between space-y-0">
+          <Label>Private Channel</Label>
+          <Switch
+            checked={form.private}
+            onCheckedChange={(checked) => {
+              setForm({
+                ...form,
+                private: checked,
+              });
+            }}
           />
         </FormField>
       </FormContent>
