@@ -63,7 +63,7 @@ export type Channel = {
   }>;
   invitees: string[];
   moderators: string[];
-  privacy: string;
+  privacy: "invite-only" | "public";
   _id: string;
   interests: string[];
   name: string;

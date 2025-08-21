@@ -7,7 +7,7 @@ import {
   DialogTrigger,
 } from "@/modules/ui/dialog";
 import { Button } from "@/modules/ui/button";
-import { Copy, MessageCircle, Check } from "lucide-react";
+import { Copy, Check, Laptop } from "lucide-react";
 import { toast } from "sonner";
 import copy from "copy-to-clipboard";
 
@@ -121,25 +121,21 @@ export function ShareDialog({
         <div className="space-y-5 pt-2.5">
           {/* Native share + copy link */}
           <div className="flex items-center space-x-2.5">
-            <Button
-              size={"sm"}
-              className="w-full justify-start"
-              onClick={handleNativeShare}
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Share via system
+            <Button size={"sm"} className="w-full" onClick={handleNativeShare}>
+              <Laptop className="w-4 h-4" />
+              Via system
             </Button>
 
             <Button
               size={"sm"}
               variant="secondary"
-              className="w-full justify-start"
+              className="w-full"
               onClick={copyToClipboard}
             >
               {copied ? (
-                <Check className="w-4 h-4 mr-2 text-green-500" />
+                <Check className="w-4 h-4 text-green-500" />
               ) : (
-                <Copy className="w-4 h-4 mr-2" />
+                <Copy className="w-4 h-4" />
               )}
               {copied ? "Copied!" : "Copy Link"}
             </Button>
@@ -153,8 +149,10 @@ export function ShareDialog({
                 className="flex flex-col items-center space-y-2"
                 onClick={() => shareToSocial(s.url)}
               >
-                <img src={s.icon} alt={s.name} className="w-10 h-10" />
-                <span className="text-xs font-bold text-primary">{s.name}</span>
+                <img src={s.icon} alt={s.name} className="w-9 h-9" />
+                <span className="text-[11px] font-bold text-primary">
+                  {s.name}
+                </span>
               </button>
             ))}
           </div>

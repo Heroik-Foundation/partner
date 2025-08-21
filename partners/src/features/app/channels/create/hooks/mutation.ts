@@ -8,6 +8,7 @@ type CreateChannelMutationProps = {
   name: string;
   description: string;
   photo: File | null;
+  isPrivateCommunity: boolean;
 };
 
 type CreatePostMutationProps = {
@@ -18,7 +19,7 @@ type CreatePostMutationProps = {
 };
 
 export function useCreateChannelMutation(props: CreateChannelMutationProps) {
-  const { name, description, photo } = props;
+  const { name, description, photo, isPrivateCommunity } = props;
   const formData = new FormData();
   const { navigate } = useRouter();
 
@@ -26,7 +27,7 @@ export function useCreateChannelMutation(props: CreateChannelMutationProps) {
     formData.append("name", name);
     formData.append("description", description);
     formData.append("photo", photo);
-    formData.append("privacy", "public");
+    formData.append("privacy", isPrivateCommunity ? "invite-only" : "public");
   }
 
   return useMutation({

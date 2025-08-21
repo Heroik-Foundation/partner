@@ -8,7 +8,7 @@ interface Props {
 
 export function ChannelRequest({ username, imageURL }: Props) {
   return (
-    <div className="flex items-center justify-between py-4 border-b">
+    <div className="flex items-center justify-between py-4 border-b border-[#0000000D]">
       <div className="flex items-center space-x-2">
         {imageURL ? (
           <img

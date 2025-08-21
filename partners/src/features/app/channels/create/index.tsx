@@ -26,6 +26,7 @@ const CreateChannel = () => {
     name: form.name,
     description: form.description,
     photo,
+    isPrivateCommunity: form.private,
   });
 
   const resetForm = () => {

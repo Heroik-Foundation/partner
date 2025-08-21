@@ -8,16 +8,17 @@ type EditChannelMutationProps = {
   name: string;
   description: string;
   photo: File | null;
+  isPrivateCommunity: boolean;
 };
 
 export function useEditChannelMutation(props: EditChannelMutationProps) {
   const queryClient = useQueryClient();
-  const { name, description, photo, id } = props;
+  const { name, description, photo, id, isPrivateCommunity } = props;
   const formData = new FormData();
 
   formData.append("name", name);
   formData.append("description", description);
-  formData.append("privacy", "public");
+  formData.append("privacy", isPrivateCommunity ? "invite-only" : "public");
 
   if (photo) {
     formData.append("photo", photo);

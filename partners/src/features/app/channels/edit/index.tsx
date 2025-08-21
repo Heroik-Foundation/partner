@@ -8,7 +8,7 @@ import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
 import { Textarea } from "@/modules/ui/textarea";
 import { ImageWithPreview } from "@/modules/units/form/image";
-import { Label } from "@radix-ui/react-label";
+
 import { useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useChannelDetailsQuery } from "../hooks/query";
@@ -16,6 +16,7 @@ import { useEditChannelMutation } from "./hooks/mutation";
 import { toast } from "sonner";
 import { ActionDrawer } from "@/modules/units/page/action";
 import { Switch } from "@/modules/ui/switch";
+import { Label } from "@/modules/ui/label";
 
 const EditChannel = () => {
   const { id } = useParams({
@@ -25,7 +26,7 @@ const EditChannel = () => {
   const [form, setForm] = useState({
     name: channel?.name,
     description: channel?.description,
-    private: false,
+    private: channel?.privacy === "public" ? false : true,
   });
   const [photo, setPhoto] = useState<File | null>(null);
   const { mutate, isPending, isError, isSuccess } = useEditChannelMutation({
@@ -33,6 +34,7 @@ const EditChannel = () => {
     description: String(form.description),
     id: id,
     photo,
+    isPrivateCommunity: form.private,
   });
 
   return (

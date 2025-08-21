@@ -28,42 +28,43 @@ interface Props {
   id: string;
   title: string;
   description: string;
+  privacy: "invite-only" | "public";
 }
 
-const options = [
-  {
-    title: "Channel Access (Private)",
-    variant: "primary",
-    icon: channelAccessIcon,
-  },
-  {
-    title: "Channel Description",
-    variant: "default",
-    icon: channelDescriptionIcon,
-    dialog: true, // ✅ mark this one as dialog-enabled
-  },
-  {
-    title: "Edit Channel",
-    variant: "default",
-    icon: channelEditIcon,
-    link: {
-      path: "/app/channels/$id/edit",
+export function ChannelOptions({ privacy, id, description }: Props) {
+  const options = [
+    {
+      title: `Channel Access (${privacy === "invite-only" ? "Private" : "Public"})`,
+      variant: "primary",
+      icon: channelAccessIcon,
     },
-  },
-  {
-    title: "Share Channel",
-    variant: "default",
-    icon: channelShareIcon,
-    share: true,
-  },
-  {
-    title: "Delete Channel",
-    variant: "destructive",
-    icon: channelDeleteIcon,
-  },
-];
+    {
+      title: "Channel Description",
+      variant: "default",
+      icon: channelDescriptionIcon,
+      dialog: true, // ✅ mark this one as dialog-enabled
+    },
+    {
+      title: "Edit Channel",
+      variant: "default",
+      icon: channelEditIcon,
+      link: {
+        path: "/app/channels/$id/edit",
+      },
+    },
+    {
+      title: "Share Channel",
+      variant: "default",
+      icon: channelShareIcon,
+      share: true,
+    },
+    {
+      title: "Delete Channel",
+      variant: "destructive",
+      icon: channelDeleteIcon,
+    },
+  ];
 
-export function ChannelOptions({ id, description }: Props) {
   return (
     <div className="relative z-50">
       <DropdownMenu>
@@ -85,7 +86,7 @@ export function ChannelOptions({ id, description }: Props) {
                   className={cn(
                     "w-[260px] h-[48px] text-primary flex gap-2",
                     variant === "primary" &&
-                      "bg-primary text-white hover:bg-primary/90 hover:text-white rounded-t"
+                      "bg-primary text-white hover:bg-primary hover:text-white rounded-t focus:bg-primary focus:text-white"
                   )}
                 >
                   <img src={icon} className="w-4 h-4" alt="" />

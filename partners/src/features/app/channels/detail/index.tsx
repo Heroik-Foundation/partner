@@ -28,6 +28,7 @@ const ChannelDetails = () => {
                 id={id}
                 description={channel?.description || ""}
                 title={channel?.name || ""}
+                privacy={channel?.privacy || "public"}
               />
             </>
           ),
