@@ -122,6 +122,7 @@ export function ShareDialog({
           {/* Native share + copy link */}
           <div className="flex items-center space-x-2.5">
             <Button
+              size={"sm"}
               className="w-full justify-start"
               onClick={handleNativeShare}
             >
@@ -130,6 +131,7 @@ export function ShareDialog({
             </Button>
 
             <Button
+              size={"sm"}
               variant="secondary"
               className="w-full justify-start"
               onClick={copyToClipboard}
@@ -151,7 +153,7 @@ export function ShareDialog({
                 className="flex flex-col items-center space-y-2"
                 onClick={() => shareToSocial(s.url)}
               >
-                <img src={s.icon} alt={s.name} className="w-11 h-11" />
+                <img src={s.icon} alt={s.name} className="w-10 h-10" />
                 <span className="text-xs font-bold text-primary">{s.name}</span>
               </button>
             ))}

@@ -16,7 +16,6 @@ import {
 import { Channel, ChannelSkeletonLoader } from "@/modules/units/card/channel";
 import { Carousel, CarouselContent, CarouselItem } from "@/modules/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { ItemNotFound } from "@/modules/units/card/not-found";
 
 const Home = () => {
   const { data: user } = useUserPropertiesQuery();
