@@ -28,6 +28,12 @@ interface ShareDialogProps {
 
 const socials = [
   {
+    name: "X",
+    icon: XIcon,
+    url: (url: string, title: string) =>
+      `https://twitter.com/share?url=${url}&text=${title}`,
+  },
+  {
     name: "Facebook",
     icon: facebookIcon,
     url: (url: string, _: string) =>
@@ -45,12 +51,7 @@ const socials = [
     // Instagram has no web-share API → fallback
     url: () => `https://www.instagram.com/`,
   },
-  {
-    name: "X",
-    icon: XIcon,
-    url: (url: string, title: string) =>
-      `https://twitter.com/share?url=${url}&text=${title}`,
-  },
+
   {
     name: "LinkedIn",
     icon: linkedInIcon,
