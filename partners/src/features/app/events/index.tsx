@@ -63,7 +63,7 @@ const AllEvents = () => {
                 setFilter(value as any);
               }}
             >
-              <p className="first-letter:uppercase relative z-10 font-semibold">
+              <p className="first-letter:uppercase relative z-10 text-sm font-semibold">
                 {value === "present"
                   ? "Ongoing"
                   : value === "future"
