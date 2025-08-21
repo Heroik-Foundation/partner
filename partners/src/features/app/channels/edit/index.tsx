@@ -93,7 +93,7 @@ const EditChannel = () => {
           />
         </FormField>
       </FormContent>
-      <FormFooter>
+      <FormFooter absolute>
         <ActionDrawer
           trigger={
             <Button
