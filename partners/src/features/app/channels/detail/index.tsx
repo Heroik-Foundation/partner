@@ -47,7 +47,7 @@ const ChannelDetails = () => {
 
       {!channel && <SuspenseLoader />}
 
-      <ChannelDetailTabs id={id} />
+      <ChannelDetailTabs isPublic={channel?.privacy === "public"} id={id} />
 
       <Actions id={id} />
     </div>

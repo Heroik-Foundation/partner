@@ -46,7 +46,7 @@ const socials = [
     url: () => `https://www.instagram.com/`,
   },
   {
-    name: "Twitter(X)",
+    name: "X",
     icon: XIcon,
     url: (url: string, title: string) =>
       `https://twitter.com/share?url=${url}&text=${title}`,
@@ -150,7 +150,7 @@ export function ShareDialog({
                 onClick={() => shareToSocial(s.url)}
               >
                 <img src={s.icon} alt={s.name} className="w-9 h-9" />
-                <span className="text-[11px] font-bold text-primary">
+                <span className="text-[10px] font-bold text-primary">
                   {s.name}
                 </span>
               </button>

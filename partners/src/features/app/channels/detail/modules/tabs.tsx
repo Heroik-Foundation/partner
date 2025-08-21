@@ -9,46 +9,65 @@ import { ChannelRequest } from "./request";
 
 interface Props {
   id: string;
+  isPublic: boolean;
 }
 
 type Tab = "announcements" | "requests";
 
-export function ChannelDetailTabs({ id }: Props) {
+type TabConfig = {
+  name: Tab;
+  value: number;
+  component: React.ComponentType<Props>;
+};
+
+export function ChannelDetailTabs({ id, isPublic }: Props) {
   const [tab, setTab] = useState<Tab>("announcements");
 
-  const tabs = [
+  // Data
+  const { data: announcements } = useChannelAnnouncementsQuery({ id });
+  const announcementsCount =
+    ((announcements?.pages as any[]) || []).flat().length || 0;
+
+  const tabs: TabConfig[] = [
     {
       name: "announcements",
-      value: 0,
+      value: announcementsCount,
       component: PostTab,
     },
-    {
-      name: "requests",
-      value: 0,
-      component: RequestTab,
-    },
+    ...(!isPublic
+      ? [
+          {
+            name: "requests" as const,
+            value: 0,
+            component: RequestTab,
+          },
+        ]
+      : []),
   ];
 
-  const CurrentTab = (tabs.find((item) => item.name === tab) || tabs[0])
+  const CurrentTab = (tabs.find((item) => item.name === tab) ?? tabs[0])
     .component;
 
   return (
     <div className="space-y-6">
-      <div className="w-full flex items-center justify-between sm:justify-around space-x-5">
-        {tabs.map((item, index) => {
+      <div
+        className={cn(
+          "w-full flex items-center justify-between sm:justify-around space-x-5",
+          isPublic && "justify-center"
+        )}
+      >
+        {tabs.map((item) => {
           const isActive = item.name === tab;
           return (
             <Button
-              size={"lg"}
+              size="lg"
               className={cn(
                 "rounded-full w-fit py-6 px-6 first-letter:uppercase",
                 !isActive && "bg-primary/10 text-primary",
                 "transition-all"
               )}
-              key={index}
-              onClick={() => {
-                setTab(item.name as Tab);
-              }}
+              key={item.name}
+              onClick={() => setTab(item.name)}
             >
               <p className="first-letter:uppercase">{item.name}</p>
               <div
@@ -64,7 +83,7 @@ export function ChannelDetailTabs({ id }: Props) {
         })}
       </div>
 
-      <CurrentTab id={id} />
+      <CurrentTab id={id} isPublic={isPublic} />
     </div>
   );
 }
@@ -76,19 +95,17 @@ function PostTab({ id }: Props) {
   const filteredPosts = announcements?.pages || [];
 
   return (
-    <div>
-      <div className="space-y-10">
-        {filteredPosts &&
-          filteredPosts.map((post: Post) => (
-            <UserPost
-              userId={user?._id}
-              {...post}
-              channelId={id}
-              key={post._id}
-            />
-          ))}
-      </div>
-      {!filteredPosts && (
+    <div className="space-y-10">
+      {filteredPosts.length > 0 ? (
+        filteredPosts.map((post: Post) => (
+          <UserPost
+            userId={user?._id}
+            {...post}
+            channelId={id}
+            key={post._id}
+          />
+        ))
+      ) : (
         <>
           <UserPostLoader /> <UserPostLoader />
         </>
@@ -99,9 +116,9 @@ function PostTab({ id }: Props) {
 
 function RequestTab({}: Props) {
   return (
-    <div className="">
-      <ChannelRequest username={"John Doe"} />
-      <ChannelRequest username={"Mary Jane"} />
+    <div>
+      <ChannelRequest username="John Doe" />
+      <ChannelRequest username="Mary Jane" />
     </div>
   );
 }

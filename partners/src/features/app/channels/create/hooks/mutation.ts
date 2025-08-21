@@ -15,7 +15,7 @@ type CreatePostMutationProps = {
   content: string;
   id?: string;
   isAnnouncement: boolean;
-  file?: File;
+  files: File[];
 };
 
 export function useCreateChannelMutation(props: CreateChannelMutationProps) {
@@ -59,13 +59,15 @@ export function useCreatePostMutation(props: CreatePostMutationProps) {
   const queryClient = useQueryClient();
   const formData = new FormData();
 
-  const { content, id, isAnnouncement, file } = props;
+  const { content, id, isAnnouncement, files } = props;
 
   formData.append("content", content);
   formData.append("communityId", String(id));
   formData.append("isAnnouncement", String(isAnnouncement));
-  if (file) {
-    formData.append("attachment", file);
+  if (files) {
+    files.forEach((item) => {
+      formData.append("attachment", item);
+    });
   }
 
   return useMutation({

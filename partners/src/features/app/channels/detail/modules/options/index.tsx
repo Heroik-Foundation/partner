@@ -37,6 +37,9 @@ export function ChannelOptions({ privacy, id, description }: Props) {
       title: `Channel Access (${privacy === "invite-only" ? "Private" : "Public"})`,
       variant: "primary",
       icon: channelAccessIcon,
+      link: {
+        path: "/app/channels/$id/guidelines",
+      },
     },
     {
       title: "Channel Description",
@@ -84,7 +87,7 @@ export function ChannelOptions({ privacy, id, description }: Props) {
                   key={index}
                   onSelect={(e) => e.preventDefault()}
                   className={cn(
-                    "w-[260px] h-[48px] text-primary flex gap-2",
+                    "w-[260px] h-[48px] text-primary focus:text-primary flex gap-2",
                     variant === "primary" &&
                       "bg-primary text-white hover:bg-primary hover:text-white rounded-t focus:bg-primary focus:text-white"
                   )}
