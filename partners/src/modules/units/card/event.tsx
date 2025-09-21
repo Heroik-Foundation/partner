@@ -34,6 +34,7 @@ export const Event = (props: EventProps) => {
     availableTickets,
   } = props;
   const { date: relativeDate, time: relativeTime } = formatISODate(date);
+  const imageURL = thumbnail === "" ? "/image/input-preview.jpg" : thumbnail;
 
   return (
     <Link
@@ -46,7 +47,7 @@ export const Event = (props: EventProps) => {
         className
       )}
       style={{
-        background: `url('${thumbnail}')`,
+        background: `url('${imageURL}')`,
         backgroundPosition: "center",
         backgroundSize: "cover",
         backgroundColor: "rgb(55 19 127 / 0.1)",

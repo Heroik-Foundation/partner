@@ -32,7 +32,7 @@ export function Actions() {
   ];
 
   return (
-    <div className="absolute right-0 bottom-0 flex flex-col items-end space-y-5 z-10">
+    <div className="fixed right-5 bottom-20 flex flex-col items-end space-y-5 z-10">
       <AnimatePresence>
         {extended && (
           <motion.div

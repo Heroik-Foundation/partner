@@ -9,19 +9,60 @@ export type EventOrganization = {
   logo: string;
 };
 
+export type EventOrganization = {
+  _id: string;
+  name: string;
+  charityRegNumber: string;
+  email: string;
+  description: string;
+  logo: string;
+  address: string;
+  fundRaised: number;
+  totalDonations: number;
+};
+
+export type EventCategory = {
+  _id: string;
+  name: string;
+  image: string;
+  subcategories: string[];
+};
+
+export type EventTicketing = {
+  _id: string;
+  ticketType: string;
+  ticketPrice: number;
+  signUpLimit: number;
+  isPayedTicket: boolean;
+  absorbFees: boolean;
+  salesStartDate: string;
+  salesEndDate: string;
+};
+
+export type EventRecurrence = {
+  _id: string;
+  frequency: string; // e.g. "WEEKLY"
+  interval: number;
+  daysOfWeek: number[]; // e.g. [3, 5]
+  endType: string; // e.g. "AFTER_OCCURRENCES"
+  totalOccurrences: number;
+  occurrenceCount: number;
+};
+
 export type Event = {
   __v: number;
   _id: string;
   address: string;
+  photo?: string;
   admin: {
     _id: string;
     email: string;
     name: string;
     photo: string;
     address: string;
-  };
+  } | null;
   adminType: string;
-  category: string;
+  category: EventCategory;
   createdAt: string;
   description: string;
   endTime: string;
@@ -30,10 +71,6 @@ export type Event = {
     organizations: EventOrganization[];
     totalPledgedAmount: number;
     minimumPledge: number;
-  };
-  eventTicket: {
-    availableTickets: number;
-    ticketPrice: number;
   };
   fundRaiser: {
     organizations: EventOrganization[];
@@ -46,11 +83,18 @@ export type Event = {
     fullname: string;
     photo: string;
   }>;
-
   name: string;
-  photo: string;
   privacy: string;
-  signUpLimit: number;
+  isTicketed: boolean;
+  isRecurring: boolean;
+  isPrimaryEvent: boolean;
+  primaryEventId: string;
+  ticketing: EventTicketing[];
+  recurrence: EventRecurrence;
+  loc: {
+    type: "Point";
+    coordinates: [number, number]; // [longitude, latitude]
+  };
   updatedAt: string;
 };
 

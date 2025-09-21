@@ -58,10 +58,10 @@ const Home = () => {
                 <CarouselItem key={index} className="w-full basis-full pl-0.5">
                   <Event
                     id={event._id}
-                    thumbnail={event.photo}
+                    thumbnail={event.photo || ""}
                     title={event.name}
                     date={event.endTime}
-                    price={event.eventTicket.ticketPrice || 0}
+                    price={event.ticketing[0].ticketPrice || 0}
                     location={event.address}
                   />
                 </CarouselItem>

@@ -20,6 +20,7 @@ export const Highlight = (props: HighlightProps) => {
     availableTickets,
   } = props;
   const { date: relativeDate, time: relativeTime } = formatISODate(date);
+  const imageURL = thumbnail === "" ? "/image/input-preview.jpg" : thumbnail;
 
   return (
     <Fragment>
@@ -34,7 +35,7 @@ export const Highlight = (props: HighlightProps) => {
             md:h-[400px]
             lg:h-[450px]
             xl:h-[500px]"
-          src={thumbnail}
+          src={imageURL}
           alt={title}
         />
       </div>

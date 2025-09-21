@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { SuspenseLoader } from "@/modules/units/page/suspense";
 import { useRouteStore } from "@/hooks/router";
 import { ShareDialog } from "@/modules/units/page/share";
+import { Tickets } from "./modules/tickets";
 
 const EventDetail = () => {
   const { id } = useParams({
@@ -70,9 +71,9 @@ const EventDetail = () => {
       {event && id && (
         <Fragment>
           <Highlight
-            availableTickets={event.eventTicket.availableTickets}
+            availableTickets={0}
             title={event.name}
-            thumbnail={event.photo}
+            thumbnail={event.photo || ""}
             members={event.members.length}
             date={event.endTime}
             avatars={event.members.map((member) => member.photo)}
@@ -88,6 +89,7 @@ const EventDetail = () => {
             percentage={event.eventPledge.totalPledgedAmount}
             minimumPledge={event.eventPledge.minimumPledge}
           />
+          <Tickets tickets={event.ticketing} />
           <Manage id={id} endDate={event.endTime} />
         </Fragment>
       )}

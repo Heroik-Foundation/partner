@@ -70,6 +70,9 @@ const AppChannelsIdIndexLazyImport = createFileRoute('/app/channels/$id/')()
 const AppEventsCreatePartnersIndexLazyImport = createFileRoute(
   '/app/events/create/partners/',
 )()
+const AppEventsCreateOptionsIndexLazyImport = createFileRoute(
+  '/app/events/create/options/',
+)()
 const AppEventsCreateCategoryIndexLazyImport = createFileRoute(
   '/app/events/create/category/',
 )()
@@ -358,6 +361,17 @@ const AppEventsCreatePartnersIndexLazyRoute =
     getParentRoute: () => AppRoute,
   } as any).lazy(() =>
     import('./routes/app/events/create/partners/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AppEventsCreateOptionsIndexLazyRoute =
+  AppEventsCreateOptionsIndexLazyImport.update({
+    id: '/events/create/options/',
+    path: '/events/create/options/',
+    getParentRoute: () => AppRoute,
+  } as any).lazy(() =>
+    import('./routes/app/events/create/options/index.lazy').then(
       (d) => d.Route,
     ),
   )
@@ -737,6 +751,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEventsCreateCategoryIndexLazyImport
       parentRoute: typeof AppImport
     }
+    '/app/events/create/options/': {
+      id: '/app/events/create/options/'
+      path: '/events/create/options'
+      fullPath: '/app/events/create/options'
+      preLoaderRoute: typeof AppEventsCreateOptionsIndexLazyImport
+      parentRoute: typeof AppImport
+    }
     '/app/events/create/partners/': {
       id: '/app/events/create/partners/'
       path: '/events/create/partners'
@@ -798,6 +819,7 @@ interface AppRouteChildren {
   AppEventsIdMessagesIndexLazyRoute: typeof AppEventsIdMessagesIndexLazyRoute
   AppEventsIdSuccessIndexLazyRoute: typeof AppEventsIdSuccessIndexLazyRoute
   AppEventsCreateCategoryIndexLazyRoute: typeof AppEventsCreateCategoryIndexLazyRoute
+  AppEventsCreateOptionsIndexLazyRoute: typeof AppEventsCreateOptionsIndexLazyRoute
   AppEventsCreatePartnersIndexLazyRoute: typeof AppEventsCreatePartnersIndexLazyRoute
   AppChannelsIdPostCreateIndexRoute: typeof AppChannelsIdPostCreateIndexRoute
   AppChannelsIdPostPostIdIndexLazyRoute: typeof AppChannelsIdPostPostIdIndexLazyRoute
@@ -832,6 +854,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppEventsIdMessagesIndexLazyRoute: AppEventsIdMessagesIndexLazyRoute,
   AppEventsIdSuccessIndexLazyRoute: AppEventsIdSuccessIndexLazyRoute,
   AppEventsCreateCategoryIndexLazyRoute: AppEventsCreateCategoryIndexLazyRoute,
+  AppEventsCreateOptionsIndexLazyRoute: AppEventsCreateOptionsIndexLazyRoute,
   AppEventsCreatePartnersIndexLazyRoute: AppEventsCreatePartnersIndexLazyRoute,
   AppChannelsIdPostCreateIndexRoute: AppChannelsIdPostCreateIndexRoute,
   AppChannelsIdPostPostIdIndexLazyRoute: AppChannelsIdPostPostIdIndexLazyRoute,
@@ -879,6 +902,7 @@ export interface FileRoutesByFullPath {
   '/app/events/$id/messages': typeof AppEventsIdMessagesIndexLazyRoute
   '/app/events/$id/success': typeof AppEventsIdSuccessIndexLazyRoute
   '/app/events/create/category': typeof AppEventsCreateCategoryIndexLazyRoute
+  '/app/events/create/options': typeof AppEventsCreateOptionsIndexLazyRoute
   '/app/events/create/partners': typeof AppEventsCreatePartnersIndexLazyRoute
   '/app/channels/$id/post/create': typeof AppChannelsIdPostCreateIndexRoute
   '/app/channels/$id/post/$postId': typeof AppChannelsIdPostPostIdIndexLazyRoute
@@ -923,6 +947,7 @@ export interface FileRoutesByTo {
   '/app/events/$id/messages': typeof AppEventsIdMessagesIndexLazyRoute
   '/app/events/$id/success': typeof AppEventsIdSuccessIndexLazyRoute
   '/app/events/create/category': typeof AppEventsCreateCategoryIndexLazyRoute
+  '/app/events/create/options': typeof AppEventsCreateOptionsIndexLazyRoute
   '/app/events/create/partners': typeof AppEventsCreatePartnersIndexLazyRoute
   '/app/channels/$id/post/create': typeof AppChannelsIdPostCreateIndexRoute
   '/app/channels/$id/post/$postId': typeof AppChannelsIdPostPostIdIndexLazyRoute
@@ -969,6 +994,7 @@ export interface FileRoutesById {
   '/app/events/$id/messages/': typeof AppEventsIdMessagesIndexLazyRoute
   '/app/events/$id/success/': typeof AppEventsIdSuccessIndexLazyRoute
   '/app/events/create/category/': typeof AppEventsCreateCategoryIndexLazyRoute
+  '/app/events/create/options/': typeof AppEventsCreateOptionsIndexLazyRoute
   '/app/events/create/partners/': typeof AppEventsCreatePartnersIndexLazyRoute
   '/app/channels/$id/post/create/': typeof AppChannelsIdPostCreateIndexRoute
   '/app/channels/$id/post/$postId/': typeof AppChannelsIdPostPostIdIndexLazyRoute
@@ -1016,6 +1042,7 @@ export interface FileRouteTypes {
     | '/app/events/$id/messages'
     | '/app/events/$id/success'
     | '/app/events/create/category'
+    | '/app/events/create/options'
     | '/app/events/create/partners'
     | '/app/channels/$id/post/create'
     | '/app/channels/$id/post/$postId'
@@ -1059,6 +1086,7 @@ export interface FileRouteTypes {
     | '/app/events/$id/messages'
     | '/app/events/$id/success'
     | '/app/events/create/category'
+    | '/app/events/create/options'
     | '/app/events/create/partners'
     | '/app/channels/$id/post/create'
     | '/app/channels/$id/post/$postId'
@@ -1103,6 +1131,7 @@ export interface FileRouteTypes {
     | '/app/events/$id/messages/'
     | '/app/events/$id/success/'
     | '/app/events/create/category/'
+    | '/app/events/create/options/'
     | '/app/events/create/partners/'
     | '/app/channels/$id/post/create/'
     | '/app/channels/$id/post/$postId/'
@@ -1194,6 +1223,7 @@ export const routeTree = rootRoute
         "/app/events/$id/messages/",
         "/app/events/$id/success/",
         "/app/events/create/category/",
+        "/app/events/create/options/",
         "/app/events/create/partners/",
         "/app/channels/$id/post/create/",
         "/app/channels/$id/post/$postId/",
@@ -1333,6 +1363,10 @@ export const routeTree = rootRoute
     },
     "/app/events/create/category/": {
       "filePath": "app/events/create/category/index.lazy.tsx",
+      "parent": "/app"
+    },
+    "/app/events/create/options/": {
+      "filePath": "app/events/create/options/index.lazy.tsx",
       "parent": "/app"
     },
     "/app/events/create/partners/": {
