@@ -67,13 +67,13 @@ export function useUpdateEventMutation(props: UpdateEventMutation) {
 
       // Start date & time
       formData.append(
-        "startTime",
+        "endTime",
         convertDateTimeInputToISOString(startDate, startTime)
       );
 
       // End date & time
       formData.append(
-        "endTime",
+        "eventEndDate",
         convertDateTimeInputToISOString(endDate, endTime)
       );
 

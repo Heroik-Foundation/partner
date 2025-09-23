@@ -3,7 +3,7 @@ import { useEventDetailsQuery } from "../../../hooks/query";
 
 interface EventFormState {
   absorbFees: boolean;
-  isPayedTicket: boolean;
+
   salesEndDate: string | null;
   salesStartDate: string | null;
   signUpLimit: number;
@@ -13,7 +13,6 @@ interface EventFormState {
 
 const DEFAULT_FORM_STATE: EventFormState = {
   absorbFees: true,
-  isPayedTicket: false,
   salesEndDate: null,
   salesStartDate: null,
   signUpLimit: 0,
@@ -50,8 +49,6 @@ export const useUpdateEventTicketTypeForm = ({
     return {
       absorbFees:
         currentTicketDetails.absorbFees ?? DEFAULT_FORM_STATE.absorbFees,
-      isPayedTicket:
-        currentTicketDetails.isPayedTicket ?? DEFAULT_FORM_STATE.isPayedTicket,
       salesEndDate:
         currentTicketDetails.salesEndDate.split("T")[0] ??
         DEFAULT_FORM_STATE.salesEndDate,
@@ -69,8 +66,14 @@ export const useUpdateEventTicketTypeForm = ({
   const [formState, setFormState] = useState<EventFormState>(initialState);
 
   useEffect(() => {
-    setFormState(initialState);
-  }, []);
+    if (
+      (currentTicketDetails?.salesStartDate ||
+        currentTicketDetails?.salesEndDate) &&
+      (formState.salesEndDate === null || formState.salesStartDate === null)
+    ) {
+      setFormState(initialState);
+    }
+  }, [event]);
 
   const updateFormField = <K extends keyof EventFormState>(
     field: K,

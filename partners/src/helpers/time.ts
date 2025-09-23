@@ -90,10 +90,11 @@ export function isPastDate(dateString: string): boolean {
 
 export function convertDateTimeInputToISOString(
   date: string,
-  time: string
+  time?: string
 ): string {
-  if (!date || !time) return "";
+  if (!date) return "";
 
-  const localDateTime = new Date(`${date}T${time}:00`);
+  const timePart = time ? `${time}:00` : "00:00:00";
+  const localDateTime = new Date(`${date}T${timePart}`);
   return localDateTime.toISOString();
 }

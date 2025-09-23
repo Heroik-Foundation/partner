@@ -19,6 +19,7 @@ import { getInitialEventState } from "./helpers/data";
 import { ActionDrawer } from "@/modules/units/page/action";
 import PlaceAutocomplete from "@/modules/units/form/address";
 import { useEventFormStore } from "../../global/hooks/logic";
+import { cn } from "@/lib/utils";
 
 const EditEvent = () => {
   const { id } = useParams({
@@ -28,7 +29,7 @@ const EditEvent = () => {
     id,
   });
 
-  const { formState, updateForm, setFormState } = useEventFormStore();
+  const { formState, updateForm, setFormState, reset } = useEventFormStore();
   const { mutate, isPending, isSuccess, isError } = useUpdateEventMutation({
     ...formState,
   });
@@ -41,6 +42,10 @@ const EditEvent = () => {
 
   useEffect(() => {
     handleInitialEventDataUpdate();
+
+    return () => {
+      reset();
+    };
   }, [event, id]);
 
   return (
@@ -108,15 +113,22 @@ const EditEvent = () => {
             >
               <div className="flex items-center space-x-2.5 w-6 h-6">
                 <img src={formState.category.image} className="" />
-                <span className="font-bold">
+                <span
+                  className={cn(
+                    "font-bold whitespace-nowrap text-primary/50",
+                    (formState.subCategory.name || formState.category.name) &&
+                      "text-primary"
+                  )}
+                >
                   {formState.subCategory.name ||
                     formState.category.name ||
-                    "Event Category"}
+                    "Select Event Category"}
                 </span>
               </div>
               <ChevronRight size={14} className="stroke-2 stroke-primary" />
             </Link>
           </FormField>
+
           <div className="w-full space-x-5 flex items-center justify-between">
             <FormField>
               <Label>Start Date</Label>

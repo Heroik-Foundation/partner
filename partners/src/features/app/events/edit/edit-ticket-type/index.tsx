@@ -18,6 +18,8 @@ import { useParams } from "@tanstack/react-router";
 import { useUpdateEventTicketTypeForm } from "./hooks/logic";
 import { calculateFees, formatter } from "./helper/fees";
 import { Button } from "@/modules/ui/button";
+import { useEditEventTicketMutation } from "./hooks/mutation";
+import { convertDateTimeInputToISOString } from "@/helpers/time";
 
 const EditTicketType = () => {
   const { id, ticketTypeId } = useParams({
@@ -33,6 +35,23 @@ const EditTicketType = () => {
     formState.ticketPrice,
     formState.absorbFees
   );
+
+  const { mutate, isPending } = useEditEventTicketMutation({
+    eventId: id || "",
+    ticketTypeId: ticketTypeId || "",
+    ...formState,
+    ticketPrice: Math.abs(Number(formState.ticketPrice * 100)),
+    ticketType: formState.ticketType.toLowerCase(),
+    ...(formState.salesEndDate !== null &&
+      formState.salesStartDate !== null && {
+        salesEndDate: convertDateTimeInputToISOString(
+          String(formState.salesEndDate)
+        ),
+        salesStartDate: convertDateTimeInputToISOString(
+          String(formState.salesStartDate)
+        ),
+      }),
+  });
 
   return (
     <Fragment>
@@ -179,7 +198,19 @@ const EditTicketType = () => {
           </div>
         </FormContent>
         <FormFooter>
-          <Button className="w-full" size={"lg"}>
+          <Button
+            onClick={() => {
+              mutate();
+            }}
+            isPending={isPending}
+            className="w-full"
+            disabled={
+              formState.salesStartDate === null ||
+              formState.salesStartDate === null
+            }
+            size={"lg"}
+            type="button"
+          >
             Update Ticket
           </Button>
         </FormFooter>
