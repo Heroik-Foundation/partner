@@ -4,47 +4,45 @@ import { authenticatedInstance } from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-type CreateEventMutation = {
+export interface UpdateEventMutation {
+  photo?: File | string;
   name: string;
   description: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  category: {
+    name: string;
+    id: string;
+    image: string;
+  };
+  subCategory: {
+    name: string;
+    id: string;
+    image: string;
+  };
+  startDate: string;
+  endDate: string;
   startTime: string;
   endTime: string;
-  longitude: number;
-  latitude: number;
-  eventTicket: {
-    totalTicket: number;
-    ticketPrice: number;
-  };
-  eventPledge?: {
-    minimumPledge: number;
-    organizations: string[];
-  };
-  category: string;
   privacy: string;
-  eventEndDate: string;
-  endDate: string;
-  address: string;
-  signUpLimit: number;
-  eventId?: string;
-  photo: File | null;
-};
+  eventId: string;
+}
 
-export function useUpdateEventMutation(props: CreateEventMutation) {
+export function useUpdateEventMutation(props: UpdateEventMutation) {
   const {
     name,
     description,
-    eventTicket,
-    eventPledge,
     category,
+    subCategory,
     privacy,
-    eventEndDate,
+    endDate,
+    startDate,
     endTime,
+    startTime,
     address,
-    signUpLimit,
     photo,
     eventId,
-    startTime,
-    endDate,
     latitude,
     longitude,
   } = props;
@@ -57,46 +55,27 @@ export function useUpdateEventMutation(props: CreateEventMutation) {
 
       formData.append("name", name);
       formData.append("description", description);
-      formData.append("category", category);
+      formData.append("category", category.id);
       formData.append("privacy", privacy);
       formData.append("longitude", String(longitude));
       formData.append("latitude", String(latitude));
+      formData.append("address", address);
 
-      //Start date
+      if (subCategory.id !== "") {
+        formData.append("subCategory", subCategory.id);
+      }
+
+      // Start date & time
+      formData.append(
+        "startTime",
+        convertDateTimeInputToISOString(startDate, startTime)
+      );
+
+      // End date & time
       formData.append(
         "endTime",
-        convertDateTimeInputToISOString(endDate, startTime)
+        convertDateTimeInputToISOString(endDate, endTime)
       );
-
-      //End date
-      formData.append(
-        "eventEndDate",
-        convertDateTimeInputToISOString(eventEndDate, endTime)
-      );
-
-      formData.append("address", address);
-      formData.append("signUpLimit", signUpLimit.toString());
-
-      // formData.append(
-      //   "eventTicket[totalTicket]",
-      //   eventTicket.totalTicket.toString()
-      // );
-
-      formData.append(
-        "eventTicket[ticketPrice]",
-        (eventTicket.ticketPrice * 100).toString()
-      );
-
-      if (eventPledge?.minimumPledge) {
-        formData.append(
-          "eventPledge[minimumPledge]",
-          (eventPledge.minimumPledge * 100).toString()
-        );
-        const pledgeOrganizations = eventPledge.organizations || [];
-        pledgeOrganizations.forEach((org) => {
-          formData.append("eventPledge[organizations][]", org);
-        });
-      }
 
       if (photo && typeof photo !== "string") {
         formData.append("photo", photo);

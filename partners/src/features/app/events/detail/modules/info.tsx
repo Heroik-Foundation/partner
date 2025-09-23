@@ -93,7 +93,13 @@ export default function Info(props: InfoProps) {
             <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex w-fit">
               Charity Partner (s)
             </h5>
-            <Link className="font-bold text-xs rounded-full bg-primary py-4 px-5 w-fit mx-auto text-white inline-flex items-center space-x-2.5">
+            <Link
+              to="/app/events/$id/partners"
+              params={{
+                id,
+              }}
+              className="font-bold text-xs rounded-full bg-primary py-4 px-5 w-fit mx-auto text-white inline-flex items-center space-x-2.5"
+            >
               <span> View Charity Partners</span> <img src={eyeIcon} alt="" />
             </Link>
           </div>

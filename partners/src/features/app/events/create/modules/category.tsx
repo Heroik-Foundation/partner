@@ -24,10 +24,12 @@ export const EventCategory = (props: EventCategoryProps) => {
       updateForm("category", {
         id: _id,
         name,
+        image: image,
       });
       updateForm("subCategory", {
         name: "",
         id: "",
+        image: image,
       });
     } else {
       setIsOpen(!isOpen);
@@ -38,10 +40,12 @@ export const EventCategory = (props: EventCategoryProps) => {
     updateForm("category", {
       id: _id,
       name,
+      image: image,
     });
     updateForm("subCategory", {
       id,
       name: subCategoryName,
+      image: image,
     });
     setIsOpen(false);
   };

@@ -89,7 +89,7 @@ const EventDetail = () => {
             percentage={event.eventPledge.totalPledgedAmount}
             minimumPledge={event.eventPledge.minimumPledge}
           />
-          <Tickets tickets={event.ticketing} />
+          <Tickets eventId={id} tickets={event.ticketing} />
           <Manage id={id} endDate={event.endTime} />
         </Fragment>
       )}

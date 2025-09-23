@@ -2,7 +2,13 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/modules/ui/input";
 
 import { Search, Settings2 } from "lucide-react";
-import { ComponentProps, ReactNode } from "react";
+import {
+  ComponentProps,
+  ReactNode,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 type SearchInputProps = {
   searchIconClassName?: string;
@@ -36,16 +42,40 @@ export const SearchInput = (props: SearchInputProps) => {
 };
 
 export const InputWithPrefix = (
-  props: { prefixItem?: ReactNode } & ComponentProps<"input">
+  props: {
+    prefixItem?: ReactNode;
+    prefixItemClassName?: string;
+  } & ComponentProps<"input">
 ) => {
-  const { className, prefixItem, ...rest } = props;
+  const { className, prefixItem, prefixItemClassName, ...rest } = props;
+  const prefixRef = useRef<HTMLDivElement>(null);
+  const [prefixWidth, setPrefixWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    if (prefixRef.current) {
+      const width = prefixRef.current.offsetWidth;
+      setPrefixWidth(width);
+    } else {
+      setPrefixWidth(0);
+    }
+  }, [prefixItem, prefixItemClassName]);
+
+  const inputPaddingLeft = prefixWidth ? `${prefixWidth + 12}px` : "0.75rem";
 
   return (
     <div className="w-full relative h-12">
-      <div className="absolute top-[25%] left-3">{prefixItem}</div>
+      {prefixItem && (
+        <div
+          ref={prefixRef}
+          className={cn("absolute top-[25%] left-3", prefixItemClassName)}
+        >
+          {prefixItem}
+        </div>
+      )}
       <Input
         {...rest}
-        className={cn("pl-10 border-primary/50 h-full", className)}
+        className={cn("border-primary/50 h-full", className)}
+        style={{ paddingLeft: inputPaddingLeft }}
       />
     </div>
   );
