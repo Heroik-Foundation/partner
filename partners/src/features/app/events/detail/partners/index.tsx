@@ -2,7 +2,6 @@ import { useParams } from "@tanstack/react-router";
 import { useEventDetailsQuery } from "../../hooks/query";
 import { Fragment } from "react/jsx-runtime";
 import { Header } from "@/features/app/global/header";
-import { Button } from "@/modules/ui/button";
 
 const EventCharityPartners = () => {
   const { id } = useParams({
@@ -43,14 +42,6 @@ const EventCharityPartners = () => {
                   </p>
                 </div>
               </div>
-
-              <Button
-                size={"sm"}
-                variant={"destructive"}
-                className="rounded-full px-5"
-              >
-                Remove
-              </Button>
             </li>
           );
         })}
