@@ -30,9 +30,11 @@ const steps = [
 ];
 
 const CreateEventOptions = () => {
-  const { currentIndex, currentStep, next } = useMultistep(
+  const { currentIndex, currentStep, next, previous } = useMultistep(
     steps.map((item) => item.component)
   );
+
+  console.log(currentIndex);
   const [open, setOpen] = useState<boolean>(true);
 
   const trigger = (
@@ -56,6 +58,7 @@ const CreateEventOptions = () => {
       title={steps[currentIndex].title}
       previousRoute={true}
       description={steps[currentIndex].description}
+      previousRouteCallback={currentIndex !== 0 ? previous : undefined}
     >
       {currentStep}
 

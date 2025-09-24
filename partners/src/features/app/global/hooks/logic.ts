@@ -23,7 +23,34 @@ export interface EventFormState {
   endTime: string;
   privacy: string;
   eventId: string;
+
+  recurrence?: EventFormRecurrenceState;
+  ticketing?: TicketTierState[];
+  fundRaiser?: FundraiserState;
 }
+
+export type EventFormRecurrenceState = {
+  interval?: number;
+  frequency?: "WEEKLY" | "MONTHLY";
+  daysOfWeek?: number[]; // 0=Sunday, 6=Saturday (for weekly recurrence)
+  endType?: "NEVER" | "UNTIL_DATE" | "AFTER_OCCURRENCES";
+  endDate?: string; // ISO string (required if endType is 'UNTIL_DATE')
+  occurrenceCount?: number; // Required if endType is 'AFTER_OCCURRENCES'
+};
+
+export type TicketTierState = {
+  ticketType: string;
+  ticketPrice: number;
+  signUpLimit: number;
+  salesStartDate: string | null;
+  salesEndDate: string | null;
+  absorbFees: boolean;
+};
+
+export type FundraiserState = {
+  fundRaisingGoal?: number;
+  organizations?: string[];
+};
 
 export const defaultValue: EventFormState = {
   photo: undefined,

@@ -9,6 +9,7 @@ type FormProps = Partial<{
   title: string;
   description: string;
   previousRoute: boolean;
+  previousRouteCallback?: () => void;
 }> &
   ComponentProps<"form">;
 
@@ -21,8 +22,15 @@ type FormCounterProps = Partial<{
   ComponentProps<"input">;
 
 export const Form = (props: FormProps) => {
-  const { title, description, previousRoute, children, className, ...rest } =
-    props;
+  const {
+    title,
+    description,
+    previousRoute,
+    previousRouteCallback,
+    children,
+    className,
+    ...rest
+  } = props;
 
   return (
     <form
@@ -32,7 +40,7 @@ export const Form = (props: FormProps) => {
         className
       )}
     >
-      {previousRoute && <PreviousButton />}
+      {previousRoute && <PreviousButton callback={previousRouteCallback} />}
       <div className="space-y-0.5">
         {title && (
           <h1 className="font-black text-primary text-2xl font-axiforma">

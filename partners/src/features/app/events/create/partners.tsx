@@ -10,11 +10,6 @@ import { useState, useMemo } from "react";
 import { useEventFormStore } from "../../global/hooks/logic";
 import { motion, AnimatePresence } from "motion/react";
 
-type CharityPartner = {
-  name: string;
-  id: string;
-};
-
 const SelectEventPartner = () => {
   const [query, setQuery] = useState("");
   const { data, hasNextPage, fetchNextPage, isPending, isFetchingNextPage } =
@@ -25,10 +20,10 @@ const SelectEventPartner = () => {
   ]);
 
   const { formState, updateForm } = useEventFormStore();
-  const selectedPartners = formState.charityPartners as CharityPartner[];
+  const selectedPartners = formState.fundRaiser?.organizations || [];
 
   const selectedIds = useMemo(() => {
-    return selectedPartners.map((partner) => partner.id);
+    return selectedPartners.map((partner) => partner);
   }, [selectedPartners]);
 
   const sortedOrganizations = useMemo(() => {

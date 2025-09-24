@@ -1,4 +1,8 @@
 import {
+  EventFormRecurrenceState,
+  useEventFormStore,
+} from "@/features/app/global/hooks/logic";
+import {
   FormContent,
   FormCounter,
   FormField,
@@ -18,6 +22,18 @@ import { SelectTrigger } from "@radix-ui/react-select";
 import { ChevronDown } from "lucide-react";
 
 export const RecurringEventDetails = () => {
+  const { formState, updateForm } = useEventFormStore();
+
+  const updateRecurrenceField = <K extends keyof EventFormRecurrenceState>(
+    field: K,
+    value: EventFormRecurrenceState[K]
+  ) => {
+    updateForm("recurrence", {
+      ...(formState.recurrence || {}),
+      [field]: value,
+    });
+  };
+
   const days = [
     {
       name: "Monday",
@@ -58,11 +74,19 @@ export const RecurringEventDetails = () => {
       title: "On",
       value: "UNTIL_DATE",
       input: "date",
+      inputValue: formState.recurrence?.endDate,
+      updateInputValue: (event: React.ChangeEvent<HTMLInputElement>) => {
+        updateRecurrenceField("endDate", event.target.value);
+      },
     },
     {
       title: "After",
       value: "AFTER_OCCURRENCES",
       input: "number",
+      inputValue: formState.recurrence?.occurrenceCount,
+      updateInputValue: (event: React.ChangeEvent<HTMLInputElement>) => {
+        updateRecurrenceField("occurrenceCount", Number(event.target.value));
+      },
     },
   ];
 
@@ -71,8 +95,31 @@ export const RecurringEventDetails = () => {
       <FormField>
         <Label>Repeats Every</Label>
         <div className="flex items-center max-w-xs space-x-2">
-          <FormCounter />
-          <Select>
+          <FormCounter
+            value={formState.recurrence?.interval}
+            onChange={({ target }) => {
+              updateRecurrenceField("interval", Math.abs(Number(target.value)));
+            }}
+            increment={() => {
+              updateRecurrenceField(
+                "interval",
+                Math.abs(Number(formState.recurrence?.interval || 0) + 1)
+              );
+            }}
+            decrement={() => {
+              updateRecurrenceField(
+                "interval",
+                Math.abs(Number(formState.recurrence?.interval || 0) - 1)
+              );
+            }}
+          />
+
+          <Select
+            onValueChange={(value: "WEEKLY" | "MONTHLY") => {
+              updateRecurrenceField("frequency", value);
+            }}
+            value={formState.recurrence?.frequency}
+          >
             <SelectTrigger className="w-[180px] h-[56px]" asChild>
               <Button
                 className="border-2 border-primary/20 justify-between"
@@ -95,12 +142,27 @@ export const RecurringEventDetails = () => {
         <Label>Repeats On</Label>
         <div className="space-x-2.5">
           {days.map((item, index) => {
+            const isSelected =
+              formState.recurrence?.daysOfWeek?.includes(item.day) || false;
+
             return (
               <Button
                 type="button"
-                variant={"outline"}
-                className="rounded-full h-10 w-10"
+                variant={isSelected ? "default" : "outline"}
+                className={`rounded-full h-10 w-10 ${isSelected ? "bg-primary text-white" : ""}`}
                 key={index}
+                onClick={() => {
+                  const currentDays = formState.recurrence?.daysOfWeek || [];
+                  let newDays: number[];
+
+                  if (currentDays.includes(item.day)) {
+                    newDays = currentDays.filter((day) => day !== item.day);
+                  } else {
+                    newDays = [...currentDays, item.day];
+                  }
+
+                  updateRecurrenceField("daysOfWeek", newDays);
+                }}
               >
                 {item.name.slice(0, 1)}
               </Button>
@@ -111,7 +173,15 @@ export const RecurringEventDetails = () => {
 
       <FormField className="space-y-5">
         <Label>Recurrence Ends</Label>
-        <RadioGroup className="space-y-5" value={recurrence[0].value}>
+        <RadioGroup
+          className="space-y-5"
+          onValueChange={(
+            value: "NEVER" | "UNTIL_DATE" | "AFTER_OCCURRENCES"
+          ) => {
+            updateRecurrenceField("endType", value);
+          }}
+          value={formState.recurrence?.endType}
+        >
           {recurrence.map((item, index) => {
             return (
               <div
@@ -123,7 +193,11 @@ export const RecurringEventDetails = () => {
                   <Label htmlFor={item.value}>{item.title}</Label>
                   {item.input && (
                     <Input
+                      value={item.inputValue}
                       type={item.input}
+                      onChange={(event) => {
+                        item.updateInputValue(event);
+                      }}
                       className={cn(
                         "w-fit h-10",
                         item.input === "number" && "w-20"

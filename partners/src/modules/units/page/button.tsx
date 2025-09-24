@@ -8,9 +8,10 @@ export type Variants = "default" | "backlight" | "backlight-faded" | "primary";
 type Props = {
   variant?: Variants;
   route?: string;
+  callback?: () => void;
 };
 
-export const PreviousButton = ({ variant, route }: Props) => {
+export const PreviousButton = ({ variant, route, callback }: Props) => {
   const { history, navigate } = useRouter();
 
   return (
@@ -23,12 +24,16 @@ export const PreviousButton = ({ variant, route }: Props) => {
         variant === "primary" && "bg-primary text-white hover:bg-primary/80"
       )}
       onClick={() => {
-        if (route) {
-          navigate({
-            to: route,
-          });
+        if (callback) {
+          callback();
         } else {
-          history.back();
+          if (route) {
+            navigate({
+              to: route,
+            });
+          } else {
+            history.back();
+          }
         }
       }}
     >
