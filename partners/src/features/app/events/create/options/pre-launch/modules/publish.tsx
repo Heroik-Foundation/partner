@@ -47,7 +47,7 @@ export const Publish = () => {
           .filter((t) => t.salesStartDate && t.salesEndDate) // only valid tickets
           .map((t) => ({
             ticketType: t.ticketType,
-            ticketPrice: t.ticketPrice,
+            ticketPrice: Math.abs(Number(t.ticketPrice) * 100),
             signUpLimit: t.signUpLimit,
             salesStartDate: t.salesStartDate!,
             salesEndDate: t.salesEndDate!,
@@ -58,7 +58,7 @@ export const Publish = () => {
       fundRaiser.fundRaisingGoal &&
       fundRaiser.organizations && {
         eventPledge: {
-          minimumPledge: fundRaiser.fundRaisingGoal,
+          minimumPledge: Math.abs(Number(fundRaiser.fundRaisingGoal) * 100),
           organizations: fundRaiser.organizations.map((org) => org.id),
         },
       }),

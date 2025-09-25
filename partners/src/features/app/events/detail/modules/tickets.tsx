@@ -3,7 +3,7 @@ import { type EventTicketing } from "@/features/app/global/types";
 import editIcon from "../assets/edit.svg";
 import { Link } from "@tanstack/react-router";
 import { formatCurrency } from "@/helpers/text";
-import { getReadableTime, isPastDate } from "@/helpers/time";
+import { formatISODate, isPastDate } from "@/helpers/time";
 
 type Props = {
   tickets: EventTicketing[];
@@ -47,7 +47,8 @@ const Ticket = (props: EventTicketing & { eventId: string }) => {
           </span>
         </h2>
         <span className="text-xs font-semibold">
-          Sales End{isPastDeadline && "ed"} {getReadableTime(salesEndDate)}
+          Sales End{isPastDeadline && "ed"} On{" "}
+          {formatISODate(salesEndDate).date}
         </span>
       </div>
 
