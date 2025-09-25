@@ -1,122 +1,55 @@
 import { Event } from "@/features/app/global/types";
 import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
-import { convertDateTimeInputToISOString } from "@/helpers/time";
 import { authenticatedInstance } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { frmz } from "frmz";
+
+type Ticket = {
+  ticketType: string;
+  ticketPrice: number;
+  signUpLimit: number;
+  salesStartDate: string; // ISO date string
+  salesEndDate: string; // ISO date string
+  absorbFees: boolean;
+};
 
 type CreateEventMutation = {
   name: string;
   description: string;
-  startTime: string;
-  endTime: string;
-  longitude: number;
-  latitude: number;
-  eventTicket: {
-    totalTicket: number;
-    ticketPrice: number;
+  fundRaiser?: {
+    fundRaisingGoal: number;
+    organizations: string[]; // array of organization IDs
   };
-  eventPledge?: {
-    minimumPledge: number;
-    organizations: string[];
+  recurrence?: {
+    interval: number;
+    frequency: "WEEKLY" | "MONTHLY"; // could extend with more if needed
+    daysOfWeek: number[]; // 0 = Sunday, 6 = Saturday
+    endType: "NEVER" | "UNTIL_DATE" | "AFTER_OCCURRENCES";
+    endDate?: string; // only if endType is UNTIL_DATE
+    occurrenceCount?: number; // only if endType is AFTER_OCCURRENCES
   };
+  ticketing?: Ticket[];
   category: string;
+  subcategory: string;
   privacy: string;
   eventEndDate: string;
-  endDate: string;
+  endTime: string;
   address: string;
-  signUpLimit: number;
-  subCategory?: string;
+  latitude: number;
+  longitude: number;
   communityId?: string;
-  photo: File | null;
+  photo?: string | File;
 };
 
 export function useCreateEventMutation(props: CreateEventMutation) {
-  const {
-    name,
-    description,
-    eventTicket,
-    eventPledge,
-    category,
-    privacy,
-    eventEndDate,
-    endDate,
-    startTime,
-    endTime,
-    subCategory,
-    address,
-    signUpLimit,
-    communityId,
-    photo,
-    latitude,
-    longitude,
-  } = props;
   const { navigate } = useRouter();
   return useMutation({
     mutationFn: async () => {
-      const formData = new FormData();
-
-      formData.append("name", name);
-      formData.append("description", description);
-      formData.append("category", category);
-      formData.append("privacy", privacy);
-      formData.append("longitude", String(longitude));
-      formData.append("latitude", String(latitude));
-
-      if (startTime && endTime && endTime && eventEndDate) {
-        //Start date
-        formData.append(
-          "endTime",
-          convertDateTimeInputToISOString(endDate, startTime)
-        );
-
-        //End date
-        formData.append(
-          "eventEndDate",
-          convertDateTimeInputToISOString(eventEndDate, endTime)
-        );
-      } else {
-        toast.error("Invalid date, please select another date");
-        throw new Error("Invalid date");
-      }
-
-      formData.append("address", address);
-
-      if (subCategory) {
-        formData.append("subcategory", subCategory);
-      }
-
-      formData.append("signUpLimit", signUpLimit.toString());
-
-      if (communityId) {
-        formData.append("communityId", communityId);
-      }
-
-      // formData.append(
-      //   "eventTicket[totalTicket]",
-      //   eventTicket.totalTicket.toString()
-      // );
-
-      formData.append(
-        "eventTicket[ticketPrice]",
-        (eventTicket.ticketPrice * 100).toString()
-      );
-
-      if (eventPledge?.minimumPledge) {
-        formData.append(
-          "eventPledge[minimumPledge]",
-          (eventPledge.minimumPledge * 100).toString()
-        );
-        const pledgeOrganizations = eventPledge.organizations || [];
-        pledgeOrganizations.forEach((org) => {
-          formData.append("eventPledge[organizations][]", org);
-        });
-      }
-
-      if (photo) {
-        formData.append("photo", photo);
-      }
+      const { getFormData } = frmz({ ...props });
+      const formData = getFormData();
+      console.log(props);
 
       const { data } = await authenticatedInstance.post(
         "/event-partners/create-event",

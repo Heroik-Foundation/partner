@@ -7,12 +7,15 @@ import { FormContent, FormField } from "@/features/auth/global/form";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
 import { useNavigate } from "@tanstack/react-router";
+import { XCircle } from "lucide-react";
+import { toast } from "sonner";
 
 export const FundraisingEventDetails = () => {
-  const { formState, updateForm } = useEventFormStore();
+  const { formState, updateForm, removeOrganization } = useEventFormStore();
   const navigate = useNavigate();
 
   const fundRaiserState = formState.fundRaiser || {};
+  const organizations = formState.fundRaiser?.organizations || [];
 
   const updateFundraiserField = <K extends keyof FundraiserState>(
     field: K,
@@ -50,6 +53,34 @@ export const FundraisingEventDetails = () => {
           placeholder="Charity Partner"
         />
       </FormField>
+
+      <ul className="space-y-3">
+        {organizations.length >= 1 &&
+          organizations.map((org, index) => {
+            return (
+              <li
+                key={index}
+                className="p-3 rounded-full border border-primay/25 flex items-center justify-between"
+              >
+                <span className="text-sm font-bold text-primary">
+                  {org.name}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    removeOrganization(org.id);
+                    toast.success("Removed", {
+                      id: "removed-oragnization",
+                    });
+                  }}
+                >
+                  <XCircle className="stroke-white fill-rose-500" />
+                </button>
+              </li>
+            );
+          })}
+      </ul>
     </FormContent>
   );
 };

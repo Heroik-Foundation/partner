@@ -17,6 +17,7 @@ type HeaderProps = {
   };
   previousButtonVariant?: Variants;
   previousButtonRoute?: string;
+  previousRouteCallback?: () => void;
 };
 
 export const Header = (props: HeaderProps) => {
@@ -25,6 +26,7 @@ export const Header = (props: HeaderProps) => {
     previousButtonVariant = "default",
     addOns,
     previousButtonRoute,
+    previousRouteCallback,
   } = props;
   const { data: notifications } = useUserNotificationsQuery();
 
@@ -39,6 +41,7 @@ export const Header = (props: HeaderProps) => {
         <PreviousButton
           variant={previousButtonVariant}
           route={previousButtonRoute}
+          callback={previousRouteCallback}
         />
         {position === "inline" && (
           <div className="font-black text-primary text-base font-axiforma absolute inset-0 flex items-center justify-center">

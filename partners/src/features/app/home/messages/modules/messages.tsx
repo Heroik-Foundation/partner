@@ -31,7 +31,7 @@ export const Messages = ({ searchQuery }: { searchQuery: string }) => {
     [hasNextPage]
   );
 
-  const messages = data?.pages.flat() || [];
+  const messages: any[] = data?.pages.flat() || [];
   const isLoading = isPending || isFetchingNextPage;
   const hasNoConversations = !isLoading && messages.length === 0;
 

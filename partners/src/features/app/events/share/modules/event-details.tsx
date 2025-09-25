@@ -2,8 +2,6 @@ import { useParams } from "@tanstack/react-router";
 import { useEventDetailsQuery } from "../../hooks/query";
 import { Event } from "@/modules/units/card/event";
 import { Fragment } from "react/jsx-runtime";
-import { SemiCircleProgressBar } from "../../detail/modules/info";
-import { formatCurrency } from "@/helpers/text";
 import { useCountdown } from "../hooks/logic";
 
 export const EventDetails = () => {
@@ -46,10 +44,10 @@ export const EventDetails = () => {
           <Fragment>
             <Event
               className="rounded-b-none min-h-64"
-              availableTickets={event.eventTicket.availableTickets || 0}
+              availableTickets={0}
               key={event._id}
               id={event._id}
-              thumbnail={event.photo}
+              thumbnail={event.photo || ""}
               title={event.name}
               date={event.endTime}
               price={event.eventPledge.minimumPledge || 0}
@@ -67,7 +65,9 @@ export const EventDetails = () => {
               <span className="bg-primary text-white font-bold py-2 px-5 text-xs rounded-lg">
                 Event Host
               </span>
-              <p className="text-white text-xs font-bold">{event.admin.name}</p>
+              <p className="text-white text-xs font-bold">
+                {event.admin?.name || ""}
+              </p>
             </div>
 
             {isFundraiser ? (
@@ -76,17 +76,6 @@ export const EventDetails = () => {
                 <p className="text-xs font-medium text-primary/50">
                   Funds needed to make a difference.
                 </p>
-                <SemiCircleProgressBar
-                  value={event.eventPledge.totalPledgedAmount}
-                  size={300}
-                >
-                  <h2 className="text-2xl font-bold text-primary">
-                    {formatCurrency(event.eventPledge.minimumPledge)}
-                  </h2>
-                  <span className="text-sm px-2.5 py-1 rounded-lg bg-teal-500/15 text-teal-600 font-semibold inline-flex">
-                    {event.eventPledge.totalPledgedAmount}%
-                  </span>{" "}
-                </SemiCircleProgressBar>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center space-y-2.5">

@@ -22,7 +22,6 @@ type Props = {
 
 export const CreateEventActionDrawer = ({
   open,
-  setOpen,
   trigger,
   callback,
   title,
@@ -30,7 +29,7 @@ export const CreateEventActionDrawer = ({
   const { primary, secondary } = callback;
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open}>
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>

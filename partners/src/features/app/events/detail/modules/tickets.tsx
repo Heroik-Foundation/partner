@@ -33,7 +33,7 @@ const Ticket = (props: EventTicketing & { eventId: string }) => {
   const isPastDeadline = isPastDate(salesEndDate);
 
   return (
-    <div className="text-primary flex items-center justify-between w-full p-4 shadow rounded-lg">
+    <li className="text-primary flex items-center justify-between w-full p-4 shadow rounded-lg">
       <div className="space-y-2.5">
         <h5 className="first-letter:uppercase text-xs font-semibold text">
           {ticketType} Tickets
@@ -60,6 +60,6 @@ const Ticket = (props: EventTicketing & { eventId: string }) => {
       >
         <img src={editIcon} alt="" className="w-5 h-5" />
       </Link>
-    </div>
+    </li>
   );
 };

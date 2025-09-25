@@ -14,7 +14,7 @@ import { Label } from "@/modules/ui/label";
 export const TicketEventDetails = () => {
   const { formState, updateForm } = useEventFormStore();
 
-  const currentIndex = 0;
+  const currentIndex = formState.currentTicketIndex;
 
   const currentIndexState: TicketTierState =
     formState.ticketing && formState.ticketing[currentIndex]
@@ -111,8 +111,13 @@ export const TicketEventDetails = () => {
       <FormField>
         <Label>Ticket Type Name</Label>
         <Input
-          value={`${currentIndexState.ticketType} Tickets`}
+          value={currentIndexState.ticketType}
           placeholder="Enter Ticket Type Name"
+          onChange={({ target }) => {
+            updateSpecificTicketTier(currentIndex, {
+              ticketType: target.value,
+            });
+          }}
         />
 
         <ul className="flex items-center space-x-5">

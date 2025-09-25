@@ -27,10 +27,10 @@ const EventCreationSuccess = () => {
             className="block"
             key={event._id}
             id={event._id}
-            thumbnail={event.photo}
+            thumbnail={event.photo || ""}
             title={event.name}
             date={event.endTime}
-            price={event.eventTicket.ticketPrice || 0}
+            price={event.ticketing[0].ticketPrice}
             location={event.address}
           />
         ) : (

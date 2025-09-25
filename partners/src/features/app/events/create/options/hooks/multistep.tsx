@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { parseAsInteger, useQueryState } from "nuqs";
 
 export function useMultistep<T>(steps: T[]) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useQueryState(
+    "step",
+    parseAsInteger.withDefault(0)
+  );
 
   function next() {
     setCurrentIndex((i) => (i < steps.length - 1 ? i + 1 : i));

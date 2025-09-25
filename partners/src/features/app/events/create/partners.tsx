@@ -23,7 +23,7 @@ const SelectEventPartner = () => {
   const selectedPartners = formState.fundRaiser?.organizations || [];
 
   const selectedIds = useMemo(() => {
-    return selectedPartners.map((partner) => partner);
+    return selectedPartners.map((partner) => partner.id);
   }, [selectedPartners]);
 
   const sortedOrganizations = useMemo(() => {

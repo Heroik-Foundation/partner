@@ -67,6 +67,9 @@ const AppChannelsCreateIndexLazyImport = createFileRoute(
   '/app/channels/create/',
 )()
 const AppChannelsIdIndexLazyImport = createFileRoute('/app/channels/$id/')()
+const AppEventsCreatePreLaunchIndexLazyImport = createFileRoute(
+  '/app/events/create/pre-launch/',
+)()
 const AppEventsCreatePartnersIndexLazyImport = createFileRoute(
   '/app/events/create/partners/',
 )()
@@ -359,6 +362,17 @@ const AuthSignupPasswordIndexRoute = AuthSignupPasswordIndexImport.update({
   path: '/auth/signup/password/',
   getParentRoute: () => rootRoute,
 } as any)
+
+const AppEventsCreatePreLaunchIndexLazyRoute =
+  AppEventsCreatePreLaunchIndexLazyImport.update({
+    id: '/events/create/pre-launch/',
+    path: '/events/create/pre-launch/',
+    getParentRoute: () => AppRoute,
+  } as any).lazy(() =>
+    import('./routes/app/events/create/pre-launch/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
 
 const AppEventsCreatePartnersIndexLazyRoute =
   AppEventsCreatePartnersIndexLazyImport.update({
@@ -798,6 +812,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEventsCreatePartnersIndexLazyImport
       parentRoute: typeof AppImport
     }
+    '/app/events/create/pre-launch/': {
+      id: '/app/events/create/pre-launch/'
+      path: '/events/create/pre-launch'
+      fullPath: '/app/events/create/pre-launch'
+      preLoaderRoute: typeof AppEventsCreatePreLaunchIndexLazyImport
+      parentRoute: typeof AppImport
+    }
     '/app/channels/$id/post/create/': {
       id: '/app/channels/$id/post/create/'
       path: '/channels/$id/post/create'
@@ -862,6 +883,7 @@ interface AppRouteChildren {
   AppEventsCreateCategoryIndexLazyRoute: typeof AppEventsCreateCategoryIndexLazyRoute
   AppEventsCreateOptionsIndexLazyRoute: typeof AppEventsCreateOptionsIndexLazyRoute
   AppEventsCreatePartnersIndexLazyRoute: typeof AppEventsCreatePartnersIndexLazyRoute
+  AppEventsCreatePreLaunchIndexLazyRoute: typeof AppEventsCreatePreLaunchIndexLazyRoute
   AppChannelsIdPostCreateIndexRoute: typeof AppChannelsIdPostCreateIndexRoute
   AppChannelsIdPostPostIdIndexLazyRoute: typeof AppChannelsIdPostPostIdIndexLazyRoute
   AppEventsIdEditTicketTypeIdIndexLazyRoute: typeof AppEventsIdEditTicketTypeIdIndexLazyRoute
@@ -899,6 +921,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppEventsCreateCategoryIndexLazyRoute: AppEventsCreateCategoryIndexLazyRoute,
   AppEventsCreateOptionsIndexLazyRoute: AppEventsCreateOptionsIndexLazyRoute,
   AppEventsCreatePartnersIndexLazyRoute: AppEventsCreatePartnersIndexLazyRoute,
+  AppEventsCreatePreLaunchIndexLazyRoute:
+    AppEventsCreatePreLaunchIndexLazyRoute,
   AppChannelsIdPostCreateIndexRoute: AppChannelsIdPostCreateIndexRoute,
   AppChannelsIdPostPostIdIndexLazyRoute: AppChannelsIdPostPostIdIndexLazyRoute,
   AppEventsIdEditTicketTypeIdIndexLazyRoute:
@@ -950,6 +974,7 @@ export interface FileRoutesByFullPath {
   '/app/events/create/category': typeof AppEventsCreateCategoryIndexLazyRoute
   '/app/events/create/options': typeof AppEventsCreateOptionsIndexLazyRoute
   '/app/events/create/partners': typeof AppEventsCreatePartnersIndexLazyRoute
+  '/app/events/create/pre-launch': typeof AppEventsCreatePreLaunchIndexLazyRoute
   '/app/channels/$id/post/create': typeof AppChannelsIdPostCreateIndexRoute
   '/app/channels/$id/post/$postId': typeof AppChannelsIdPostPostIdIndexLazyRoute
   '/app/events/$id/edit/$ticketTypeId': typeof AppEventsIdEditTicketTypeIdIndexLazyRoute
@@ -997,6 +1022,7 @@ export interface FileRoutesByTo {
   '/app/events/create/category': typeof AppEventsCreateCategoryIndexLazyRoute
   '/app/events/create/options': typeof AppEventsCreateOptionsIndexLazyRoute
   '/app/events/create/partners': typeof AppEventsCreatePartnersIndexLazyRoute
+  '/app/events/create/pre-launch': typeof AppEventsCreatePreLaunchIndexLazyRoute
   '/app/channels/$id/post/create': typeof AppChannelsIdPostCreateIndexRoute
   '/app/channels/$id/post/$postId': typeof AppChannelsIdPostPostIdIndexLazyRoute
   '/app/events/$id/edit/$ticketTypeId': typeof AppEventsIdEditTicketTypeIdIndexLazyRoute
@@ -1046,6 +1072,7 @@ export interface FileRoutesById {
   '/app/events/create/category/': typeof AppEventsCreateCategoryIndexLazyRoute
   '/app/events/create/options/': typeof AppEventsCreateOptionsIndexLazyRoute
   '/app/events/create/partners/': typeof AppEventsCreatePartnersIndexLazyRoute
+  '/app/events/create/pre-launch/': typeof AppEventsCreatePreLaunchIndexLazyRoute
   '/app/channels/$id/post/create/': typeof AppChannelsIdPostCreateIndexRoute
   '/app/channels/$id/post/$postId/': typeof AppChannelsIdPostPostIdIndexLazyRoute
   '/app/events/$id/edit/$ticketTypeId/': typeof AppEventsIdEditTicketTypeIdIndexLazyRoute
@@ -1096,6 +1123,7 @@ export interface FileRouteTypes {
     | '/app/events/create/category'
     | '/app/events/create/options'
     | '/app/events/create/partners'
+    | '/app/events/create/pre-launch'
     | '/app/channels/$id/post/create'
     | '/app/channels/$id/post/$postId'
     | '/app/events/$id/edit/$ticketTypeId'
@@ -1142,6 +1170,7 @@ export interface FileRouteTypes {
     | '/app/events/create/category'
     | '/app/events/create/options'
     | '/app/events/create/partners'
+    | '/app/events/create/pre-launch'
     | '/app/channels/$id/post/create'
     | '/app/channels/$id/post/$postId'
     | '/app/events/$id/edit/$ticketTypeId'
@@ -1189,6 +1218,7 @@ export interface FileRouteTypes {
     | '/app/events/create/category/'
     | '/app/events/create/options/'
     | '/app/events/create/partners/'
+    | '/app/events/create/pre-launch/'
     | '/app/channels/$id/post/create/'
     | '/app/channels/$id/post/$postId/'
     | '/app/events/$id/edit/$ticketTypeId/'
@@ -1283,6 +1313,7 @@ export const routeTree = rootRoute
         "/app/events/create/category/",
         "/app/events/create/options/",
         "/app/events/create/partners/",
+        "/app/events/create/pre-launch/",
         "/app/channels/$id/post/create/",
         "/app/channels/$id/post/$postId/",
         "/app/events/$id/edit/$ticketTypeId/",
@@ -1434,6 +1465,10 @@ export const routeTree = rootRoute
     },
     "/app/events/create/partners/": {
       "filePath": "app/events/create/partners/index.lazy.tsx",
+      "parent": "/app"
+    },
+    "/app/events/create/pre-launch/": {
+      "filePath": "app/events/create/pre-launch/index.lazy.tsx",
       "parent": "/app"
     },
     "/app/channels/$id/post/create/": {

@@ -21,15 +21,15 @@ export const CharityOrganization = (props: CharityOrganizationProps) => {
   const { thumbnail, title, address, nodeRef, id, formState, updateForm } =
     props;
   const isOrgPresent = (formState.fundRaiser?.organizations || []).some(
-    (partner) => partner === id
+    (partner) => partner.id === id
   );
 
   const handleOrgArrUpdates = () => {
     const initialData = formState.fundRaiser?.organizations || [];
 
     const newData = isOrgPresent
-      ? initialData.filter((partner) => partner !== id)
-      : [...initialData, id];
+      ? initialData.filter((partner) => partner.id !== id)
+      : [...initialData, { name: title, id }];
 
     updateForm("fundRaiser", {
       fundRaisingGoal: formState.fundRaiser?.fundRaisingGoal,

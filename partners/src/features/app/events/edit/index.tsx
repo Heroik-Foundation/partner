@@ -36,7 +36,7 @@ const EditEvent = () => {
 
   const handleInitialEventDataUpdate = () => {
     if (event && (formState.name === "" || formState.name !== event.name)) {
-      setFormState(getInitialEventState(event));
+      setFormState(getInitialEventState(event) as any);
     }
   };
 
