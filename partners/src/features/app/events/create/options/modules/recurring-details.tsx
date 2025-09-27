@@ -20,6 +20,7 @@ import {
 } from "@/modules/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
 import { ChevronDown } from "lucide-react";
+import { toast } from "sonner";
 
 export const RecurringEventDetails = () => {
   const { formState, updateForm } = useEventFormStore();
@@ -96,6 +97,7 @@ export const RecurringEventDetails = () => {
         <Label>Repeats Every</Label>
         <div className="flex items-center max-w-xs space-x-2">
           <FormCounter
+            required
             value={formState.recurrence?.interval}
             onChange={({ target }) => {
               updateRecurrenceField("interval", Math.abs(Number(target.value)));
@@ -115,6 +117,7 @@ export const RecurringEventDetails = () => {
           />
 
           <Select
+            required
             onValueChange={(value: "WEEKLY" | "MONTHLY") => {
               updateRecurrenceField("frequency", value);
             }}
@@ -197,6 +200,19 @@ export const RecurringEventDetails = () => {
                       type={item.input}
                       onChange={(event) => {
                         item.updateInputValue(event);
+                      }}
+                      readOnly={formState.recurrence?.endType !== item.value}
+                      required={
+                        (formState.recurrence?.endType === "UNTIL_DATE" &&
+                          item.value === "UNTIL_DATE") ||
+                        (formState.recurrence?.endType ===
+                          "AFTER_OCCURRENCES" &&
+                          item.value === "AFTER_OCCURRENCES")
+                      }
+                      onFocus={() => {
+                        if (formState.recurrence?.endType !== item.value) {
+                          toast.info("Select this option to input value");
+                        }
                       }}
                       className={cn(
                         "w-fit h-10",

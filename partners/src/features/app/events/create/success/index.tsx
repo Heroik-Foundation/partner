@@ -1,13 +1,16 @@
-import { useParams, useRouter } from "@tanstack/react-router";
+import { useParams, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEventDetailsQuery } from "../../hooks/query";
 import { Button } from "@/modules/ui/button";
 import { Event, EventSkeletonLoader } from "@/modules/units/card/event";
 import { Share } from "lucide-react";
+import { useRouteStore } from "@/hooks/router";
 
 const EventCreationSuccess = () => {
   const { id } = useParams({
     strict: false,
   });
+  const pathname = useRouterState().location.pathname;
+  const { setPath } = useRouteStore();
   const { navigate } = useRouter();
   const { data: event } = useEventDetailsQuery({ id });
 
@@ -47,6 +50,8 @@ const EventCreationSuccess = () => {
                 id: String(id),
               },
             });
+
+            setPath(pathname);
           }}
           size="lg"
           className="primary-box-shadow"

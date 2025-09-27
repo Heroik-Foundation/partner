@@ -84,20 +84,28 @@ const AllEvents = () => {
 
       {events && (
         <div className="gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {events.pages.map((event, index, all_events) => (
-            <Event
-              {...(all_events.length - 1 === index && {
-                nodeRef: lastEventRef,
-              })}
-              key={event._id}
-              id={event._id}
-              thumbnail={event.photo || ""}
-              title={event.name}
-              date={event.endTime}
-              price={event.ticketing[0].ticketPrice || 0}
-              location={event.address}
-            />
-          ))}
+          {(() => {
+            const seen = new Set();
+            const uniqueEvents = events.pages.filter((event) => {
+              if (seen.has(event._id)) return false;
+              seen.add(event._id);
+              return true;
+            });
+            return uniqueEvents.map((event, index) => (
+              <Event
+                {...(uniqueEvents.length - 1 === index && {
+                  nodeRef: lastEventRef,
+                })}
+                key={event._id}
+                id={event._id}
+                thumbnail={event.photo || ""}
+                title={event.name}
+                date={event.endTime}
+                price={event.ticketing[0].ticketPrice || 0}
+                location={event.address}
+              />
+            ));
+          })()}
 
           {isFetching && (
             <Fragment>

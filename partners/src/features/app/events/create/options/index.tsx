@@ -2,23 +2,35 @@ import { Form, FormFooter } from "@/features/auth/global/form";
 import { RecurringEventDetails } from "./modules/recurring-details";
 import { TicketEventDetails } from "./modules/ticket-details";
 import { FundraisingEventDetails } from "./modules/fundraising-details";
+import { TicketsOverview } from "./modules/tickets-overview";
+import { CreateEventActionDrawer } from "./modules/action-drawer";
 import { useMultistep } from "./hooks/multistep";
 import { Fragment, useEffect, useState } from "react";
-import { CreateEventActionDrawer } from "./modules/action-drawer";
 import { Button } from "@/modules/ui/button";
 import { ArrowRightCircle } from "lucide-react";
 import { useEventFormStore } from "@/features/app/global/hooks/logic";
-import { TicketsOverview } from "./modules/tickets-overview";
 import { objectHasNullOrUndefined } from "@/helpers/object";
 import { toast } from "sonner";
 import { Header } from "@/features/app/global/header";
 import { useNavigate } from "@tanstack/react-router";
 
+type StepConfig = {
+  title: string;
+  description: string;
+  component: JSX.Element;
+  cta: string;
+  position: "stacked" | "inline";
+};
+
 const CreateEventOptions = () => {
   const { formState, setFormState } = useEventFormStore();
   const navigate = useNavigate();
+  const [open, setOpen] = useState<boolean>(true);
 
-  const steps = [
+  const hasTickets = (formState.ticketing?.length || 0) >= 1;
+  const isAddingTicket = formState.currentTicketIndex > 0;
+
+  const steps: StepConfig[] = [
     {
       title: "Event Recurrence",
       description: "Set How Often You Want Your Event To Recur",
@@ -27,21 +39,20 @@ const CreateEventOptions = () => {
       position: "stacked",
     },
     {
-      title:
-        formState.currentTicketIndex > 0 ? "Add Ticket Type" : "Ticket Details",
+      title: isAddingTicket ? "Add Ticket Type" : "Ticket Details",
       description: "Enter the required Ticket information below.",
       component: <TicketEventDetails />,
       cta: "Is This A Paid Ticketed event?",
-      position: formState.currentTicketIndex > 0 ? "inline" : "stacked",
+      position: isAddingTicket ? "inline" : "stacked",
     },
-    ...(formState.ticketing && formState.ticketing.length >= 1
+    ...(hasTickets
       ? [
           {
             title: "Review Tickets",
-            description: "Rewview Ticket information below.",
-            component: <TicketsOverview previousStep={previousStep} />,
-            cta: "Would you like to review your tickets ?",
-            position: "stacked",
+            description: "Review Ticket information below.",
+            component: <TicketsOverview previousStep={handlePreviousStep} />,
+            cta: "Would you like to review your tickets?",
+            position: "stacked" as const,
           },
         ]
       : []),
@@ -55,62 +66,70 @@ const CreateEventOptions = () => {
   ];
 
   const { currentIndex, currentStep, next, previous, isLastStep } =
-    useMultistep(steps.map((item) => item.component));
+    useMultistep(steps.map((step) => step.component));
 
-  const [open, setOpen] = useState<boolean>(true);
+  const currentStepConfig = steps[currentIndex];
 
-  function previousStep() {
+  function handlePreviousStep() {
     previous();
-
     setFormState({
       ...formState,
       currentTicketIndex: formState.currentTicketIndex + 1,
     });
   }
 
-  function previousRoute() {
-    if (formState.currentTicketIndex > 0 && currentIndex === 1) {
+  function handlePreviousRoute() {
+    if (isAddingTicket && currentIndex === 1) {
       next();
     } else {
       previous();
     }
   }
 
-  function nextStep() {
-    if (
-      currentIndex === 1 &&
-      formState.ticketing &&
-      formState.ticketing[formState.currentTicketIndex] &&
-      objectHasNullOrUndefined(
-        formState.ticketing[formState.currentTicketIndex]
-      )
-    ) {
-      toast.error("Please complete the form before continuing");
-      return;
-    }
+  function validateCurrentStep(): boolean {
+    const { recurrence, ticketing, fundRaiser, currentTicketIndex } = formState;
 
     if (
       currentIndex === 0 &&
-      formState.recurrence &&
-      objectHasNullOrUndefined(formState.recurrence)
+      recurrence &&
+      objectHasNullOrUndefined(recurrence)
     ) {
-      toast.error("Please complete the form before continuing");
-      return;
+      toast.error("Kindly complete the form before continuing");
+      return false;
+    }
+
+    if (
+      currentIndex === 1 &&
+      ticketing?.[currentTicketIndex] &&
+      objectHasNullOrUndefined(ticketing[currentTicketIndex])
+    ) {
+      toast.error("Kindly complete the form before continuing");
+      return false;
+    }
+
+    if (isLastStep && fundRaiser && objectHasNullOrUndefined(fundRaiser)) {
+      toast.error("Kindly complete the form before continuing");
+      return false;
     }
 
     if (
       isLastStep &&
-      formState.fundRaiser &&
-      objectHasNullOrUndefined(formState.fundRaiser)
+      fundRaiser &&
+      fundRaiser.organizations &&
+      fundRaiser.organizations.length < 1
     ) {
-      toast.error("Please complete the form before continuing");
-      return;
+      toast.info("Kindly select a charity partner");
+      return false;
     }
 
+    return true;
+  }
+
+  function handleNextStep() {
+    if (!validateCurrentStep()) return;
+
     if (isLastStep) {
-      navigate({
-        to: "/app/events/create/pre-launch",
-      });
+      navigate({ to: "/app/events/create/pre-launch" });
       return;
     }
 
@@ -118,53 +137,79 @@ const CreateEventOptions = () => {
     setOpen(true);
   }
 
-  const trigger = (
+  function shouldCloseDrawer(): boolean {
+    return (
+      (isLastStep && !!formState.fundRaiser) ||
+      (currentIndex === 0 && !!formState.recurrence) ||
+      ((currentIndex === 1 || currentIndex === 2) && hasTickets)
+    );
+  }
+
+  useEffect(() => {
+    if (shouldCloseDrawer()) {
+      setOpen(false);
+    }
+  }, [currentIndex, formState.fundRaiser, formState.recurrence, hasTickets]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      const message =
+        "Are you sure you want to leave? This will restart the form and you'll lose your progress.";
+      e.returnValue = message;
+      return message;
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  const submitButton = (
     <Button
-      onClick={() => {
-        if (!open) {
-          nextStep();
-        } else {
-          setOpen(true);
-        }
-      }}
+      onClick={() => console.log("you clicked me")}
+      type="submit"
       className="w-full"
       size="lg"
-      type="button"
     >
       <span>Save & Continue</span>
       <ArrowRightCircle className="fill-white stroke-primary" size={24} />
     </Button>
   );
 
-  useEffect(() => {
-    if (isLastStep && formState.fundRaiser) {
-      setOpen(false);
-    }
-  }, []);
-
   return (
     <Fragment>
       <Header
         header={{
-          position: steps[currentIndex].position as any,
-          title: steps[currentIndex].title,
-          subtitle: steps[currentIndex].description,
+          position: currentStepConfig.position,
+          title: currentStepConfig.title,
+          subtitle: currentStepConfig.description,
         }}
-        previousRouteCallback={currentIndex !== 0 ? previousRoute : undefined}
+        previousRouteCallback={
+          currentIndex !== 0 ? handlePreviousRoute : undefined
+        }
       />
-      <Form>
+
+      <Form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleNextStep();
+        }}
+      >
         {currentStep}
 
         <FormFooter>
           <CreateEventActionDrawer
-            trigger={trigger}
+            trigger={submitButton}
             callback={{
               primary: () => setOpen(false),
-              secondary: () => nextStep(),
+              secondary: handleNextStep,
             }}
             open={open}
             setOpen={setOpen}
-            title={steps[currentIndex].cta}
+            title={currentStepConfig.cta}
           />
         </FormFooter>
       </Form>

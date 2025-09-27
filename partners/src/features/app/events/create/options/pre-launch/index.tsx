@@ -46,14 +46,14 @@ export const PreLaunch = () => {
         availableTickets={formState.ticketing ? formState.ticketing.length : 0}
         title={formState.name}
         thumbnail={
-          formState.photo ? URL.createObjectURL(formState.photo as File) : ""
+          typeof formState.photo !== "undefined"
+            ? URL.createObjectURL(formState.photo as File)
+            : ""
         }
-        members={0}
         date={convertDateTimeInputToISOString(
           formState.startDate,
           formState.startTime
         )}
-        avatars={[""]}
         location={formState.address}
       />
 

@@ -1,11 +1,12 @@
 import { formatISODate } from "@/helpers/time";
+import { cn } from "@/lib/utils";
 import { DetailProps, EventProps } from "@/modules/units/card/event";
 import { Calendar, Clock, MapPin, Ticket } from "lucide-react";
 import { Fragment } from "react/jsx-runtime";
 
 type HighlightProps = {
-  members: number;
-  avatars: string[];
+  members?: number;
+  avatars?: string[];
   availableTickets: number;
 } & Omit<EventProps, "price" | "nodeRef" | "id">;
 
@@ -21,6 +22,8 @@ export const Highlight = (props: HighlightProps) => {
   } = props;
   const { date: relativeDate, time: relativeTime } = formatISODate(date);
   const imageURL = thumbnail === "" ? "/image/input-preview.jpg" : thumbnail;
+
+  const hasAttendees = (members || 0) > 0 && (avatars || []).length > 0;
 
   return (
     <Fragment>
@@ -58,38 +61,41 @@ export const Highlight = (props: HighlightProps) => {
           <EventDetail icon={Clock} content={relativeTime} />
         </div>
         <div
-          className="w-full flex items-center justify-between space-x-2.5
-          md:space-x-4"
+          className={cn(
+            "w-full flex items-center justify-between space-x-2.5 md:space-x-4",
+            !hasAttendees && "justify-center"
+          )}
         >
-          <div
-            className="bg-primary/15 py-2.5 px-4 rounded-full flex space-x-2 items-center justify-center w-full
-            md:py-3 md:px-5"
-          >
-            <div className="flex -space-x-2">
-              {avatars.slice(0, 3).map((avatar, index) => (
-                <img
-                  key={index}
-                  src={avatar}
-                  alt="Avatar"
-                  className="w-5 h-5 rounded-full object-fill border-2 border-white
-                    md:w-6 md:h-6"
-                />
-              ))}
+          {hasAttendees && (
+            <div className="bg-primary/15 py-2.5 px-4 rounded-full flex space-x-2 items-center md:py-3 md:px-5">
+              <div className="flex -space-x-2">
+                {avatars
+                  ?.slice(0, 3)
+                  .map((avatar, index) => (
+                    <img
+                      key={index}
+                      src={avatar}
+                      alt="Avatar"
+                      className="w-5 h-5 rounded-full object-fill border-2 border-white md:w-6 md:h-6"
+                    />
+                  ))}
+              </div>
+              <span className="text-xs font-bold md:text-sm">
+                {members} Attending
+              </span>
             </div>
-            <span
-              className="text-xs font-bold
-              md:text-sm"
-            >
-              {members} Attending
-            </span>
-          </div>
-          <div className="flex items-start space-x-1 w-full">
+          )}
+
+          <div
+            className={cn(
+              "flex items-start space-x-1",
+              !hasAttendees && "justify-center"
+            )}
+          >
             <Ticket size={14} className="md:w-4 md:h-4" />
-            <span
-              className="font-extrabold text-xs whitespace-nowrap
-              md:text-sm"
-            >
-              {availableTickets > 0 ? availableTickets : ""} Spots available
+            <span className="font-extrabold text-xs whitespace-nowrap md:text-sm">
+              {availableTickets > 0 ? `${availableTickets} ` : ""}Spots
+              available
             </span>
           </div>
         </div>

@@ -96,10 +96,15 @@ export const TicketEventDetails = () => {
       <FormField>
         <Label>Event Ticket Price</Label>
         <InputWithPrefix
+          required
           prefixItem={<span className="font-bold text-primary/30">£</span>}
           placeholder="0"
           type="number"
-          value={currentIndexState.ticketPrice}
+          value={
+            currentIndexState.ticketPrice === 0
+              ? undefined
+              : currentIndexState.ticketPrice
+          }
           onChange={({ target }) => {
             updateSpecificTicketTier(currentIndex, {
               ticketPrice: Number(target.value),
@@ -111,6 +116,7 @@ export const TicketEventDetails = () => {
       <FormField>
         <Label>Ticket Type Name</Label>
         <Input
+          required
           value={currentIndexState.ticketType}
           placeholder="Enter Ticket Type Name"
           onChange={({ target }) => {
@@ -120,11 +126,11 @@ export const TicketEventDetails = () => {
           }}
         />
 
-        <ul className="flex items-center space-x-5">
+        <ul className="flex items-center w-full justify-between">
           {["Standard", "Silver", "Gold", "Platnium"].map((option, index) => {
             return (
               <li
-                className="px-5 py-3 text-xs font-bold bg-primary text-white rounded-full cursor-pointer"
+                className="px-4 py-2 text-xs font-bold bg-primary text-white rounded-full cursor-pointer"
                 key={index}
                 onClick={() => {
                   updateSpecificTicketTier(currentIndex, {
@@ -142,6 +148,7 @@ export const TicketEventDetails = () => {
       <FormField>
         <Label>No of Tickets Available</Label>
         <FormCounter
+          required
           value={currentIndexState.signUpLimit}
           onChange={({ target }) => {
             updateSpecificTicketTier(currentIndex, {
@@ -165,26 +172,28 @@ export const TicketEventDetails = () => {
         <FormField>
           <Label>Sale Starts</Label>
           <Input
+            required
             value={currentIndexState.salesStartDate || ""}
             onChange={({ target }) => {
               updateSpecificTicketTier(currentIndex, {
                 salesStartDate: target.value,
               });
             }}
-            className="text-primary/50"
+            className="placeholder:text-primary/50"
             type="date"
           />
         </FormField>
         <FormField>
           <Label>Sale Ends</Label>
           <Input
+            required
             value={currentIndexState.salesEndDate || ""}
             onChange={({ target }) => {
               updateSpecificTicketTier(currentIndex, {
                 salesEndDate: target.value,
               });
             }}
-            className="text-primary/50"
+            className="placeholder:text-primary/50"
             type="date"
           />
         </FormField>

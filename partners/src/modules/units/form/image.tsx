@@ -54,10 +54,11 @@ export const ImageWithPreview = ({
   };
 
   useEffect(() => {
+    "p;  ";
     if (initialPreview && !state) {
       setPreview(initialPreview);
     } else if ((initialPreview && state) || (!initialPreview && state)) {
-      handlePreview(state);
+      // handlePreview(state);
     }
   }, [initialPreview]);
 
@@ -66,7 +67,7 @@ export const ImageWithPreview = ({
       <div className="w-full">
         <img
           id="preview_img"
-          className="w-full h-56 object-cover rounded-xl"
+          className="w-full h-56 object-cover rounded-xl object-center"
           src={preview}
           alt="Current profile photo"
         />

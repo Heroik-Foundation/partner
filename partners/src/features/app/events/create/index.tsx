@@ -21,6 +21,7 @@ import PlaceAutocomplete from "@/modules/units/form/address";
 import { useEffect } from "react";
 import { useMapStore } from "@/stores/maps";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const CreateEvent = () => {
   const { formState, updateForm } = useEventFormStore();
@@ -31,6 +32,17 @@ const CreateEvent = () => {
     resetStore();
   }, []);
 
+  const handleSubmit = () => {
+    if (!formState.category) {
+      toast.info("Please select a category");
+      return;
+    }
+
+    navigate({
+      to: "/app/events/create/options",
+    });
+  };
+
   return (
     <Fragment>
       <Header
@@ -40,7 +52,12 @@ const CreateEvent = () => {
           subtitle: "Enter the required information below.",
         }}
       />
-      <Form>
+      <Form
+        onSubmit={(event) => {
+          event.preventDefault();
+          handleSubmit();
+        }}
+      >
         <FormContent className="space-y-8">
           <ImageWithPreview
             state={formState.photo}
@@ -162,16 +179,7 @@ const CreateEvent = () => {
           </div>
         </FormContent>
         <FormFooter>
-          <Button
-            onClick={() => {
-              navigate({
-                to: "/app/events/create/options",
-              });
-            }}
-            className="w-full"
-            size="lg"
-            type="button"
-          >
+          <Button className="w-full" size="lg">
             Continue
           </Button>
         </FormFooter>
