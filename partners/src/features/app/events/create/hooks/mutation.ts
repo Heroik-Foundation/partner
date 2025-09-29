@@ -49,7 +49,6 @@ export function useCreateEventMutation(props: CreateEventMutation) {
     mutationFn: async () => {
       const { getFormData } = frmz({ ...props });
       const formData = getFormData();
-      console.log(props);
 
       const { data } = await authenticatedInstance.post(
         "/event-partners/create-event",

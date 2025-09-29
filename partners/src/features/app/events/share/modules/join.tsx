@@ -32,7 +32,7 @@ export const Join = ({ message = "Join Event" }) => {
 
   return (
     <motion.div
-      className="fixed bottom-0 left-0 mx-auto right-0 max-w-lg bg-white p-5"
+      className="fixed bottom-0 left-0 mx-auto right-0 bg-white p-5 max-w-xl"
       variants={containerVariants}
       initial="collapsed"
       animate={show ? "expanded" : "collapsed"}
