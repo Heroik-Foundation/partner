@@ -4,6 +4,7 @@ import { Button } from "@/modules/ui/button";
 import { Event, EventSkeletonLoader } from "@/modules/units/card/event";
 import { Share } from "lucide-react";
 import { useRouteStore } from "@/hooks/router";
+import { ShareDialog } from "@/modules/units/page/share";
 
 const EventCreationSuccess = () => {
   const { id } = useParams({
@@ -58,21 +59,18 @@ const EventCreationSuccess = () => {
         >
           View Event
         </Button>
-        <Button
-          onClick={() => {
-            navigate({
-              to: "/event/$id",
-              params: {
-                id: String(id),
-              },
-            });
-          }}
-          size="lg"
-          variant="outline"
-        >
-          <span>Share Event </span>
-          <Share />
-        </Button>
+        <ShareDialog
+          dialogTitle="Share this event"
+          title={event?.name}
+          description={event?.description}
+          url={`https://events.hiroek.io/event/${event?._id}`}
+          trigger={
+            <Button size="lg" variant="outline">
+              <span>Share Event </span>
+              <Share />
+            </Button>
+          }
+        />
       </div>
     </div>
   );

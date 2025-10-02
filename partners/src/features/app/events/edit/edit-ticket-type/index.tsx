@@ -53,6 +53,8 @@ const EditTicketType = () => {
       }),
   });
 
+  console.log();
+
   return (
     <Fragment>
       <Header
