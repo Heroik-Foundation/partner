@@ -5,6 +5,7 @@ export interface AuthForm {
   name: string;
   image: File | null;
   address: string;
+  bio: string;
   email: string;
   number: string;
   code: string;
@@ -20,6 +21,7 @@ interface AuthStore {
 
 export const initialValues = {
   name: "",
+  bio: "",
   image: null,
   address: "",
   email: "",

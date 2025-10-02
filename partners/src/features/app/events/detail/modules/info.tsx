@@ -118,7 +118,7 @@ export default function Info(props: InfoProps) {
       {!isFundraiser && (
         <Fragment>
           <div className="flex flex-col items-start justify-center space-y-2.5">
-            <span className="py-2 px-5 bg-primary/15 text-primary text-xs font-extrabold rounded-lg">
+            <span className="py-1 px-2.5 bg-primary/15 text-primary text-sm font-extrabold rounded-lg w-fit mx-auto">
               Event Countdown
             </span>
 

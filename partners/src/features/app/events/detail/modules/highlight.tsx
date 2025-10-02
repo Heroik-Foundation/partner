@@ -1,8 +1,10 @@
 import { formatISODate } from "@/helpers/time";
 import { cn } from "@/lib/utils";
 import { DetailProps, EventProps } from "@/modules/units/card/event";
-import { Calendar, Clock, MapPin, Ticket } from "lucide-react";
+import { Calendar, Clock, MapPin } from "lucide-react";
 import { Fragment } from "react/jsx-runtime";
+
+import ticketIcon from "../assets/ticket.svg";
 
 type HighlightProps = {
   members?: number;
@@ -88,13 +90,13 @@ export const Highlight = (props: HighlightProps) => {
 
           <div
             className={cn(
-              "flex items-start space-x-1",
+              "flex items-center space-x-1",
               !hasAttendees && "justify-center"
             )}
           >
-            <Ticket size={14} className="md:w-4 md:h-4" />
+            <img src={ticketIcon} alt="" className="w-2.5" />
             <span className="font-extrabold text-xs whitespace-nowrap md:text-sm">
-              {availableTickets > 0 ? `${availableTickets} ` : ""}Spots
+              {availableTickets > 0 ? `${availableTickets} ` : ""}Tickets
               available
             </span>
           </div>

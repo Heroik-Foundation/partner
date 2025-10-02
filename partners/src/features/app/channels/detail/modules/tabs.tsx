@@ -5,7 +5,6 @@ import { Post } from "@/features/app/global/types";
 import { UserPost, UserPostLoader } from "./post";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { ChannelRequest } from "./request";
 
 interface Props {
   id: string;
@@ -34,15 +33,15 @@ export function ChannelDetailTabs({ id, isPublic }: Props) {
       value: announcementsCount,
       component: PostTab,
     },
-    ...(!isPublic
-      ? [
-          {
-            name: "requests" as const,
-            value: 0,
-            component: RequestTab,
-          },
-        ]
-      : []),
+    // ...(!isPublic
+    //   ? [
+    //       {
+    //         name: "requests" as const,
+    //         value: 0,
+    //         component: RequestTab,
+    //       },
+    //     ]
+    //   : []),
   ];
 
   const CurrentTab = (tabs.find((item) => item.name === tab) ?? tabs[0])
@@ -52,8 +51,8 @@ export function ChannelDetailTabs({ id, isPublic }: Props) {
     <div className="space-y-6">
       <div
         className={cn(
-          "w-full flex items-center justify-between sm:justify-around space-x-5",
-          isPublic && "justify-center"
+          "w-full flex items-center justify-center space-x-5"
+          // isPublic && "justify-center"
         )}
       >
         {tabs.map((item) => {
@@ -114,11 +113,11 @@ function PostTab({ id }: Props) {
   );
 }
 
-function RequestTab({}: Props) {
-  return (
-    <div>
-      <ChannelRequest username="John Doe" />
-      <ChannelRequest username="Mary Jane" />
-    </div>
-  );
-}
+// function RequestTab({}: Props) {
+//   return (
+//     <div>
+//       <ChannelRequest username="John Doe" />
+//       <ChannelRequest username="Mary Jane" />
+//     </div>
+//   );
+// }

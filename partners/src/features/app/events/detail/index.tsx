@@ -25,6 +25,10 @@ const EventDetail = () => {
     ? `/app/`
     : undefined;
 
+  const ticketsAvailable = Array.isArray(event?.ticketing)
+    ? event.ticketing.reduce((sum, obj) => sum + (obj.signUpLimit || 0), 0)
+    : 0;
+
   return (
     <div className="space-y-5">
       <Header
@@ -54,7 +58,7 @@ const EventDetail = () => {
                 dialogTitle="Share this event"
                 title={event?.name}
                 description={event?.description}
-                url={`https://partners.hiroek.io/event/${event?._id}`}
+                url={`https://events.hiroek.io/event/${event?._id}`}
                 trigger={
                   <Button className="z-10">
                     <Share2 className="fill-white" />
@@ -71,7 +75,7 @@ const EventDetail = () => {
       {event && id && (
         <Fragment>
           <Highlight
-            availableTickets={0}
+            availableTickets={ticketsAvailable}
             title={event.name}
             thumbnail={event.photo || ""}
             members={event.members.length}

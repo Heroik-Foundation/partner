@@ -21,8 +21,6 @@ import { Route as AppChannelsIdPostCreateIndexImport } from './routes/app/channe
 
 const IndexLazyImport = createFileRoute('/')()
 const AppIndexLazyImport = createFileRoute('/app/')()
-const EventIdIndexLazyImport = createFileRoute('/event/$id/')()
-const ChannelIdIndexLazyImport = createFileRoute('/channel/$id/')()
 const AuthSignupIndexLazyImport = createFileRoute('/auth/signup/')()
 const AuthRecoveryIndexLazyImport = createFileRoute('/auth/recovery/')()
 const AuthLoginIndexLazyImport = createFileRoute('/auth/login/')()
@@ -132,22 +130,6 @@ const AppIndexLazyRoute = AppIndexLazyImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any).lazy(() => import('./routes/app/index.lazy').then((d) => d.Route))
-
-const EventIdIndexLazyRoute = EventIdIndexLazyImport.update({
-  id: '/event/$id/',
-  path: '/event/$id/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/event/$id/index.lazy').then((d) => d.Route),
-)
-
-const ChannelIdIndexLazyRoute = ChannelIdIndexLazyImport.update({
-  id: '/channel/$id/',
-  path: '/channel/$id/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/channel/$id/index.lazy').then((d) => d.Route),
-)
 
 const AuthSignupIndexLazyRoute = AuthSignupIndexLazyImport.update({
   id: '/auth/signup/',
@@ -616,20 +598,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignupIndexLazyImport
       parentRoute: typeof rootRoute
     }
-    '/channel/$id/': {
-      id: '/channel/$id/'
-      path: '/channel/$id'
-      fullPath: '/channel/$id'
-      preLoaderRoute: typeof ChannelIdIndexLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/event/$id/': {
-      id: '/event/$id/'
-      path: '/event/$id'
-      fullPath: '/event/$id'
-      preLoaderRoute: typeof EventIdIndexLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/auth/signup/password/': {
       id: '/auth/signup/password/'
       path: '/auth/signup/password'
@@ -946,8 +914,6 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginIndexLazyRoute
   '/auth/recovery': typeof AuthRecoveryIndexLazyRoute
   '/auth/signup': typeof AuthSignupIndexLazyRoute
-  '/channel/$id': typeof ChannelIdIndexLazyRoute
-  '/event/$id': typeof EventIdIndexLazyRoute
   '/auth/signup/password': typeof AuthSignupPasswordIndexRoute
   '/app/channels/$id': typeof AppChannelsIdIndexLazyRoute
   '/app/channels/create': typeof AppChannelsCreateIndexLazyRoute
@@ -994,8 +960,6 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginIndexLazyRoute
   '/auth/recovery': typeof AuthRecoveryIndexLazyRoute
   '/auth/signup': typeof AuthSignupIndexLazyRoute
-  '/channel/$id': typeof ChannelIdIndexLazyRoute
-  '/event/$id': typeof EventIdIndexLazyRoute
   '/auth/signup/password': typeof AuthSignupPasswordIndexRoute
   '/app/channels/$id': typeof AppChannelsIdIndexLazyRoute
   '/app/channels/create': typeof AppChannelsCreateIndexLazyRoute
@@ -1044,8 +1008,6 @@ export interface FileRoutesById {
   '/auth/login/': typeof AuthLoginIndexLazyRoute
   '/auth/recovery/': typeof AuthRecoveryIndexLazyRoute
   '/auth/signup/': typeof AuthSignupIndexLazyRoute
-  '/channel/$id/': typeof ChannelIdIndexLazyRoute
-  '/event/$id/': typeof EventIdIndexLazyRoute
   '/auth/signup/password/': typeof AuthSignupPasswordIndexRoute
   '/app/channels/$id/': typeof AppChannelsIdIndexLazyRoute
   '/app/channels/create/': typeof AppChannelsCreateIndexLazyRoute
@@ -1095,8 +1057,6 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/recovery'
     | '/auth/signup'
-    | '/channel/$id'
-    | '/event/$id'
     | '/auth/signup/password'
     | '/app/channels/$id'
     | '/app/channels/create'
@@ -1142,8 +1102,6 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/recovery'
     | '/auth/signup'
-    | '/channel/$id'
-    | '/event/$id'
     | '/auth/signup/password'
     | '/app/channels/$id'
     | '/app/channels/create'
@@ -1190,8 +1148,6 @@ export interface FileRouteTypes {
     | '/auth/login/'
     | '/auth/recovery/'
     | '/auth/signup/'
-    | '/channel/$id/'
-    | '/event/$id/'
     | '/auth/signup/password/'
     | '/app/channels/$id/'
     | '/app/channels/create/'
@@ -1232,8 +1188,6 @@ export interface RootRouteChildren {
   AuthLoginIndexLazyRoute: typeof AuthLoginIndexLazyRoute
   AuthRecoveryIndexLazyRoute: typeof AuthRecoveryIndexLazyRoute
   AuthSignupIndexLazyRoute: typeof AuthSignupIndexLazyRoute
-  ChannelIdIndexLazyRoute: typeof ChannelIdIndexLazyRoute
-  EventIdIndexLazyRoute: typeof EventIdIndexLazyRoute
   AuthSignupPasswordIndexRoute: typeof AuthSignupPasswordIndexRoute
   AuthRecoveryPasswordIndexLazyRoute: typeof AuthRecoveryPasswordIndexLazyRoute
   AuthRecoverySuccessIndexLazyRoute: typeof AuthRecoverySuccessIndexLazyRoute
@@ -1246,8 +1200,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginIndexLazyRoute: AuthLoginIndexLazyRoute,
   AuthRecoveryIndexLazyRoute: AuthRecoveryIndexLazyRoute,
   AuthSignupIndexLazyRoute: AuthSignupIndexLazyRoute,
-  ChannelIdIndexLazyRoute: ChannelIdIndexLazyRoute,
-  EventIdIndexLazyRoute: EventIdIndexLazyRoute,
   AuthSignupPasswordIndexRoute: AuthSignupPasswordIndexRoute,
   AuthRecoveryPasswordIndexLazyRoute: AuthRecoveryPasswordIndexLazyRoute,
   AuthRecoverySuccessIndexLazyRoute: AuthRecoverySuccessIndexLazyRoute,
@@ -1269,8 +1221,6 @@ export const routeTree = rootRoute
         "/auth/login/",
         "/auth/recovery/",
         "/auth/signup/",
-        "/channel/$id/",
-        "/event/$id/",
         "/auth/signup/password/",
         "/auth/recovery/password/",
         "/auth/recovery/success/",
@@ -1360,12 +1310,6 @@ export const routeTree = rootRoute
     },
     "/auth/signup/": {
       "filePath": "auth/signup/index.lazy.tsx"
-    },
-    "/channel/$id/": {
-      "filePath": "channel/$id/index.lazy.tsx"
-    },
-    "/event/$id/": {
-      "filePath": "event/$id/index.lazy.tsx"
     },
     "/auth/signup/password/": {
       "filePath": "auth/signup/password/index.tsx"

@@ -14,6 +14,7 @@ import { handleInputChangeEvent } from "@/features/auth/global/helpers/input";
 import { useUserPropertiesQuery } from "../global/hooks/query";
 import { useCallback, useEffect } from "react";
 import { useUpdateUserDetailsMutation } from "./hooks/mutation";
+import { Textarea } from "@/modules/ui/textarea";
 
 const Profile = () => {
   const { form, setForm, resetForm } = useAuthStore();
@@ -108,6 +109,18 @@ const Profile = () => {
             type="tel"
             required
             onChange={(event) => handleInputChangeEvent(event, form, setForm)}
+          />
+        </FormField>
+
+        <FormField>
+          <Label htmlFor="number">Partner Bio</Label>
+          <Textarea
+            name="bio"
+            placeholder="Write something about you"
+            value={form.bio}
+            onChange={(event: any) =>
+              handleInputChangeEvent(event, form, setForm)
+            }
           />
         </FormField>
 

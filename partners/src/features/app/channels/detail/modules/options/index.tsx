@@ -118,7 +118,7 @@ export function ChannelOptions({ privacy, id, description }: Props) {
                   dialogTitle="Share this channel"
                   title={title}
                   description={description}
-                  url={`https://partners.hiroek.io/channel/${id}`}
+                  url={`https://channel.hiroek.io/channel/${id}`}
                   trigger={item}
                 />
               ) : (
