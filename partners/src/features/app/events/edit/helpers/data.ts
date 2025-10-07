@@ -11,6 +11,7 @@ export const getInitialEventState = (eventData: Event) => {
   const endDate = eventData.eventEndDate.split("T")[0];
 
   return {
+    absorbFees: eventData.absorbFees,
     name: eventData.name || "",
     description: eventData.description || "",
     address: eventData.address || "",

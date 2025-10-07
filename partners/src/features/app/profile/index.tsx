@@ -25,19 +25,23 @@ const Profile = () => {
     eventsPerYear: String(form.events),
     logo: form.image as any,
     telephone: form.number,
+    bio: form.bio,
   });
 
   const handleInitialData = useCallback(() => {
     if (user) {
-      setForm({
-        ...form,
-        name: user.name,
-        address: user.address,
-        email: user.email,
-        events: user.eventsPerYear,
-        number: user.telephone,
-        image: user.logo as any,
-      });
+      if ((!form.email || !form.number) && user?.email && user.telephone) {
+        setForm({
+          ...form,
+          name: user.name,
+          address: user.address,
+          email: user.email,
+          events: user.eventsPerYear,
+          number: user.telephone,
+          image: user.logo as any,
+          bio: user.bio,
+        });
+      }
     }
   }, [user]);
 
@@ -47,7 +51,7 @@ const Profile = () => {
     return () => {
       resetForm();
     };
-  }, []);
+  }, [form.email, form.number, user]);
 
   return (
     <Form

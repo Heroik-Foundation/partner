@@ -50,6 +50,7 @@ export type EventRecurrence = {
 };
 
 export type Event = {
+  absorbFees: boolean;
   __v: number;
   _id: string;
   address: string;
@@ -136,6 +137,7 @@ export type User = {
   address: string;
   createdAt: string;
   email: string;
+  bio: string;
   eventsPerYear: number;
   isVerified: boolean;
   logo: string;

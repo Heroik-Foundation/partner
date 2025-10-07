@@ -5,15 +5,26 @@ import { Event, EventSkeletonLoader } from "@/modules/units/card/event";
 import { Share } from "lucide-react";
 import { useRouteStore } from "@/hooks/router";
 import { ShareDialog } from "@/modules/units/page/share";
+import { useEventFormStore } from "@/features/app/global/hooks/logic";
+import { useEffect } from "react";
 
 const EventCreationSuccess = () => {
   const { id } = useParams({
     strict: false,
   });
+  const { reset } = useEventFormStore();
   const pathname = useRouterState().location.pathname;
   const { setPath } = useRouteStore();
   const { navigate } = useRouter();
   const { data: event } = useEventDetailsQuery({ id });
+
+  useEffect(() => {
+    reset();
+
+    return () => {
+      reset();
+    };
+  }, []);
 
   return (
     <div className="space-y-20 pt-10 relative">

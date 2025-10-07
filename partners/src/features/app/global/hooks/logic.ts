@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export interface EventFormState {
+  absorbFees: boolean;
   photo: File | string | undefined;
   name: string;
   description: string;
@@ -46,7 +47,6 @@ export type TicketTierState = {
   signUpLimit: number;
   salesStartDate: string | null;
   salesEndDate: string | null;
-  absorbFees: boolean;
 };
 
 export type FundraiserState = {
@@ -55,6 +55,7 @@ export type FundraiserState = {
 };
 
 export const defaultValue: EventFormState = {
+  absorbFees: true,
   photo: undefined,
   name: "",
   description: "",
@@ -78,6 +79,7 @@ export const defaultValue: EventFormState = {
   privacy: "",
   eventId: "",
   currentTicketIndex: 0,
+  ticketing: [],
 };
 
 type StaticEventFormStore = {

@@ -2,8 +2,6 @@ import { useState, useMemo, useEffect } from "react";
 import { useEventDetailsQuery } from "../../../hooks/query";
 
 interface EventFormState {
-  absorbFees: boolean;
-
   salesEndDate: string | null;
   salesStartDate: string | null;
   signUpLimit: number;
@@ -12,7 +10,6 @@ interface EventFormState {
 }
 
 const DEFAULT_FORM_STATE: EventFormState = {
-  absorbFees: true,
   salesEndDate: null,
   salesStartDate: null,
   signUpLimit: 0,
@@ -47,8 +44,6 @@ export const useUpdateEventTicketTypeForm = ({
     }
 
     return {
-      absorbFees:
-        currentTicketDetails.absorbFees ?? DEFAULT_FORM_STATE.absorbFees,
       salesEndDate:
         currentTicketDetails.salesEndDate.split("T")[0] ??
         DEFAULT_FORM_STATE.salesEndDate,
@@ -100,5 +95,6 @@ export const useUpdateEventTicketTypeForm = ({
     resetForm,
     isDirty,
     hasTicketData: !!currentTicketDetails,
+    absorbFees: event?.absorbFees || false,
   };
 };

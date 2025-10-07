@@ -8,7 +8,7 @@ type Props = {
   signUpLimit: number;
   salesStartDate: string | null;
   salesEndDate: string | null;
-  absorbFees: boolean;
+
   eventId: string;
   ticketTypeId: string;
 };

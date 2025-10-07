@@ -20,6 +20,7 @@ import { ActionDrawer } from "@/modules/units/page/action";
 import PlaceAutocomplete from "@/modules/units/form/address";
 import { useEventFormStore } from "../../global/hooks/logic";
 import { cn } from "@/lib/utils";
+import { Switch } from "@/modules/ui/switch";
 
 const EditEvent = () => {
   const { id } = useParams({
@@ -181,6 +182,20 @@ const EditEvent = () => {
                 }}
               />
             </FormField>
+          </div>
+
+          <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-sm text-primary">
+                Do you want to absorb all the ticket fees?
+              </span>
+              <Switch
+                checked={formState.absorbFees}
+                onCheckedChange={(value) => {
+                  updateForm("absorbFees", value);
+                }}
+              />
+            </div>
           </div>
         </FormContent>
         <FormFooter>

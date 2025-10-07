@@ -9,18 +9,15 @@ type Props = {
   telephone: string;
   address: string;
   logo: string | File;
+  bio: string;
 };
 
 export function useUpdateUserDetailsMutation(props: Props) {
-  const { name, eventsPerYear, telephone, address, logo } = props;
+  const { logo, ...rest } = props;
   const { invalidateQueries } = useQueryClient();
 
   const { getFormData } = frmz({
-    name,
-    eventsPerYear,
-    telephone,
-    address,
-    logo,
+    ...rest,
   });
 
   return useMutation({

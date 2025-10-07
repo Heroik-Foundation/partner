@@ -26,15 +26,13 @@ const EditTicketType = () => {
     strict: false,
   });
 
-  const { formState, updateFormField } = useUpdateEventTicketTypeForm({
-    id,
-    ticketTypeId,
-  });
+  const { formState, updateFormField, absorbFees } =
+    useUpdateEventTicketTypeForm({
+      id,
+      ticketTypeId,
+    });
 
-  const feeBreakdown = calculateFees(
-    formState.ticketPrice,
-    formState.absorbFees
-  );
+  const feeBreakdown = calculateFees(formState.ticketPrice, absorbFees);
 
   const { mutate, isPending } = useEditEventTicketMutation({
     eventId: id || "",
@@ -52,8 +50,6 @@ const EditTicketType = () => {
         ),
       }),
   });
-
-  console.log();
 
   return (
     <Fragment>
@@ -119,12 +115,7 @@ const EditTicketType = () => {
               <span className="font-semibold text-sm">
                 Do you want to absorb all the fees?
               </span>
-              <Switch
-                checked={formState.absorbFees}
-                onCheckedChange={(checked) => {
-                  updateFormField("absorbFees", checked);
-                }}
-              />
+              <Switch checked={absorbFees} disabled />
             </div>
           </div>
 
@@ -132,7 +123,7 @@ const EditTicketType = () => {
             <Label>Ticket Type Name</Label>
             <Input readOnly value={`${formState.ticketType} Tickets`} />
 
-            <ul className="flex items-center space-x-5">
+            <ul className="flex items-center justify-between">
               {["Standard", "Silver", "Gold", "Platnium"].map(
                 (option, index) => {
                   return (

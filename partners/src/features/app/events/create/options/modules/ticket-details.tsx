@@ -20,7 +20,6 @@ export const TicketEventDetails = () => {
     formState.ticketing && formState.ticketing[currentIndex]
       ? formState.ticketing[currentIndex]
       : {
-          absorbFees: false,
           salesEndDate: null,
           salesStartDate: null,
           signUpLimit: 0,
@@ -52,7 +51,6 @@ export const TicketEventDetails = () => {
         signUpLimit: 0,
         salesStartDate: null,
         salesEndDate: null,
-        absorbFees: false,
         ...updates, // Apply the updates to the new tier
       };
 
@@ -68,7 +66,6 @@ export const TicketEventDetails = () => {
             signUpLimit: 0,
             salesStartDate: null,
             salesEndDate: null,
-            absorbFees: false,
           });
         }
         updatedTiers[index] = newTier;

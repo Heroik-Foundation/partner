@@ -101,7 +101,7 @@ const AllEvents = () => {
                 thumbnail={event.photo || ""}
                 title={event.name}
                 date={event.endTime}
-                price={event.ticketing[0].ticketPrice || 0}
+                price={Number(event.ticketing[0].ticketPrice || 0)}
                 location={event.address}
               />
             ));

@@ -18,6 +18,11 @@ export const PreLaunch = () => {
 
   const tickets = formState.ticketing ? formState.ticketing : [];
 
+  const totalTickets = tickets.reduce(
+    (sum, ticket) => sum + ticket.signUpLimit,
+    0
+  );
+
   function validatePreLaunchProps() {
     if (
       (formState.recurrence &&
@@ -43,7 +48,7 @@ export const PreLaunch = () => {
       />
 
       <Highlight
-        availableTickets={formState.ticketing ? formState.ticketing.length : 0}
+        availableTickets={totalTickets}
         title={formState.name}
         thumbnail={
           typeof formState.photo !== "undefined"
