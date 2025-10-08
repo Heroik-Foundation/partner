@@ -2,27 +2,23 @@ import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
 import { authenticatedInstance } from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { frmz } from "frmz";
 
 type EditChannelMutationProps = {
   id?: string;
   name: string;
   description: string;
   photo: File | null;
-  isPrivateCommunity: boolean;
+  isPrivateCommunity?: boolean;
 };
 
 export function useEditChannelMutation(props: EditChannelMutationProps) {
   const queryClient = useQueryClient();
-  const { name, description, photo, id, isPrivateCommunity } = props;
-  const formData = new FormData();
+  const { name, description, photo, id } = props;
 
-  formData.append("name", name);
-  formData.append("description", description);
-  formData.append("privacy", isPrivateCommunity ? "invite-only" : "public");
+  const { getFormData } = frmz({ name, description, ...(photo && photo) });
 
-  if (photo) {
-    formData.append("photo", photo);
-  }
+  const formData = getFormData();
 
   return useMutation({
     mutationFn: async () => {

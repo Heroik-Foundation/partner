@@ -26,7 +26,6 @@ const EditChannel = () => {
   const [form, setForm] = useState({
     name: channel?.name,
     description: channel?.description,
-    private: channel?.privacy === "public" ? false : true,
   });
   const [photo, setPhoto] = useState<File | null>(null);
   const { mutate, isPending, isError, isSuccess } = useEditChannelMutation({
@@ -34,7 +33,6 @@ const EditChannel = () => {
     description: String(form.description),
     id: id,
     photo,
-    isPrivateCommunity: form.private,
   });
 
   return (
