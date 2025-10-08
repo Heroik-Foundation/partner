@@ -12,7 +12,6 @@ type Ticket = {
   signUpLimit: number;
   salesStartDate: string; // ISO date string
   salesEndDate: string; // ISO date string
-  absorbFees: boolean;
 };
 
 type CreateEventMutation = {
