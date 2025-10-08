@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { useCreateChannelMutation } from "./hooks/mutation";
 import { toast } from "sonner";
 import { ActionDrawer } from "@/modules/units/page/action";
-import { Switch } from "@/modules/ui/switch";
 
 const CreateChannel = () => {
   const [form, setForm] = useState({
@@ -26,7 +25,7 @@ const CreateChannel = () => {
     name: form.name,
     description: form.description,
     photo,
-    isPrivateCommunity: form.private,
+    isPrivateCommunity: false,
   });
 
   const resetForm = () => {
@@ -87,18 +86,19 @@ const CreateChannel = () => {
             placeholder="Type channel description here ..."
           />
         </FormField>
-        <FormField className="flex flex-row items-center w-full justify-between space-y-0">
+        {/* <FormField className="flex flex-row items-center w-full justify-between space-y-0">
           <Label>Private Channel</Label>
           <Switch
+            disabled
             checked={form.private}
-            onCheckedChange={(checked) => {
-              setForm({
-                ...form,
-                private: checked,
-              });
-            }}
+            // onCheckedChange={(checked) => {
+            //   setForm({
+            //     ...form,
+            //     private: checked,
+            //   });
+            // }}
           />
-        </FormField>
+        </FormField> */}
       </FormContent>
       <FormFooter absolute>
         <ActionDrawer
