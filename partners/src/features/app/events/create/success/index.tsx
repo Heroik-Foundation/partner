@@ -7,22 +7,29 @@ import { useRouteStore } from "@/hooks/router";
 import { ShareDialog } from "@/modules/units/page/share";
 import { useEventFormStore } from "@/features/app/global/hooks/logic";
 import { useEffect } from "react";
+import { useMapStore } from "@/stores/maps";
 
 const EventCreationSuccess = () => {
   const { id } = useParams({
     strict: false,
   });
   const { reset } = useEventFormStore();
+  const { resetStore } = useMapStore();
   const pathname = useRouterState().location.pathname;
   const { setPath } = useRouteStore();
   const { navigate } = useRouter();
   const { data: event } = useEventDetailsQuery({ id });
 
-  useEffect(() => {
+  const handleFormReset = () => {
     reset();
+    resetStore();
+  };
+
+  useEffect(() => {
+    handleFormReset();
 
     return () => {
-      reset();
+      handleFormReset();
     };
   }, []);
 

@@ -83,6 +83,31 @@ const CreateEventOptions = () => {
       next();
     } else {
       previous();
+      setOpen(true);
+    }
+  }
+
+  function handleOptionCancellation() {
+    if (currentStepConfig.title === "Event Recurrence") {
+      setFormState({
+        ...formState,
+        recurrence: undefined,
+      });
+    }
+
+    if (currentStepConfig.title === "Ticket Details") {
+      setFormState({
+        ...formState,
+        currentTicketIndex: 0,
+        ticketing: undefined,
+      });
+    }
+
+    if (currentStepConfig.title === "Fundraising Details") {
+      setFormState({
+        ...formState,
+        fundRaiser: undefined,
+      });
     }
   }
 
@@ -201,16 +226,32 @@ const CreateEventOptions = () => {
         {currentStep}
 
         <FormFooter>
-          <CreateEventActionDrawer
-            trigger={submitButton}
-            callback={{
-              primary: () => setOpen(false),
-              secondary: handleNextStep,
-            }}
-            open={open}
-            setOpen={setOpen}
-            title={currentStepConfig.cta}
-          />
+          <div className="flex items-center justify-between space-x-2.5">
+            <Button
+              onClick={() => {
+                handleOptionCancellation();
+                setOpen(true);
+              }}
+              type="button"
+              size={"lg"}
+              className="w-full"
+              color="primary"
+              variant={"secondary"}
+            >
+              Cancel
+            </Button>
+
+            <CreateEventActionDrawer
+              trigger={submitButton}
+              callback={{
+                primary: () => setOpen(false),
+                secondary: handleNextStep,
+              }}
+              open={open}
+              setOpen={setOpen}
+              title={currentStepConfig.cta}
+            />
+          </div>
         </FormFooter>
       </Form>
     </Fragment>

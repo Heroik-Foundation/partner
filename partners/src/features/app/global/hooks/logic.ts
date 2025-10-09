@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 export interface EventFormState {
   absorbFees: boolean;
@@ -94,55 +93,43 @@ type StaticEventFormStore = {
   removeOrganization: (id: string) => void;
 };
 
-export const useEventFormStore = create<StaticEventFormStore>()(
-  persist(
-    (set) => ({
-      formState: defaultValue,
-      setFormState: (state) => set(() => ({ formState: state })),
-      reset: () => {
-        // Clear the persisted state completely
-        localStorage.removeItem("event-form-storage");
-        set(() => ({ formState: defaultValue }));
+export const useEventFormStore = create<StaticEventFormStore>((set) => ({
+  formState: defaultValue,
+  setFormState: (state) => set(() => ({ formState: state })),
+  reset: () => {
+    set(() => ({ formState: defaultValue }));
+  },
+  updateForm: (field, value) =>
+    set((state) => ({
+      formState: {
+        ...state.formState,
+        [field]: value,
       },
-      updateForm: (field, value) =>
-        set((state) => ({
-          formState: {
-            ...state.formState,
-            [field]: value,
-          },
-        })),
-      deleteTicketTier: (index: number) =>
-        set((state) => {
-          if (!state.formState.ticketing) return state; // nothing to delete
+    })),
+  deleteTicketTier: (index: number) =>
+    set((state) => {
+      if (!state.formState.ticketing) return state; // nothing to delete
 
-          return {
-            formState: {
-              ...state.formState,
-              ticketing: state.formState.ticketing.filter(
-                (_, i) => i !== index
-              ),
-            },
-          };
-        }),
-      removeOrganization: (id) =>
-        set((state) => {
-          const organizations = state.formState.fundRaiser?.organizations;
-          if (!organizations) return state; // nothing to delete
-
-          return {
-            formState: {
-              ...state.formState,
-              fundRaiser: {
-                ...state.formState.fundRaiser,
-                organizations: organizations.filter((org) => org.id !== id),
-              },
-            },
-          };
-        }),
+      return {
+        formState: {
+          ...state.formState,
+          ticketing: state.formState.ticketing.filter((_, i) => i !== index),
+        },
+      };
     }),
-    {
-      name: "event-form-storage", // unique name for the storage key
-      partialize: (state) => ({ formState: state.formState }), // only persist the formState
-    }
-  )
-);
+  removeOrganization: (id) =>
+    set((state) => {
+      const organizations = state.formState.fundRaiser?.organizations;
+      if (!organizations) return state; // nothing to delete
+
+      return {
+        formState: {
+          ...state.formState,
+          fundRaiser: {
+            ...state.formState.fundRaiser,
+            organizations: organizations.filter((org) => org.id !== id),
+          },
+        },
+      };
+    }),
+}));
