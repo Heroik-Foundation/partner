@@ -4,6 +4,7 @@ import { Hash } from "lucide-react";
 export type ChannelProps = {
   id: string;
   title: string;
+  description: string;
   thumbnail: string;
   avatars: string[];
   members: number;
