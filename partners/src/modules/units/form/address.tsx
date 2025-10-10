@@ -297,7 +297,7 @@ const MapLocationPicker = ({
         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
         onClick={handleBackdropClick}
       >
-        <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden relative">
           {/* Modal Header */}
           <div className="flex items-center justify-between p-4 border-b">
             <h2 className="text-lg font-semibold">Select Location</h2>
@@ -370,7 +370,8 @@ const MapLocationPicker = ({
           </div>
 
           {/* Action buttons */}
-          <div className="w-full bg-white flex justify-between items-center py-3 px-4 border-t flex-shrink-0">
+
+          <div className="absolute w-full bg-white flex justify-between items-center py-3 px-4 border-t bottom-0">
             <Button onClick={handleCancel} variant={"secondary"}>
               Cancel
             </Button>
