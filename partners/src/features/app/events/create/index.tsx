@@ -14,7 +14,7 @@ import { Header } from "../../global/header";
 
 import { ChevronRight } from "lucide-react";
 
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEventFormStore } from "../../global/hooks/logic";
 
 import PlaceAutocomplete from "@/modules/units/form/address";
@@ -24,9 +24,10 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const CreateEvent = () => {
-  const { formState, updateForm } = useEventFormStore();
+  const { formState, updateForm, reset } = useEventFormStore();
   const { resetStore } = useMapStore();
   const navigate = useNavigate();
+  const { history } = useRouter();
 
   useEffect(() => {
     resetStore();
@@ -50,6 +51,11 @@ const CreateEvent = () => {
           position: "stacked",
           title: "Create New Event",
           subtitle: "Enter the required information below.",
+        }}
+        previousRouteCallback={() => {
+          reset();
+          resetStore();
+          history.back();
         }}
       />
       <Form
