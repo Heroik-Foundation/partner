@@ -23,6 +23,7 @@ const EventCreationSuccess = () => {
   const handleFormReset = () => {
     reset();
     resetStore();
+    setPath(pathname);
   };
 
   useEffect(() => {
@@ -63,14 +64,13 @@ const EventCreationSuccess = () => {
       <div className="flex flex-col space-y-2.5">
         <Button
           onClick={() => {
+            setPath(pathname);
             navigate({
               to: "/app/events/$id",
               params: {
                 id: String(id),
               },
             });
-
-            setPath(pathname);
           }}
           size="lg"
           className="primary-box-shadow"

@@ -38,7 +38,7 @@ export const PreLaunch = () => {
   }, []);
 
   return (
-    <div>
+    <div className="pb-32">
       <Header
         header={{
           title: "",

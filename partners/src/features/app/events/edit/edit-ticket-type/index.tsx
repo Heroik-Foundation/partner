@@ -20,6 +20,7 @@ import { calculateFees, formatter } from "./helper/fees";
 import { Button } from "@/modules/ui/button";
 import { useEditEventTicketMutation } from "./hooks/mutation";
 import { convertDateTimeInputToISOString } from "@/helpers/time";
+import { cn } from "@/lib/utils";
 
 const EditTicketType = () => {
   const { id, ticketTypeId } = useParams({
@@ -121,14 +122,24 @@ const EditTicketType = () => {
 
           <FormField>
             <Label>Ticket Type Name</Label>
-            <Input readOnly value={`${formState.ticketType} Tickets`} />
+
+            <Input
+              value={formState.ticketType}
+              onChange={({ target }) => {
+                updateFormField("ticketType", String(target.value));
+              }}
+            />
 
             <ul className="flex items-center justify-between">
               {["Standard", "Silver", "Gold", "Platnium"].map(
                 (option, index) => {
                   return (
                     <li
-                      className="px-5 py-3 text-xs font-bold bg-primary text-white rounded-full cursor-pointer"
+                      className={cn(
+                        "px-4 py-2 text-xs font-bold bg-primary text-white rounded-full cursor-pointer transition-all",
+                        formState.ticketType === option &&
+                          "text-primary bg-primary/10 border border-primary"
+                      )}
                       key={index}
                       onClick={() => {
                         updateFormField("ticketType", option);

@@ -9,11 +9,15 @@ import {
 import { useState, useMemo } from "react";
 import { useEventFormStore } from "../../global/hooks/logic";
 import { motion, AnimatePresence } from "motion/react";
+import { Button } from "@/modules/ui/button";
+import { useRouter } from "@tanstack/react-router";
 
 const SelectEventPartner = () => {
   const [query, setQuery] = useState("");
   const { data, hasNextPage, fetchNextPage, isPending, isFetchingNextPage } =
     useCharityOrganizationsQuery({ searchQuery: query });
+
+  const { history } = useRouter();
 
   const lastOrgRef = useIntersectionObserver<HTMLDivElement>(fetchNextPage, [
     hasNextPage,
@@ -56,6 +60,20 @@ const SelectEventPartner = () => {
         }}
         placeholder="Search For Charity Partner"
       />
+
+      {selectedIds.length >= 1 && (
+        <div className="fixed inset-x-0 max-w-sm mx-auto bottom-5 z-50">
+          <Button
+            onClick={() => {
+              history.back();
+            }}
+            className="w-full"
+            size={"lg"}
+          >
+            Submit
+          </Button>
+        </div>
+      )}
 
       <motion.div className="space-y-5" layout>
         <AnimatePresence>

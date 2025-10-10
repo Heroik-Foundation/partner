@@ -8,6 +8,7 @@ import {
   FormCounter,
   FormField,
 } from "@/features/auth/global/form";
+import { cn } from "@/lib/utils";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
 
@@ -127,7 +128,11 @@ export const TicketEventDetails = () => {
           {["Standard", "Silver", "Gold", "Platnium"].map((option, index) => {
             return (
               <li
-                className="px-4 py-2 text-xs font-bold bg-primary text-white rounded-full cursor-pointer"
+                className={cn(
+                  "px-4 py-2 text-xs font-bold bg-primary text-white rounded-full cursor-pointer transition-all",
+                  currentIndexState.ticketType === option &&
+                    "text-primary bg-primary/10 border border-primary"
+                )}
                 key={index}
                 onClick={() => {
                   updateSpecificTicketTier(currentIndex, {
