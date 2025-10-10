@@ -168,13 +168,13 @@ const CreateEventOptions = () => {
     fundRaiser,
   ]);
 
-  const shouldCloseDrawer = useCallback((): boolean => {
-    return (
-      (lastStep && !!fundRaiser) ||
-      (stepIndex === 0 && !!recurrence) ||
-      ((stepIndex === 1 || stepIndex === 2) && hasTickets)
-    );
-  }, [lastStep, fundRaiser, stepIndex, recurrence, hasTickets]);
+  // const shouldCloseDrawer = useCallback((): boolean => {
+  //   return (
+  //     (lastStep && !!fundRaiser) ||
+  //     (stepIndex === 0 && !!recurrence) ||
+  //     ((stepIndex === 1 || stepIndex === 2) && hasTickets)
+  //   );
+  // }, [lastStep, fundRaiser, stepIndex, recurrence, hasTickets]);
 
   const handleNextStep = useCallback(() => {
     if (!validateCurrentStep()) return;
@@ -185,18 +185,17 @@ const CreateEventOptions = () => {
     }
 
     nextStep();
-    if (!shouldCloseDrawer()) {
-      setOpen(true);
-    }
-  }, [validateCurrentStep, lastStep, navigate, nextStep, shouldCloseDrawer]);
 
-  useEffect(() => {
-    if (shouldCloseDrawer()) {
-      setOpen(false);
-    } else if (lastStep && !fundRaiser) {
-      setOpen(true);
-    }
-  }, [shouldCloseDrawer]);
+    setOpen(true);
+  }, [validateCurrentStep, lastStep, navigate, nextStep]);
+
+  // useEffect(() => {
+  //   if (shouldCloseDrawer()) {
+  //     setOpen(false);
+  //   } else if (lastStep && !fundRaiser) {
+  //     setOpen(true);
+  //   }
+  // }, [shouldCloseDrawer]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {

@@ -57,7 +57,7 @@ export const PreLaunch = () => {
 
   useEffect(() => {
     validatePreLaunchProps();
-  }, [validatePreLaunchProps]);
+  }, []);
 
   const handleEditTicket = useCallback(
     (index: number) => {
