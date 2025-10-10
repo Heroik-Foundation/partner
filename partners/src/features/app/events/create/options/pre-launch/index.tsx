@@ -2,40 +2,72 @@ import { Highlight } from "../../../detail/modules/highlight";
 import { useEventFormStore } from "@/features/app/global/hooks/logic";
 import { convertDateTimeInputToISOString, formatISODate } from "@/helpers/time";
 import { Header } from "@/features/app/global/header";
-
 import { decimalFormatter } from "@/helpers/text";
-import { Link, useRouter } from "@tanstack/react-router";
-
+import { Link, useNavigate } from "@tanstack/react-router";
 import eyeIcon from "@/features/app/events/detail/assets/eye.svg";
 import editIcon from "@/features/app/events/detail/assets/edit.svg";
 import { objectHasNullOrUndefined } from "@/helpers/object";
-import { useEffect } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { Publish } from "./modules/publish";
+import { toast } from "sonner";
 
 export const PreLaunch = () => {
   const { formState, setFormState } = useEventFormStore();
-  const { history } = useRouter();
+  const navigate = useNavigate();
 
-  const tickets = formState.ticketing ? formState.ticketing : [];
-
-  const totalTickets = tickets.reduce(
-    (sum, ticket) => sum + ticket.signUpLimit,
-    0
+  const tickets = useMemo(
+    () => formState.ticketing || [],
+    [formState.ticketing]
   );
 
-  function validatePreLaunchProps() {
-    if (
-      (formState.recurrence &&
-        objectHasNullOrUndefined(formState.recurrence)) ||
-      (formState.fundRaiser && objectHasNullOrUndefined(formState.fundRaiser))
-    ) {
-      history.back();
+  const totalTickets = useMemo(
+    () => tickets.reduce((sum, ticket) => sum + ticket.signUpLimit, 0),
+    [tickets]
+  );
+
+  const thumbnailUrl = useMemo(
+    () =>
+      typeof formState.photo !== "undefined" && formState.photo instanceof File
+        ? URL.createObjectURL(formState.photo)
+        : "",
+    [formState.photo]
+  );
+
+  const eventDate = useMemo(
+    () =>
+      convertDateTimeInputToISOString(formState.startDate, formState.startTime),
+    [formState.startDate, formState.startTime]
+  );
+
+  const validatePreLaunchProps = useCallback(() => {
+    const { recurrence, fundRaiser, endDate, startDate, name, description } =
+      formState;
+
+    const hasInvalidRecurrence =
+      recurrence && objectHasNullOrUndefined(recurrence);
+    const hasInvalidFundraiser =
+      fundRaiser && objectHasNullOrUndefined(fundRaiser);
+    const hasMissingRequired = !endDate || !startDate || !name || !description;
+
+    if (hasInvalidRecurrence || hasInvalidFundraiser || hasMissingRequired) {
+      toast.info("Please complete event details to access this page");
+      navigate({ to: "/app/events/create" });
     }
-  }
+  }, [formState, navigate]);
 
   useEffect(() => {
     validatePreLaunchProps();
-  }, []);
+  }, [validatePreLaunchProps]);
+
+  const handleEditTicket = useCallback(
+    (index: number) => {
+      setFormState({
+        ...formState,
+        currentTicketIndex: index,
+      });
+    },
+    [formState, setFormState]
+  );
 
   return (
     <div className="pb-32">
@@ -50,15 +82,8 @@ export const PreLaunch = () => {
       <Highlight
         availableTickets={totalTickets}
         title={formState.name}
-        thumbnail={
-          typeof formState.photo !== "undefined"
-            ? URL.createObjectURL(formState.photo as File)
-            : ""
-        }
-        date={convertDateTimeInputToISOString(
-          formState.startDate,
-          formState.startTime
-        )}
+        thumbnail={thumbnailUrl}
+        date={eventDate}
         location={formState.address}
       />
 
@@ -89,11 +114,10 @@ export const PreLaunch = () => {
               <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex w-fit">
                 Minimum Pledge
               </h5>
-
               <span className="font-bold text-sm w-fit mx-auto rounded-full bg-primary py-3 px-5 text-white">
                 £
                 {decimalFormatter.format(
-                  Number(formState.fundRaiser.fundRaisingGoal)
+                  Number(formState.fundRaiser.fundRaisingGoal || 0)
                 )}
               </span>
             </div>
@@ -109,6 +133,11 @@ export const PreLaunch = () => {
               {tickets.map((ticket, index) => {
                 const { ticketType, ticketPrice, signUpLimit, salesEndDate } =
                   ticket;
+
+                const formattedDate = formatISODate(
+                  convertDateTimeInputToISOString(String(salesEndDate))
+                ).date;
+
                 return (
                   <li
                     key={index}
@@ -127,28 +156,14 @@ export const PreLaunch = () => {
                         </span>
                       </h2>
                       <span className="text-xs font-semibold">
-                        Sales End On{" "}
-                        {
-                          formatISODate(
-                            convertDateTimeInputToISOString(
-                              String(salesEndDate)
-                            )
-                          ).date
-                        }
+                        Sales End On {formattedDate}
                       </span>
                     </div>
 
                     <Link
                       to="/app/events/create/options"
-                      search={{
-                        step: 1,
-                      }}
-                      onClick={() => {
-                        setFormState({
-                          ...formState,
-                          currentTicketIndex: index,
-                        });
-                      }}
+                      search={{ step: 1 }}
+                      onClick={() => handleEditTicket(index)}
                     >
                       <img src={editIcon} alt="" className="w-5 h-5" />
                     </Link>

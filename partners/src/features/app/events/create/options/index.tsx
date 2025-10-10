@@ -190,14 +190,14 @@ const CreateEventOptions = () => {
     }
   }, [validateCurrentStep, lastStep, navigate, nextStep, shouldCloseDrawer]);
 
-  // Auto-close drawer when conditions are met
   useEffect(() => {
     if (shouldCloseDrawer()) {
       setOpen(false);
+    } else if (lastStep && !fundRaiser) {
+      setOpen(true);
     }
   }, [shouldCloseDrawer]);
 
-  // Prevent accidental navigation away
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();

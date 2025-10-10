@@ -2,6 +2,11 @@ export function formatISODate(isoString: string): {
   date: string;
   time: string;
 } {
+  if (!isoString || isNaN(Date.parse(isoString))) {
+    console.error("Invalid ISO string:", isoString);
+    return { date: "", time: "" };
+  }
+
   const date = new Date(isoString);
 
   const dateOptions: Intl.DateTimeFormatOptions = {
