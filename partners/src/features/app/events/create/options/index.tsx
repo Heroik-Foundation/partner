@@ -103,6 +103,10 @@ const CreateEventOptions = () => {
       nextStep();
     } else {
       previousStep();
+
+      if (currentStepConfig.title === "Fundraising Details" && hasTickets) {
+        return;
+      }
       setOpen(true);
     }
   }, [isAddingTicket, stepIndex, nextStep, previousStep]);
@@ -112,7 +116,10 @@ const CreateEventOptions = () => {
 
     if (currentStepConfig.title === "Event Recurrence") {
       updates.recurrence = undefined;
-    } else if (currentStepConfig.title === "Ticket Details") {
+    } else if (
+      currentStepConfig.title === "Ticket Details" ||
+      currentStepConfig.title === "Add Ticket Type"
+    ) {
       updates.currentTicketIndex = 0;
       updates.ticketing = undefined;
     } else if (currentStepConfig.title === "Fundraising Details") {
@@ -168,14 +175,6 @@ const CreateEventOptions = () => {
     fundRaiser,
   ]);
 
-  // const shouldCloseDrawer = useCallback((): boolean => {
-  //   return (
-  //     (lastStep && !!fundRaiser) ||
-  //     (stepIndex === 0 && !!recurrence) ||
-  //     ((stepIndex === 1 || stepIndex === 2) && hasTickets)
-  //   );
-  // }, [lastStep, fundRaiser, stepIndex, recurrence, hasTickets]);
-
   const handleNextStep = useCallback(() => {
     if (!validateCurrentStep()) return;
 
@@ -186,16 +185,22 @@ const CreateEventOptions = () => {
 
     nextStep();
 
+    if (
+      (currentStepConfig.title === "Ticket Details" ||
+        currentStepConfig.title === "Add Ticket Type") &&
+      hasTickets
+    ) {
+      return;
+    }
+
     setOpen(true);
   }, [validateCurrentStep, lastStep, navigate, nextStep]);
 
-  // useEffect(() => {
-  //   if (shouldCloseDrawer()) {
-  //     setOpen(false);
-  //   } else if (lastStep && !fundRaiser) {
-  //     setOpen(true);
-  //   }
-  // }, [shouldCloseDrawer]);
+  useEffect(() => {
+    if (currentStepConfig?.title === "Review Tickets" && hasTickets) {
+      setOpen(false);
+    }
+  }, [currentStepConfig?.title, hasTickets]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -216,7 +221,6 @@ const CreateEventOptions = () => {
     [handleNextStep]
   );
 
-  // Memoize buttons to prevent unnecessary re-renders
   const buttons = useMemo(
     () => ({
       submit: (
@@ -277,7 +281,10 @@ const CreateEventOptions = () => {
             <CreateEventActionDrawer
               trigger={buttons.submit}
               callback={{
-                primary: () => setOpen(false),
+                primary: () => {
+                  setOpen(false);
+                  handleOptionCancellation();
+                },
                 secondary: handleNextStep,
               }}
               open={open}
