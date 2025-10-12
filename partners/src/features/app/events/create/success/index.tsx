@@ -1,9 +1,9 @@
-import { useParams, useRouter, useRouterState } from "@tanstack/react-router";
+import { useParams, useRouter } from "@tanstack/react-router";
 import { useEventDetailsQuery } from "../../hooks/query";
 import { Button } from "@/modules/ui/button";
 import { Event, EventSkeletonLoader } from "@/modules/units/card/event";
 import { Share } from "lucide-react";
-import { useRouteStore } from "@/hooks/router";
+
 import { ShareDialog } from "@/modules/units/page/share";
 import { useEventFormStore } from "@/features/app/global/hooks/logic";
 import { useEffect } from "react";
@@ -15,15 +15,13 @@ const EventCreationSuccess = () => {
   });
   const { reset } = useEventFormStore();
   const { resetStore } = useMapStore();
-  const pathname = useRouterState().location.pathname;
-  const { setPath } = useRouteStore();
+
   const { navigate } = useRouter();
   const { data: event } = useEventDetailsQuery({ id });
 
   const handleFormReset = () => {
     reset();
     resetStore();
-    setPath(pathname);
   };
 
   useEffect(() => {
@@ -64,7 +62,6 @@ const EventCreationSuccess = () => {
       <div className="flex flex-col space-y-2.5">
         <Button
           onClick={() => {
-            setPath(pathname);
             navigate({
               to: "/app/events/$id",
               params: {

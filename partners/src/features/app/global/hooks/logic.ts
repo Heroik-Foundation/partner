@@ -91,6 +91,7 @@ type StaticEventFormStore = {
     value: EventFormState[K]
   ) => void;
   deleteTicketTier: (index: number) => void;
+  removeAllTickets: () => void; // Add this line
   removeOrganization: (id: string) => void;
 };
 
@@ -122,6 +123,14 @@ export const useEventFormStore = create<StaticEventFormStore>()(
             },
           };
         }),
+      removeAllTickets: () =>
+        // Add this function
+        set((state) => ({
+          formState: {
+            ...state.formState,
+            ticketing: [],
+          },
+        })),
       removeOrganization: (id) =>
         set((state) => {
           const organizations = state.formState.fundRaiser?.organizations;

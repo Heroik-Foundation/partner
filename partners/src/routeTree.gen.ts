@@ -14,6 +14,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as AppImport } from './routes/app'
+import { Route as AppEventsImport } from './routes/app/events'
 import { Route as AuthSignupPasswordIndexImport } from './routes/auth/signup/password/index'
 import { Route as AppChannelsIdPostCreateIndexImport } from './routes/app/channels/$id/post/create/index'
 
@@ -131,6 +132,12 @@ const AppIndexLazyRoute = AppIndexLazyImport.update({
   getParentRoute: () => AppRoute,
 } as any).lazy(() => import('./routes/app/index.lazy').then((d) => d.Route))
 
+const AppEventsRoute = AppEventsImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AppRoute,
+} as any)
+
 const AuthSignupIndexLazyRoute = AuthSignupIndexLazyImport.update({
   id: '/auth/signup/',
   path: '/auth/signup/',
@@ -196,9 +203,9 @@ const AppMessagesIndexLazyRoute = AppMessagesIndexLazyImport.update({
 )
 
 const AppEventsIndexLazyRoute = AppEventsIndexLazyImport.update({
-  id: '/events/',
-  path: '/events/',
-  getParentRoute: () => AppRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppEventsRoute,
 } as any).lazy(() =>
   import('./routes/app/events/index.lazy').then((d) => d.Route),
 )
@@ -306,17 +313,17 @@ const AppRevenueHistoryIndexLazyRoute = AppRevenueHistoryIndexLazyImport.update(
 )
 
 const AppEventsCreateIndexLazyRoute = AppEventsCreateIndexLazyImport.update({
-  id: '/events/create/',
-  path: '/events/create/',
-  getParentRoute: () => AppRoute,
+  id: '/create/',
+  path: '/create/',
+  getParentRoute: () => AppEventsRoute,
 } as any).lazy(() =>
   import('./routes/app/events/create/index.lazy').then((d) => d.Route),
 )
 
 const AppEventsIdIndexLazyRoute = AppEventsIdIndexLazyImport.update({
-  id: '/events/$id/',
-  path: '/events/$id/',
-  getParentRoute: () => AppRoute,
+  id: '/$id/',
+  path: '/$id/',
+  getParentRoute: () => AppEventsRoute,
 } as any).lazy(() =>
   import('./routes/app/events/$id/index.lazy').then((d) => d.Route),
 )
@@ -347,9 +354,9 @@ const AuthSignupPasswordIndexRoute = AuthSignupPasswordIndexImport.update({
 
 const AppEventsCreatePreLaunchIndexLazyRoute =
   AppEventsCreatePreLaunchIndexLazyImport.update({
-    id: '/events/create/pre-launch/',
-    path: '/events/create/pre-launch/',
-    getParentRoute: () => AppRoute,
+    id: '/create/pre-launch/',
+    path: '/create/pre-launch/',
+    getParentRoute: () => AppEventsRoute,
   } as any).lazy(() =>
     import('./routes/app/events/create/pre-launch/index.lazy').then(
       (d) => d.Route,
@@ -358,9 +365,9 @@ const AppEventsCreatePreLaunchIndexLazyRoute =
 
 const AppEventsCreatePartnersIndexLazyRoute =
   AppEventsCreatePartnersIndexLazyImport.update({
-    id: '/events/create/partners/',
-    path: '/events/create/partners/',
-    getParentRoute: () => AppRoute,
+    id: '/create/partners/',
+    path: '/create/partners/',
+    getParentRoute: () => AppEventsRoute,
   } as any).lazy(() =>
     import('./routes/app/events/create/partners/index.lazy').then(
       (d) => d.Route,
@@ -369,9 +376,9 @@ const AppEventsCreatePartnersIndexLazyRoute =
 
 const AppEventsCreateOptionsIndexLazyRoute =
   AppEventsCreateOptionsIndexLazyImport.update({
-    id: '/events/create/options/',
-    path: '/events/create/options/',
-    getParentRoute: () => AppRoute,
+    id: '/create/options/',
+    path: '/create/options/',
+    getParentRoute: () => AppEventsRoute,
   } as any).lazy(() =>
     import('./routes/app/events/create/options/index.lazy').then(
       (d) => d.Route,
@@ -380,9 +387,9 @@ const AppEventsCreateOptionsIndexLazyRoute =
 
 const AppEventsCreateCategoryIndexLazyRoute =
   AppEventsCreateCategoryIndexLazyImport.update({
-    id: '/events/create/category/',
-    path: '/events/create/category/',
-    getParentRoute: () => AppRoute,
+    id: '/create/category/',
+    path: '/create/category/',
+    getParentRoute: () => AppEventsRoute,
   } as any).lazy(() =>
     import('./routes/app/events/create/category/index.lazy').then(
       (d) => d.Route,
@@ -391,44 +398,44 @@ const AppEventsCreateCategoryIndexLazyRoute =
 
 const AppEventsIdSuccessIndexLazyRoute =
   AppEventsIdSuccessIndexLazyImport.update({
-    id: '/events/$id/success/',
-    path: '/events/$id/success/',
-    getParentRoute: () => AppRoute,
+    id: '/$id/success/',
+    path: '/$id/success/',
+    getParentRoute: () => AppEventsRoute,
   } as any).lazy(() =>
     import('./routes/app/events/$id/success/index.lazy').then((d) => d.Route),
   )
 
 const AppEventsIdPartnersIndexLazyRoute =
   AppEventsIdPartnersIndexLazyImport.update({
-    id: '/events/$id/partners/',
-    path: '/events/$id/partners/',
-    getParentRoute: () => AppRoute,
+    id: '/$id/partners/',
+    path: '/$id/partners/',
+    getParentRoute: () => AppEventsRoute,
   } as any).lazy(() =>
     import('./routes/app/events/$id/partners/index.lazy').then((d) => d.Route),
   )
 
 const AppEventsIdMessagesIndexLazyRoute =
   AppEventsIdMessagesIndexLazyImport.update({
-    id: '/events/$id/messages/',
-    path: '/events/$id/messages/',
-    getParentRoute: () => AppRoute,
+    id: '/$id/messages/',
+    path: '/$id/messages/',
+    getParentRoute: () => AppEventsRoute,
   } as any).lazy(() =>
     import('./routes/app/events/$id/messages/index.lazy').then((d) => d.Route),
   )
 
 const AppEventsIdEditIndexLazyRoute = AppEventsIdEditIndexLazyImport.update({
-  id: '/events/$id/edit/',
-  path: '/events/$id/edit/',
-  getParentRoute: () => AppRoute,
+  id: '/$id/edit/',
+  path: '/$id/edit/',
+  getParentRoute: () => AppEventsRoute,
 } as any).lazy(() =>
   import('./routes/app/events/$id/edit/index.lazy').then((d) => d.Route),
 )
 
 const AppEventsIdDashboardIndexLazyRoute =
   AppEventsIdDashboardIndexLazyImport.update({
-    id: '/events/$id/dashboard/',
-    path: '/events/$id/dashboard/',
-    getParentRoute: () => AppRoute,
+    id: '/$id/dashboard/',
+    path: '/$id/dashboard/',
+    getParentRoute: () => AppEventsRoute,
   } as any).lazy(() =>
     import('./routes/app/events/$id/dashboard/index.lazy').then((d) => d.Route),
   )
@@ -465,9 +472,9 @@ const AppChannelsIdEditIndexLazyRoute = AppChannelsIdEditIndexLazyImport.update(
 
 const AppEventsIdMessagesIdIndexLazyRoute =
   AppEventsIdMessagesIdIndexLazyImport.update({
-    id: '/events/$id/messages/$id/',
-    path: '/events/$id/messages/$id/',
-    getParentRoute: () => AppRoute,
+    id: '/$id/messages/$id/',
+    path: '/$id/messages/$id/',
+    getParentRoute: () => AppEventsRoute,
   } as any).lazy(() =>
     import('./routes/app/events/$id/messages/$id/index.lazy').then(
       (d) => d.Route,
@@ -476,9 +483,9 @@ const AppEventsIdMessagesIdIndexLazyRoute =
 
 const AppEventsIdEditTicketTypeIdIndexLazyRoute =
   AppEventsIdEditTicketTypeIdIndexLazyImport.update({
-    id: '/events/$id/edit/$ticketTypeId/',
-    path: '/events/$id/edit/$ticketTypeId/',
-    getParentRoute: () => AppRoute,
+    id: '/$id/edit/$ticketTypeId/',
+    path: '/$id/edit/$ticketTypeId/',
+    getParentRoute: () => AppEventsRoute,
   } as any).lazy(() =>
     import('./routes/app/events/$id/edit/$ticketTypeId/index.lazy').then(
       (d) => d.Route,
@@ -521,6 +528,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppImport
       parentRoute: typeof rootRoute
     }
+    '/app/events': {
+      id: '/app/events'
+      path: '/events'
+      fullPath: '/app/events'
+      preLoaderRoute: typeof AppEventsImport
+      parentRoute: typeof AppImport
+    }
     '/app/': {
       id: '/app/'
       path: '/'
@@ -537,10 +551,10 @@ declare module '@tanstack/react-router' {
     }
     '/app/events/': {
       id: '/app/events/'
-      path: '/events'
-      fullPath: '/app/events'
+      path: '/'
+      fullPath: '/app/events/'
       preLoaderRoute: typeof AppEventsIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/messages/': {
       id: '/app/messages/'
@@ -621,17 +635,17 @@ declare module '@tanstack/react-router' {
     }
     '/app/events/$id/': {
       id: '/app/events/$id/'
-      path: '/events/$id'
+      path: '/$id'
       fullPath: '/app/events/$id'
       preLoaderRoute: typeof AppEventsIdIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/events/create/': {
       id: '/app/events/create/'
-      path: '/events/create'
+      path: '/create'
       fullPath: '/app/events/create'
       preLoaderRoute: typeof AppEventsCreateIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/revenue/history/': {
       id: '/app/revenue/history/'
@@ -726,66 +740,66 @@ declare module '@tanstack/react-router' {
     }
     '/app/events/$id/dashboard/': {
       id: '/app/events/$id/dashboard/'
-      path: '/events/$id/dashboard'
+      path: '/$id/dashboard'
       fullPath: '/app/events/$id/dashboard'
       preLoaderRoute: typeof AppEventsIdDashboardIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/events/$id/edit/': {
       id: '/app/events/$id/edit/'
-      path: '/events/$id/edit'
+      path: '/$id/edit'
       fullPath: '/app/events/$id/edit'
       preLoaderRoute: typeof AppEventsIdEditIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/events/$id/messages/': {
       id: '/app/events/$id/messages/'
-      path: '/events/$id/messages'
+      path: '/$id/messages'
       fullPath: '/app/events/$id/messages'
       preLoaderRoute: typeof AppEventsIdMessagesIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/events/$id/partners/': {
       id: '/app/events/$id/partners/'
-      path: '/events/$id/partners'
+      path: '/$id/partners'
       fullPath: '/app/events/$id/partners'
       preLoaderRoute: typeof AppEventsIdPartnersIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/events/$id/success/': {
       id: '/app/events/$id/success/'
-      path: '/events/$id/success'
+      path: '/$id/success'
       fullPath: '/app/events/$id/success'
       preLoaderRoute: typeof AppEventsIdSuccessIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/events/create/category/': {
       id: '/app/events/create/category/'
-      path: '/events/create/category'
+      path: '/create/category'
       fullPath: '/app/events/create/category'
       preLoaderRoute: typeof AppEventsCreateCategoryIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/events/create/options/': {
       id: '/app/events/create/options/'
-      path: '/events/create/options'
+      path: '/create/options'
       fullPath: '/app/events/create/options'
       preLoaderRoute: typeof AppEventsCreateOptionsIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/events/create/partners/': {
       id: '/app/events/create/partners/'
-      path: '/events/create/partners'
+      path: '/create/partners'
       fullPath: '/app/events/create/partners'
       preLoaderRoute: typeof AppEventsCreatePartnersIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/events/create/pre-launch/': {
       id: '/app/events/create/pre-launch/'
-      path: '/events/create/pre-launch'
+      path: '/create/pre-launch'
       fullPath: '/app/events/create/pre-launch'
       preLoaderRoute: typeof AppEventsCreatePreLaunchIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/channels/$id/post/create/': {
       id: '/app/channels/$id/post/create/'
@@ -803,46 +817,27 @@ declare module '@tanstack/react-router' {
     }
     '/app/events/$id/edit/$ticketTypeId/': {
       id: '/app/events/$id/edit/$ticketTypeId/'
-      path: '/events/$id/edit/$ticketTypeId'
+      path: '/$id/edit/$ticketTypeId'
       fullPath: '/app/events/$id/edit/$ticketTypeId'
       preLoaderRoute: typeof AppEventsIdEditTicketTypeIdIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
     '/app/events/$id/messages/$id/': {
       id: '/app/events/$id/messages/$id/'
-      path: '/events/$id/messages/$id'
+      path: '/$id/messages/$id'
       fullPath: '/app/events/$id/messages/$id'
       preLoaderRoute: typeof AppEventsIdMessagesIdIndexLazyImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppEventsImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface AppRouteChildren {
-  AppIndexLazyRoute: typeof AppIndexLazyRoute
-  AppChannelsIndexLazyRoute: typeof AppChannelsIndexLazyRoute
+interface AppEventsRouteChildren {
   AppEventsIndexLazyRoute: typeof AppEventsIndexLazyRoute
-  AppMessagesIndexLazyRoute: typeof AppMessagesIndexLazyRoute
-  AppNotificationsIndexLazyRoute: typeof AppNotificationsIndexLazyRoute
-  AppProfileIndexLazyRoute: typeof AppProfileIndexLazyRoute
-  AppRevenueIndexLazyRoute: typeof AppRevenueIndexLazyRoute
-  AppSettingsIndexLazyRoute: typeof AppSettingsIndexLazyRoute
-  AppChannelsIdIndexLazyRoute: typeof AppChannelsIdIndexLazyRoute
-  AppChannelsCreateIndexLazyRoute: typeof AppChannelsCreateIndexLazyRoute
   AppEventsIdIndexLazyRoute: typeof AppEventsIdIndexLazyRoute
   AppEventsCreateIndexLazyRoute: typeof AppEventsCreateIndexLazyRoute
-  AppRevenueHistoryIndexLazyRoute: typeof AppRevenueHistoryIndexLazyRoute
-  AppRevenueSetupAccountIndexLazyRoute: typeof AppRevenueSetupAccountIndexLazyRoute
-  AppRevenueSetupPinIndexLazyRoute: typeof AppRevenueSetupPinIndexLazyRoute
-  AppRevenueWithdrawIndexLazyRoute: typeof AppRevenueWithdrawIndexLazyRoute
-  AppSettingsContactIndexLazyRoute: typeof AppSettingsContactIndexLazyRoute
-  AppTicketsHistoryIndexLazyRoute: typeof AppTicketsHistoryIndexLazyRoute
-  AppTicketsScanIndexLazyRoute: typeof AppTicketsScanIndexLazyRoute
-  AppChannelsIdEditIndexLazyRoute: typeof AppChannelsIdEditIndexLazyRoute
-  AppChannelsIdGuidelinesIndexLazyRoute: typeof AppChannelsIdGuidelinesIndexLazyRoute
-  AppChannelsIdMembersIndexLazyRoute: typeof AppChannelsIdMembersIndexLazyRoute
   AppEventsIdDashboardIndexLazyRoute: typeof AppEventsIdDashboardIndexLazyRoute
   AppEventsIdEditIndexLazyRoute: typeof AppEventsIdEditIndexLazyRoute
   AppEventsIdMessagesIndexLazyRoute: typeof AppEventsIdMessagesIndexLazyRoute
@@ -852,35 +847,14 @@ interface AppRouteChildren {
   AppEventsCreateOptionsIndexLazyRoute: typeof AppEventsCreateOptionsIndexLazyRoute
   AppEventsCreatePartnersIndexLazyRoute: typeof AppEventsCreatePartnersIndexLazyRoute
   AppEventsCreatePreLaunchIndexLazyRoute: typeof AppEventsCreatePreLaunchIndexLazyRoute
-  AppChannelsIdPostCreateIndexRoute: typeof AppChannelsIdPostCreateIndexRoute
-  AppChannelsIdPostPostIdIndexLazyRoute: typeof AppChannelsIdPostPostIdIndexLazyRoute
   AppEventsIdEditTicketTypeIdIndexLazyRoute: typeof AppEventsIdEditTicketTypeIdIndexLazyRoute
   AppEventsIdMessagesIdIndexLazyRoute: typeof AppEventsIdMessagesIdIndexLazyRoute
 }
 
-const AppRouteChildren: AppRouteChildren = {
-  AppIndexLazyRoute: AppIndexLazyRoute,
-  AppChannelsIndexLazyRoute: AppChannelsIndexLazyRoute,
+const AppEventsRouteChildren: AppEventsRouteChildren = {
   AppEventsIndexLazyRoute: AppEventsIndexLazyRoute,
-  AppMessagesIndexLazyRoute: AppMessagesIndexLazyRoute,
-  AppNotificationsIndexLazyRoute: AppNotificationsIndexLazyRoute,
-  AppProfileIndexLazyRoute: AppProfileIndexLazyRoute,
-  AppRevenueIndexLazyRoute: AppRevenueIndexLazyRoute,
-  AppSettingsIndexLazyRoute: AppSettingsIndexLazyRoute,
-  AppChannelsIdIndexLazyRoute: AppChannelsIdIndexLazyRoute,
-  AppChannelsCreateIndexLazyRoute: AppChannelsCreateIndexLazyRoute,
   AppEventsIdIndexLazyRoute: AppEventsIdIndexLazyRoute,
   AppEventsCreateIndexLazyRoute: AppEventsCreateIndexLazyRoute,
-  AppRevenueHistoryIndexLazyRoute: AppRevenueHistoryIndexLazyRoute,
-  AppRevenueSetupAccountIndexLazyRoute: AppRevenueSetupAccountIndexLazyRoute,
-  AppRevenueSetupPinIndexLazyRoute: AppRevenueSetupPinIndexLazyRoute,
-  AppRevenueWithdrawIndexLazyRoute: AppRevenueWithdrawIndexLazyRoute,
-  AppSettingsContactIndexLazyRoute: AppSettingsContactIndexLazyRoute,
-  AppTicketsHistoryIndexLazyRoute: AppTicketsHistoryIndexLazyRoute,
-  AppTicketsScanIndexLazyRoute: AppTicketsScanIndexLazyRoute,
-  AppChannelsIdEditIndexLazyRoute: AppChannelsIdEditIndexLazyRoute,
-  AppChannelsIdGuidelinesIndexLazyRoute: AppChannelsIdGuidelinesIndexLazyRoute,
-  AppChannelsIdMembersIndexLazyRoute: AppChannelsIdMembersIndexLazyRoute,
   AppEventsIdDashboardIndexLazyRoute: AppEventsIdDashboardIndexLazyRoute,
   AppEventsIdEditIndexLazyRoute: AppEventsIdEditIndexLazyRoute,
   AppEventsIdMessagesIndexLazyRoute: AppEventsIdMessagesIndexLazyRoute,
@@ -891,11 +865,63 @@ const AppRouteChildren: AppRouteChildren = {
   AppEventsCreatePartnersIndexLazyRoute: AppEventsCreatePartnersIndexLazyRoute,
   AppEventsCreatePreLaunchIndexLazyRoute:
     AppEventsCreatePreLaunchIndexLazyRoute,
-  AppChannelsIdPostCreateIndexRoute: AppChannelsIdPostCreateIndexRoute,
-  AppChannelsIdPostPostIdIndexLazyRoute: AppChannelsIdPostPostIdIndexLazyRoute,
   AppEventsIdEditTicketTypeIdIndexLazyRoute:
     AppEventsIdEditTicketTypeIdIndexLazyRoute,
   AppEventsIdMessagesIdIndexLazyRoute: AppEventsIdMessagesIdIndexLazyRoute,
+}
+
+const AppEventsRouteWithChildren = AppEventsRoute._addFileChildren(
+  AppEventsRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppEventsRoute: typeof AppEventsRouteWithChildren
+  AppIndexLazyRoute: typeof AppIndexLazyRoute
+  AppChannelsIndexLazyRoute: typeof AppChannelsIndexLazyRoute
+  AppMessagesIndexLazyRoute: typeof AppMessagesIndexLazyRoute
+  AppNotificationsIndexLazyRoute: typeof AppNotificationsIndexLazyRoute
+  AppProfileIndexLazyRoute: typeof AppProfileIndexLazyRoute
+  AppRevenueIndexLazyRoute: typeof AppRevenueIndexLazyRoute
+  AppSettingsIndexLazyRoute: typeof AppSettingsIndexLazyRoute
+  AppChannelsIdIndexLazyRoute: typeof AppChannelsIdIndexLazyRoute
+  AppChannelsCreateIndexLazyRoute: typeof AppChannelsCreateIndexLazyRoute
+  AppRevenueHistoryIndexLazyRoute: typeof AppRevenueHistoryIndexLazyRoute
+  AppRevenueSetupAccountIndexLazyRoute: typeof AppRevenueSetupAccountIndexLazyRoute
+  AppRevenueSetupPinIndexLazyRoute: typeof AppRevenueSetupPinIndexLazyRoute
+  AppRevenueWithdrawIndexLazyRoute: typeof AppRevenueWithdrawIndexLazyRoute
+  AppSettingsContactIndexLazyRoute: typeof AppSettingsContactIndexLazyRoute
+  AppTicketsHistoryIndexLazyRoute: typeof AppTicketsHistoryIndexLazyRoute
+  AppTicketsScanIndexLazyRoute: typeof AppTicketsScanIndexLazyRoute
+  AppChannelsIdEditIndexLazyRoute: typeof AppChannelsIdEditIndexLazyRoute
+  AppChannelsIdGuidelinesIndexLazyRoute: typeof AppChannelsIdGuidelinesIndexLazyRoute
+  AppChannelsIdMembersIndexLazyRoute: typeof AppChannelsIdMembersIndexLazyRoute
+  AppChannelsIdPostCreateIndexRoute: typeof AppChannelsIdPostCreateIndexRoute
+  AppChannelsIdPostPostIdIndexLazyRoute: typeof AppChannelsIdPostPostIdIndexLazyRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppEventsRoute: AppEventsRouteWithChildren,
+  AppIndexLazyRoute: AppIndexLazyRoute,
+  AppChannelsIndexLazyRoute: AppChannelsIndexLazyRoute,
+  AppMessagesIndexLazyRoute: AppMessagesIndexLazyRoute,
+  AppNotificationsIndexLazyRoute: AppNotificationsIndexLazyRoute,
+  AppProfileIndexLazyRoute: AppProfileIndexLazyRoute,
+  AppRevenueIndexLazyRoute: AppRevenueIndexLazyRoute,
+  AppSettingsIndexLazyRoute: AppSettingsIndexLazyRoute,
+  AppChannelsIdIndexLazyRoute: AppChannelsIdIndexLazyRoute,
+  AppChannelsCreateIndexLazyRoute: AppChannelsCreateIndexLazyRoute,
+  AppRevenueHistoryIndexLazyRoute: AppRevenueHistoryIndexLazyRoute,
+  AppRevenueSetupAccountIndexLazyRoute: AppRevenueSetupAccountIndexLazyRoute,
+  AppRevenueSetupPinIndexLazyRoute: AppRevenueSetupPinIndexLazyRoute,
+  AppRevenueWithdrawIndexLazyRoute: AppRevenueWithdrawIndexLazyRoute,
+  AppSettingsContactIndexLazyRoute: AppSettingsContactIndexLazyRoute,
+  AppTicketsHistoryIndexLazyRoute: AppTicketsHistoryIndexLazyRoute,
+  AppTicketsScanIndexLazyRoute: AppTicketsScanIndexLazyRoute,
+  AppChannelsIdEditIndexLazyRoute: AppChannelsIdEditIndexLazyRoute,
+  AppChannelsIdGuidelinesIndexLazyRoute: AppChannelsIdGuidelinesIndexLazyRoute,
+  AppChannelsIdMembersIndexLazyRoute: AppChannelsIdMembersIndexLazyRoute,
+  AppChannelsIdPostCreateIndexRoute: AppChannelsIdPostCreateIndexRoute,
+  AppChannelsIdPostPostIdIndexLazyRoute: AppChannelsIdPostPostIdIndexLazyRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -903,9 +929,10 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/app': typeof AppRouteWithChildren
+  '/app/events': typeof AppEventsRouteWithChildren
   '/app/': typeof AppIndexLazyRoute
   '/app/channels': typeof AppChannelsIndexLazyRoute
-  '/app/events': typeof AppEventsIndexLazyRoute
+  '/app/events/': typeof AppEventsIndexLazyRoute
   '/app/messages': typeof AppMessagesIndexLazyRoute
   '/app/notifications': typeof AppNotificationsIndexLazyRoute
   '/app/profile': typeof AppProfileIndexLazyRoute
@@ -997,6 +1024,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/app': typeof AppRouteWithChildren
+  '/app/events': typeof AppEventsRouteWithChildren
   '/app/': typeof AppIndexLazyRoute
   '/app/channels/': typeof AppChannelsIndexLazyRoute
   '/app/events/': typeof AppEventsIndexLazyRoute
@@ -1046,9 +1074,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/app/events'
     | '/app/'
     | '/app/channels'
-    | '/app/events'
+    | '/app/events/'
     | '/app/messages'
     | '/app/notifications'
     | '/app/profile'
@@ -1137,6 +1166,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/app/events'
     | '/app/'
     | '/app/channels/'
     | '/app/events/'
@@ -1233,9 +1263,9 @@ export const routeTree = rootRoute
     "/app": {
       "filePath": "app.tsx",
       "children": [
+        "/app/events",
         "/app/",
         "/app/channels/",
-        "/app/events/",
         "/app/messages/",
         "/app/notifications/",
         "/app/profile/",
@@ -1243,8 +1273,6 @@ export const routeTree = rootRoute
         "/app/settings/",
         "/app/channels/$id/",
         "/app/channels/create/",
-        "/app/events/$id/",
-        "/app/events/create/",
         "/app/revenue/history/",
         "/app/revenue/setup-account/",
         "/app/revenue/setup-pin/",
@@ -1255,6 +1283,17 @@ export const routeTree = rootRoute
         "/app/channels/$id/edit/",
         "/app/channels/$id/guidelines/",
         "/app/channels/$id/members/",
+        "/app/channels/$id/post/create/",
+        "/app/channels/$id/post/$postId/"
+      ]
+    },
+    "/app/events": {
+      "filePath": "app/events.tsx",
+      "parent": "/app",
+      "children": [
+        "/app/events/",
+        "/app/events/$id/",
+        "/app/events/create/",
         "/app/events/$id/dashboard/",
         "/app/events/$id/edit/",
         "/app/events/$id/messages/",
@@ -1264,8 +1303,6 @@ export const routeTree = rootRoute
         "/app/events/create/options/",
         "/app/events/create/partners/",
         "/app/events/create/pre-launch/",
-        "/app/channels/$id/post/create/",
-        "/app/channels/$id/post/$postId/",
         "/app/events/$id/edit/$ticketTypeId/",
         "/app/events/$id/messages/$id/"
       ]
@@ -1280,7 +1317,7 @@ export const routeTree = rootRoute
     },
     "/app/events/": {
       "filePath": "app/events/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/messages/": {
       "filePath": "app/messages/index.lazy.tsx",
@@ -1324,11 +1361,11 @@ export const routeTree = rootRoute
     },
     "/app/events/$id/": {
       "filePath": "app/events/$id/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/events/create/": {
       "filePath": "app/events/create/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/revenue/history/": {
       "filePath": "app/revenue/history/index.lazy.tsx",
@@ -1381,39 +1418,39 @@ export const routeTree = rootRoute
     },
     "/app/events/$id/dashboard/": {
       "filePath": "app/events/$id/dashboard/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/events/$id/edit/": {
       "filePath": "app/events/$id/edit/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/events/$id/messages/": {
       "filePath": "app/events/$id/messages/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/events/$id/partners/": {
       "filePath": "app/events/$id/partners/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/events/$id/success/": {
       "filePath": "app/events/$id/success/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/events/create/category/": {
       "filePath": "app/events/create/category/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/events/create/options/": {
       "filePath": "app/events/create/options/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/events/create/partners/": {
       "filePath": "app/events/create/partners/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/events/create/pre-launch/": {
       "filePath": "app/events/create/pre-launch/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/channels/$id/post/create/": {
       "filePath": "app/channels/$id/post/create/index.tsx",
@@ -1425,11 +1462,11 @@ export const routeTree = rootRoute
     },
     "/app/events/$id/edit/$ticketTypeId/": {
       "filePath": "app/events/$id/edit/$ticketTypeId/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     },
     "/app/events/$id/messages/$id/": {
       "filePath": "app/events/$id/messages/$id/index.lazy.tsx",
-      "parent": "/app"
+      "parent": "/app/events"
     }
   }
 }
