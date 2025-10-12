@@ -50,7 +50,9 @@ export const PreLaunch = () => {
     const hasMissingRequired = !endDate || !startDate || !name || !description;
 
     if (hasInvalidRecurrence || hasInvalidFundraiser || hasMissingRequired) {
-      toast.info("Please complete event details to access this page");
+      toast.info("Please complete event details to access this page", {
+        id: "pre-launch-invalid-details-info",
+      });
       navigate({ to: "/app/events/create" });
     }
   }, [formState, navigate]);

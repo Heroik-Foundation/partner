@@ -5,7 +5,7 @@ import { Fragment } from "react/jsx-runtime";
 
 export const RouteTrackerProvider = ({ children }: { children: ReactNode }) => {
   const pathname = useRouterState().location.pathname;
-  const { setPath, previousPath, currentPath } = useRouteStore();
+  const { setPath } = useRouteStore();
 
   const handlePathTrankingRouteUpdate = () => {
     setPath(pathname);
@@ -14,8 +14,6 @@ export const RouteTrackerProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     handlePathTrankingRouteUpdate();
   }, [pathname]);
-
-  console.log(previousPath, currentPath);
 
   return <Fragment>{children}</Fragment>;
 };
