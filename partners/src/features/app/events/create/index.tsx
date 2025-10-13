@@ -22,12 +22,18 @@ import { useEffect } from "react";
 import { useMapStore } from "@/stores/maps";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useRouteStore } from "@/hooks/router";
 
 const CreateEvent = () => {
   const { formState, updateForm, reset } = useEventFormStore();
+  const { previousPath } = useRouteStore();
   const { resetStore } = useMapStore();
   const navigate = useNavigate();
   const { history } = useRouter();
+
+  const backRoute = previousPath?.toLowerCase().includes("pre-launch")
+    ? `/app/`
+    : undefined;
 
   useEffect(() => {
     resetStore();
@@ -57,6 +63,7 @@ const CreateEvent = () => {
           resetStore();
           history.back();
         }}
+        previousButtonRoute={backRoute}
       />
       <Form
         onSubmit={(event) => {

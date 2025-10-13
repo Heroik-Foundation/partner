@@ -1,49 +1,52 @@
+import { Fragment, useEffect, useState, useCallback, useMemo } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { ArrowRightCircle } from "lucide-react";
+import { toast } from "sonner";
+
 import { Form, FormFooter } from "@/features/auth/global/form";
+import { Header } from "@/features/app/global/header";
+import { Button } from "@/modules/ui/button";
+import { objectHasNullOrUndefined } from "@/helpers/object";
+import {
+  EventFormState,
+  useEventFormStore,
+} from "@/features/app/global/hooks/logic";
+
 import { RecurringEventDetails } from "./modules/recurring-details";
 import { TicketEventDetails } from "./modules/ticket-details";
 import { FundraisingEventDetails } from "./modules/fundraising-details";
 import { TicketsOverview } from "./modules/tickets-overview";
 import { CreateEventActionDrawer } from "./modules/action-drawer";
 import { useMultistep } from "./hooks/multistep";
-import { Fragment, useEffect, useState, useCallback, useMemo } from "react";
-import { Button } from "@/modules/ui/button";
-import { ArrowRightCircle } from "lucide-react";
-import {
-  EventFormState,
-  useEventFormStore,
-} from "@/features/app/global/hooks/logic";
-import { objectHasNullOrUndefined } from "@/helpers/object";
-import { toast } from "sonner";
-import { Header } from "@/features/app/global/header";
-import { useNavigate } from "@tanstack/react-router";
 
-type StepConfig = {
+interface StepConfig {
   title: string;
   description: string;
   component: JSX.Element;
   cta: string;
   position: "stacked" | "inline";
-};
+}
 
 const CreateEventOptions = () => {
   const { formState, setFormState } = useEventFormStore();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(true);
-  const [openCancellationDrawer, setOpenCancellationDrawer] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [isCancellationDrawerOpen, setIsCancellationDrawerOpen] =
+    useState(false);
 
   const { recurrence, ticketing, fundRaiser, currentTicketIndex } = formState;
   const hasTickets = (ticketing?.length || 0) >= 1;
   const isAddingTicket = currentTicketIndex > 0;
 
-  const { previous } = useMultistep([]);
+  const { previous: initialPreviousStep } = useMultistep([]);
 
   const handlePreviousStep = useCallback(() => {
-    previous();
+    initialPreviousStep();
     setFormState({
       ...formState,
       currentTicketIndex: currentTicketIndex + 1,
     });
-  }, [previous, setFormState, formState, currentTicketIndex]);
+  }, [initialPreviousStep, setFormState, formState, currentTicketIndex]);
 
   const steps = useMemo((): StepConfig[] => {
     const baseSteps: StepConfig[] = [
@@ -84,16 +87,15 @@ const CreateEventOptions = () => {
     }
 
     return baseSteps;
-  }, [hasTickets, isAddingTicket, handlePreviousStep]);
+  }, [hasTickets, isAddingTicket, currentTicketIndex, handlePreviousStep]);
 
   const multistep = useMultistep(steps.map((step) => step.component));
-
   const {
     currentIndex: stepIndex,
     currentStep: stepComponent,
     next: nextStep,
-    previous: previousStep,
-    isLastStep: lastStep,
+    previous: multistepPreviousStep,
+    isLastStep: isLastStep,
   } = multistep;
 
   const currentStepConfig = steps[stepIndex];
@@ -102,28 +104,35 @@ const CreateEventOptions = () => {
     if (isAddingTicket && stepIndex === 1) {
       nextStep();
     } else {
-      previousStep();
-
-      if (currentStepConfig.title === "Fundraising Details" && hasTickets) {
+      multistepPreviousStep();
+      if (currentStepConfig.title === "Fundraising Details" && hasTickets)
         return;
-      }
-      setOpen(true);
+      setIsDrawerOpen(true);
     }
-  }, [isAddingTicket, stepIndex, nextStep, previousStep]);
+  }, [
+    isAddingTicket,
+    stepIndex,
+    nextStep,
+    multistepPreviousStep,
+    currentStepConfig?.title,
+    hasTickets,
+  ]);
 
   const handleOptionCancellation = useCallback(() => {
     const updates: Partial<EventFormState> = {};
 
-    if (currentStepConfig.title === "Event Recurrence") {
-      updates.recurrence = undefined;
-    } else if (
-      currentStepConfig.title === "Ticket Details" ||
-      currentStepConfig.title === "Add Ticket Type"
-    ) {
-      updates.currentTicketIndex = 0;
-      updates.ticketing = undefined;
-    } else if (currentStepConfig.title === "Fundraising Details") {
-      updates.fundRaiser = undefined;
+    switch (currentStepConfig?.title) {
+      case "Event Recurrence":
+        updates.recurrence = undefined;
+        break;
+      case "Ticket Details":
+      case "Add Ticket Type":
+        updates.currentTicketIndex = 0;
+        updates.ticketing = undefined;
+        break;
+      case "Fundraising Details":
+        updates.fundRaiser = undefined;
+        break;
     }
 
     if (Object.keys(updates).length > 0) {
@@ -154,7 +163,7 @@ const CreateEventOptions = () => {
     }
 
     // Validate fundraising step
-    if (lastStep && fundRaiser) {
+    if (isLastStep && fundRaiser) {
       if (objectHasNullOrUndefined(fundRaiser)) {
         toast.error("Kindly complete the form before continuing");
         return false;
@@ -168,7 +177,7 @@ const CreateEventOptions = () => {
     return true;
   }, [
     stepIndex,
-    lastStep,
+    isLastStep,
     recurrence,
     ticketing,
     currentTicketIndex,
@@ -178,7 +187,7 @@ const CreateEventOptions = () => {
   const handleNextStep = useCallback(() => {
     if (!validateCurrentStep()) return;
 
-    if (lastStep) {
+    if (isLastStep) {
       navigate({ to: "/app/events/create/pre-launch" });
       return;
     }
@@ -186,21 +195,31 @@ const CreateEventOptions = () => {
     nextStep();
 
     if (
-      (currentStepConfig.title === "Ticket Details" ||
-        currentStepConfig.title === "Add Ticket Type") &&
-      hasTickets
+      currentStepConfig.title === "Ticket Details" ||
+      currentStepConfig.title === "Add Ticket Type"
     ) {
       return;
     }
 
-    setOpen(true);
-  }, [validateCurrentStep, lastStep, navigate, nextStep]);
+    setIsDrawerOpen(true);
+  }, [
+    validateCurrentStep,
+    isLastStep,
+    navigate,
+    nextStep,
+    currentStepConfig?.title,
+  ]);
 
   useEffect(() => {
-    if (currentStepConfig?.title === "Review Tickets" && hasTickets) {
-      setOpen(false);
+    const isTicketRelatedStep =
+      currentStepConfig?.title === "Review Tickets" ||
+      currentStepConfig?.title === "Add Ticket Type" ||
+      currentStepConfig?.title === "Ticket Details";
+
+    if (isTicketRelatedStep) {
+      setIsDrawerOpen(false);
     }
-  }, [currentStepConfig?.title, hasTickets]);
+  }, [currentStepConfig?.title]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -231,7 +250,7 @@ const CreateEventOptions = () => {
       ),
       cancel: (
         <Button
-          onClick={() => setOpenCancellationDrawer(true)}
+          onClick={() => setIsCancellationDrawerOpen(true)}
           type="button"
           size="lg"
           className="w-full"
@@ -244,6 +263,11 @@ const CreateEventOptions = () => {
     }),
     []
   );
+
+  const isReviewOrTicketStep =
+    currentStepConfig?.title === "Review Tickets" ||
+    currentStepConfig?.title === "Add Ticket Type" ||
+    currentStepConfig?.title === "Ticket Details";
 
   return (
     <Fragment>
@@ -263,32 +287,34 @@ const CreateEventOptions = () => {
 
         <FormFooter>
           <div className="flex items-center justify-between space-x-2.5">
-            <CreateEventActionDrawer
-              trigger={buttons.cancel}
-              callback={{
-                primary: () => {
-                  handleOptionCancellation();
-                  setOpenCancellationDrawer(false);
-                  handleNextStep();
-                },
-                secondary: () => setOpenCancellationDrawer(false),
-              }}
-              open={openCancellationDrawer}
-              setOpen={setOpenCancellationDrawer}
-              title="Are you sure you want to cancel?"
-            />
+            {!isReviewOrTicketStep && (
+              <CreateEventActionDrawer
+                trigger={buttons.cancel}
+                callback={{
+                  primary: () => {
+                    handleOptionCancellation();
+                    setIsCancellationDrawerOpen(false);
+                    handleNextStep();
+                  },
+                  secondary: () => setIsCancellationDrawerOpen(false),
+                }}
+                open={isCancellationDrawerOpen}
+                setOpen={setIsCancellationDrawerOpen}
+                title="Are you sure you want to cancel?"
+              />
+            )}
 
             <CreateEventActionDrawer
               trigger={buttons.submit}
               callback={{
                 primary: () => {
-                  setOpen(false);
+                  setIsDrawerOpen(false);
                   handleOptionCancellation();
                 },
                 secondary: handleNextStep,
               }}
-              open={open}
-              setOpen={setOpen}
+              open={isDrawerOpen}
+              setOpen={setIsDrawerOpen}
               title={currentStepConfig?.cta || ""}
             />
           </div>
