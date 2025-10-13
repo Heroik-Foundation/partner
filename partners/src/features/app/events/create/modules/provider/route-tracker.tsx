@@ -1,6 +1,6 @@
 import { useRouteStore } from "@/hooks/router";
-import { ReactNode, useRouterState } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useRouterState } from "@tanstack/react-router";
+import { useEffect, type ReactNode } from "react";
 import { Fragment } from "react/jsx-runtime";
 
 export const RouteTrackerProvider = ({ children }: { children: ReactNode }) => {
