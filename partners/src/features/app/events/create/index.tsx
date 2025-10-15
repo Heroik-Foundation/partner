@@ -18,7 +18,6 @@ import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEventFormStore } from "../../global/hooks/logic";
 
 import PlaceAutocomplete from "@/modules/units/form/address";
-import { useEffect } from "react";
 import { useMapStore } from "@/stores/maps";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -34,10 +33,6 @@ const CreateEvent = () => {
   const backRoute = previousPath?.toLowerCase().includes("pre-launch")
     ? `/app/`
     : undefined;
-
-  useEffect(() => {
-    resetStore();
-  }, []);
 
   const handleSubmit = () => {
     if (!formState.category) {
@@ -105,7 +100,6 @@ const CreateEvent = () => {
             <PlaceAutocomplete
               required
               placeholder="Type Event/Address here"
-              initialValue={formState.address}
               callback={(value) => {
                 updateForm("address", String(value.address));
                 updateForm("longitude", value.lng);

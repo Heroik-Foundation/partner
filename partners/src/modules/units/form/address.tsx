@@ -19,7 +19,7 @@ interface LocationResult {
 
 interface Props {
   placeholder?: string;
-  initialValue?: string;
+
   required?: boolean;
   callback?: (location: LocationResult) => void;
   disabled?: boolean;
@@ -45,7 +45,7 @@ const API_KEY =
 
 const MapLocationPicker = ({
   placeholder = "Click to select location",
-  initialValue,
+
   required = false,
   callback,
   disabled = false,
@@ -95,17 +95,6 @@ const MapLocationPicker = ({
       setMapCenter({ lat, lng });
     }
   }, []);
-
-  // Initialize with persisted data or initialValue
-  useEffect(() => {
-    if (initialValue && !selectedLocation?.address) {
-      setLocation({
-        address: initialValue,
-        lat: 0,
-        lng: 0,
-      });
-    }
-  }, [initialValue, selectedLocation?.address, setLocation]);
 
   // Call callback when selectedLocation changes
   useEffect(() => {

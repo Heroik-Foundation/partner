@@ -40,17 +40,24 @@ export const useMapStore = create<MapState>()(
         set({ markerPosition: position }),
 
       resetStore: () => {
-        sessionStorage.removeItem("map-location-storage");
+        localStorage.removeItem("map-location-storage"); // Changed to localStorage
         set(initialState);
       },
     }),
     {
       name: "map-location-storage",
-      storage: createJSONStorage(() => sessionStorage), // Changed to sessionStorage
+      storage: createJSONStorage(() => localStorage), // Changed to localStorage
       partialize: (state) => ({
         selectedLocation: state.selectedLocation,
         markerPosition: state.markerPosition,
       }),
+      version: 1,
+      migrate: (persistedState: any, version: number) => {
+        if (version === 0) {
+          // Handle migration if needed
+        }
+        return persistedState as MapState;
+      },
     }
   )
 );

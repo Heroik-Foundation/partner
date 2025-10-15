@@ -98,7 +98,6 @@ const EditEvent = () => {
             <PlaceAutocomplete
               required
               placeholder="Type Event/Address here"
-              initialValue={formState.address}
               callback={(value) => {
                 updateForm("address", String(value.address));
                 updateForm("longitude", value.lng);
