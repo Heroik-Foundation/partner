@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState, useCallback, useMemo } from "react";
+import { Fragment, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRightCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -30,23 +30,13 @@ interface StepConfig {
 const CreateEventOptions = () => {
   const { formState, setFormState } = useEventFormStore();
   const navigate = useNavigate();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+
   const [isCancellationDrawerOpen, setIsCancellationDrawerOpen] =
     useState(false);
 
   const { recurrence, ticketing, fundRaiser, currentTicketIndex } = formState;
   const hasTickets = (ticketing?.length || 0) >= 1;
   const isAddingTicket = currentTicketIndex > 0;
-
-  const { previous: initialPreviousStep } = useMultistep([]);
-
-  const handlePreviousStep = useCallback(() => {
-    initialPreviousStep();
-    setFormState({
-      ...formState,
-      currentTicketIndex: currentTicketIndex + 1,
-    });
-  }, [initialPreviousStep, setFormState, formState, currentTicketIndex]);
 
   const steps = useMemo((): StepConfig[] => {
     const baseSteps: StepConfig[] = [
@@ -58,10 +48,7 @@ const CreateEventOptions = () => {
         position: "stacked",
       },
       {
-        title:
-          isAddingTicket && currentTicketIndex !== 0
-            ? "Add Ticket Type"
-            : "Ticket Details",
+        title: isAddingTicket ? "Add Ticket Type" : "Ticket Details",
         description: "Enter the required Ticket information below.",
         component: <TicketEventDetails />,
         cta: "Is This A Paid Ticketed event?",
@@ -80,109 +67,92 @@ const CreateEventOptions = () => {
       baseSteps.splice(2, 0, {
         title: "Review Tickets",
         description: "Review Ticket information below.",
-        component: <TicketsOverview previousStep={handlePreviousStep} />,
+        component: <TicketsOverview previousStep={() => {}} />,
         cta: "Would you like to review your tickets?",
         position: "stacked",
       });
     }
 
     return baseSteps;
-  }, [hasTickets, isAddingTicket, currentTicketIndex, handlePreviousStep]);
+  }, [hasTickets, isAddingTicket]);
 
   const multistep = useMultistep(steps.map((step) => step.component));
   const {
     currentIndex: stepIndex,
     currentStep: stepComponent,
-    next: nextStep,
-    previous: multistepPreviousStep,
-    isLastStep: isLastStep,
+    next,
+    previous,
+    isLastStep,
   } = multistep;
-
   const currentStepConfig = steps[stepIndex];
 
-  const handlePreviousRoute = useCallback(() => {
-    if (isAddingTicket && stepIndex === 1) {
-      nextStep();
-    } else {
-      multistepPreviousStep();
-      if (currentStepConfig.title === "Fundraising Details" && hasTickets)
-        return;
-      setIsDrawerOpen(true);
-    }
-  }, [
-    isAddingTicket,
-    stepIndex,
-    nextStep,
-    multistepPreviousStep,
-    currentStepConfig?.title,
-    hasTickets,
-  ]);
-
-  const handleOptionCancellation = useCallback(() => {
-    const updates: Partial<EventFormState> = {};
-
-    switch (currentStepConfig?.title) {
-      case "Event Recurrence":
-        updates.recurrence = undefined;
-        break;
-      case "Ticket Details":
-      case "Add Ticket Type":
-        updates.currentTicketIndex = 0;
-        updates.ticketing = undefined;
-        break;
-      case "Fundraising Details":
-        updates.fundRaiser = undefined;
-        break;
+  const handleDefaultDrawerOpenState = (): boolean => {
+    if (
+      isLastStep &&
+      (Number(formState.fundRaiser?.fundRaisingGoal || 0) >= 0 ||
+        (formState.fundRaiser?.organizations || []).length >= 0)
+    ) {
+      return false;
     }
 
-    if (Object.keys(updates).length > 0) {
-      setFormState({ ...formState, ...updates });
-    }
-  }, [currentStepConfig?.title, setFormState, formState]);
+    return true;
+  };
 
+  const [isDrawerOpen, setIsDrawerOpen] = useState(
+    handleDefaultDrawerOpenState()
+  );
+
+  // FIXED: Correct validation logic - allow navigation when form is empty
   const validateCurrentStep = useCallback((): boolean => {
-    // Early return for valid steps
+    // Allow moving to next step if user hasn't started filling the current step
     if (!recurrence && !ticketing?.[currentTicketIndex] && !fundRaiser) {
       return true;
     }
 
-    // Validate recurrence step
-    if (stepIndex === 0 && recurrence && objectHasNullOrUndefined(recurrence)) {
-      toast.error("Kindly complete the form before continuing");
-      return false;
-    }
+    // Validate only if the user has started filling the form
+    const stepValidations = {
+      0: () => !recurrence || !objectHasNullOrUndefined(recurrence),
+      1: () =>
+        !ticketing?.[currentTicketIndex] ||
+        !objectHasNullOrUndefined(ticketing[currentTicketIndex]),
+      [steps.length - 1]: () => {
+        if (!fundRaiser) return true;
+        return (
+          !objectHasNullOrUndefined(fundRaiser) &&
+          (!fundRaiser.organizations || fundRaiser.organizations.length > 0)
+        );
+      },
+    };
 
-    // Validate ticket step
-    if (
-      stepIndex === 1 &&
-      ticketing?.[currentTicketIndex] &&
-      objectHasNullOrUndefined(ticketing[currentTicketIndex])
-    ) {
-      toast.error("Kindly complete the form before continuing");
-      return false;
-    }
+    const validator = stepValidations[stepIndex];
 
-    // Validate fundraising step
-    if (isLastStep && fundRaiser) {
-      if (objectHasNullOrUndefined(fundRaiser)) {
-        toast.error("Kindly complete the form before continuing");
-        return false;
-      }
-      if (fundRaiser.organizations && fundRaiser.organizations.length < 1) {
-        toast.info("Kindly select a charity partner");
-        return false;
-      }
+    if (validator && !validator()) {
+      const errorMessage =
+        stepIndex === steps.length - 1 &&
+        fundRaiser?.organizations?.length === 0
+          ? "Kindly select a charity partner"
+          : "Kindly complete the form before continuing";
+
+      toast.error(errorMessage);
+      return false;
     }
 
     return true;
   }, [
     stepIndex,
-    isLastStep,
+    steps.length,
     recurrence,
     ticketing,
     currentTicketIndex,
     fundRaiser,
   ]);
+
+  const handlePreviousStep = useCallback(() => {
+    previous();
+    if (currentStepConfig?.title !== "Fundraising Details" || !hasTickets) {
+      setIsDrawerOpen(true);
+    }
+  }, [previous, currentStepConfig?.title, hasTickets]);
 
   const handleNextStep = useCallback(() => {
     if (!validateCurrentStep()) return;
@@ -192,45 +162,18 @@ const CreateEventOptions = () => {
       return;
     }
 
-    nextStep();
+    next();
 
-    if (
-      currentStepConfig.title === "Ticket Details" ||
-      currentStepConfig.title === "Add Ticket Type"
-    ) {
-      return;
+    if (!currentStepConfig?.title.includes("Ticket")) {
+      setIsDrawerOpen(true);
     }
-
-    setIsDrawerOpen(true);
   }, [
     validateCurrentStep,
     isLastStep,
     navigate,
-    nextStep,
+    next,
     currentStepConfig?.title,
   ]);
-
-  useEffect(() => {
-    const isTicketRelatedStep =
-      currentStepConfig?.title === "Review Tickets" ||
-      currentStepConfig?.title === "Add Ticket Type" ||
-      currentStepConfig?.title === "Ticket Details";
-
-    if (isTicketRelatedStep) {
-      setIsDrawerOpen(false);
-    }
-  }, [currentStepConfig?.title]);
-
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-      e.returnValue =
-        "Are you sure you want to leave? This will restart the form and you'll lose your progress.";
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, []);
 
   const handleFormSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -239,6 +182,23 @@ const CreateEventOptions = () => {
     },
     [handleNextStep]
   );
+
+  const handleOptionCancellation = useCallback(() => {
+    const updates: Partial<EventFormState> = {};
+
+    const cancellationMap: Record<string, Partial<EventFormState>> = {
+      "Event Recurrence": { recurrence: undefined },
+      "Ticket Details": { currentTicketIndex: 0, ticketing: undefined },
+      "Add Ticket Type": { currentTicketIndex: 0, ticketing: undefined },
+      "Fundraising Details": { fundRaiser: undefined },
+    };
+
+    Object.assign(updates, cancellationMap[currentStepConfig?.title] || {});
+
+    if (Object.keys(updates).length > 0) {
+      setFormState({ ...formState, ...updates });
+    }
+  }, [currentStepConfig?.title, setFormState, formState]);
 
   const buttons = useMemo(
     () => ({
@@ -264,10 +224,8 @@ const CreateEventOptions = () => {
     []
   );
 
-  const isReviewOrTicketStep =
-    currentStepConfig?.title === "Review Tickets" ||
-    currentStepConfig?.title === "Add Ticket Type" ||
-    currentStepConfig?.title === "Ticket Details";
+  const isTicketStep = currentStepConfig?.title.includes("Ticket");
+  const shouldShowDrawer = !isTicketStep && isDrawerOpen;
 
   return (
     <Fragment>
@@ -277,9 +235,7 @@ const CreateEventOptions = () => {
           title: currentStepConfig?.title || "",
           subtitle: currentStepConfig?.description || "",
         }}
-        previousRouteCallback={
-          stepIndex !== 0 ? handlePreviousRoute : undefined
-        }
+        previousRouteCallback={stepIndex !== 0 ? handlePreviousStep : undefined}
       />
 
       <Form onSubmit={handleFormSubmit}>
@@ -287,7 +243,7 @@ const CreateEventOptions = () => {
 
         <FormFooter>
           <div className="flex items-center justify-between space-x-2.5">
-            {!isReviewOrTicketStep && (
+            {!isTicketStep && (
               <CreateEventActionDrawer
                 trigger={buttons.cancel}
                 callback={{
@@ -309,11 +265,10 @@ const CreateEventOptions = () => {
               callback={{
                 primary: () => {
                   setIsDrawerOpen(false);
-                  handleOptionCancellation();
                 },
                 secondary: handleNextStep,
               }}
-              open={isDrawerOpen}
+              open={shouldShowDrawer}
               setOpen={setIsDrawerOpen}
               title={currentStepConfig?.cta || ""}
             />

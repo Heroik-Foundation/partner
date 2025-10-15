@@ -11,6 +11,12 @@ import {
 import { cn } from "@/lib/utils";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
+import {
+  calculateFees,
+  formatter,
+} from "../../../edit/edit-ticket-type/helper/fees";
+import infoIcon from "../../../edit/edit-ticket-type/assets/info.svg";
+import { Switch } from "@/modules/ui/switch";
 
 export const TicketEventDetails = () => {
   const { formState, updateForm } = useEventFormStore();
@@ -28,14 +34,15 @@ export const TicketEventDetails = () => {
           ticketType: "Standard",
         };
 
+  const feeBreakdown = calculateFees(
+    currentIndexState.ticketPrice,
+    formState.absorbFees
+  );
+
   const updateSpecificTicketTier = (
     index: number,
     updates: Partial<TicketTierState>
   ) => {
-    // Debug: Log initial state
-    console.log("Before update - formState.ticketing:", formState.ticketing);
-    console.log("Update requested - index:", index, "updates:", updates);
-
     const currentTiers = formState.ticketing || [];
 
     // If index is out of bounds or array is empty, create/add the tier
@@ -44,8 +51,6 @@ export const TicketEventDetails = () => {
       index >= currentTiers.length ||
       currentTiers.length === 0
     ) {
-      console.log("Creating new tier at index:", index);
-
       const newTier: TicketTierState = {
         ticketType: "Standard",
         ticketPrice: 0,
@@ -75,7 +80,6 @@ export const TicketEventDetails = () => {
         updatedTiers = [...currentTiers, newTier];
       }
 
-      console.log("Adding new tier - updatedTiers:", updatedTiers);
       updateForm("ticketing", updatedTiers);
       return;
     }
@@ -85,7 +89,6 @@ export const TicketEventDetails = () => {
       i === index ? { ...tier, ...updates } : tier
     );
 
-    console.log("Updating existing tier - updatedTiers:", updatedTiers);
     updateForm("ticketing", updatedTiers);
   };
 
@@ -110,6 +113,52 @@ export const TicketEventDetails = () => {
           }}
         />
       </FormField>
+
+      <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary space-y-4">
+        <div className="flex items-end justify-end w-full">
+          <img src={infoIcon} alt="" className="w-fit" />
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="font-bold text-sm">Ticket Price</span>
+          <span className="font-black text-primary">
+            £{formatter.format(currentIndexState.ticketPrice)}
+          </span>
+        </div>
+        <hr className="w-full border-primary/30" />
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-sm">Hiroek Fee:</span>
+          <span className="font-black text-primary">£0.60</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-sm">Payment Processing Fee:</span>
+          <span className="font-black text-primary">1.5%+ £0.20</span>
+        </div>
+        <hr className="w-full border-primary/30" />
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-sm">Buyers Pay:</span>
+          <span className="font-black text-primary">
+            £{formatter.format(feeBreakdown.buyersPay)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-sm">You Receive:</span>
+          <span className="font-black text-primary">
+            £{formatter.format(feeBreakdown.youReceive)}
+          </span>
+        </div>
+        <hr className="w-full border-primary/30" />
+        <div className="flex items-center justify-between">
+          <span className="font-semibold text-sm">
+            Do you want to absorb all the fees?
+          </span>
+          <Switch
+            onCheckedChange={(value) => {
+              updateForm("absorbFees", value);
+            }}
+            checked={formState.absorbFees}
+          />
+        </div>
+      </div>
 
       <FormField>
         <Label>Ticket Type Name</Label>

@@ -62,7 +62,7 @@ const SelectEventPartner = () => {
       />
 
       {selectedIds.length >= 1 && (
-        <div className="fixed inset-x-0 max-w-sm mx-auto bottom-5 z-50">
+        <div className="fixed inset-x-0 w-[92%] sm:max-w-sm mx-auto bottom-5 z-50">
           <Button
             onClick={() => {
               history.back();
