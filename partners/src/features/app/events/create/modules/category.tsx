@@ -26,11 +26,8 @@ export const EventCategory = (props: EventCategoryProps) => {
         name,
         image: image,
       });
-      updateForm("subCategory", {
-        name: "",
-        id: "",
-        image: image,
-      });
+
+      updateForm("subCategory", undefined);
     } else {
       setIsOpen(!isOpen);
     }
@@ -107,7 +104,7 @@ export const EventCategory = (props: EventCategoryProps) => {
                 key={subcategory._id}
                 className={cn(
                   "w-full flex items-center justify-between py-3.5 pl-7 transition-colors duration-150",
-                  formState.subCategory.id === subcategory._id &&
+                  formState?.subCategory?.id === subcategory._id &&
                     "bg-primary/5 hover:bg-primary/10"
                 )}
                 onClick={() =>
@@ -127,7 +124,7 @@ export const EventCategory = (props: EventCategoryProps) => {
                   </span>
                 </div>
 
-                {formState.subCategory.id === subcategory._id && (
+                {formState?.subCategory?.id === subcategory._id && (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}

@@ -127,11 +127,18 @@ export const TicketEventDetails = () => {
         <hr className="w-full border-primary/30" />
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Hiroek Fee:</span>
-          <span className="font-black text-primary">£0.60</span>
+          <span className="font-black text-primary">
+            {" "}
+            {Math.abs(currentIndexState.ticketPrice || 0) > 0 ? "£0.60" : "£0"}
+          </span>
         </div>
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Payment Processing Fee:</span>
-          <span className="font-black text-primary">1.5%+ £0.20</span>
+          <span className="font-black text-primary">
+            {Math.abs(currentIndexState.ticketPrice || 0) > 0
+              ? "1.5% + £0.20"
+              : "£0"}
+          </span>
         </div>
         <hr className="w-full border-primary/30" />
         <div className="flex items-center justify-between">

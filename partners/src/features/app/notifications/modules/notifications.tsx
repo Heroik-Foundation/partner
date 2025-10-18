@@ -64,7 +64,7 @@ const NotificationContent = ({
   <div>
     <span className="text-xs font-bold text-primary">{notification.title}</span>
     <p className="text-xs font-bold text-primary/50">
-      {truncateText(notification.message, 28)}
+      {truncateText(notification.message.replace("community", "channel"), 28)}
     </p>
   </div>
 );
@@ -83,10 +83,14 @@ const NotificationDrawerContent = ({
   <DrawerContent>
     <DrawerHeader>
       <DrawerTitle className="font-extrabold text-lg text-primary">
-        {notification.title}
+        {notification.title
+          .replace("community", "channel")
+          .replace("Community", "Channel")}
       </DrawerTitle>
       <DrawerDescription className="text-primary/50 font-semibold">
-        {notification.message}
+        {notification.message
+          .replace("community", "channel")
+          .replace("Community", "Channel")}
       </DrawerDescription>
     </DrawerHeader>
     <DrawerFooter>

@@ -6,6 +6,7 @@ import { getReadableTime } from "@/helpers/time";
 import { formatNumberSequence } from "@/helpers/text";
 import { Fragment } from "react/jsx-runtime";
 import { cn } from "@/lib/utils";
+import { ItemNotFound } from "@/modules/units/card/not-found";
 
 export const Withdrawals = () => {
   const { data, hasNextPage, fetchNextPage, isPending, isFetchingNextPage } =
@@ -54,6 +55,9 @@ export const Withdrawals = () => {
           <LogSkeletonLoader />
           <LogSkeletonLoader />
         </Fragment>
+      )}
+      {(!isPending || !isFetchingNextPage) && rows.length < 1 && (
+        <ItemNotFound message="No withdrawal record found" />
       )}
     </div>
   );

@@ -7,21 +7,26 @@ import {
   ErrorResponse,
   handleUserResponseToError,
 } from "../../../../helpers/error";
+import { frmz } from "frmz";
 
 export function useSignUpMutation() {
   const { form } = useAuthStore();
   const { navigate } = useRouter();
-  const formData = new FormData();
 
-  formData.append("name", form.name);
-  formData.append("address", form.address);
-  formData.append("email", form.email);
-  formData.append("telephone", String(form.number));
-  formData.append("eventsPerYear", String(form.events));
+  const { getFormData } = frmz({
+    name: form.name,
+    address: form.address,
+    email: form.email,
+    telephone: form.number,
+    eventsPerYear: form.events,
+    ...(form.image !== null && {
+      logo: form.image,
+    }),
+    bio: form.bio,
+  });
 
-  if (form.image) {
-    formData.append("logo", form.image);
-  }
+  const formData = getFormData();
+
   return useMutation({
     mutationFn: async () => {
       const { data } = await baseInstance.post(

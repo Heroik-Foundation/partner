@@ -11,6 +11,8 @@ export const Balance = () => {
   const bankName = wallet?.owner?.bankName || "-";
   const bankAccountNumber = wallet?.owner?.bankAccountNumber || "-";
 
+  console.log(wallet);
+
   const details = [
     {
       title: "Bank Name",

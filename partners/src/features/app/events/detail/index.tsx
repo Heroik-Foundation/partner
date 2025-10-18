@@ -13,6 +13,7 @@ import { SuspenseLoader } from "@/modules/units/page/suspense";
 import { useRouteStore } from "@/hooks/router";
 import { ShareDialog } from "@/modules/units/page/share";
 import { Tickets } from "./modules/tickets";
+import { EventCountdown } from "./modules/countdown";
 
 const EventDetail = () => {
   const { id } = useParams({
@@ -28,6 +29,14 @@ const EventDetail = () => {
   const ticketsAvailable = Array.isArray(event?.ticketing)
     ? event.ticketing.reduce((sum, obj) => sum + (obj.signUpLimit || 0), 0)
     : 0;
+
+  const isFundraiser =
+    Number(event?.eventPledge.minimumPledge || 0) > 0 &&
+    (
+      event?.eventPledge.organizations.map(
+        (organization) => organization.name
+      ) || []
+    ).length >= 1;
 
   return (
     <div className="space-y-5">
@@ -94,6 +103,7 @@ const EventDetail = () => {
             minimumPledge={event.eventPledge.minimumPledge}
           />
           <Tickets eventId={id} tickets={event.ticketing} />
+          {!isFundraiser && <EventCountdown startDate={event.endTime} />}
           <Manage id={id} endDate={event.endTime} />
         </Fragment>
       )}

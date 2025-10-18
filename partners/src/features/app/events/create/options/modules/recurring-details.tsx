@@ -37,31 +37,31 @@ export const RecurringEventDetails = () => {
 
   const days = [
     {
-      name: "Monday",
+      name: "Sunday",
       day: 0,
     },
     {
-      name: "Tuesday",
+      name: "Monday",
       day: 1,
     },
     {
-      name: "Wednesday",
+      name: "Tuesday",
       day: 2,
     },
     {
-      name: "Thursday",
+      name: "Wednesday",
       day: 3,
     },
     {
-      name: "Friday",
+      name: "Thursday",
       day: 4,
     },
     {
-      name: "Saturday",
+      name: "Friday",
       day: 5,
     },
     {
-      name: "Sunday",
+      name: "Saturday",
       day: 6,
     },
   ];

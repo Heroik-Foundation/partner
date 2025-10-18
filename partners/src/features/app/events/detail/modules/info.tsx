@@ -4,8 +4,6 @@ import { Link } from "@tanstack/react-router";
 import { buttonVariants } from "@/modules/ui/button";
 import { formatCurrency } from "@/helpers/text";
 import { cn } from "@/lib/utils";
-import { Fragment } from "react/jsx-runtime";
-import { useCountdown } from "../../share/hooks/logic";
 
 import eyeIcon from "../assets/eye.svg";
 import messagesIcon from "../assets/messages.svg";
@@ -21,30 +19,9 @@ type InfoProps = {
 };
 
 export default function Info(props: InfoProps) {
-  const { id, description, minimumPledge, organizations, startDate } = props;
+  const { id, description, minimumPledge, organizations } = props;
 
   const isFundraiser = Number(minimumPledge) > 0 && organizations.length >= 1;
-
-  const { days, hours, minutes, seconds } = useCountdown(startDate);
-
-  const countdown = [
-    {
-      title: "Days",
-      data: days,
-    },
-    {
-      title: "Hours",
-      data: hours,
-    },
-    {
-      title: "Minutes",
-      data: minutes,
-    },
-    {
-      title: "Seconds",
-      data: seconds,
-    },
-  ];
 
   return (
     <div className="space-y-5 w-full">
@@ -114,103 +91,6 @@ export default function Info(props: InfoProps) {
           </div>
         </div>
       )}
-
-      {!isFundraiser && (
-        <Fragment>
-          <div className="flex flex-col items-start justify-center space-y-2.5">
-            <span className="py-1 px-2.5 bg-primary/15 text-primary text-sm font-extrabold rounded-lg w-fit mx-auto">
-              Event Countdown
-            </span>
-
-            <div className="flex items-center space-x-2.5 w-full">
-              {countdown.map((measure, index) => {
-                return (
-                  <div
-                    key={index}
-                    className="space-y-2.5 flex flex-col justify-center items-center w-full"
-                  >
-                    <div className="bg-primary/30 p-2.5 rounded-lg w-full">
-                      <h1 className="text-[44px] font-black text-primary text-center w-full">
-                        {measure.data}
-                      </h1>
-                    </div>
-                    <span className="text-xs font-black text-primary">
-                      {measure.title}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </Fragment>
-      )}
     </div>
   );
 }
-
-// export const SemiCircleProgressBar = ({
-//   value,
-//   size = 120,
-//   children,
-// }: {
-//   value: number;
-//   size?: number;
-//   children?: React.ReactNode;
-// }) => {
-//   const strokeWidth = 10;
-//   const radius = (size - strokeWidth) / 2;
-//   const circumference = Math.PI * radius;
-//   const offset = circumference - (value / 100) * circumference;
-
-//   return (
-//     <div
-//       className="relative"
-//       style={{
-//         width: size,
-//         height: size / 2 + strokeWidth,
-//       }}
-//     >
-//       <svg
-//         width={size}
-//         height={size / 2 + strokeWidth}
-//         viewBox={`0 0 ${size} ${size / 2 + strokeWidth}`}
-//         className="block mx-auto"
-//       >
-//         <path
-//           d={`M${strokeWidth / 2},${radius + strokeWidth / 2} A${radius},${radius} 0 0,1 ${size - strokeWidth / 2},${
-//             radius + strokeWidth / 2
-//           }`}
-//           fill="none"
-//           stroke="#e5e7eb"
-//           strokeWidth={strokeWidth}
-//         />
-
-//         <path
-//           d={`M${strokeWidth / 2},${radius + strokeWidth / 2} A${radius},${radius} 0 0,1 ${size - strokeWidth / 2},${
-//             radius + strokeWidth / 2
-//           }`}
-//           fill="none"
-//           stroke="#37137f"
-//           strokeWidth={strokeWidth}
-//           strokeLinecap="round"
-//           strokeDasharray={circumference}
-//           strokeDashoffset={offset}
-//           style={{
-//             transition: "stroke-dashoffset 0.5s ease-in-out",
-//           }}
-//         />
-//       </svg>
-//       {/* Render custom children */}
-//       <div
-//         className="absolute top-0 left-0 flex flex-col space-y-2 items-center justify-center"
-//         style={{
-//           width: size,
-//           height: size / 2,
-//           transform: `translateY(${strokeWidth / 2}px)`,
-//         }}
-//       >
-//         {children}
-//       </div>
-//     </div>
-//   );
-// };

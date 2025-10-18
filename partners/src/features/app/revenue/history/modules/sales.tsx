@@ -1,9 +1,9 @@
 import { useIntersectionObserver } from "@/hooks/observer";
-import { useTicketSalesListQuery } from "../hooks/query";
-import { TicketSale } from "@/features/app/global/types";
+import { EventSaleType, useTicketSalesListQuery } from "../hooks/query";
 import { Fragment } from "react/jsx-runtime";
 import { formatCurrency, truncateText } from "@/helpers/text";
 import { getReadableTime } from "@/helpers/time";
+import { ItemNotFound } from "@/modules/units/card/not-found";
 
 export const Sales = () => {
   const {
@@ -18,7 +18,7 @@ export const Sales = () => {
     hasNextPage,
   ]);
 
-  const rows: TicketSale[] = salesLogs?.pages || [];
+  const rows: EventSaleType[] = salesLogs?.pages || [];
 
   return (
     <div className="space-y-2.5">
@@ -48,7 +48,7 @@ export const Sales = () => {
 
             <div className="flex flex-col text-end">
               <span className="text-sm text-emerald-500 font-extrabold">
-                {formatCurrency(sale.event.eventTicket.ticketPrice)}
+                {formatCurrency(sale.event.ticketing[0].ticketPrice)}
               </span>
               <span className="text-[10px] text-primary/50 font-extrabold">
                 {getReadableTime(sale.createdAt)}
@@ -63,6 +63,10 @@ export const Sales = () => {
           <SaleSkeletonLoader />
           <SaleSkeletonLoader />
         </Fragment>
+      )}
+
+      {(!isPending || !isFetchingNextPage) && rows.length < 1 && (
+        <ItemNotFound message="No sales record found" />
       )}
     </div>
   );

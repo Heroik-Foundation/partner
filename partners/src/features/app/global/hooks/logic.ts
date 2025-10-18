@@ -14,7 +14,7 @@ export interface EventFormState {
     id: string;
     image: string;
   };
-  subCategory: {
+  subCategory?: {
     name: string;
     id: string;
     image: string;
@@ -63,11 +63,6 @@ export const defaultValue: EventFormState = {
   latitude: 0,
   longitude: 0,
   category: {
-    name: "",
-    id: "",
-    image: "",
-  },
-  subCategory: {
     name: "",
     id: "",
     image: "",

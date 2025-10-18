@@ -10,11 +10,11 @@ import { Button } from "@/modules/ui/button";
 import { useSignUpMutation } from "./hooks/mutation";
 import { toast } from "sonner";
 import PlaceAutocomplete from "@/modules/units/form/address";
+import { Textarea } from "@/modules/ui/textarea";
 
 const SignUp = () => {
   const { form, setForm } = useAuthStore();
   const { mutate, isPending } = useSignUpMutation();
-
   return (
     <Form
       title="Sign Up"
@@ -89,6 +89,19 @@ const SignUp = () => {
             type="tel"
             required
             onChange={(event) => handleInputChangeEvent(event, form, setForm)}
+          />
+        </FormField>
+
+        <FormField>
+          <Label htmlFor="number">Partner Bio</Label>
+          <Textarea
+            required
+            name="bio"
+            placeholder="Write something about you"
+            value={form.bio}
+            onChange={(event: any) =>
+              handleInputChangeEvent(event, form, setForm)
+            }
           />
         </FormField>
 
