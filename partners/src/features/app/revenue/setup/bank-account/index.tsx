@@ -17,6 +17,7 @@ type Form = {
   bankAccountName: string;
   bankAccountNumber: string;
   sortCode: string;
+  pin: string;
 };
 
 const SetupBankAccount = () => {
@@ -26,6 +27,7 @@ const SetupBankAccount = () => {
     bankAccountName: "",
     bankAccountNumber: "",
     sortCode: "",
+    pin: "",
   });
   const { mutate, isPending } = useUpdateBankDetailsMutation(form);
 
@@ -38,12 +40,14 @@ const SetupBankAccount = () => {
     const bankAccountName = wallet?.owner?.bankAccountName || "";
     const bankAccountNumber = wallet?.owner?.bankAccountNumber || "";
     const sortCode = wallet?.owner.sortCode || "";
+    const pin = "";
 
     const defaultBankDetails = {
       bankName,
       bankAccountName,
       bankAccountNumber,
       sortCode,
+      pin,
     };
 
     setForm(defaultBankDetails);
@@ -127,6 +131,20 @@ const SetupBankAccount = () => {
               setForm((prev) => ({
                 ...prev,
                 sortCode: target.value,
+              }));
+            }}
+          />
+        </FormField>
+        <FormField>
+          <Label>Pin</Label>
+          <Input
+            required
+            type="number"
+            value={form.pin}
+            onChange={({ target }) => {
+              setForm((prev) => ({
+                ...prev,
+                pin: target.value,
               }));
             }}
           />

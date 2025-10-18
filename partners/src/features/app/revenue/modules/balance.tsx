@@ -10,8 +10,7 @@ export const Balance = () => {
   const balance = wallet?.balance || 0;
   const bankName = wallet?.owner?.bankName || "-";
   const bankAccountNumber = wallet?.owner?.bankAccountNumber || "-";
-
-  console.log(wallet);
+  const hasPin = wallet?.owner.pinSet;
 
   const details = [
     {
@@ -54,8 +53,12 @@ export const Balance = () => {
         <Button
           className="shadow-xl bg-white/30 disabled:opacity-30 text-sm font-semibold w-full"
           onClick={() => {
+            const path =
+              wallet && hasPin
+                ? "/app/revenue/setup-account"
+                : "/app/revenue/setup-pin";
             navigate({
-              to: "/app/revenue/setup-account",
+              to: path,
             });
           }}
         >
