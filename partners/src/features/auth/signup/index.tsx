@@ -15,6 +15,7 @@ import { Textarea } from "@/modules/ui/textarea";
 const SignUp = () => {
   const { form, setForm } = useAuthStore();
   const { mutate, isPending } = useSignUpMutation();
+
   return (
     <Form
       title="Sign Up"

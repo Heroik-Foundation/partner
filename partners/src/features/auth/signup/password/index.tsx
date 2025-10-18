@@ -13,12 +13,14 @@ import { Button } from "@/modules/ui/button";
 import { toast } from "sonner";
 import { Route } from "@/routes/auth/signup/password";
 import { useRouter } from "@tanstack/react-router";
+import { useOTPValidationMutation } from "./hooks/mutation";
 
 const SetupPassword = () => {
   const [password, setPassword] = useState("");
   const { form, setForm } = useAuthStore();
   const { verificationCode } = Route.useSearch();
   const { navigate } = useRouter();
+  const { mutate, isPending } = useOTPValidationMutation();
 
   const handleVerificationCode = useCallback(() => {
     if (verificationCode && verificationCode.length > 3) {
@@ -47,6 +49,7 @@ const SetupPassword = () => {
         event.preventDefault();
 
         if (form.password !== "" && form.password === password) {
+          mutate();
         } else if (form.password === password) {
           toast.info("Passwords don't match");
         }
@@ -74,6 +77,7 @@ const SetupPassword = () => {
         <Button
           className="w-full font-axiforma font-semibold text-sm"
           disabled={!verificationCode}
+          isPending={isPending}
           color="primary"
           size="lg"
         >
