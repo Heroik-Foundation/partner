@@ -8,6 +8,7 @@ type UpdateBankDetailsMutationProps = {
   bankAccountNumber: string;
   bankName: string;
   sortCode: string;
+  pin: string;
 };
 
 type UpdateSecurityPinMutationProps = {

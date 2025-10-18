@@ -58,12 +58,14 @@ const SetupBankAccount = () => {
   }, []);
 
   const handleSubmit = () => {
-    const { bankAccountName, bankAccountNumber, bankName, sortCode } = form;
+    const { bankAccountName, bankAccountNumber, bankName, sortCode, pin } =
+      form;
     if (
       bankAccountName === "" ||
       bankAccountNumber === "" ||
       bankName === "" ||
-      sortCode === ""
+      sortCode === "" ||
+      pin === ""
     ) {
       toast.info("Please complete the form to continue");
     } else {
