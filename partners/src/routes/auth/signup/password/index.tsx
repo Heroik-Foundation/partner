@@ -4,6 +4,7 @@ import { z } from "zod";
 
 const verificationLinkSchema = z.object({
   verificationCode: z.string().nonempty(),
+  email: z.string().nonempty(),
 });
 
 // type VerificationCode = z.infer<typeof verificationLinkSchema>;

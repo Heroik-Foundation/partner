@@ -18,7 +18,7 @@ import { useOTPValidationMutation } from "./hooks/mutation";
 const SetupPassword = () => {
   const [password, setPassword] = useState("");
   const { form, setForm } = useAuthStore();
-  const { verificationCode } = Route.useSearch();
+  const { verificationCode, email } = Route.useSearch();
   const { navigate } = useRouter();
   const { mutate, isPending } = useOTPValidationMutation();
 
@@ -27,6 +27,7 @@ const SetupPassword = () => {
       setForm({
         ...form,
         code: verificationCode,
+        email,
       });
     } else {
       toast.error("Invalid verification link, please try again");
@@ -38,7 +39,7 @@ const SetupPassword = () => {
 
   useEffect(() => {
     handleVerificationCode();
-  }, [verificationCode]);
+  }, [verificationCode, email]);
 
   return (
     <Form
