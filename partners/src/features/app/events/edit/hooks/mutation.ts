@@ -16,7 +16,7 @@ export interface UpdateEventMutation {
     id: string;
     image: string;
   };
-  subCategory: {
+  subCategory?: {
     name: string;
     id: string;
     image: string;
@@ -61,7 +61,7 @@ export function useUpdateEventMutation(props: UpdateEventMutation) {
       formData.append("latitude", String(latitude));
       formData.append("address", address);
 
-      if (subCategory.id !== "") {
+      if (subCategory && subCategory.id !== "") {
         formData.append("subCategory", subCategory.id);
       }
 

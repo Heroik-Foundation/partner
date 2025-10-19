@@ -31,7 +31,7 @@ export const Publish = () => {
     address,
     category: category.id,
     description,
-    subcategory: subCategory.id,
+    subcategory: subCategory?.id,
     privacy: "public",
     ...(photo ? { photo: photo as string | File } : {}),
     latitude,

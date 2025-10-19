@@ -116,11 +116,11 @@ const EditEvent = () => {
                 <span
                   className={cn(
                     "font-bold whitespace-nowrap text-primary/50",
-                    (formState.subCategory.name || formState.category.name) &&
+                    (formState?.subCategory?.name || formState.category.name) &&
                       "text-primary"
                   )}
                 >
-                  {formState.subCategory.name ||
+                  {formState?.subCategory?.name ||
                     formState.category.name ||
                     "Select Event Category"}
                 </span>

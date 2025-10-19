@@ -31,7 +31,7 @@ type CreateEventMutation = {
   };
   ticketing?: Ticket[];
   category: string;
-  subcategory: string;
+  subcategory?: string;
   privacy: string;
   eventEndDate: string;
   endTime: string;
