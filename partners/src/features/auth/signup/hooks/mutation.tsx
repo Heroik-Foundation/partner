@@ -19,10 +19,10 @@ export function useSignUpMutation() {
     email: form.email,
     telephone: form.number,
     eventsPerYear: form.events,
+    bio: form.bio,
     ...(form.image !== null && {
       logo: form.image,
     }),
-    bio: form.bio,
   });
 
   const formData = getFormData();

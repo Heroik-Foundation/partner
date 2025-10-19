@@ -29,7 +29,8 @@ const SignUp = () => {
           form.address === "" ||
           form.email === "" ||
           form.number === "" ||
-          form.image === null
+          form.image === null ||
+          form.bio === ""
         ) {
           toast.info("Please complete the form and try again");
         } else if (!form.number.startsWith("+") || form.number.length < 8) {
