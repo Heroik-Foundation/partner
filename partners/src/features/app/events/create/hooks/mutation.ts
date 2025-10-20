@@ -43,10 +43,14 @@ type CreateEventMutation = {
 };
 
 export function useCreateEventMutation(props: CreateEventMutation) {
+  const { subcategory, ...rest } = props;
   const { navigate } = useRouter();
   return useMutation({
     mutationFn: async () => {
-      const { getFormData } = frmz({ ...props });
+      const { getFormData } = frmz({
+        ...(subcategory !== undefined && { subcategory: subcategory }),
+        ...rest,
+      });
       const formData = getFormData();
 
       const { data } = await authenticatedInstance.post(

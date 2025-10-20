@@ -29,5 +29,6 @@ export function useMultistep<T>(steps: T[]) {
     next,
     previous,
     skip,
+    setCurrentIndex,
   };
 }

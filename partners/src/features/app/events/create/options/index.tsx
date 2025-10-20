@@ -67,7 +67,7 @@ const CreateEventOptions = () => {
       baseSteps.splice(2, 0, {
         title: "Review Tickets",
         description: "Review Ticket information below.",
-        component: <TicketsOverview previousStep={() => {}} />,
+        component: <TicketsOverview previousStep={addAdditionalTickets} />,
         cta: "Would you like to review your tickets?",
         position: "stacked",
       });
@@ -83,6 +83,7 @@ const CreateEventOptions = () => {
     next,
     previous,
     isLastStep,
+    setCurrentIndex: setCurrentStepIndex,
   } = multistep;
   const currentStepConfig = steps[stepIndex];
 
@@ -102,7 +103,6 @@ const CreateEventOptions = () => {
     handleDefaultDrawerOpenState()
   );
 
-  // FIXED: Correct validation logic - allow navigation when form is empty
   const validateCurrentStep = useCallback((): boolean => {
     // Allow moving to next step if user hasn't started filling the current step
     if (!recurrence && !ticketing?.[currentTicketIndex] && !fundRaiser) {
@@ -151,6 +151,9 @@ const CreateEventOptions = () => {
     previous();
     if (currentStepConfig?.title !== "Fundraising Details" || !hasTickets) {
       setIsDrawerOpen(true);
+    }
+    if (isAddingTicket) {
+      setCurrentStepIndex(2);
     }
   }, [previous, currentStepConfig?.title, hasTickets]);
 
@@ -223,6 +226,15 @@ const CreateEventOptions = () => {
     }),
     []
   );
+
+  function addAdditionalTickets() {
+    setFormState({
+      ...formState,
+      currentTicketIndex: Number(formState.currentTicketIndex || 0) + 1,
+    });
+
+    previous();
+  }
 
   const isTicketStep = currentStepConfig?.title.includes("Ticket");
   const shouldShowDrawer = !isTicketStep && isDrawerOpen;
