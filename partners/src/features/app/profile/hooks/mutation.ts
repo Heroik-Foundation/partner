@@ -2,6 +2,7 @@ import { authenticatedInstance } from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { frmz } from "frmz";
+import { AxiosError } from "axios";
 
 type Props = {
   name: string;
@@ -14,7 +15,7 @@ type Props = {
 
 export function useUpdateUserDetailsMutation(props: Props) {
   const { logo, ...rest } = props;
-  const { invalidateQueries } = useQueryClient();
+  const queryClient = useQueryClient();
 
   const { getFormData } = frmz({
     ...rest,
@@ -23,21 +24,31 @@ export function useUpdateUserDetailsMutation(props: Props) {
   return useMutation({
     mutationFn: async () => {
       const formData = getFormData();
-
-      const { data } = await authenticatedInstance.patch(
+      const response = await authenticatedInstance.patch(
         "/event-partners/edit-details",
         formData
       );
-
-      return data;
+      return response.data;
     },
     onSuccess: () => {
       toast.success("Details updated successfully!");
-      invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ["user"],
       });
     },
-    onError: (error) => {
+    onError: (error: AxiosError) => {
+      if (
+        error.response &&
+        error.response.status >= 200 &&
+        error.response.status < 300
+      ) {
+        toast.success("Details updated successfully!");
+        queryClient.invalidateQueries({
+          queryKey: ["user"],
+        });
+        return;
+      }
+
       toast.error("Failed to update details.");
       console.error("Update error:", error);
     },

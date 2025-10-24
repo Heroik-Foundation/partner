@@ -45,13 +45,11 @@ export function useUpdateBankDetailsMutation(
   });
 }
 
-export function useUpdateSecurityPinMutation(
-  props: UpdateSecurityPinMutationProps
-) {
+export function useUpdateSecurityPinMutation() {
   const { navigate } = useRouter();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (props: UpdateSecurityPinMutationProps) => {
       const { data } = await authenticatedInstance.patch(
         "/event-partners/update-pin",
         {

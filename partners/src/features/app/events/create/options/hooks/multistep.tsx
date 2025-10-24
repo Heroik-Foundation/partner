@@ -3,29 +3,29 @@ import { parseAsInteger, useQueryState } from "nuqs";
 export function useMultistep<T>(steps: T[]) {
   const [currentIndex, setCurrentIndex] = useQueryState(
     "step",
-    parseAsInteger.withDefault(0)
+    parseAsInteger.withDefault(1) // Start at step 1
   );
 
   function next() {
-    setCurrentIndex((i) => (i < steps.length - 1 ? i + 1 : i));
+    setCurrentIndex((i) => (i < steps.length ? i + 1 : i));
   }
 
   function previous() {
-    setCurrentIndex((i) => (i > 0 ? i - 1 : i));
+    setCurrentIndex((i) => (i > 1 ? i - 1 : i));
   }
 
   function skip(toIndex: number) {
-    if (toIndex >= 0 && toIndex < steps.length) {
+    if (toIndex >= 1 && toIndex <= steps.length) {
       setCurrentIndex(toIndex);
     }
   }
 
   return {
-    currentStep: steps[currentIndex],
+    currentStep: steps[currentIndex - 1], // Adjust index for array access (0-based)
     currentIndex,
     steps,
-    isFirstStep: currentIndex === 0,
-    isLastStep: currentIndex === steps.length - 1,
+    isFirstStep: currentIndex === 1,
+    isLastStep: currentIndex === steps.length,
     next,
     previous,
     skip,

@@ -1,38 +1,52 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { Check, AlertCircle, ChevronLeft, Loader2 } from "lucide-react";
 import { Label } from "@/modules/ui/label";
 import { useUpdateSecurityPinMutation } from "../../hooks/mutation";
 
-export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
-  // Define PIN length as a constant
+export const SecurityPinInput = ({
+  pinSet,
+}: {
+  pinSet: boolean | undefined;
+}) => {
   const MAX_PIN_LENGTH = 4;
-
-  // Define all possible steps
-  type StepType = "create" | "confirm" | "enterOld" | "enterNew" | "confirmNew";
+  type StepType =
+    | "loading"
+    | "create"
+    | "confirm"
+    | "enterOld"
+    | "enterNew"
+    | "confirmNew";
 
   const [input, setInput] = useState<string>("");
   const [confirmInput, setConfirmInput] = useState<string>("");
   const [oldPin, setOldPin] = useState<string>("");
-  const { mutate, isPending } = useUpdateSecurityPinMutation({
-    newPin: confirmInput,
-    ...(pinSet === true && { oldPin }),
-  });
-
-  const [step, setStep] = useState<StepType>(pinSet ? "enterOld" : "create");
+  const { mutate, isPending } = useUpdateSecurityPinMutation();
+  const [step, setStep] = useState<StepType>(
+    pinSet === undefined ? "loading" : pinSet ? "enterOld" : "create"
+  );
   const [error, setError] = useState<string | null>(null);
 
   const numpad = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
+  useEffect(() => {
+    if (pinSet !== undefined) {
+      setStep(pinSet ? "enterOld" : "create");
+      setInput("");
+      setConfirmInput("");
+      setOldPin("");
+      setError(null);
+    }
+  }, [pinSet]);
+
   const handleNumberInput = (number: number) => {
+    if (pinSet === undefined) return;
     if (pinSet) {
-      // Handle input for existing PIN workflow
       if (step === "enterOld") {
         setOldPin((prev) => {
           if (prev.length >= MAX_PIN_LENGTH) return prev;
 
           const newInput = prev + number;
 
-          // Automatically move to next step when old PIN is complete
           if (newInput.length === MAX_PIN_LENGTH) {
             setTimeout(() => {
               setStep("enterNew");
@@ -47,7 +61,6 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
 
           const newInput = prev + number;
 
-          // Automatically move to confirm step when new PIN is complete
           if (newInput.length === MAX_PIN_LENGTH) {
             setTimeout(() => {
               setStep("confirmNew");
@@ -56,15 +69,13 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
 
           return newInput;
         });
-      } else {
-        // confirmNew step
+      } else if (step === "confirmNew") {
         setConfirmInput((prev) => {
           if (prev.length >= MAX_PIN_LENGTH) return prev;
           return prev + number;
         });
       }
     } else {
-      // Original behavior for new PIN workflow
       if (step === "create") {
         setInput((prev) => {
           if (prev.length >= MAX_PIN_LENGTH) return prev;
@@ -79,7 +90,7 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
 
           return newInput;
         });
-      } else {
+      } else if (step === "confirm") {
         setConfirmInput((prev) => {
           if (prev.length >= MAX_PIN_LENGTH) return prev;
           return prev + number;
@@ -89,19 +100,20 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
   };
 
   const handleBackspace = () => {
+    if (pinSet === undefined) return;
     if (pinSet) {
       if (step === "enterOld") {
         setOldPin((prev) => prev.slice(0, -1));
       } else if (step === "enterNew") {
         setInput((prev) => prev.slice(0, -1));
-      } else {
+      } else if (step === "confirmNew") {
         setConfirmInput((prev) => prev.slice(0, -1));
         setError(null);
       }
     } else {
       if (step === "create") {
         setInput((prev) => prev.slice(0, -1));
-      } else {
+      } else if (step === "confirm") {
         setConfirmInput((prev) => prev.slice(0, -1));
         setError(null);
       }
@@ -109,6 +121,7 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
   };
 
   const handleSubmit = () => {
+    if (pinSet === undefined) return;
     if (pinSet) {
       if (step === "enterOld") {
         if (oldPin.length === MAX_PIN_LENGTH) {
@@ -116,13 +129,12 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
         }
       } else if (step === "enterNew") {
         if (input.length === MAX_PIN_LENGTH) {
-          mutate();
           setStep("confirmNew");
         }
-      } else {
+      } else if (step === "confirmNew") {
         if (confirmInput.length === MAX_PIN_LENGTH) {
           if (input === confirmInput) {
-            mutate();
+            mutate({ newPin: confirmInput, oldPin });
             setOldPin("");
             setInput("");
             setConfirmInput("");
@@ -139,10 +151,10 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
         if (input.length === MAX_PIN_LENGTH) {
           setStep("confirm");
         }
-      } else {
+      } else if (step === "confirm") {
         if (confirmInput.length === MAX_PIN_LENGTH) {
           if (input === confirmInput) {
-            console.log("PIN confirmed:", input);
+            mutate({ newPin: confirmInput });
             setInput("");
             setConfirmInput("");
             setStep("create");
@@ -157,6 +169,7 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
   };
 
   const handleReset = () => {
+    if (pinSet === undefined) return;
     setOldPin("");
     setInput("");
     setConfirmInput("");
@@ -165,6 +178,7 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
   };
 
   const getActiveInput = () => {
+    if (pinSet === undefined) return "";
     if (pinSet) {
       if (step === "enterOld") return oldPin;
       if (step === "enterNew") return input;
@@ -178,6 +192,7 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
   const isInputComplete = activeInput.length === MAX_PIN_LENGTH;
 
   const getStepLabel = () => {
+    if (pinSet === undefined) return "Loading...";
     if (pinSet) {
       if (step === "enterOld") return "Enter Old PIN";
       if (step === "enterNew") return "Enter New PIN";
@@ -186,6 +201,23 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
       return step === "create" ? "Enter Security PIN" : "Confirm Security PIN";
     }
   };
+
+  if (pinSet === undefined) {
+    return (
+      <div className="w-full max-w-md mx-auto space-y-10">
+        <div className="text-center space-y-5">
+          <Label>Loading...</Label>
+          <div className="flex justify-center gap-5">
+            {Array.from({ length: MAX_PIN_LENGTH }).map((_, i) => (
+              <div key={i} className="p-5 rounded-xl bg-primary/10">
+                <div className="h-4 w-4 rounded-full border-2 border-primary" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-md mx-auto space-y-10">
@@ -232,6 +264,7 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
                 <button
                   className="rounded-full h-16 w-16 mx-auto font-bold p-5 bg-red-100 text-red-600 flex items-center justify-center"
                   onClick={handleBackspace}
+                  disabled={pinSet === undefined}
                 >
                   <ChevronLeft size={20} />
                 </button>
@@ -239,10 +272,16 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
                 <button
                   className="rounded-full h-16 w-16 mx-auto font-bold p-5 bg-primary/10 text-primary"
                   key={number}
-                  disabled={activeInput.length >= MAX_PIN_LENGTH}
+                  disabled={
+                    activeInput.length >= MAX_PIN_LENGTH || pinSet === undefined
+                  }
                   onClick={() => handleNumberInput(number)}
                   style={{
-                    opacity: activeInput.length >= MAX_PIN_LENGTH ? 0.5 : 1,
+                    opacity:
+                      activeInput.length >= MAX_PIN_LENGTH ||
+                      pinSet === undefined
+                        ? 0.5
+                        : 1,
                   }}
                 >
                   {number}
@@ -251,8 +290,15 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
                 <button
                   className="rounded-full h-16 w-16 mx-auto font-bold p-5 bg-green-100 text-green-600 flex items-center justify-center"
                   onClick={handleSubmit}
-                  disabled={!isInputComplete || isPending}
-                  style={{ opacity: isInputComplete ? 1 : 0.5 }}
+                  disabled={
+                    !isInputComplete || isPending || pinSet === undefined
+                  }
+                  style={{
+                    opacity:
+                      isInputComplete && !isPending && pinSet !== undefined
+                        ? 1
+                        : 0.5,
+                  }}
                 >
                   {isPending ? (
                     <Loader2 className="animate-spin" size={20} />
@@ -269,9 +315,14 @@ export const SecurityPinInput = ({ pinSet }: { pinSet: boolean }) => {
               className="rounded-full h-16 w-16 mx-auto font-bold p-5 bg-primary/10 text-primary"
               key={number}
               onClick={() => handleNumberInput(number)}
-              disabled={activeInput.length >= MAX_PIN_LENGTH}
+              disabled={
+                activeInput.length >= MAX_PIN_LENGTH || pinSet === undefined
+              }
               style={{
-                opacity: activeInput.length >= MAX_PIN_LENGTH ? 0.5 : 1,
+                opacity:
+                  activeInput.length >= MAX_PIN_LENGTH || pinSet === undefined
+                    ? 0.5
+                    : 1,
               }}
             >
               {number}

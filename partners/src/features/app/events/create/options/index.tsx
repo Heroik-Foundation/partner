@@ -20,7 +20,12 @@ import { CreateEventActionDrawer } from "./modules/action-drawer";
 import { useMultistep } from "./hooks/multistep";
 
 interface StepConfig {
-  title: string;
+  title:
+    | "Event Recurrence"
+    | "Add Ticket Type"
+    | "Ticket Details"
+    | "Fundraising Details"
+    | "Review Tickets";
   description: string;
   component: JSX.Element;
   cta: string;
@@ -28,7 +33,13 @@ interface StepConfig {
 }
 
 const CreateEventOptions = () => {
-  const { formState, setFormState } = useEventFormStore();
+  const {
+    formState,
+    setFormState,
+    deleteTicketTier,
+    pruneRedundantTickets,
+    recalculateTicketIndex,
+  } = useEventFormStore();
   const navigate = useNavigate();
 
   const [isCancellationDrawerOpen, setIsCancellationDrawerOpen] =
@@ -84,10 +95,11 @@ const CreateEventOptions = () => {
     previous,
     isLastStep,
     setCurrentIndex: setCurrentStepIndex,
+    isFirstStep,
   } = multistep;
-  const currentStepConfig = steps[stepIndex];
+  const currentStepConfig = steps[stepIndex - 1]; // Adjust for 1-based index
 
-  const handleDefaultDrawerOpenState = (): boolean => {
+  const handleDefaultDrawerOpenState = useCallback((): boolean => {
     if (
       isLastStep &&
       (Number(formState.fundRaiser?.fundRaisingGoal || 0) >= 0 ||
@@ -97,7 +109,7 @@ const CreateEventOptions = () => {
     }
 
     return true;
-  };
+  }, [isLastStep, formState.fundRaiser]);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(
     handleDefaultDrawerOpenState()
@@ -111,11 +123,13 @@ const CreateEventOptions = () => {
 
     // Validate only if the user has started filling the form
     const stepValidations = {
-      0: () => !recurrence || !objectHasNullOrUndefined(recurrence),
-      1: () =>
+      1: () => !recurrence || !objectHasNullOrUndefined(recurrence), // Event Recurrence
+      2: () =>
         !ticketing?.[currentTicketIndex] ||
-        !objectHasNullOrUndefined(ticketing[currentTicketIndex]),
-      [steps.length - 1]: () => {
+        !objectHasNullOrUndefined(ticketing[currentTicketIndex]), // Ticket Details
+      [hasTickets ? 3 : 2]: () => true, // Review Tickets (if present, index 3; else skip)
+      [steps.length]: () => {
+        // Fundraising Details (last step)
         if (!fundRaiser) return true;
         return (
           !objectHasNullOrUndefined(fundRaiser) &&
@@ -128,8 +142,7 @@ const CreateEventOptions = () => {
 
     if (validator && !validator()) {
       const errorMessage =
-        stepIndex === steps.length - 1 &&
-        fundRaiser?.organizations?.length === 0
+        stepIndex === steps.length && fundRaiser?.organizations?.length === 0
           ? "Kindly select a charity partner"
           : "Kindly complete the form before continuing";
 
@@ -145,6 +158,7 @@ const CreateEventOptions = () => {
     ticketing,
     currentTicketIndex,
     fundRaiser,
+    hasTickets,
   ]);
 
   const handlePreviousStep = useCallback(() => {
@@ -152,12 +166,21 @@ const CreateEventOptions = () => {
     if (currentStepConfig?.title !== "Fundraising Details" || !hasTickets) {
       setIsDrawerOpen(true);
     }
-    if (isAddingTicket) {
-      setCurrentStepIndex(2);
+    if (currentStepConfig.title === "Add Ticket Type") {
+      setCurrentStepIndex(2); // Go to Ticket Details step
+      deleteTicketTier(currentTicketIndex);
     }
-  }, [previous, currentStepConfig?.title, hasTickets]);
+  }, [
+    previous,
+    currentStepConfig?.title,
+    hasTickets,
+    setCurrentStepIndex,
+    deleteTicketTier,
+    currentTicketIndex,
+  ]);
 
   const handleNextStep = useCallback(() => {
+    pruneRedundantTickets();
     if (!validateCurrentStep()) return;
 
     if (isLastStep) {
@@ -176,6 +199,7 @@ const CreateEventOptions = () => {
     navigate,
     next,
     currentStepConfig?.title,
+    pruneRedundantTickets,
   ]);
 
   const handleFormSubmit = useCallback(
@@ -228,11 +252,8 @@ const CreateEventOptions = () => {
   );
 
   function addAdditionalTickets() {
-    setFormState({
-      ...formState,
-      currentTicketIndex: Number(formState.currentTicketIndex || 0) + 1,
-    });
-
+    pruneRedundantTickets();
+    recalculateTicketIndex();
     previous();
   }
 
@@ -247,7 +268,7 @@ const CreateEventOptions = () => {
           title: currentStepConfig?.title || "",
           subtitle: currentStepConfig?.description || "",
         }}
-        previousRouteCallback={stepIndex !== 0 ? handlePreviousStep : undefined}
+        previousRouteCallback={isFirstStep ? undefined : handlePreviousStep} // Use isFirstStep
       />
 
       <Form onSubmit={handleFormSubmit}>

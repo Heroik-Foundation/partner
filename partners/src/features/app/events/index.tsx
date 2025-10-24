@@ -13,6 +13,9 @@ import {
 import { useIntersectionObserver } from "@/hooks/observer";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { ShareDialog } from "@/modules/units/page/share";
+import { Button } from "@/modules/ui/button";
+import { Share2 } from "lucide-react";
 
 const AllEvents = () => {
   const [query, setQuery] = useState<string>("");
@@ -39,6 +42,21 @@ const AllEvents = () => {
         header={{
           position: "inline",
           title: "My Events",
+        }}
+        addOns={{
+          content: (
+            <ShareDialog
+              dialogTitle="Share this event"
+              title={"All events"}
+              description={"All user events"}
+              url={`https://events.hiroek.io/user/${user?._id}`}
+              trigger={
+                <Button className="z-10">
+                  <Share2 className="fill-white" />
+                </Button>
+              }
+            />
+          ),
         }}
       />
       <SearchInput

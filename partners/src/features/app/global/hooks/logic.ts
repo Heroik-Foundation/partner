@@ -86,8 +86,10 @@ type StaticEventFormStore = {
     value: EventFormState[K]
   ) => void;
   deleteTicketTier: (index: number) => void;
-  removeAllTickets: () => void; // Add this line
+  removeAllTickets: () => void;
   removeOrganization: (id: string) => void;
+  pruneRedundantTickets: () => void;
+  recalculateTicketIndex: () => void;
 };
 
 export const useEventFormStore = create<StaticEventFormStore>()(
@@ -109,21 +111,24 @@ export const useEventFormStore = create<StaticEventFormStore>()(
         set((state) => {
           if (!state.formState.ticketing) return state;
 
+          const newTicketing = state.formState.ticketing.filter(
+            (_, i) => i !== index
+          );
           return {
             formState: {
               ...state.formState,
-              ticketing: state.formState.ticketing.filter(
-                (_, i) => i !== index
-              ),
+              ticketing: newTicketing,
+              currentTicketIndex:
+                newTicketing.length > 0 ? newTicketing.length : 0,
             },
           };
         }),
       removeAllTickets: () =>
-        // Add this function
         set((state) => ({
           formState: {
             ...state.formState,
             ticketing: [],
+            currentTicketIndex: 0,
           },
         })),
       removeOrganization: (id) =>
@@ -141,6 +146,34 @@ export const useEventFormStore = create<StaticEventFormStore>()(
             },
           };
         }),
+      pruneRedundantTickets: () =>
+        set((state) => {
+          if (!state.formState.ticketing) return state;
+
+          const newTicketing = state.formState.ticketing.filter(
+            (ticket) =>
+              ticket.ticketType &&
+              ticket.ticketPrice > 0 &&
+              ticket.signUpLimit > 0 &&
+              ticket.salesStartDate !== null &&
+              ticket.salesEndDate !== null
+          );
+          return {
+            formState: {
+              ...state.formState,
+              ticketing: newTicketing,
+              currentTicketIndex:
+                newTicketing.length > 0 ? newTicketing.length : 0,
+            },
+          };
+        }),
+      recalculateTicketIndex: () =>
+        set((state) => ({
+          formState: {
+            ...state.formState,
+            currentTicketIndex: state.formState.ticketing?.length || 0,
+          },
+        })),
     }),
     {
       name: "event-form-storage",
