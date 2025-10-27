@@ -24,6 +24,7 @@ import { FundraisingEventDetails } from "./modules/fundraising-details";
 import { TicketsOverview } from "./modules/tickets-overview";
 import { CreateEventActionDrawer } from "./modules/action-drawer";
 import { useMultistep } from "./hooks/multistep";
+import { useRouteStore } from "@/hooks/router";
 
 interface StepConfig {
   title:
@@ -47,6 +48,7 @@ const CreateEventOptions = () => {
     recalculateTicketIndex,
   } = useEventFormStore();
   const navigate = useNavigate();
+  const { previousPath } = useRouteStore();
 
   const [isCancellationDrawerOpen, setIsCancellationDrawerOpen] =
     useState(false);
@@ -214,11 +216,22 @@ const CreateEventOptions = () => {
   }, [stepIndex, recurrence, ticketing, currentTicketIndex, fundRaiser]);
 
   const handlePreviousStep = useCallback(() => {
+    if (
+      previousPath &&
+      (previousPath?.includes("pre-launch") ||
+        previousPath === "/app/events/create/pre-launch")
+    ) {
+      navigate({
+        to: "/app/events/create/pre-launch",
+      });
+    }
+
     if (isFirstStep) {
       navigate({
         to: "/app/events/create",
       });
     }
+
     if (currentStepConfig?.title === "Add Ticket Type") {
       setCurrentStepIndex(3);
       deleteTicketTier(currentTicketIndex);
