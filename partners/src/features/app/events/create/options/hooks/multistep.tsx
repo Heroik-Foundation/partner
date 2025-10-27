@@ -3,7 +3,7 @@ import { parseAsInteger, useQueryState } from "nuqs";
 export function useMultistep<T>(steps: T[]) {
   const [currentIndex, setCurrentIndex] = useQueryState(
     "step",
-    parseAsInteger.withDefault(1) // Start at step 1
+    parseAsInteger.withDefault(1)
   );
 
   function next() {
@@ -21,7 +21,7 @@ export function useMultistep<T>(steps: T[]) {
   }
 
   return {
-    currentStep: steps[currentIndex - 1], // Adjust index for array access (0-based)
+    currentStep: steps[currentIndex - 1],
     currentIndex,
     steps,
     isFirstStep: currentIndex === 1,
