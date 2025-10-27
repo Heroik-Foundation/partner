@@ -19,7 +19,11 @@ interface LocationResult {
 
 interface Props {
   placeholder?: string;
-
+  initialValue?: {
+    lat: number;
+    lng: number;
+    address: string;
+  };
   required?: boolean;
   callback?: (location: LocationResult) => void;
   disabled?: boolean;
@@ -35,8 +39,8 @@ const mapContainerStyle = {
 };
 
 const defaultCenter: LatLngLiteral = {
-  lat: 37.7749,
-  lng: -122.4194,
+  lat: 0,
+  lng: 0,
 };
 
 // Get API key from environment
@@ -45,7 +49,7 @@ const API_KEY =
 
 const MapLocationPicker = ({
   placeholder = "Click to select location",
-
+  initialValue,
   required = false,
   callback,
   disabled = false,
@@ -95,6 +99,30 @@ const MapLocationPicker = ({
       setMapCenter({ lat, lng });
     }
   }, []);
+
+  const handleInitialValues = () => {
+    if (initialValue) {
+      if (searchValue === "") {
+        setSearchValue(initialValue.address);
+      }
+
+      if (JSON.stringify(location) === JSON.stringify(defaultCenter)) {
+        console.log("Long values", initialValue.lat, initialValue.lng);
+        setMapCenter({
+          lat: initialValue.lat,
+          lng: initialValue.lng,
+        });
+      }
+
+      if (!selectedLocation) {
+        setLocation({
+          address: initialValue.address,
+          lat: initialValue.lat,
+          lng: initialValue.lng,
+        });
+      }
+    }
+  };
 
   // Call callback when selectedLocation changes
   useEffect(() => {
@@ -169,6 +197,10 @@ const MapLocationPicker = ({
       );
     }
   }, [isMapOpen, markerPosition]);
+
+  useEffect(() => {
+    handleInitialValues();
+  }, [initialValue?.address]);
 
   // Event handlers
   const handleOpenMap = useCallback(() => {

@@ -21,6 +21,7 @@ import PlaceAutocomplete from "@/modules/units/form/address";
 import { useEventFormStore } from "../../global/hooks/logic";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/modules/ui/switch";
+import { useMapStore } from "@/stores/maps";
 
 const EditEvent = () => {
   const { id } = useParams({
@@ -30,8 +31,11 @@ const EditEvent = () => {
     id,
   });
 
+  const { resetStore } = useMapStore();
+
   const { formState, updateForm, setFormState, reset } = useEventFormStore();
   const { mutate, isPending, isSuccess, isError } = useUpdateEventMutation({
+    event: event,
     ...formState,
   });
 
@@ -46,6 +50,7 @@ const EditEvent = () => {
 
     return () => {
       reset();
+      resetStore();
     };
   }, [event, id]);
 
@@ -96,10 +101,15 @@ const EditEvent = () => {
           <FormField>
             <Label>Event Venue</Label>
             <PlaceAutocomplete
+              initialValue={{
+                address: formState.address,
+                lat: formState.latitude,
+                lng: formState.longitude,
+              }}
               required
               placeholder="Type Event/Address here"
               callback={(value) => {
-                updateForm("address", String(value.address));
+                updateForm("address", value.address);
                 updateForm("longitude", value.lng);
                 updateForm("latitude", value.lat);
               }}

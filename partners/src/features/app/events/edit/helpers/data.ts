@@ -10,13 +10,16 @@ export const getInitialEventState = (eventData: Event) => {
   const startDate = eventData.endTime.split("T")[0];
   const endDate = eventData.eventEndDate.split("T")[0];
 
+  const longitude = eventData.loc.coordinates[0];
+  const latitude = eventData.loc.coordinates[1];
+
   return {
     absorbFees: eventData.absorbFees,
     name: eventData.name || "",
     description: eventData.description || "",
     address: eventData.address || "",
-    longitude: 0,
-    latitude: 0,
+    longitude,
+    latitude,
     category: {
       name: eventData.category.name || "",
       id: eventData.category._id || "",
