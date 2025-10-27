@@ -78,6 +78,15 @@ export function formatMonth(dateString: string): string {
   return date.toLocaleString("default", { month: "long" });
 }
 
+export function getTimeFromISO(isoString: string): string {
+  const date = new Date(isoString);
+
+  const hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
+
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+}
+
 export function isPastDate(dateString: string): boolean {
   const inputDate = new Date(dateString);
   const now = new Date();

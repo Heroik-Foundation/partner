@@ -214,6 +214,11 @@ const CreateEventOptions = () => {
   }, [stepIndex, recurrence, ticketing, currentTicketIndex, fundRaiser]);
 
   const handlePreviousStep = useCallback(() => {
+    if (isFirstStep) {
+      navigate({
+        to: "/app/events/create",
+      });
+    }
     if (currentStepConfig?.title === "Add Ticket Type") {
       setCurrentStepIndex(3);
       deleteTicketTier(currentTicketIndex);
@@ -354,7 +359,7 @@ const CreateEventOptions = () => {
           title: currentStepConfig?.title || "",
           subtitle: currentStepConfig?.description || "",
         }}
-        previousRouteCallback={isFirstStep ? undefined : handlePreviousStep}
+        previousRouteCallback={handlePreviousStep}
       />
       <Form onSubmit={handleFormSubmit}>
         {stepComponent}
