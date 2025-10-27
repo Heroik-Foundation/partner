@@ -5,6 +5,7 @@ import { useParams } from "@tanstack/react-router";
 import { Fragment } from "react";
 import { ItemNotFound } from "@/modules/units/card/not-found";
 import { getReadableTime } from "@/helpers/time";
+import { formatCurrency } from "@/helpers/text";
 
 export const TicketSales = () => {
   const { id } = useParams({
@@ -17,6 +18,8 @@ export const TicketSales = () => {
     });
 
   const rows = data?.pages || [];
+
+  console.log(data);
 
   return (
     <div className="space-y-5 w-full">
@@ -51,7 +54,7 @@ export const TicketSales = () => {
               </div>
 
               <span className="font-extrabold text-primary">
-                £{Number(sale.event.eventTicket.ticketPrice) / 100}
+                {formatCurrency(0)}
               </span>
             </div>
           );
