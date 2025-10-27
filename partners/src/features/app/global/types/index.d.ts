@@ -531,15 +531,24 @@ export type EventTicket = {
       fundRaisingGoal: number;
       organizations: string[];
     };
-    eventTicket: {
-      totalTicket: number;
-      availableTickets: number;
+    ticketing: {
+      ticketType: string;
       ticketPrice: number;
-    };
+      signUpLimit: number;
+      salesStartDate: string;
+      salesEndDate: string;
+    }[];
     eventPledge: {
       minimumPledge: number;
       totalPledgedAmount: number;
       organizations: string[];
+    };
+    recurrence: {
+      interval: number;
+      frequency: string;
+      daysOfWeek: number[];
+      endType: string;
+      occurrenceCount: number;
     };
     organization: string;
     category: {
@@ -558,6 +567,7 @@ export type EventTicket = {
       name: string;
     };
     signUpLimit: string;
+    spotsLeft: string;
     eventEndDate: string;
     privacy: string;
     endTime: string;
@@ -574,24 +584,74 @@ export type EventTicket = {
       name: string;
       description: string;
       privacy: string;
-
+      admin: {
+        _id: string;
+        fullname: string;
+        username: string;
+        phone: string;
+        photo: string;
+        birthDate: string;
+        callingCode: string;
+        isAdmin: boolean;
+        blocked: boolean;
+        isAccountSetup: boolean;
+        role: string;
+        loc: {
+          type: "Point";
+          coordinates: [number, number];
+        };
+        email: string;
+        blockedUsers: string[];
+        followers: string[];
+        following: string[];
+      };
+      adminType: string;
       posts: {
         totalPosts: number;
       }[];
       totalMembers: number;
       totalPosts: number;
     };
+    absorbFees: boolean;
     admin: string;
+    adminType: string;
   };
   user: {
     _id: string;
-    photo: string;
     fullname: string;
+    username: string;
+    phone: string;
+    photo: string;
+    birthDate: string;
+    callingCode: string;
+    isAdmin: boolean;
+    blocked: boolean;
+    isAccountSetup: boolean;
+    role: string;
+    loc: {
+      type: "Point";
+      coordinates: [number, number];
+    };
+    email: string;
+    blockedUsers: string[];
+    followers: string[];
+    following: string[];
   };
   totalTickets: number;
-  tickets: string[];
+  ticketType: {
+    ticketType: string;
+    ticketPrice: number;
+    signUpLimit: number;
+    salesStartDate: string;
+    salesEndDate: string;
+  };
+  tickets: {
+    code: string;
+    isGifted: boolean;
+    giftedBy: string;
+    giftedAt: string;
+  }[];
   updatedAt: string;
-  createdAt: string;
 };
 
 export type EventMessageUser = {

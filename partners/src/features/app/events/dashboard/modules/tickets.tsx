@@ -54,7 +54,7 @@ export const TicketSales = () => {
               </div>
 
               <span className="font-extrabold text-primary">
-                {formatCurrency(0)}
+                {formatCurrency(sale.ticketType.ticketPrice)}
               </span>
             </div>
           );
