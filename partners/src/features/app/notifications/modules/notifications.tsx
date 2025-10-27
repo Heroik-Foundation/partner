@@ -122,6 +122,9 @@ const NotificationItem = ({
         <div
           className="py-2.5 flex items-start justify-between w-full"
           ref={isLast ? lastNotificationRef : undefined}
+          onClick={() => {
+            onMarkAsRead(notification._id);
+          }}
         >
           <div className="flex items-center space-x-1.5">
             <NotificationIcon type={notification.type} />

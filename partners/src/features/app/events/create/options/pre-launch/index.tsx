@@ -164,7 +164,7 @@ export const PreLaunch = () => {
 
                     <Link
                       to="/app/events/create/options"
-                      search={{ step: 1 }}
+                      search={{ step: 2 }}
                       onClick={() => handleEditTicket(index)}
                     >
                       <img src={editIcon} alt="" className="w-5 h-5" />
