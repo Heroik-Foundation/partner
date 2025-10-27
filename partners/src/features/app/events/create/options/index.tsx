@@ -362,7 +362,11 @@ const CreateEventOptions = () => {
   );
 
   const isTicketStep = currentStepConfig?.title.includes("Ticket");
-  const shouldShowDrawer = !isTicketStep && isActionDrawerOpen;
+  const hasFundraiserData = !!(
+    fundRaiser?.organizations?.length || fundRaiser?.fundRaisingGoal
+  );
+  const shouldShowDrawer =
+    !isTicketStep && isActionDrawerOpen && !hasFundraiserData;
 
   return (
     <Fragment>
