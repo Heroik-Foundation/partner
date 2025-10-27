@@ -184,6 +184,14 @@ const CreateEventOptions = () => {
     if (!validateCurrentStep()) return;
 
     if (isLastStep) {
+      if (!ticketing || ticketing.length < 1) {
+        toast.info("Please add a ticket to continue");
+
+        setCurrentStepIndex(2);
+
+        return;
+      }
+
       navigate({ to: "/app/events/create/pre-launch" });
       return;
     }

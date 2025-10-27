@@ -31,14 +31,13 @@ export const TicketRevenueChart = () => {
   const stats: MonthlyData[] = data || [];
 
   const chartData = stats
-    .map((item) => {
-      return {
-        month: formatMonth(item.month),
-        amount: Number(item.amount),
-      };
-    })
-    .sort((a, b) => new Date(b.month).getTime() - new Date(a.month).getTime()) // Sort descending
-    .slice(0, 6);
+    .sort((a, b) => new Date(b.month).getTime() - new Date(a.month).getTime())
+    .slice(0, 6)
+    .map((item) => ({
+      month: formatMonth(item.month),
+      amount: Number(item.amount) / 100,
+    }))
+    .reverse();
 
   return (
     <div className="w-full space-y-5 flex items-center justify-center flex-col">
