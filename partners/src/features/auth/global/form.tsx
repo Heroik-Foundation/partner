@@ -117,7 +117,7 @@ export const FormPassword = (props: ComponentProps<"input">) => {
 };
 
 export const FormCounter = (props: FormCounterProps) => {
-  const { className, increment, decrement, ...rest } = props;
+  const { className, increment, decrement, disabled, ...rest } = props;
   return (
     <div className="w-full relative">
       <Button
@@ -125,11 +125,13 @@ export const FormCounter = (props: FormCounterProps) => {
         className="absolute top-2 left-2"
         onClick={decrement}
         size="sm"
+        disabled={disabled}
       >
         <Minus />
       </Button>
       <Input
         {...rest}
+        disabled={disabled}
         type="text"
         placeholder="0"
         className={cn("px-10 text-center", className)}
@@ -139,6 +141,7 @@ export const FormCounter = (props: FormCounterProps) => {
         className="absolute top-2 right-2"
         onClick={increment}
         size="sm"
+        disabled={disabled}
       >
         <Plus />
       </Button>

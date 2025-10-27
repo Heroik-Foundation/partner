@@ -17,9 +17,11 @@ import {
 } from "../../../edit/edit-ticket-type/helper/fees";
 import infoIcon from "../../../edit/edit-ticket-type/assets/info.svg";
 import { Switch } from "@/modules/ui/switch";
+import { toast } from "sonner";
 
 export const TicketEventDetails = () => {
   const { formState, updateForm } = useEventFormStore();
+  const { ticketing } = formState;
 
   const currentIndex = formState.currentTicketIndex;
 
@@ -39,6 +41,13 @@ export const TicketEventDetails = () => {
     formState.absorbFees
   );
 
+  // Determine if we're in unlimited mode based on first ticket
+  const firstTicketHasUnlimitedSignup =
+    ticketing && ticketing.length > 0 && ticketing[0].signUpLimit === 0;
+
+  const isSignUpLimitDisabled =
+    firstTicketHasUnlimitedSignup && currentIndex > 0;
+
   const updateSpecificTicketTier = (
     index: number,
     updates: Partial<TicketTierState>
@@ -57,14 +66,13 @@ export const TicketEventDetails = () => {
         signUpLimit: 0,
         salesStartDate: null,
         salesEndDate: null,
-        ...updates, // Apply the updates to the new tier
+        ...updates,
       };
 
-      // If we need to fill gaps (index > current length), create array with empty slots
       let updatedTiers: TicketTierState[];
       if (index >= currentTiers.length) {
         updatedTiers = [...currentTiers];
-        // Fill gaps with default values if needed
+
         while (updatedTiers.length <= index) {
           updatedTiers.push({
             ticketType: "Standard",
@@ -76,7 +84,6 @@ export const TicketEventDetails = () => {
         }
         updatedTiers[index] = newTier;
       } else {
-        // Just add to the end if index is 0 and array is empty
         updatedTiers = [...currentTiers, newTier];
       }
 
@@ -90,6 +97,55 @@ export const TicketEventDetails = () => {
     );
 
     updateForm("ticketing", updatedTiers);
+  };
+
+  // const validTicketInput = () => {
+  //   if (ticketing && ticketing.length > 1) {
+  //     const signUpLimits = ticketing
+  //       .filter((ticket) => ticket && !objectHasNullOrUndefined(ticket))
+  //       .map((ticket) => ticket.signUpLimit || 0);
+
+  //     const hasZeroLimit = signUpLimits.some((limit) => limit === 0);
+  //     const hasNonZeroLimit = signUpLimits.some((limit) => limit > 0);
+
+  //     if (hasZeroLimit && hasNonZeroLimit) {
+  //       toast.error(
+  //         "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits."
+  //       );
+  //       return false;
+  //     } else {
+  //       return true;
+  //     }
+  //   }
+
+  //   return true;
+  // };
+
+  const handleSignUpLimitChange = (value: number) => {
+    // If first ticket is unlimited (0), force all subsequent tickets to be 0
+    if (firstTicketHasUnlimitedSignup && currentIndex > 0) {
+      updateSpecificTicketTier(currentIndex, {
+        signUpLimit: 0,
+      });
+      return;
+    }
+
+    // If first ticket has a limit > 0, don't allow 0 for any ticket
+    if (
+      ticketing &&
+      ticketing.length > 0 &&
+      ticketing[0].signUpLimit > 0 &&
+      value === 0
+    ) {
+      toast.error(
+        "Cannot set unlimited tickets when first ticket has a limit."
+      );
+      return;
+    }
+
+    updateSpecificTicketTier(currentIndex, {
+      signUpLimit: value,
+    });
   };
 
   return (
@@ -207,21 +263,20 @@ export const TicketEventDetails = () => {
         <Label>No of Tickets Available</Label>
         <FormCounter
           required
+          disabled={isSignUpLimitDisabled}
           value={currentIndexState.signUpLimit}
           onChange={({ target }) => {
-            updateSpecificTicketTier(currentIndex, {
-              signUpLimit: Number(target.value),
-            });
+            handleSignUpLimitChange(Number(target.value));
           }}
           decrement={() => {
-            updateSpecificTicketTier(currentIndex, {
-              signUpLimit: Math.abs(Number(currentIndexState.signUpLimit) - 1),
-            });
+            const newValue = Math.max(
+              0,
+              Number(currentIndexState.signUpLimit) - 1
+            );
+            handleSignUpLimitChange(newValue);
           }}
           increment={() => {
-            updateSpecificTicketTier(currentIndex, {
-              signUpLimit: Math.abs(Number(currentIndexState.signUpLimit) + 1),
-            });
+            handleSignUpLimitChange(Number(currentIndexState.signUpLimit) + 1);
           }}
         />
       </FormField>

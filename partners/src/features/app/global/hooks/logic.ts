@@ -153,8 +153,6 @@ export const useEventFormStore = create<StaticEventFormStore>()(
           const newTicketing = state.formState.ticketing.filter(
             (ticket) =>
               ticket.ticketType &&
-              ticket.ticketPrice > 0 &&
-              ticket.signUpLimit > 0 &&
               ticket.salesStartDate !== null &&
               ticket.salesEndDate !== null
           );

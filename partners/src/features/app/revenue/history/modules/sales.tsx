@@ -36,7 +36,10 @@ export const Sales = () => {
                 src={sale.event.photo}
               />
               <div className="flex flex-col space-y-0.5">
-                <h6 className="text-xs font-semibold text-primary">User</h6>
+                <h6 className="text-xs font-semibold text-primary">
+                  {/* //@ts-ignore */}
+                  {sale.user.fullname || "-"}
+                </h6>
                 <span className="text-[10px] text-primary/50 font-extrabold">
                   {truncateText(sale.event.name, 100)}
                 </span>

@@ -75,6 +75,7 @@ export type EventSaleType = {
     isDeleted: boolean;
     isAccountSetup: boolean;
     role: string;
+    fullname: string;
     interest: string[];
     blockedUsers: string[];
     following: string[];
