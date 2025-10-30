@@ -30,7 +30,7 @@ const Profile = () => {
 
   const handleInitialData = useCallback(() => {
     if (user) {
-      if ((!form.email || !form.number) && user?.email && user.telephone) {
+      if ((!form.email || !form.number || !form.name) && user) {
         setForm({
           ...form,
           name: user.name,

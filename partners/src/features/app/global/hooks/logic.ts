@@ -55,7 +55,7 @@ export type FundraiserState = {
 };
 
 export const defaultValue: EventFormState = {
-  absorbFees: true,
+  absorbFees: false,
   photo: undefined,
   name: "",
   description: "",

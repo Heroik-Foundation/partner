@@ -18,6 +18,7 @@ import {
 import infoIcon from "../../../edit/edit-ticket-type/assets/info.svg";
 import { Switch } from "@/modules/ui/switch";
 import { toast } from "sonner";
+import { sanitizeNumericInput } from "@/helpers/input";
 
 export const TicketEventDetails = () => {
   const { formState, updateForm } = useEventFormStore();
@@ -264,9 +265,14 @@ export const TicketEventDetails = () => {
         <FormCounter
           required
           disabled={isSignUpLimitDisabled}
-          value={currentIndexState.signUpLimit}
+          value={
+            currentIndexState.signUpLimit === 0
+              ? undefined
+              : currentIndexState.signUpLimit
+          }
           onChange={({ target }) => {
-            handleSignUpLimitChange(Number(target.value));
+            //@ts-ignore
+            handleSignUpLimitChange(sanitizeNumericInput(target.value));
           }}
           decrement={() => {
             const newValue = Math.max(

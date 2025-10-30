@@ -7,6 +7,7 @@ import {
   FormCounter,
   FormField,
 } from "@/features/auth/global/form";
+import { sanitizeNumericInput } from "@/helpers/input";
 import { cn } from "@/lib/utils";
 import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
@@ -86,7 +87,11 @@ export const RecurringEventDetails = () => {
       input: "number",
       inputValue: formState.recurrence?.occurrenceCount,
       updateInputValue: (event: React.ChangeEvent<HTMLInputElement>) => {
-        updateRecurrenceField("occurrenceCount", Number(event.target.value));
+        updateRecurrenceField(
+          "occurrenceCount",
+          //@ts-ignore
+          sanitizeNumericInput(event.target.value)
+        );
       },
     },
   ];
@@ -100,7 +105,11 @@ export const RecurringEventDetails = () => {
             required
             value={formState.recurrence?.interval}
             onChange={({ target }) => {
-              updateRecurrenceField("interval", Math.abs(Number(target.value)));
+              updateRecurrenceField(
+                "interval",
+                //@ts-ignore
+                sanitizeNumericInput(target.value)
+              );
             }}
             increment={() => {
               updateRecurrenceField(
@@ -196,6 +205,7 @@ export const RecurringEventDetails = () => {
                   <Label htmlFor={item.value}>{item.title}</Label>
                   {item.input && (
                     <Input
+                      name={item.title.toLowerCase()}
                       value={item.inputValue}
                       type={item.input}
                       onChange={(event) => {

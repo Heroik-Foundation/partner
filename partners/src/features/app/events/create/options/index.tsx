@@ -7,7 +7,7 @@ import {
   useRef,
 } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRightCircle } from "lucide-react";
+import { ArrowRightCircle, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 import { Form, FormFooter } from "@/features/auth/global/form";
@@ -377,6 +377,29 @@ const CreateEventOptions = () => {
           subtitle: currentStepConfig?.description || "",
         }}
         previousRouteCallback={handlePreviousStep}
+        addOns={{
+          content: (
+            <>
+              {currentStepConfig.title === "Ticket Details" &&
+                ticketing &&
+                ticketing.filter(
+                  (ticket) =>
+                    ticket.salesEndDate !== null &&
+                    ticket.salesStartDate !== null
+                ).length >= 1 && (
+                  <Button
+                    onClick={() => {
+                      next();
+                    }}
+                    size={"sm"}
+                    variant={"secondary"}
+                  >
+                    Review Tickets <ChevronRight />
+                  </Button>
+                )}
+            </>
+          ),
+        }}
       />
       <Form onSubmit={handleFormSubmit}>
         {stepComponent}

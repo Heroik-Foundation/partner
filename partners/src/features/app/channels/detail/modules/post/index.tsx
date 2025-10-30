@@ -105,7 +105,9 @@ export const UserPost = ({
             alt=""
           />
         )}
-        <p className="font-medium text-sm text-primary">{content}</p>
+        <p className="font-medium text-sm text-primary break-words">
+          {content}
+        </p>
       </div>
       <PostActions
         likes={likes}

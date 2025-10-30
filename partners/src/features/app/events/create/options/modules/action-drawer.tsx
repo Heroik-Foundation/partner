@@ -41,6 +41,7 @@ export const CreateEventActionDrawer = ({
           <Button
             className="rounded-full w-full"
             size={"lg"}
+            type="button"
             onClick={() => {
               primary();
             }}
@@ -50,6 +51,7 @@ export const CreateEventActionDrawer = ({
           <Button
             size={"lg"}
             variant={"outline"}
+            type="button"
             className="border-accent text-accent rounded-full w-full"
             onClick={() => {
               secondary();
