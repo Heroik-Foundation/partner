@@ -7,7 +7,7 @@ import {
   useRef,
 } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRightCircle, ChevronRight } from "lucide-react";
+import { ArrowRightCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Form, FormFooter } from "@/features/auth/global/form";
@@ -82,7 +82,9 @@ const CreateEventOptions = () => {
       {
         title: "Ticket Details",
         description: "Enter the required ticket information.",
-        component: <TicketEventDetails />,
+        component: (
+          <TicketEventDetails ticketStateContext={ticketStateContext} />
+        ),
         cta: "Is this a paid ticketed event?",
         position: "stacked",
       },
@@ -160,7 +162,7 @@ const CreateEventOptions = () => {
         if (ticketing && ticketing.length > 1) {
           const signUpLimits = ticketing
             .filter((ticket) => ticket && !objectHasNullOrUndefined(ticket))
-            .map((ticket) => ticket.signUpLimit || 0);
+            .map((ticket) => Number(ticket.signUpLimit) || 0);
 
           const hasZeroLimit = signUpLimits.some((limit) => limit === 0);
           const hasNonZeroLimit = signUpLimits.some((limit) => limit > 0);
@@ -377,29 +379,6 @@ const CreateEventOptions = () => {
           subtitle: currentStepConfig?.description || "",
         }}
         previousRouteCallback={handlePreviousStep}
-        addOns={{
-          content: (
-            <>
-              {currentStepConfig.title === "Ticket Details" &&
-                ticketing &&
-                ticketing.filter(
-                  (ticket) =>
-                    ticket.salesEndDate !== null &&
-                    ticket.salesStartDate !== null
-                ).length >= 1 && (
-                  <Button
-                    onClick={() => {
-                      next();
-                    }}
-                    size={"sm"}
-                    variant={"secondary"}
-                  >
-                    Review Tickets <ChevronRight />
-                  </Button>
-                )}
-            </>
-          ),
-        }}
       />
       <Form onSubmit={handleFormSubmit}>
         {stepComponent}

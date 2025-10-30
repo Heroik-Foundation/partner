@@ -17,32 +17,55 @@ import {
 } from "../../../edit/edit-ticket-type/helper/fees";
 import infoIcon from "../../../edit/edit-ticket-type/assets/info.svg";
 import { Switch } from "@/modules/ui/switch";
-import { toast } from "sonner";
 import { sanitizeNumericInput } from "@/helpers/input";
 
-export const TicketEventDetails = () => {
+type Props = {
+  ticketStateContext: "adding" | "creating";
+};
+
+const DEFAULT_TICKET_STATE: TicketTierState = {
+  salesEndDate: null,
+  salesStartDate: null,
+  signUpLimit: 0,
+  ticketPrice: 0,
+  ticketType: "Standard",
+};
+
+export const TicketEventDetails = ({ ticketStateContext }: Props) => {
   const { formState, updateForm } = useEventFormStore();
   const { ticketing } = formState;
 
-  const currentIndex = formState.currentTicketIndex;
+  const currentIndex =
+    ticketStateContext === "creating"
+      ? Math.abs(Number(ticketing && ticketing?.length) - 1) || 0
+      : formState.currentTicketIndex;
 
-  const currentIndexState: TicketTierState =
-    formState.ticketing && formState.ticketing[currentIndex]
-      ? formState.ticketing[currentIndex]
-      : {
-          salesEndDate: null,
-          salesStartDate: null,
-          signUpLimit: 0,
-          ticketPrice: 0,
-          ticketType: "Standard",
-        };
+  const getCurrentTicketState = (): TicketTierState => {
+    const hasExistingTickets = ticketing && ticketing.length > 0;
+    const ticketExistsAtIndex = hasExistingTickets && ticketing[currentIndex];
+
+    if (ticketStateContext !== "adding" && ticketExistsAtIndex) {
+      return ticketing[currentIndex];
+    }
+
+    if (ticketStateContext !== "adding" && !ticketExistsAtIndex) {
+      return DEFAULT_TICKET_STATE;
+    }
+
+    if (ticketStateContext === "adding" && ticketExistsAtIndex) {
+      return ticketing[currentIndex];
+    }
+
+    return DEFAULT_TICKET_STATE;
+  };
+
+  const currentIndexState = getCurrentTicketState();
 
   const feeBreakdown = calculateFees(
     currentIndexState.ticketPrice,
     formState.absorbFees
   );
 
-  // Determine if we're in unlimited mode based on first ticket
   const firstTicketHasUnlimitedSignup =
     ticketing && ticketing.length > 0 && ticketing[0].signUpLimit === 0;
 
@@ -55,33 +78,23 @@ export const TicketEventDetails = () => {
   ) => {
     const currentTiers = formState.ticketing || [];
 
-    // If index is out of bounds or array is empty, create/add the tier
     if (
       index < 0 ||
       index >= currentTiers.length ||
       currentTiers.length === 0
     ) {
       const newTier: TicketTierState = {
-        ticketType: "Standard",
-        ticketPrice: 0,
-        signUpLimit: 0,
-        salesStartDate: null,
-        salesEndDate: null,
+        ...DEFAULT_TICKET_STATE,
         ...updates,
       };
 
       let updatedTiers: TicketTierState[];
+
       if (index >= currentTiers.length) {
         updatedTiers = [...currentTiers];
 
         while (updatedTiers.length <= index) {
-          updatedTiers.push({
-            ticketType: "Standard",
-            ticketPrice: 0,
-            signUpLimit: 0,
-            salesStartDate: null,
-            salesEndDate: null,
-          });
+          updatedTiers.push({ ...DEFAULT_TICKET_STATE });
         }
         updatedTiers[index] = newTier;
       } else {
@@ -92,7 +105,6 @@ export const TicketEventDetails = () => {
       return;
     }
 
-    // Update existing tier
     const updatedTiers = currentTiers.map((tier, i) =>
       i === index ? { ...tier, ...updates } : tier
     );
@@ -100,47 +112,11 @@ export const TicketEventDetails = () => {
     updateForm("ticketing", updatedTiers);
   };
 
-  // const validTicketInput = () => {
-  //   if (ticketing && ticketing.length > 1) {
-  //     const signUpLimits = ticketing
-  //       .filter((ticket) => ticket && !objectHasNullOrUndefined(ticket))
-  //       .map((ticket) => ticket.signUpLimit || 0);
-
-  //     const hasZeroLimit = signUpLimits.some((limit) => limit === 0);
-  //     const hasNonZeroLimit = signUpLimits.some((limit) => limit > 0);
-
-  //     if (hasZeroLimit && hasNonZeroLimit) {
-  //       toast.error(
-  //         "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits."
-  //       );
-  //       return false;
-  //     } else {
-  //       return true;
-  //     }
-  //   }
-
-  //   return true;
-  // };
-
   const handleSignUpLimitChange = (value: number) => {
-    // If first ticket is unlimited (0), force all subsequent tickets to be 0
     if (firstTicketHasUnlimitedSignup && currentIndex > 0) {
       updateSpecificTicketTier(currentIndex, {
         signUpLimit: 0,
       });
-      return;
-    }
-
-    // If first ticket has a limit > 0, don't allow 0 for any ticket
-    if (
-      ticketing &&
-      ticketing.length > 0 &&
-      ticketing[0].signUpLimit > 0 &&
-      value === 0
-    ) {
-      toast.error(
-        "Cannot set unlimited tickets when first ticket has a limit."
-      );
       return;
     }
 
@@ -185,7 +161,6 @@ export const TicketEventDetails = () => {
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Hiroek Fee:</span>
           <span className="font-black text-primary">
-            {" "}
             {Math.abs(currentIndexState.ticketPrice || 0) > 0 ? "£0.60" : "£0"}
           </span>
         </div>
