@@ -19,8 +19,6 @@ export const TicketSales = () => {
 
   const rows = data?.pages || [];
 
-  console.log(data);
-
   return (
     <div className="space-y-5 w-full">
       <div className="flex items-center justify-between">

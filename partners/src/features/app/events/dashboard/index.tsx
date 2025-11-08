@@ -11,6 +11,8 @@ const EventDashboard = () => {
   const { id } = useParams({ strict: false });
   const { data: stats } = useEventStatsQuery({ id });
 
+  console.log(stats);
+
   return (
     <div className="space-y-5">
       <Header
@@ -23,10 +25,10 @@ const EventDashboard = () => {
       {stats && id && (
         <Fragment>
           <Stats
-            pledge={stats.fundRaisingGoal}
+            pledge={Number(stats.pledges || 0)}
             signups={stats.members}
             ticket={{
-              revenue: stats.fundRaised,
+              revenue: Number(stats.ticketValues || 0),
               sold: stats.tickets || 0,
             }}
           />
