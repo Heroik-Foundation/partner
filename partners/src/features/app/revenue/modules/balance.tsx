@@ -2,6 +2,7 @@ import { Button } from "@/modules/ui/button";
 import { useRouter } from "@tanstack/react-router";
 import { Wallet2 } from "lucide-react";
 import { useWalletDetailsQuery } from "../hooks/query";
+import { formatCurrency } from "@/helpers/text";
 
 export const Balance = () => {
   const { navigate } = useRouter();
@@ -29,7 +30,7 @@ export const Balance = () => {
         <div className="flex items-center justify-between">
           <div>
             <span className="text-sm font-bold">Account balance</span>
-            <h1 className="text-xl font-semibold">£{balance}</h1>
+            <h1 className="text-xl font-semibold">{formatCurrency(balance)}</h1>
           </div>
 
           <Wallet2 className="stroke-white fill-white/10" />

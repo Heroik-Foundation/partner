@@ -70,7 +70,12 @@ export const TicketRevenueChart = () => {
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={
+                <ChartTooltipContent
+                  hideLabel
+                  formatter={(value) => `£${value}`}
+                />
+              }
             />
             <Bar dataKey="amount" fill="var(--color-desktop)" radius={8} />
           </BarChart>
