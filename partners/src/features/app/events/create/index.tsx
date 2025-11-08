@@ -208,7 +208,7 @@ const CreateEvent = () => {
         <ActionDialog
           isOpen={openClosingDialog}
           setIsOpen={setOpenClosingDialogState}
-          title="Are you sure"
+          title="Discard this event"
           description="Clicking on Accept would clear out all previously inputed details"
           callback={{
             fn: handleUnresolvedUserInput,
