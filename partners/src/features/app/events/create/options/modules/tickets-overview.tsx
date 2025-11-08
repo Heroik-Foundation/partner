@@ -33,7 +33,7 @@ export const TicketsOverview = ({ previousStep }: Props) => {
                   <h5 className="font-extrabold space-x-0.5">
                     <span>£{decimalFormatter.format(ticketPrice)}</span>
                     <span className="text-xs font-semibold">
-                      {signUpLimit === 0
+                      {Number(signUpLimit) === 0
                         ? "Tickets Available"
                         : `(${signUpLimit} Tickets Available)`}
                     </span>

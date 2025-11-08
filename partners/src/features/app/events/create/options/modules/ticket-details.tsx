@@ -18,6 +18,7 @@ import {
 import infoIcon from "../../../edit/edit-ticket-type/assets/info.svg";
 import { Switch } from "@/modules/ui/switch";
 import { sanitizeNumericInput } from "@/helpers/input";
+import { getValidTicketCount } from "../helper/ticket";
 
 type Props = {
   ticketStateContext: "adding" | "creating";
@@ -37,7 +38,10 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
 
   const currentIndex =
     ticketStateContext === "creating"
-      ? Math.abs(Number(ticketing && ticketing?.length) - 1) || 0
+      ? Math.abs(
+          getValidTicketCount(ticketing) -
+            (getValidTicketCount(ticketing) === 0 ? 0 : 1)
+        ) || 0
       : formState.currentTicketIndex;
 
   const getCurrentTicketState = (): TicketTierState => {
@@ -67,10 +71,12 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
   );
 
   const firstTicketHasUnlimitedSignup =
-    ticketing && ticketing.length > 0 && ticketing[0].signUpLimit === 0;
+    ticketing &&
+    ticketing.length >= 1 &&
+    Number(ticketing[0].signUpLimit) === 0;
 
   const isSignUpLimitDisabled =
-    firstTicketHasUnlimitedSignup && currentIndex > 0;
+    firstTicketHasUnlimitedSignup && currentIndex > 1;
 
   const updateSpecificTicketTier = (
     index: number,

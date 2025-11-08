@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 type DrawerState = "initial" | "pending" | "success" | "error";
 
 type DrawerProps = {
-  trigger: ReactNode;
+  trigger?: ReactNode;
   isPending?: boolean;
   isSuccess?: boolean;
   isError?: boolean;
@@ -47,13 +47,15 @@ type DrawerProps = {
 };
 
 type DialogProps = {
-  trigger: ReactNode;
+  trigger?: ReactNode;
   title: string;
   description: string;
+  isOpen?: boolean;
+  setIsOpen?: (open: boolean) => void;
   callback: {
     fn: () => void;
-    isPending: boolean;
-    isSuccess: boolean;
+    isPending?: boolean;
+    isSuccess?: boolean;
   };
 };
 
@@ -134,7 +136,7 @@ export const ActionDrawer = (props: DrawerProps) => {
 
   return (
     <Drawer open={drawerOpen} onOpenChange={handleOpenChange}>
-      <DrawerTrigger asChild>{trigger}</DrawerTrigger>
+      {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
       <DrawerContent>
         <motion.div
           initial="initial"
@@ -244,7 +246,7 @@ export const ActionDrawer = (props: DrawerProps) => {
 
 export const ActionDialog = (props: DialogProps) => {
   const [open, setOpen] = useState(false);
-  const { trigger, title, description, callback } = props;
+  const { trigger, title, description, callback, isOpen, setIsOpen } = props;
   const { fn, isPending, isSuccess } = callback;
 
   useEffect(() => {
@@ -254,10 +256,12 @@ export const ActionDialog = (props: DialogProps) => {
   }, [isSuccess]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="w-full" asChild>
-        {trigger}
-      </DialogTrigger>
+    <Dialog open={isOpen || open} onOpenChange={setIsOpen || setOpen}>
+      {trigger && (
+        <DialogTrigger className="w-full" asChild>
+          {trigger}
+        </DialogTrigger>
+      )}
       <DialogContent className="px-0 pb-0">
         <DialogHeader className="px-5">
           <DialogTitle className="font-extrabold text-primary">

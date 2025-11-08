@@ -14,25 +14,25 @@ import { Header } from "../../global/header";
 
 import { ChevronRight } from "lucide-react";
 
-import { Link, useNavigate, useRouter } from "@tanstack/react-router";
-import { useEventFormStore } from "../../global/hooks/logic";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useEventFormStore, defaultValue } from "../../global/hooks/logic";
 
 import PlaceAutocomplete from "@/modules/units/form/address";
 import { useMapStore } from "@/stores/maps";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { useRouteStore } from "@/hooks/router";
+import { ActionDialog } from "@/modules/units/page/action";
+import { useState } from "react";
 
 const CreateEvent = () => {
   const { formState, updateForm, reset } = useEventFormStore();
-  const { previousPath } = useRouteStore();
   const { resetStore } = useMapStore();
   const navigate = useNavigate();
-  const { history } = useRouter();
 
-  const backRoute = previousPath?.toLowerCase().includes("pre-launch")
-    ? `/app/`
-    : undefined;
+  const [openClosingDialog, setOpenClosingDialogState] =
+    useState<boolean>(false);
+  const hasUserInput =
+    JSON.stringify(defaultValue) !== JSON.stringify(formState);
 
   const handleSubmit = () => {
     if (!formState.category) {
@@ -45,6 +45,14 @@ const CreateEvent = () => {
     });
   };
 
+  const handleUnresolvedUserInput = () => {
+    reset();
+    resetStore();
+    navigate({
+      to: "/app",
+    });
+  };
+
   return (
     <Fragment>
       <Header
@@ -54,12 +62,16 @@ const CreateEvent = () => {
           subtitle: "Enter the required information below.",
         }}
         previousRouteCallback={() => {
-          reset();
-          resetStore();
-          history.back();
+          if (hasUserInput) {
+            setOpenClosingDialogState(true);
+          } else {
+            navigate({
+              to: "/app",
+            });
+          }
         }}
-        previousButtonRoute={backRoute}
       />
+
       <Form
         onSubmit={(event) => {
           event.preventDefault();
@@ -191,6 +203,18 @@ const CreateEvent = () => {
           </Button>
         </FormFooter>
       </Form>
+
+      {hasUserInput && openClosingDialog && (
+        <ActionDialog
+          isOpen={openClosingDialog}
+          setIsOpen={setOpenClosingDialogState}
+          title="Are you sure"
+          description="Clicking on Accept would clear out all previously inputed details"
+          callback={{
+            fn: handleUnresolvedUserInput,
+          }}
+        />
+      )}
     </Fragment>
   );
 };

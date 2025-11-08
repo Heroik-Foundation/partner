@@ -218,6 +218,7 @@ const CreateEventOptions = () => {
   }, [stepIndex, recurrence, ticketing, currentTicketIndex, fundRaiser]);
 
   const handlePreviousStep = useCallback(() => {
+    pruneRedundantTickets();
     if (
       previousPath &&
       (previousPath?.includes("pre-launch") ||
@@ -254,9 +255,9 @@ const CreateEventOptions = () => {
   ]);
 
   const handleNextStep = useCallback(() => {
-    if (isNavigatingRef.current) return;
-
     pruneRedundantTickets();
+
+    if (isNavigatingRef.current) return;
 
     if (!validateCurrentStep()) return;
 

@@ -26,6 +26,7 @@ export const PreviousButton = ({ variant, route, callback }: Props) => {
       onClick={() => {
         if (callback) {
           callback();
+          return;
         } else {
           if (route) {
             navigate({
