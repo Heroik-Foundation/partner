@@ -14,14 +14,18 @@ export function useUserEventTicketVerificationMutation() {
       return data;
     },
     onSuccess: () => {
-      toast.success("Ticket Verified");
+      toast.success("Ticket Verified", {
+        id: "valid-qr-code",
+      });
       navigate({
         to: "/app/tickets/history",
       });
     },
     onError: (error) => {
       console.log(error);
-      toast.error("Invalid Ticket QR Code");
+      toast.error("Invalid Ticket QR Code", {
+        id: "invalid-ticket-qr-code",
+      });
     },
   });
 }
