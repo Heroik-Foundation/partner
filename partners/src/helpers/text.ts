@@ -53,3 +53,11 @@ export const decimalFormatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
+
+export function trimNumber(value: string | number): number {
+  const num = Number(value);
+  if (isNaN(num)) {
+    throw new Error("Invalid number format");
+  }
+  return num;
+}

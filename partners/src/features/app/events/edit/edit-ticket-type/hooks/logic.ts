@@ -5,7 +5,7 @@ interface EventFormState {
   salesEndDate: string | null;
   salesStartDate: string | null;
   signUpLimit: number;
-  ticketPrice: number;
+  ticketPrice: string;
   ticketType: string;
 }
 
@@ -13,7 +13,7 @@ const DEFAULT_FORM_STATE: EventFormState = {
   salesEndDate: null,
   salesStartDate: null,
   signUpLimit: 0,
-  ticketPrice: 0,
+  ticketPrice: "",
   ticketType: "Standard",
 };
 
@@ -52,7 +52,7 @@ export const useUpdateEventTicketTypeForm = ({
         DEFAULT_FORM_STATE.salesStartDate,
       signUpLimit:
         currentTicketDetails.signUpLimit ?? DEFAULT_FORM_STATE.signUpLimit,
-      ticketPrice: convertTicketPrice(currentTicketDetails.ticketPrice),
+      ticketPrice: String(convertTicketPrice(currentTicketDetails.ticketPrice)),
       ticketType:
         currentTicketDetails.ticketType || DEFAULT_FORM_STATE.ticketType,
     };

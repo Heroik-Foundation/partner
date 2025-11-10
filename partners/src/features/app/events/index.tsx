@@ -43,6 +43,7 @@ const AllEvents = () => {
           position: "inline",
           title: "My Events",
         }}
+        previousButtonRoute="/app"
         addOns={{
           content: (
             <ShareDialog

@@ -22,9 +22,7 @@ const EventDetail = () => {
   const { data: event } = useEventDetailsQuery({ id });
 
   const { previousPath } = useRouteStore();
-  const backRoute = previousPath?.toLowerCase().includes("success")
-    ? `/app/`
-    : undefined;
+  const backRoute = previousPath === "/app/events" ? "/app/events" : "/app";
 
   const ticketsAvailable = Array.isArray(event?.ticketing)
     ? event.ticketing.reduce((sum, obj) => sum + (obj.signUpLimit || 0), 0)

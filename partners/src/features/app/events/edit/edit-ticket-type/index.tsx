@@ -21,6 +21,7 @@ import { Button } from "@/modules/ui/button";
 import { useEditEventTicketMutation } from "./hooks/mutation";
 import { convertDateTimeInputToISOString } from "@/helpers/time";
 import { cn } from "@/lib/utils";
+import { sanitizeNumericInput } from "@/helpers/input";
 
 const EditTicketType = () => {
   const { id, ticketTypeId } = useParams({
@@ -33,13 +34,15 @@ const EditTicketType = () => {
       ticketTypeId,
     });
 
-  const feeBreakdown = calculateFees(formState.ticketPrice, absorbFees);
+  const ticketPrice = Number(formState.ticketPrice);
+
+  const feeBreakdown = calculateFees(ticketPrice, absorbFees);
 
   const { mutate, isPending } = useEditEventTicketMutation({
     eventId: id || "",
     ticketTypeId: ticketTypeId || "",
     ...formState,
-    ticketPrice: Math.abs(Number(formState.ticketPrice * 100)),
+    ticketPrice: Math.abs(Number(ticketPrice * 100)),
     ticketType: formState.ticketType.toLowerCase(),
     ...(formState.salesEndDate !== null &&
       formState.salesStartDate !== null && {
@@ -69,10 +72,13 @@ const EditTicketType = () => {
               prefixItemClassName="text-primary font-bold"
               prefixItem="£"
               placeholder="0"
-              type="number"
+              type="text"
               value={formState.ticketPrice}
               onChange={({ target }) => {
-                updateFormField("ticketPrice", Number(target.value));
+                updateFormField(
+                  "ticketPrice",
+                  sanitizeNumericInput(target.value)
+                );
               }}
             />
           </FormField>
@@ -84,14 +90,14 @@ const EditTicketType = () => {
             <div className="flex items-center justify-between">
               <span className="font-bold text-sm">Ticket Price</span>
               <span className="font-black text-primary">
-                £{formatter.format(formState.ticketPrice)}
+                £{formatter.format(ticketPrice)}
               </span>
             </div>
             <hr className="w-full border-primary/30" />
             <div className="flex items-center justify-between">
               <span className="font-semibold text-sm">Hiroek Fee:</span>
               <span className="font-black text-primary">
-                {Math.abs(formState.ticketPrice || 0) > 0 ? "£0.60" : "£0"}
+                {Math.abs(ticketPrice || 0) > 0 ? "£0.60" : "£0"}
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -99,9 +105,7 @@ const EditTicketType = () => {
                 Payment Processing Fee:
               </span>
               <span className="font-black text-primary">
-                {Math.abs(formState.ticketPrice || 0) > 0
-                  ? "1.5% + £0.20"
-                  : "£0"}
+                {Math.abs(ticketPrice || 0) > 0 ? "1.5% + £0.20" : "£0"}
               </span>
             </div>
             <hr className="w-full border-primary/30" />

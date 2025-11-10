@@ -140,9 +140,7 @@ export function useUpdateEventMutation(props: UpdateEventMutation) {
     },
     onSuccess: () => {
       if (Object.keys(updatedFields).length === 0) {
-        return toast.success("No changes detected", {
-          id: "completed-event-edit",
-        });
+        return;
       } else {
         toast.success("Event updated successfully", {
           id: "completed-event-edit",

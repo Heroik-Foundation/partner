@@ -2,7 +2,7 @@ import { Highlight } from "../../../detail/modules/highlight";
 import { useEventFormStore } from "@/features/app/global/hooks/logic";
 import { convertDateTimeInputToISOString, formatISODate } from "@/helpers/time";
 import { Header } from "@/features/app/global/header";
-import { decimalFormatter } from "@/helpers/text";
+import { decimalFormatter, trimNumber } from "@/helpers/text";
 import { Link, useNavigate } from "@tanstack/react-router";
 import eyeIcon from "@/features/app/events/detail/assets/eye.svg";
 import editIcon from "@/features/app/events/detail/assets/edit.svg";
@@ -82,7 +82,7 @@ export const PreLaunch = () => {
       />
 
       <Highlight
-        availableTickets={totalTickets}
+        availableTickets={trimNumber(totalTickets)}
         title={formState.name}
         thumbnail={thumbnailUrl}
         date={eventDate}
