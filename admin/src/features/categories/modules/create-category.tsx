@@ -21,6 +21,12 @@ interface CategoryFormProps {
   isPending?: boolean;
   title?: string;
   triggerTitle?: string;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
+  initalValues?: {
+    image: string;
+    name: string;
+  };
 }
 
 export default function CategoryForm({
@@ -28,10 +34,17 @@ export default function CategoryForm({
   isPending,
   title,
   triggerTitle,
+  open,
+  setOpen,
+  initalValues,
 }: CategoryFormProps) {
-  const [categoryName, setCategoryName] = useState<string>("");
+  const [categoryName, setCategoryName] = useState<string>(
+    initalValues?.name || ""
+  );
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    initalValues?.image || null
+  );
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -80,17 +93,19 @@ export default function CategoryForm({
 
   return (
     <div>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <Button
-            isLoading={isPending}
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            {triggerTitle || "Create Category"}
-          </Button>
-        </DialogTrigger>
+      <Dialog open={open || isOpen} onOpenChange={setOpen || setIsOpen}>
+        {triggerTitle && (
+          <DialogTrigger asChild>
+            <Button
+              isLoading={isPending}
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              {triggerTitle}
+            </Button>
+          </DialogTrigger>
+        )}
 
         <DialogContent className="sm:max-w-md rounded-xl">
           <DialogHeader>

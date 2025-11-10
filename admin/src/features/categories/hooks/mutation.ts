@@ -32,6 +32,49 @@ export function useCreateCategoryInitMutation() {
   });
 }
 
+export function useEditCategoryMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      name,
+      image,
+      categoryId,
+    }: {
+      name: string;
+      image: File | null;
+      categoryId: string;
+    }) => {
+      const formData = new FormData();
+
+      formData.append("name", name);
+
+      if (image) {
+        formData.append("photo", image);
+      }
+
+      const { data } = await api.patch<Category>(
+        `/categories/${categoryId}`,
+        formData
+      );
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["user-event-categories"],
+      });
+      toast.success("Category edited successfully");
+    },
+    onError: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["user-event-categories"],
+      });
+      toast.error("An error occured while editing category");
+    },
+  });
+}
+
 export function useCreateSubCategoryInitMutation() {
   const queryClient = useQueryClient();
 
