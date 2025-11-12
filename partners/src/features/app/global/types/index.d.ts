@@ -33,6 +33,7 @@ export type EventTicketing = {
   ticketType: string;
   ticketPrice: number;
   signUpLimit: number;
+  spotsLeft: number;
   isPayedTicket: boolean;
   absorbFees: boolean;
   salesStartDate: string;

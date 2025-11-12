@@ -24,9 +24,20 @@ const EventDetail = () => {
   const { previousPath } = useRouteStore();
   const backRoute = previousPath === "/app/events" ? "/app/events" : "/app";
 
-  const ticketsAvailable = Array.isArray(event?.ticketing)
-    ? event.ticketing.reduce((sum, obj) => sum + (obj.signUpLimit || 0), 0)
-    : 0;
+  let ticketsAvailable = 0;
+
+  if (Array.isArray(event?.ticketing)) {
+    const hasZeroSignUpLimit = event.ticketing.some(
+      (obj) => obj.signUpLimit === 0
+    );
+
+    if (!hasZeroSignUpLimit) {
+      ticketsAvailable = event.ticketing.reduce(
+        (sum, obj) => sum + (obj.spotsLeft || 0),
+        0
+      );
+    }
+  }
 
   const isFundraiser =
     Number(event?.eventPledge.minimumPledge || 0) > 0 &&
