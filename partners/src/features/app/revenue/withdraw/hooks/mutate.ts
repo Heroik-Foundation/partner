@@ -6,7 +6,7 @@ export function useWithdrawalInitMutation({ amount }: { amount: number }) {
   return useMutation({
     mutationFn: async () => {
       const { data } = await authenticatedInstance.post(
-        "/event-partner/withdraw-funds",
+        "/event-partners/withdraw-funds",
         {
           amount,
         }
@@ -17,8 +17,7 @@ export function useWithdrawalInitMutation({ amount }: { amount: number }) {
     onSuccess: () => {
       toast.success("Withdrawal successful");
     },
-    onError: (error) => {
-      console.log(error);
+    onError: () => {
       toast.error("An error occured");
     },
   });
