@@ -7,8 +7,8 @@ import { Plus } from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
 import { useWithdrawalInitMutation } from "../hooks/mutate";
 import { ActionDrawer } from "@/modules/units/page/action";
-import { formatCurrency } from "@/helpers/text";
 import { useWalletDetailsQuery } from "../../hooks/query";
+import { safeAmount } from "../helpers/number";
 
 export const WithdrawalOptions = () => {
   const { data: wallet } = useWalletDetailsQuery();
@@ -16,7 +16,7 @@ export const WithdrawalOptions = () => {
   const { navigate } = useRouter();
 
   const { mutate, isPending, isError, isSuccess } = useWithdrawalInitMutation({
-    amount: Number(amount),
+    amount: safeAmount(amount) * 100,
   });
 
   const bankAccountName = wallet?.owner?.bankAccountName || "";
@@ -81,7 +81,7 @@ export const WithdrawalOptions = () => {
         }}
         description="Amount would be deducted from your balance and funded in the account previously setup"
         title={{
-          initial: `Are you sure you want to withdraw ${formatCurrency(Number(amount))}`,
+          initial: `Are you sure you want to withdraw £${Number(amount).toLocaleString()}`,
           pending: "Processing Payment",
           error: "Payment Failed",
           success: "Withdrawal Successful",
