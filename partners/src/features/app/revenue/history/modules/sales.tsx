@@ -24,6 +24,7 @@ export const Sales = () => {
     <div className="space-y-2.5">
       {rows.map((sale, index, list) => {
         const isLast = list.length - 1 === index;
+        const quantity = sale.tickets.length;
         return (
           <div
             ref={isLast ? lastSaleRef : undefined}
@@ -51,7 +52,9 @@ export const Sales = () => {
 
             <div className="flex flex-col text-end">
               <span className="text-sm text-emerald-500 font-extrabold">
-                {formatCurrency(sale.event.ticketing[0].ticketPrice)}
+                {formatCurrency(
+                  sale.event.ticketing[0].ticketPrice * Number(quantity)
+                )}
               </span>
               <span className="text-[10px] text-primary/50 font-extrabold">
                 {getReadableTime(sale.createdAt)}

@@ -32,6 +32,7 @@ export const TicketSales = () => {
 
       <div className="space-y-5">
         {rows.map((sale, index) => {
+          const quantity = sale.tickets.length;
           return (
             <div key={index} className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -52,7 +53,7 @@ export const TicketSales = () => {
               </div>
 
               <span className="font-extrabold text-primary">
-                {formatCurrency(sale.ticketType.ticketPrice)}
+                {formatCurrency(sale.ticketType.ticketPrice * Number(quantity))}
               </span>
             </div>
           );

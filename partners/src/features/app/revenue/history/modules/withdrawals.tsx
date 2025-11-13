@@ -3,7 +3,7 @@ import { useWithdrawalLogsListQuery } from "../hooks/query";
 import { WithdrawalLog } from "@/features/app/global/types";
 import { BadgeEuro } from "lucide-react";
 import { getReadableTime } from "@/helpers/time";
-import { formatNumberSequence } from "@/helpers/text";
+import { formatCurrency, formatNumberSequence } from "@/helpers/text";
 import { Fragment } from "react/jsx-runtime";
 import { cn } from "@/lib/utils";
 import { ItemNotFound } from "@/modules/units/card/not-found";
@@ -36,7 +36,7 @@ export const Withdrawals = () => {
               <BadgeEuro size={40} className="fill-primary stroke-white" />
               <div>
                 <h6 className="text-xs font-bold text-emerald-500">
-                  £{log.amount} Withdrawn
+                  {formatCurrency(log.amount)} Withdrawn
                 </h6>
                 <span className="text-[10px] font-semibold text-primary/50">
                   Bank Account {formatNumberSequence(log.bankAccountNumber)}
