@@ -27,8 +27,15 @@ export const Tickets = ({ tickets, eventId }: Props) => {
 };
 
 const Ticket = (props: EventTicketing & { eventId: string }) => {
-  const { ticketType, ticketPrice, salesEndDate, signUpLimit, _id, eventId } =
-    props;
+  const {
+    ticketType,
+    ticketPrice,
+    salesEndDate,
+    signUpLimit,
+    _id,
+    eventId,
+    spotsLeft,
+  } = props;
 
   const isPastDeadline = isPastDate(salesEndDate);
 
@@ -41,9 +48,7 @@ const Ticket = (props: EventTicketing & { eventId: string }) => {
         <h2 className="font-extrabold text-base">
           {formatCurrency(ticketPrice)}{" "}
           <span className="text-xs font-semibold">
-            {signUpLimit > 0
-              ? `${signUpLimit} Tickets Available`
-              : "Per Ticket"}
+            {signUpLimit > 0 ? `${spotsLeft} Tickets Available` : "Per Ticket"}
           </span>
         </h2>
         <span className="text-xs font-semibold">

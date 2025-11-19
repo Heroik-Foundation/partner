@@ -7,12 +7,11 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/modules/ui/empty";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { AudioLines } from "lucide-react";
 
 export const ErrorComponent = ({}: { error: any }) => {
   const navigate = useNavigate();
-  const router = useRouter();
 
   return (
     <div className="max-w-md h-screen mx-auto flex items-center justify-center">
@@ -31,7 +30,7 @@ export const ErrorComponent = ({}: { error: any }) => {
           <div className="flex gap-2">
             <Button
               onClick={() => {
-                router.invalidate();
+                window.location.reload();
               }}
             >
               Reload
