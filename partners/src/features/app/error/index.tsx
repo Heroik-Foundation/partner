@@ -13,6 +13,24 @@ import { AudioLines } from "lucide-react";
 export const ErrorComponent = ({}: { error: any }) => {
   const navigate = useNavigate();
 
+  const handleReload = () => {
+    try {
+      if (typeof window !== "undefined") {
+        window.location.href = window.location.href;
+
+        setTimeout(() => {
+          window.location.replace(window.location.href);
+        }, 100);
+
+        setTimeout(() => {
+          navigate({ to: window.location.pathname as any });
+        }, 200);
+      }
+    } catch (error) {
+      navigate({ to: "/auth/login" });
+    }
+  };
+
   return (
     <div className="max-w-md h-screen mx-auto flex items-center justify-center">
       <Empty>
@@ -28,13 +46,7 @@ export const ErrorComponent = ({}: { error: any }) => {
         </EmptyHeader>
         <EmptyContent>
           <div className="flex gap-2">
-            <Button
-              onClick={() => {
-                window.location.reload();
-              }}
-            >
-              Reload
-            </Button>
+            <Button onClick={handleReload}>Reload</Button>
             <Button
               variant="outline"
               onClick={() => {

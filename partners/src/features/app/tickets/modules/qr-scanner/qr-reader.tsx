@@ -16,20 +16,15 @@ const QrReader = ({ isScanning }: { isScanning: boolean }) => {
   const handleScanSuccess = (result: QrScanner.ScanResult) => {
     const scannedData = result.data;
 
-    // If we just scanned this code, ignore it
     if (lastScannedRef.current === scannedData) {
       return;
     }
 
-    // Process the new scan
-    console.log("New QR code detected:", scannedData);
     lastScannedRef.current = scannedData;
     setScannedResult(scannedData);
 
-    // Trigger mutation
     mutate({ eventTicketId: scannedData });
 
-    // Clear the result display after 10 seconds
     if (resultTimeoutRef.current) {
       clearTimeout(resultTimeoutRef.current);
     }
@@ -37,7 +32,6 @@ const QrReader = ({ isScanning }: { isScanning: boolean }) => {
       setScannedResult(null);
     }, 10000);
 
-    // Allow re-scanning the same code after 5 seconds
     if (scanTimeoutRef.current) {
       clearTimeout(scanTimeoutRef.current);
     }
@@ -110,6 +104,7 @@ const QrReader = ({ isScanning }: { isScanning: boolean }) => {
       );
     }
   }, [isCameraAccessible, isScanning]);
+
   return (
     <div className="relative flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow-md w-full max-w-sm">
       <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-blue-500">
