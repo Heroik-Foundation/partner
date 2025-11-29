@@ -7,7 +7,7 @@ export function useUserEventTicketVerificationMutation() {
   const { navigate } = useRouter();
   return useMutation({
     mutationFn: async ({ eventTicketId }: { eventTicketId: string }) => {
-      const { data } = await authenticatedInstance.post(
+      const { data } = await authenticatedInstance.get(
         `/events/user-event-ticket-verification/${eventTicketId}`
       );
 
