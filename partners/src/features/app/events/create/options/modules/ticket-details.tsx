@@ -267,11 +267,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         <FormCounter
           required
           disabled={isSignUpLimitDisabled}
-          value={
-            localTicketState.signUpLimit === 0
-              ? undefined
-              : localTicketState.signUpLimit
-          }
+          value={localTicketState.signUpLimit}
           onChange={({ target }) => {
             //@ts-ignore
             handleSignUpLimitChange(sanitizeNumericInput(target.value));

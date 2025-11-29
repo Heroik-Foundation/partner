@@ -135,7 +135,7 @@ export function useTicketSalesListQuery() {
     initialPageParam: 1,
     select: ({ pageParams, pages }) => ({
       pageParams,
-      pages: pages[0].result.data.flat(),
+      pages: pages.flatMap((page) => page.result.data),
     }),
     getNextPageParam: (lastPage) => {
       const { currentPage, totalPages } = lastPage.result;
@@ -166,7 +166,7 @@ export function useWithdrawalLogsListQuery() {
     initialPageParam: 1,
     select: ({ pageParams, pages }) => ({
       pageParams,
-      pages: pages[0].logs.data.flat(),
+      pages: pages.flatMap((page) => page.logs.data),
     }),
     getNextPageParam: (lastPage) => {
       const { currentPage, totalPages } = lastPage.logs;
