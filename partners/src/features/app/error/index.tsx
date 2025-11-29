@@ -7,36 +7,37 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/modules/ui/empty";
-import { useNavigate } from "@tanstack/react-router";
-import { AudioLines } from "lucide-react";
+import { useNavigate, useRouter } from "@tanstack/react-router";
+import { AlertTriangle } from "lucide-react";
+import { ErrorComponentProps } from "@tanstack/react-router";
 
-export const ErrorComponent = ({}: { error: any }) => {
+export const ErrorComponent = ({ error, reset }: ErrorComponentProps) => {
   const navigate = useNavigate();
+  const router = useRouter();
 
   const handleReload = () => {
+    reset();
+    router.invalidate();
+  };
+
+  console.log(error.message);
+
+  const handleLogin = async () => {
     try {
-      if (typeof window !== "undefined") {
-        window.location.href = window.location.href;
-
-        setTimeout(() => {
-          window.location.replace(window.location.href);
-        }, 100);
-
-        setTimeout(() => {
-          navigate({ to: window.location.pathname as any });
-        }, 200);
-      }
-    } catch (error) {
-      navigate({ to: "/auth/login" });
+      await navigate({
+        to: "/auth/login",
+      });
+    } catch (err) {
+      window.location.href = "/auth/login";
     }
   };
 
   return (
-    <div className="max-w-md h-screen mx-auto flex items-center justify-center">
+    <div className="max-w-md h-screen mx-auto flex items-center justify-center p-4">
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <AudioLines />
+            <AlertTriangle />
           </EmptyMedia>
           <EmptyTitle>Connection Timeout</EmptyTitle>
           <EmptyDescription>
@@ -47,14 +48,7 @@ export const ErrorComponent = ({}: { error: any }) => {
         <EmptyContent>
           <div className="flex gap-2">
             <Button onClick={handleReload}>Reload</Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                navigate({
-                  to: "/auth/login",
-                });
-              }}
-            >
+            <Button variant="outline" onClick={handleLogin}>
               Log In
             </Button>
           </div>

@@ -22,15 +22,11 @@ export const Sales = () => {
 
   return (
     <div className="space-y-2.5">
-      {rows.map((sale, index, list) => {
-        const isLast = list.length - 1 === index;
+      <div ref={lastSaleRef} />
+      {rows.map((sale, index) => {
         const quantity = sale.tickets.length;
         return (
-          <div
-            ref={isLast ? lastSaleRef : undefined}
-            key={index}
-            className="flex items-center justify-between py-3.5"
-          >
+          <div key={index} className="flex items-center justify-between py-3.5">
             <div className="flex items-center space-x-1.5">
               <img
                 className="w-10 h-10 rounded-full object-cover object-center"
@@ -64,7 +60,7 @@ export const Sales = () => {
         );
       })}
 
-      {(isPending || isFetchingNextPage) && (
+      {isPending && (
         <Fragment>
           <SaleSkeletonLoader />
           <SaleSkeletonLoader />
