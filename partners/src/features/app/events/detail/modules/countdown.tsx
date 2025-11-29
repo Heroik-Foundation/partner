@@ -25,7 +25,7 @@ export const EventCountdown = ({ startDate }: { startDate: string }) => {
   ];
 
   return (
-    <div className="flex flex-col items-start justify-center space-y-2.5">
+    <div className="flex flex-col items-start justify-center space-y-2.5 max-w-full">
       <span className="py-1 px-2.5 bg-primary/15 text-primary text-sm font-extrabold rounded-lg w-fit mx-auto">
         Event Countdown
       </span>
