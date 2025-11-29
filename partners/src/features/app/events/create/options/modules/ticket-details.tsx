@@ -19,6 +19,7 @@ import infoIcon from "../../../edit/edit-ticket-type/assets/info.svg";
 import { Switch } from "@/modules/ui/switch";
 import { sanitizeNumericInput } from "@/helpers/input";
 import { getValidTicketCount } from "../helper/ticket";
+import { useState, useEffect } from "react";
 
 type Props = {
   ticketStateContext: "adding" | "creating";
@@ -65,8 +66,17 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
 
   const currentIndexState = getCurrentTicketState();
 
+  // Local state for managing ticket data before dates are set
+  const [localTicketState, setLocalTicketState] =
+    useState<TicketTierState>(currentIndexState);
+
+  // Sync local state with form state when currentIndex changes or ticket exists
+  useEffect(() => {
+    setLocalTicketState(currentIndexState);
+  }, [currentIndex]);
+
   const feeBreakdown = calculateFees(
-    currentIndexState.ticketPrice,
+    localTicketState.ticketPrice,
     formState.absorbFees
   );
 
@@ -118,15 +128,26 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
     updateForm("ticketing", updatedTiers);
   };
 
+  // Update local state and sync to form if dates are present
+  const updateLocalState = (updates: Partial<TicketTierState>) => {
+    const newState = { ...localTicketState, ...updates };
+    setLocalTicketState(newState);
+
+    // If both dates are present, update the form state
+    if (newState.salesStartDate && newState.salesEndDate) {
+      updateSpecificTicketTier(currentIndex, newState);
+    }
+  };
+
   const handleSignUpLimitChange = (value: number) => {
     if (firstTicketHasUnlimitedSignup && currentIndex > 0) {
-      updateSpecificTicketTier(currentIndex, {
+      updateLocalState({
         signUpLimit: 0,
       });
       return;
     }
 
-    updateSpecificTicketTier(currentIndex, {
+    updateLocalState({
       signUpLimit: value,
     });
   };
@@ -141,12 +162,12 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           placeholder="0"
           type="number"
           value={
-            currentIndexState.ticketPrice === 0
+            localTicketState.ticketPrice === 0
               ? undefined
-              : currentIndexState.ticketPrice
+              : localTicketState.ticketPrice
           }
           onChange={({ target }) => {
-            updateSpecificTicketTier(currentIndex, {
+            updateLocalState({
               ticketPrice: Number(target.value),
             });
           }}
@@ -160,20 +181,20 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         <div className="flex items-center justify-between">
           <span className="font-bold text-sm">Ticket Price</span>
           <span className="font-black text-primary">
-            £{formatter.format(currentIndexState.ticketPrice)}
+            £{formatter.format(localTicketState.ticketPrice)}
           </span>
         </div>
         <hr className="w-full border-primary/30" />
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Hiroek Fee:</span>
           <span className="font-black text-primary">
-            {Math.abs(currentIndexState.ticketPrice || 0) > 0 ? "£0.60" : "£0"}
+            {Math.abs(localTicketState.ticketPrice || 0) > 0 ? "£0.60" : "£0"}
           </span>
         </div>
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Payment Processing Fee:</span>
           <span className="font-black text-primary">
-            {Math.abs(currentIndexState.ticketPrice || 0) > 0
+            {Math.abs(localTicketState.ticketPrice || 0) > 0
               ? "1.5% + £0.20"
               : "£0"}
           </span>
@@ -209,10 +230,10 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         <Label>Ticket Type Name</Label>
         <Input
           required
-          value={currentIndexState.ticketType}
+          value={localTicketState.ticketType}
           placeholder="Enter Ticket Type Name"
           onChange={({ target }) => {
-            updateSpecificTicketTier(currentIndex, {
+            updateLocalState({
               ticketType: target.value,
             });
           }}
@@ -224,12 +245,12 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
               <li
                 className={cn(
                   "px-4 py-2 text-xs font-bold bg-primary text-white rounded-full cursor-pointer transition-all",
-                  currentIndexState.ticketType === option &&
+                  localTicketState.ticketType === option &&
                     "text-primary bg-primary/10 border border-primary"
                 )}
                 key={index}
                 onClick={() => {
-                  updateSpecificTicketTier(currentIndex, {
+                  updateLocalState({
                     ticketType: option,
                   });
                 }}
@@ -247,9 +268,9 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           required
           disabled={isSignUpLimitDisabled}
           value={
-            currentIndexState.signUpLimit === 0
+            localTicketState.signUpLimit === 0
               ? undefined
-              : currentIndexState.signUpLimit
+              : localTicketState.signUpLimit
           }
           onChange={({ target }) => {
             //@ts-ignore
@@ -258,12 +279,12 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           decrement={() => {
             const newValue = Math.max(
               0,
-              Number(currentIndexState.signUpLimit) - 1
+              Number(localTicketState.signUpLimit) - 1
             );
             handleSignUpLimitChange(newValue);
           }}
           increment={() => {
-            handleSignUpLimitChange(Number(currentIndexState.signUpLimit) + 1);
+            handleSignUpLimitChange(Number(localTicketState.signUpLimit) + 1);
           }}
         />
       </FormField>
@@ -273,9 +294,9 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           <Label>Sale Starts</Label>
           <Input
             required
-            value={currentIndexState.salesStartDate || ""}
+            value={localTicketState.salesStartDate || ""}
             onChange={({ target }) => {
-              updateSpecificTicketTier(currentIndex, {
+              updateLocalState({
                 salesStartDate: target.value,
               });
             }}
@@ -287,9 +308,9 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           <Label>Sale Ends</Label>
           <Input
             required
-            value={currentIndexState.salesEndDate || ""}
+            value={localTicketState.salesEndDate || ""}
             onChange={({ target }) => {
-              updateSpecificTicketTier(currentIndex, {
+              updateLocalState({
                 salesEndDate: target.value,
               });
             }}
