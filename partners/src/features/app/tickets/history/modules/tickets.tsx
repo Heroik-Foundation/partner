@@ -13,7 +13,6 @@ export const ScannedTickets = ({ searchQuery }: { searchQuery: string }) => {
 
   const rows = useMemo(() => {
     const result = data?.pages || [];
-
     return result;
   }, [data]);
 
@@ -50,13 +49,13 @@ export const ScannedTickets = ({ searchQuery }: { searchQuery: string }) => {
                     {ticket.user.fullname}
                   </h6>
                   <span className="text-[10px] text-primary/50 font-bold">
-                    {getReadableTime(ticket.event.createdAt)}
+                    {getReadableTime(ticket.createdAt)}
                   </span>
                 </div>
               </div>
 
               <Button className="rounded-full" variant="secondary" size="sm">
-                View Details
+                {ticket.ticketId}
               </Button>
             </div>
           );

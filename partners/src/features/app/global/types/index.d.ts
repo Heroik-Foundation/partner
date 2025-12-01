@@ -461,28 +461,23 @@ export type Caller = {
 
 export type ScannedTicket = {
   _id: string;
+  event: string;
+  attendee: string;
+  ticketId: string;
+  callerType: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
   user: {
     _id: string;
     fullname: string;
-    username: string;
-    phone: string;
     photo: string;
-    birthDate: string;
-    callingCode: string;
-    isAdmin: boolean;
-    blocked: boolean;
-    isAccountSetup: boolean;
-    role: string;
-    loc: Location;
-    email: string;
-    blockedUsers: string[];
-    followers: string[];
-    following: string[];
   };
-  event: Event;
-  attendee: string;
-  callerType: string;
-  caller: Caller;
+  caller: {
+    _id: string;
+    name: string;
+    logo: string;
+  };
 };
 
 export type Conversation = {
