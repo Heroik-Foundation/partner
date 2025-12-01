@@ -4,6 +4,7 @@ import { useIntersectionObserver } from "@/hooks/observer";
 import { getReadableTime } from "@/helpers/time";
 import { Button } from "@/modules/ui/button";
 import { ItemNotFound } from "@/modules/units/card/not-found";
+import { useNavigate } from "@tanstack/react-router";
 
 export const ScannedTickets = ({ searchQuery }: { searchQuery: string }) => {
   const { data, hasNextPage, fetchNextPage, isPending, isFetchingNextPage } =
@@ -21,6 +22,8 @@ export const ScannedTickets = ({ searchQuery }: { searchQuery: string }) => {
   ]);
 
   const noTicketFound = rows.length < 1 && !isPending && !isFetchingNextPage;
+
+  const naviagte = useNavigate();
 
   return (
     <div className="space-y-5">
@@ -49,13 +52,25 @@ export const ScannedTickets = ({ searchQuery }: { searchQuery: string }) => {
                     {ticket.user.fullname}
                   </h6>
                   <span className="text-[10px] text-primary/50 font-bold">
-                    {getReadableTime(ticket.createdAt)}
+                    {getReadableTime(ticket.createdAt)} | {ticket.ticketId}
                   </span>
                 </div>
               </div>
 
-              <Button className="rounded-full" variant="secondary" size="sm">
-                {ticket.ticketId}
+              <Button
+                onClick={() => {
+                  naviagte({
+                    to: "/app/events/$id",
+                    params: {
+                      id: ticket.event,
+                    },
+                  });
+                }}
+                className="rounded-full"
+                variant="secondary"
+                size="sm"
+              >
+                View Event
               </Button>
             </div>
           );
