@@ -21,9 +21,9 @@ export const getInitialEventState = (eventData: Event) => {
     longitude,
     latitude,
     category: {
-      name: eventData.category.name || "",
-      id: eventData.category._id || "",
-      image: eventData.category.image || "",
+      name: eventData?.category?.name || "",
+      id: eventData?.category?._id || "",
+      image: eventData?.category?.image || "",
     },
     subCategory: { name: "", id: "", image: "" },
     startDate: startDate,
