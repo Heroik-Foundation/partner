@@ -2,6 +2,8 @@ import axios from "axios";
 import { deleteTokens, getTokens } from "./session";
 import { toast } from "sonner";
 
+const env = import.meta.env.DEV === true ? "dev" : "prod";
+
 /**
  * @component @name baseInstance
  * @description Axios instance configured with the base URL for the Hiroek staging API.
@@ -20,7 +22,10 @@ import { toast } from "sonner";
  * @returns {AxiosInstance} Configured Axios instance.
  */
 const baseInstance = axios.create({
-  baseURL: "https://staging.hiroek.io/api",
+  baseURL:
+    env === "dev"
+      ? "https://dev.hiroek.io/api"
+      : "https://staging.hiroek.io/api",
 });
 
 /**
@@ -43,7 +48,10 @@ const baseInstance = axios.create({
  * @returns {AxiosInstance} Configured Axios instance.
  */
 const authenticatedInstance = axios.create({
-  baseURL: "https://staging.hiroek.io/api",
+  baseURL:
+    env === "dev"
+      ? "https://dev.hiroek.io/api"
+      : "https://staging.hiroek.io/api",
 });
 
 authenticatedInstance.interceptors.request.use(

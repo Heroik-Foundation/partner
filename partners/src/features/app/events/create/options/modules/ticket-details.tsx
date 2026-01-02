@@ -20,6 +20,8 @@ import { Switch } from "@/modules/ui/switch";
 import { sanitizeNumericInput } from "@/helpers/input";
 import { getValidTicketCount } from "../helper/ticket";
 import { useState, useEffect } from "react";
+import { CurrencySelect } from "@/modules/units/form/currency";
+import { useCurrencyStore } from "@/stores/currency";
 
 type Props = {
   ticketStateContext: "adding" | "creating";
@@ -34,6 +36,7 @@ const DEFAULT_TICKET_STATE: TicketTierState = {
 };
 
 export const TicketEventDetails = ({ ticketStateContext }: Props) => {
+  const { selectedCurrency } = useCurrencyStore();
   const { formState, updateForm } = useEventFormStore();
   const { ticketing } = formState;
 
@@ -155,10 +158,22 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
   return (
     <FormContent>
       <FormField>
+        <Label>Payout Currency</Label>
+        <CurrencySelect
+          classNames={{
+            trigger: "w-full h-12 border-primary/50",
+          }}
+        />
+      </FormField>
+      <FormField>
         <Label>Event Ticket Price</Label>
         <InputWithPrefix
           required
-          prefixItem={<span className="font-bold text-primary/30">£</span>}
+          prefixItem={
+            <span className="font-bold text-primary/30">
+              {selectedCurrency.symbol}
+            </span>
+          }
           placeholder="0"
           type="number"
           value={
@@ -181,35 +196,39 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         <div className="flex items-center justify-between">
           <span className="font-bold text-sm">Ticket Price</span>
           <span className="font-black text-primary">
-            £{formatter.format(localTicketState.ticketPrice)}
+            {selectedCurrency.symbol}
+            {formatter.format(localTicketState.ticketPrice)}
           </span>
         </div>
         <hr className="w-full border-primary/30" />
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Hiroek Fee:</span>
           <span className="font-black text-primary">
-            {Math.abs(localTicketState.ticketPrice || 0) > 0 ? "£0.60" : "£0"}
+            {selectedCurrency.symbol}
+            {Math.abs(localTicketState.ticketPrice || 0) > 0 ? "0.60" : "0"}
           </span>
         </div>
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Payment Processing Fee:</span>
           <span className="font-black text-primary">
             {Math.abs(localTicketState.ticketPrice || 0) > 0
-              ? "1.5% + £0.20"
-              : "£0"}
+              ? `1.5% + ${selectedCurrency.symbol}0.20`
+              : `${selectedCurrency.symbol}0`}
           </span>
         </div>
         <hr className="w-full border-primary/30" />
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Buyers Pay:</span>
           <span className="font-black text-primary">
-            £{formatter.format(feeBreakdown.buyersPay)}
+            {selectedCurrency.symbol}
+            {formatter.format(feeBreakdown.buyersPay)}
           </span>
         </div>
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">You Receive:</span>
           <span className="font-black text-primary">
-            £{formatter.format(feeBreakdown.youReceive)}
+            {selectedCurrency.symbol}
+            {formatter.format(feeBreakdown.youReceive)}
           </span>
         </div>
         <hr className="w-full border-primary/30" />

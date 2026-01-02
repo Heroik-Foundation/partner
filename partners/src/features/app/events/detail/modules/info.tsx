@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import eyeIcon from "../assets/eye.svg";
 import messagesIcon from "../assets/messages.svg";
 import dashboardIcon from "../assets/dashboard.svg";
+import { CurrencyCode, CurrencyCodeEnum } from "@/stores/currency";
 
 type InfoProps = {
   id: string;
@@ -16,10 +17,11 @@ type InfoProps = {
   minimumPledge: number;
   startDate: string;
   organizations: string[];
+  currency: CurrencyCode;
 };
 
 export default function Info(props: InfoProps) {
-  const { id, description, minimumPledge, organizations } = props;
+  const { id, description, minimumPledge, organizations, currency } = props;
 
   const isFundraiser = Number(minimumPledge) > 0 && organizations.length >= 1;
 
@@ -36,6 +38,9 @@ export default function Info(props: InfoProps) {
           to="/app/events/$id/dashboard"
           params={{
             id,
+          }}
+          search={{
+            currency: currency as CurrencyCodeEnum,
           }}
         >
           <img src={dashboardIcon} alt="" className="w-4 h-4" />{" "}
@@ -86,7 +91,7 @@ export default function Info(props: InfoProps) {
             </h5>
 
             <span className="font-bold text-sm w-fit mx-auto rounded-full bg-primary py-3 px-5 text-white">
-              {formatCurrency(minimumPledge)}
+              {formatCurrency(minimumPledge, currency)}
             </span>
           </div>
         </div>

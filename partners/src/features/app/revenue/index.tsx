@@ -1,3 +1,4 @@
+import { CurrencySelect } from "@/modules/units/form/currency";
 import { Header } from "../global/header";
 import { Balance } from "./modules/balance";
 import { TicketRevenueChart } from "./modules/revenue-chart";
@@ -10,6 +11,9 @@ const Revenue = () => {
           title: "Event Revenue",
           subtitle: "Manage your funds.",
           position: "stacked",
+        }}
+        addOns={{
+          content: <CurrencySelect />,
         }}
       />
 

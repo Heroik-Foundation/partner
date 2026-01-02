@@ -93,6 +93,7 @@ const EventDetail = () => {
       {event && id && (
         <Fragment>
           <Highlight
+            currency={event.currency}
             availableTickets={ticketsAvailable}
             title={event.name}
             thumbnail={event.photo || ""}
@@ -102,6 +103,7 @@ const EventDetail = () => {
             location={event.address}
           />
           <Info
+            currency={event.currency}
             startDate={event.endTime}
             description={event.description}
             id={id}
@@ -111,9 +113,13 @@ const EventDetail = () => {
             percentage={event.eventPledge.totalPledgedAmount}
             minimumPledge={event.eventPledge.minimumPledge}
           />
-          <Tickets eventId={id} tickets={event.ticketing} />
+          <Tickets
+            currency={event.currency}
+            eventId={id}
+            tickets={event.ticketing}
+          />
           {!isFundraiser && <EventCountdown startDate={event.endTime} />}
-          <Manage id={id} endDate={event.endTime} />
+          <Manage id={id} endDate={event.endTime} event={event} />
         </Fragment>
       )}
     </div>

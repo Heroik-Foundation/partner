@@ -3,6 +3,7 @@
 import { Currency, Coins, Ticket, UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/helpers/text";
+import { useSearch } from "@tanstack/react-router";
 
 type StatProps = {
   pledge: number;
@@ -14,10 +15,14 @@ type StatProps = {
 };
 
 export const Stats = ({ pledge, ticket, signups }: StatProps) => {
+  const { currency } = useSearch({
+    from: "/app/events/$id/dashboard/",
+  });
+
   const stats = [
     {
       title: "Total Pledged Amount",
-      value: formatCurrency(pledge),
+      value: formatCurrency(pledge, currency),
       icon: Currency,
     },
     {
@@ -27,7 +32,7 @@ export const Stats = ({ pledge, ticket, signups }: StatProps) => {
     },
     {
       title: "Total Ticket Revenue",
-      value: formatCurrency(ticket.revenue),
+      value: formatCurrency(ticket.revenue, currency),
       icon: Coins,
     },
     {

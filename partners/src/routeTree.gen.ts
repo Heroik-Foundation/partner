@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AppImport } from './routes/app'
 import { Route as AppEventsImport } from './routes/app/events'
 import { Route as AuthSignupPasswordIndexImport } from './routes/auth/signup/password/index'
+import { Route as AppEventsIdDashboardIndexImport } from './routes/app/events/$id/dashboard/index'
 import { Route as AppChannelsIdPostCreateIndexImport } from './routes/app/channels/$id/post/create/index'
 
 // Create Virtual Routes
@@ -89,9 +90,6 @@ const AppEventsIdMessagesIndexLazyImport = createFileRoute(
 )()
 const AppEventsIdEditIndexLazyImport = createFileRoute(
   '/app/events/$id/edit/',
-)()
-const AppEventsIdDashboardIndexLazyImport = createFileRoute(
-  '/app/events/$id/dashboard/',
 )()
 const AppChannelsIdMembersIndexLazyImport = createFileRoute(
   '/app/channels/$id/members/',
@@ -431,15 +429,6 @@ const AppEventsIdEditIndexLazyRoute = AppEventsIdEditIndexLazyImport.update({
   import('./routes/app/events/$id/edit/index.lazy').then((d) => d.Route),
 )
 
-const AppEventsIdDashboardIndexLazyRoute =
-  AppEventsIdDashboardIndexLazyImport.update({
-    id: '/$id/dashboard/',
-    path: '/$id/dashboard/',
-    getParentRoute: () => AppEventsRoute,
-  } as any).lazy(() =>
-    import('./routes/app/events/$id/dashboard/index.lazy').then((d) => d.Route),
-  )
-
 const AppChannelsIdMembersIndexLazyRoute =
   AppChannelsIdMembersIndexLazyImport.update({
     id: '/channels/$id/members/',
@@ -469,6 +458,12 @@ const AppChannelsIdEditIndexLazyRoute = AppChannelsIdEditIndexLazyImport.update(
 ).lazy(() =>
   import('./routes/app/channels/$id/edit/index.lazy').then((d) => d.Route),
 )
+
+const AppEventsIdDashboardIndexRoute = AppEventsIdDashboardIndexImport.update({
+  id: '/$id/dashboard/',
+  path: '/$id/dashboard/',
+  getParentRoute: () => AppEventsRoute,
+} as any)
 
 const AppEventsIdMessagesIdIndexLazyRoute =
   AppEventsIdMessagesIdIndexLazyImport.update({
@@ -717,6 +712,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignupSuccessIndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/app/events/$id/dashboard/': {
+      id: '/app/events/$id/dashboard/'
+      path: '/$id/dashboard'
+      fullPath: '/app/events/$id/dashboard'
+      preLoaderRoute: typeof AppEventsIdDashboardIndexImport
+      parentRoute: typeof AppEventsImport
+    }
     '/app/channels/$id/edit/': {
       id: '/app/channels/$id/edit/'
       path: '/channels/$id/edit'
@@ -737,13 +739,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/channels/$id/members'
       preLoaderRoute: typeof AppChannelsIdMembersIndexLazyImport
       parentRoute: typeof AppImport
-    }
-    '/app/events/$id/dashboard/': {
-      id: '/app/events/$id/dashboard/'
-      path: '/$id/dashboard'
-      fullPath: '/app/events/$id/dashboard'
-      preLoaderRoute: typeof AppEventsIdDashboardIndexLazyImport
-      parentRoute: typeof AppEventsImport
     }
     '/app/events/$id/edit/': {
       id: '/app/events/$id/edit/'
@@ -838,7 +833,7 @@ interface AppEventsRouteChildren {
   AppEventsIndexLazyRoute: typeof AppEventsIndexLazyRoute
   AppEventsIdIndexLazyRoute: typeof AppEventsIdIndexLazyRoute
   AppEventsCreateIndexLazyRoute: typeof AppEventsCreateIndexLazyRoute
-  AppEventsIdDashboardIndexLazyRoute: typeof AppEventsIdDashboardIndexLazyRoute
+  AppEventsIdDashboardIndexRoute: typeof AppEventsIdDashboardIndexRoute
   AppEventsIdEditIndexLazyRoute: typeof AppEventsIdEditIndexLazyRoute
   AppEventsIdMessagesIndexLazyRoute: typeof AppEventsIdMessagesIndexLazyRoute
   AppEventsIdPartnersIndexLazyRoute: typeof AppEventsIdPartnersIndexLazyRoute
@@ -855,7 +850,7 @@ const AppEventsRouteChildren: AppEventsRouteChildren = {
   AppEventsIndexLazyRoute: AppEventsIndexLazyRoute,
   AppEventsIdIndexLazyRoute: AppEventsIdIndexLazyRoute,
   AppEventsCreateIndexLazyRoute: AppEventsCreateIndexLazyRoute,
-  AppEventsIdDashboardIndexLazyRoute: AppEventsIdDashboardIndexLazyRoute,
+  AppEventsIdDashboardIndexRoute: AppEventsIdDashboardIndexRoute,
   AppEventsIdEditIndexLazyRoute: AppEventsIdEditIndexLazyRoute,
   AppEventsIdMessagesIndexLazyRoute: AppEventsIdMessagesIndexLazyRoute,
   AppEventsIdPartnersIndexLazyRoute: AppEventsIdPartnersIndexLazyRoute,
@@ -956,10 +951,10 @@ export interface FileRoutesByFullPath {
   '/auth/recovery/password': typeof AuthRecoveryPasswordIndexLazyRoute
   '/auth/recovery/success': typeof AuthRecoverySuccessIndexLazyRoute
   '/auth/signup/success': typeof AuthSignupSuccessIndexLazyRoute
+  '/app/events/$id/dashboard': typeof AppEventsIdDashboardIndexRoute
   '/app/channels/$id/edit': typeof AppChannelsIdEditIndexLazyRoute
   '/app/channels/$id/guidelines': typeof AppChannelsIdGuidelinesIndexLazyRoute
   '/app/channels/$id/members': typeof AppChannelsIdMembersIndexLazyRoute
-  '/app/events/$id/dashboard': typeof AppEventsIdDashboardIndexLazyRoute
   '/app/events/$id/edit': typeof AppEventsIdEditIndexLazyRoute
   '/app/events/$id/messages': typeof AppEventsIdMessagesIndexLazyRoute
   '/app/events/$id/partners': typeof AppEventsIdPartnersIndexLazyRoute
@@ -1002,10 +997,10 @@ export interface FileRoutesByTo {
   '/auth/recovery/password': typeof AuthRecoveryPasswordIndexLazyRoute
   '/auth/recovery/success': typeof AuthRecoverySuccessIndexLazyRoute
   '/auth/signup/success': typeof AuthSignupSuccessIndexLazyRoute
+  '/app/events/$id/dashboard': typeof AppEventsIdDashboardIndexRoute
   '/app/channels/$id/edit': typeof AppChannelsIdEditIndexLazyRoute
   '/app/channels/$id/guidelines': typeof AppChannelsIdGuidelinesIndexLazyRoute
   '/app/channels/$id/members': typeof AppChannelsIdMembersIndexLazyRoute
-  '/app/events/$id/dashboard': typeof AppEventsIdDashboardIndexLazyRoute
   '/app/events/$id/edit': typeof AppEventsIdEditIndexLazyRoute
   '/app/events/$id/messages': typeof AppEventsIdMessagesIndexLazyRoute
   '/app/events/$id/partners': typeof AppEventsIdPartnersIndexLazyRoute
@@ -1051,10 +1046,10 @@ export interface FileRoutesById {
   '/auth/recovery/password/': typeof AuthRecoveryPasswordIndexLazyRoute
   '/auth/recovery/success/': typeof AuthRecoverySuccessIndexLazyRoute
   '/auth/signup/success/': typeof AuthSignupSuccessIndexLazyRoute
+  '/app/events/$id/dashboard/': typeof AppEventsIdDashboardIndexRoute
   '/app/channels/$id/edit/': typeof AppChannelsIdEditIndexLazyRoute
   '/app/channels/$id/guidelines/': typeof AppChannelsIdGuidelinesIndexLazyRoute
   '/app/channels/$id/members/': typeof AppChannelsIdMembersIndexLazyRoute
-  '/app/events/$id/dashboard/': typeof AppEventsIdDashboardIndexLazyRoute
   '/app/events/$id/edit/': typeof AppEventsIdEditIndexLazyRoute
   '/app/events/$id/messages/': typeof AppEventsIdMessagesIndexLazyRoute
   '/app/events/$id/partners/': typeof AppEventsIdPartnersIndexLazyRoute
@@ -1101,10 +1096,10 @@ export interface FileRouteTypes {
     | '/auth/recovery/password'
     | '/auth/recovery/success'
     | '/auth/signup/success'
+    | '/app/events/$id/dashboard'
     | '/app/channels/$id/edit'
     | '/app/channels/$id/guidelines'
     | '/app/channels/$id/members'
-    | '/app/events/$id/dashboard'
     | '/app/events/$id/edit'
     | '/app/events/$id/messages'
     | '/app/events/$id/partners'
@@ -1146,10 +1141,10 @@ export interface FileRouteTypes {
     | '/auth/recovery/password'
     | '/auth/recovery/success'
     | '/auth/signup/success'
+    | '/app/events/$id/dashboard'
     | '/app/channels/$id/edit'
     | '/app/channels/$id/guidelines'
     | '/app/channels/$id/members'
-    | '/app/events/$id/dashboard'
     | '/app/events/$id/edit'
     | '/app/events/$id/messages'
     | '/app/events/$id/partners'
@@ -1193,10 +1188,10 @@ export interface FileRouteTypes {
     | '/auth/recovery/password/'
     | '/auth/recovery/success/'
     | '/auth/signup/success/'
+    | '/app/events/$id/dashboard/'
     | '/app/channels/$id/edit/'
     | '/app/channels/$id/guidelines/'
     | '/app/channels/$id/members/'
-    | '/app/events/$id/dashboard/'
     | '/app/events/$id/edit/'
     | '/app/events/$id/messages/'
     | '/app/events/$id/partners/'
@@ -1404,6 +1399,10 @@ export const routeTree = rootRoute
     "/auth/signup/success/": {
       "filePath": "auth/signup/success/index.lazy.tsx"
     },
+    "/app/events/$id/dashboard/": {
+      "filePath": "app/events/$id/dashboard/index.tsx",
+      "parent": "/app/events"
+    },
     "/app/channels/$id/edit/": {
       "filePath": "app/channels/$id/edit/index.lazy.tsx",
       "parent": "/app"
@@ -1415,10 +1414,6 @@ export const routeTree = rootRoute
     "/app/channels/$id/members/": {
       "filePath": "app/channels/$id/members/index.lazy.tsx",
       "parent": "/app"
-    },
-    "/app/events/$id/dashboard/": {
-      "filePath": "app/events/$id/dashboard/index.lazy.tsx",
-      "parent": "/app/events"
     },
     "/app/events/$id/edit/": {
       "filePath": "app/events/$id/edit/index.lazy.tsx",

@@ -10,8 +10,10 @@ import { objectHasNullOrUndefined } from "@/helpers/object";
 import { useEffect, useMemo, useCallback } from "react";
 import { Publish } from "./modules/publish";
 import { toast } from "sonner";
+import { useCurrencyStore } from "@/stores/currency";
 
 export const PreLaunch = () => {
+  const { selectedCurrency } = useCurrencyStore();
   const { formState, setFormState } = useEventFormStore();
   const navigate = useNavigate();
 
@@ -82,6 +84,7 @@ export const PreLaunch = () => {
       />
 
       <Highlight
+        currency={selectedCurrency.value}
         availableTickets={trimNumber(totalTickets)}
         title={formState.name}
         thumbnail={thumbnailUrl}
@@ -150,6 +153,7 @@ export const PreLaunch = () => {
                         {ticketType} Tickets
                       </h5>
                       <h2 className="font-extrabold text-base">
+                        {selectedCurrency.symbol}
                         {decimalFormatter.format(ticketPrice)}{" "}
                         <span className="text-xs font-semibold">
                           {signUpLimit > 0

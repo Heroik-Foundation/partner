@@ -1,12 +1,13 @@
 import { Button } from "@/modules/ui/button";
 import { useRouter } from "@tanstack/react-router";
 import { Wallet2 } from "lucide-react";
-import { useWalletDetailsQuery } from "../hooks/query";
+import { useWalletDetailsByCurrencyQuery } from "../hooks/query";
 import { formatCurrency } from "@/helpers/text";
 
 export const Balance = () => {
   const { navigate } = useRouter();
-  const { data: wallet } = useWalletDetailsQuery();
+
+  const { data: wallet } = useWalletDetailsByCurrencyQuery();
 
   const balance = wallet?.balance || 0;
   const bankName = wallet?.owner?.bankName || "-";

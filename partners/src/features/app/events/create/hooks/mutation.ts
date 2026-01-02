@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { frmz } from "frmz";
+import { useCurrencyStore } from "@/stores/currency";
 
 type Ticket = {
   ticketType: string;
@@ -43,12 +44,14 @@ type CreateEventMutation = {
 };
 
 export function useCreateEventMutation(props: CreateEventMutation) {
+  const { selectedCurrency } = useCurrencyStore();
   const { subcategory, ...rest } = props;
   const { navigate } = useRouter();
   return useMutation({
     mutationFn: async () => {
       const { getFormData } = frmz({
         ...(subcategory !== undefined && { subcategory: subcategory }),
+        currency: selectedCurrency.value,
         ...rest,
       });
       const formData = getFormData();

@@ -3,6 +3,7 @@ import { Calendar, Clock, MapPin, Ticket, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatISODate } from "@/helpers/time";
 import { formatCurrency } from "@/helpers/text";
+import { CurrencyCode } from "@/stores/currency";
 
 export type EventProps = {
   id: string;
@@ -14,6 +15,7 @@ export type EventProps = {
   nodeRef?: any;
   className?: string;
   availableTickets?: number;
+  currency: CurrencyCode;
 };
 
 export type DetailProps = {
@@ -32,6 +34,7 @@ export const Event = (props: EventProps) => {
     nodeRef,
     className,
     availableTickets,
+    currency,
   } = props;
   const { date: relativeDate, time: relativeTime } = formatISODate(date);
   const imageURL = thumbnail === "" ? "/image/input-preview.jpg" : thumbnail;
@@ -55,7 +58,7 @@ export const Event = (props: EventProps) => {
       ref={nodeRef}
     >
       <div className="absolute rounded-full px-4 py-1.5 text-accent font-black top-5 right-5 bg-white text-sm">
-        {formatCurrency(price)}
+        {formatCurrency(price, currency)}
       </div>
 
       <div className="p-4 bg-white text-primary absolute rounded-xl space-y-2.5 left-0 right-0 bottom-5 mx-auto w-[90%]">

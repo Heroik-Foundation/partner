@@ -11,8 +11,6 @@ const EventDashboard = () => {
   const { id } = useParams({ strict: false });
   const { data: stats } = useEventStatsQuery({ id });
 
-  console.log(stats);
-
   return (
     <div className="space-y-5">
       <Header

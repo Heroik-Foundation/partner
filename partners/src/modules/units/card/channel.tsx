@@ -64,6 +64,6 @@ export const ChannelSkeletonLoader = () => (
 
 export const ChannelNotFound = () => (
   <div className="flex items-center justify-center bg-red-100 text-red-500 rounded-xl h-28">
-    <span className="font-bold">Event Not Found</span>
+    <span className="font-bold">Channel Not Found</span>
   </div>
 );

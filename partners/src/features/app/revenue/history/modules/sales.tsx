@@ -48,7 +48,10 @@ export const Sales = () => {
 
             <div className="flex flex-col text-end">
               <span className="text-sm text-emerald-500 font-extrabold">
-                {formatCurrency(sale.ticketType.ticketPrice * Number(quantity))}
+                {formatCurrency(
+                  sale.ticketType.ticketPrice * Number(quantity),
+                  sale.event.currency
+                )}
               </span>
               <span className="text-[10px] text-primary/50 font-extrabold">
                 {getReadableTime(sale.createdAt)}

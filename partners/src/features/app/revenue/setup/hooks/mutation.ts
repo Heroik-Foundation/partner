@@ -1,5 +1,6 @@
 import { authenticatedInstance } from "@/lib/axios";
-import { useMutation } from "@tanstack/react-query";
+import { useCurrencyStore } from "@/stores/currency";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 
@@ -20,11 +21,13 @@ export function useUpdateBankDetailsMutation(
   props: UpdateBankDetailsMutationProps
 ) {
   const { navigate } = useRouter();
+  const { selectedCurrency } = useCurrencyStore();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
       const { data } = await authenticatedInstance.patch(
-        "/event-partners/update-bank-details",
+        `/event-partners/update-bank-details/${selectedCurrency.value}`,
         {
           ...props,
         }
@@ -34,6 +37,9 @@ export function useUpdateBankDetailsMutation(
     },
     onSuccess: () => {
       toast.success("Details updated successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["user-wallet-by-currency"],
+      });
       navigate({
         to: "/app/revenue/setup-pin",
       });

@@ -53,7 +53,10 @@ export const TicketSales = () => {
               </div>
 
               <span className="font-extrabold text-primary">
-                {formatCurrency(sale.ticketType.ticketPrice * Number(quantity))}
+                {formatCurrency(
+                  sale.ticketType.ticketPrice * Number(quantity),
+                  sale.event.currency
+                )}
               </span>
             </div>
           );

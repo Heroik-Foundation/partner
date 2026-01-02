@@ -5,11 +5,13 @@ import {
 } from "@/features/app/global/hooks/logic";
 import { FormContent, FormField } from "@/features/auth/global/form";
 import { Label } from "@/modules/ui/label";
+import { useCurrencyStore } from "@/stores/currency";
 import { Link } from "@tanstack/react-router";
 import { Building2, ChevronRight, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export const FundraisingEventDetails = () => {
+  const { selectedCurrency } = useCurrencyStore();
   const { formState, updateForm, removeOrganization } = useEventFormStore();
 
   const fundRaiserState = formState.fundRaiser || {};
@@ -31,7 +33,11 @@ export const FundraisingEventDetails = () => {
         <Label>Set Minimum Pledge</Label>
         <InputWithPrefix
           required
-          prefixItem={<span className="font-bold text-primary/30">£</span>}
+          prefixItem={
+            <span className="font-bold text-primary/30">
+              {selectedCurrency.symbol}
+            </span>
+          }
           placeholder="0"
           value={fundRaiserState.fundRaisingGoal}
           onChange={({ target }) => {

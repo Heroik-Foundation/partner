@@ -5,12 +5,14 @@ import { Button } from "@/modules/ui/button";
 import { PlusCircle } from "lucide-react";
 import trashIcon from "../assets/trash.svg";
 import { toast } from "sonner";
+import { useCurrencyStore } from "@/stores/currency";
 
 type Props = {
   previousStep: () => void;
 };
 
 export const TicketsOverview = ({ previousStep }: Props) => {
+  const { selectedCurrency } = useCurrencyStore();
   const { formState, deleteTicketTier } = useEventFormStore();
 
   const tickets = formState.ticketing || [];
@@ -31,7 +33,10 @@ export const TicketsOverview = ({ previousStep }: Props) => {
               <div className="p-4 text-primary flex items-center justify-between w-full">
                 <div>
                   <h5 className="font-extrabold space-x-0.5">
-                    <span>£{decimalFormatter.format(ticketPrice)}</span>
+                    <span>
+                      {selectedCurrency.symbol}
+                      {decimalFormatter.format(ticketPrice)}
+                    </span>
                     <span className="text-xs font-semibold">
                       {Number(signUpLimit) === 0
                         ? "Tickets Available"

@@ -7,10 +7,12 @@ import {
 import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
-import { useWalletDetailsQuery } from "../../hooks/query";
-import { useCallback, useEffect, useState } from "react";
+import { useWalletDetailsByCurrencyQuery } from "../../hooks/query";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useUpdateBankDetailsMutation } from "../hooks/mutation";
+import { Header } from "@/features/app/global/header";
+import { CurrencySelect } from "@/modules/units/form/currency";
 
 type Form = {
   bankName: string;
@@ -21,7 +23,7 @@ type Form = {
 };
 
 const SetupBankAccount = () => {
-  const { data: wallet } = useWalletDetailsQuery();
+  const { data: wallet } = useWalletDetailsByCurrencyQuery();
   const [form, setForm] = useState<Form>({
     bankName: "",
     bankAccountName: "",
@@ -74,91 +76,101 @@ const SetupBankAccount = () => {
   };
 
   return (
-    <Form
-      title={pageTitle}
-      description="update your bank details"
-      previousRoute={true}
-      onSubmit={(event) => {
-        event.preventDefault();
-        handleSubmit();
-      }}
-    >
-      <FormContent>
-        <FormField>
-          <Label>Bank Name</Label>
-          <Input
-            required
-            value={form.bankName}
-            onChange={({ target }) => {
-              setForm((prev) => ({
-                ...prev,
-                bankName: target.value,
-              }));
-            }}
-          />
-        </FormField>
-        <FormField>
-          <Label>Account Name</Label>
-          <Input
-            required
-            value={form.bankAccountName}
-            onChange={({ target }) => {
-              setForm((prev) => ({
-                ...prev,
-                bankAccountName: target.value,
-              }));
-            }}
-          />
-        </FormField>
-        <FormField>
-          <Label>Account Number</Label>
-          <Input
-            required
-            type="number"
-            value={form.bankAccountNumber}
-            onChange={({ target }) => {
-              setForm((prev) => ({
-                ...prev,
-                bankAccountNumber: target.value,
-              }));
-            }}
-          />
-        </FormField>
-        <FormField>
-          <Label>Sort Code</Label>
-          <Input
-            required
-            value={form.sortCode}
-            onChange={({ target }) => {
-              setForm((prev) => ({
-                ...prev,
-                sortCode: target.value,
-              }));
-            }}
-          />
-        </FormField>
-        <FormField>
-          <Label>Pin</Label>
-          <Input
-            required
-            type="number"
-            value={form.pin}
-            onChange={({ target }) => {
-              setForm((prev) => ({
-                ...prev,
-                pin: target.value,
-              }));
-            }}
-          />
-        </FormField>
-      </FormContent>
+    <Fragment>
+      <Header
+        header={{
+          title: pageTitle,
+          position: "stacked",
+          subtitle: "Update your bank details",
+        }}
+        addOns={{
+          content: <CurrencySelect />,
+        }}
+      />
+      <Form
+        className="min-h-fit"
+        onSubmit={(event) => {
+          event.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <FormContent>
+          <FormField>
+            <Label>Bank Name</Label>
+            <Input
+              required
+              value={form.bankName}
+              onChange={({ target }) => {
+                setForm((prev) => ({
+                  ...prev,
+                  bankName: target.value,
+                }));
+              }}
+            />
+          </FormField>
+          <FormField>
+            <Label>Account Name</Label>
+            <Input
+              required
+              value={form.bankAccountName}
+              onChange={({ target }) => {
+                setForm((prev) => ({
+                  ...prev,
+                  bankAccountName: target.value,
+                }));
+              }}
+            />
+          </FormField>
+          <FormField>
+            <Label>Account Number</Label>
+            <Input
+              required
+              type="number"
+              value={form.bankAccountNumber}
+              onChange={({ target }) => {
+                setForm((prev) => ({
+                  ...prev,
+                  bankAccountNumber: target.value,
+                }));
+              }}
+            />
+          </FormField>
+          <FormField>
+            <Label>Sort Code</Label>
+            <Input
+              required
+              value={form.sortCode}
+              onChange={({ target }) => {
+                setForm((prev) => ({
+                  ...prev,
+                  sortCode: target.value,
+                }));
+              }}
+            />
+          </FormField>
+          <FormField>
+            <Label>Pin</Label>
+            <Input
+              required
+              type="number"
+              value={form.pin}
+              onChange={({ target }) => {
+                setForm((prev) => ({
+                  ...prev,
+                  pin: target.value,
+                }));
+              }}
+            />
+          </FormField>
+        </FormContent>
 
-      <FormFooter absolute>
-        <Button isPending={isPending} size="lg" className="w-full">
-          Save Bank Account
-        </Button>
-      </FormFooter>
-    </Form>
+        <FormFooter className="pt-5">
+          <Button isPending={isPending} size="lg" className="w-full">
+            Save Bank Account
+          </Button>
+        </FormFooter>
+      </Form>
+    </Fragment>
   );
 };
 

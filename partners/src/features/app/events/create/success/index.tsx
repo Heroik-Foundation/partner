@@ -45,6 +45,7 @@ const EventCreationSuccess = () => {
 
         {event ? (
           <Event
+            currency={event.currency}
             className="block"
             key={event._id}
             id={event._id}

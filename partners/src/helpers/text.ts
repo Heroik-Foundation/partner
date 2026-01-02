@@ -1,3 +1,4 @@
+import { currencies, CurrencyCode, useCurrencyStore } from "@/stores/currency";
 import { ChangeEvent } from "react";
 
 export function truncateText(text: string, length: number = 100): string {
@@ -8,11 +9,26 @@ export function truncateText(text: string, length: number = 100): string {
   return text.slice(0, length) + "...";
 }
 
-export function formatCurrency(amount: number): string {
-  const value = amount ? Number(amount) / 100 : 0;
-  return value.toLocaleString("en-GB", {
+export function formatCurrency(
+  amount: number,
+  currencyCode?: CurrencyCode
+): string {
+  const storeCurrency = useCurrencyStore.getState().selectedCurrency;
+
+  const currency = currencyCode
+    ? currencies.find((c) => c.value === currencyCode)
+    : storeCurrency;
+
+  const { value: currencyValue } = currency ?? {
+    value: "gbp",
+    symbol: "£",
+  };
+
+  const majorAmount = amount ? amount / 100 : 0;
+
+  return majorAmount.toLocaleString("en-GB", {
     style: "currency",
-    currency: "GBP",
+    currency: currencyValue.toUpperCase(),
   });
 }
 

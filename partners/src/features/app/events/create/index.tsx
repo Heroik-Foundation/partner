@@ -84,6 +84,9 @@ const CreateEvent = () => {
             handleState={(file) => {
               updateForm("photo", file);
             }}
+            initialPreview={
+              typeof formState.photo === "string" ? formState.photo : undefined
+            }
           />
           <FormField>
             <Label>Event Name</Label>
@@ -112,6 +115,15 @@ const CreateEvent = () => {
             <PlaceAutocomplete
               required
               placeholder="Type Event/Address here"
+              initialValue={
+                formState.address && formState.latitude && formState.longitude
+                  ? {
+                      address: formState.address,
+                      lat: formState.latitude,
+                      lng: formState.longitude,
+                    }
+                  : undefined
+              }
               callback={(value) => {
                 updateForm("address", String(value.address));
                 updateForm("longitude", value.lng);

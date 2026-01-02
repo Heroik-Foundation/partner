@@ -52,7 +52,7 @@ export function useUserPropertiesQuery() {
 
       return data.eventPartner;
     },
-    staleTime: timeInMinutes(5),
+    staleTime: timeInMinutes(60),
     retry: 5,
   });
 }

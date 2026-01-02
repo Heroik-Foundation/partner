@@ -1,120 +1,145 @@
 import { useUserPropertiesQuery } from "@/features/app/global/hooks/query";
 import { timeInMinutes } from "@/helpers/time";
 import { authenticatedInstance } from "@/lib/axios";
+import { CurrencyCode } from "@/stores/currency";
+
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 export type EventSaleType = {
   _id: string;
-  createAt: string;
   event: {
     _id: string;
+    photo: string;
+    name: string;
+    description: string;
     fundRaiser: {
-      organizations: string[];
       fundRaised: number;
       goalReached: boolean;
-    };
-    eventPledge: {
+      fundRaisingGoal: number;
       organizations: string[];
-      totalPledgedAmount: number;
-      minimumPledge: number;
     };
-    adminType: string;
-    isTicketed: boolean;
-    isRecurring: boolean;
-    isPrimaryEvent: boolean;
-    primaryEventId: string | null;
-    members: string[];
-    privacy: string;
-    invitees: string[];
-    isStarted: boolean;
-    isClosed: boolean;
-    absorbFees: boolean;
-    name: string;
-    address: string;
-    category: string;
-    description: string;
-    subcategory: string;
-    endTime: string;
-    eventEndDate: string;
-    recurrence: {
-      interval: number;
-      daysOfWeek: number[];
-      endType: string;
-      totalOccurrences: number;
-      _id: string;
-      frequency: string;
-      occurrenceCount: number;
-    };
-    ticketing: Array<{
-      isPayedTicket: boolean;
-      signUpLimit: number;
-      _id: string;
+    ticketing: {
       ticketType: string;
       ticketPrice: number;
-      salesStartDate: string;
-      salesEndDate: string;
-      spotsLeft: number;
-      totalTicket: number;
-    }>;
-    photo: string;
-    admin: string;
-    eventUuid: string;
+      signUpLimit: number;
+      salesStartDate: string; // ISO date string
+      salesEndDate: string; // ISO date string
+    }[];
+    eventPledge: {
+      minimumPledge: number;
+      totalPledgedAmount: number;
+      organizations: string[];
+    };
+    recurrence: {
+      interval: number;
+      frequency: string;
+      daysOfWeek: number[];
+      endType: string;
+      occurrenceCount: number;
+    };
+    organization: string;
+    category: {
+      _id: string;
+      image: string;
+      name: string;
+      subcategories: {
+        _id: string;
+        image: string;
+        name: string;
+      }[];
+    };
+    subcategory: {
+      _id: string;
+      image: string;
+      name: string;
+    };
+    signUpLimit: string;
+    spotsLeft: string;
+    eventEndDate: string;
+    privacy: string;
+    endTime: string;
     loc: {
       type: "Point";
       coordinates: [number, number];
     };
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
+    currency: CurrencyCode;
+    members: string[];
+    community: {
+      _id: string;
+      members: string[];
+      invitees: string[];
+      moderators: string[];
+      name: string;
+      description: string;
+      privacy: string;
+      admin: {
+        _id: string;
+        fullname: string;
+        username: string;
+        phone: string;
+        photo: string;
+        birthDate: string;
+        callingCode: string;
+        isAdmin: boolean;
+        blocked: boolean;
+        isAccountSetup: boolean;
+        role: string;
+        loc: {
+          type: "Point";
+          coordinates: [number, number];
+        };
+        email: string;
+        blockedUsers: string[];
+        followers: string[];
+        following: string[];
+      };
+      adminType: string;
+      posts: {
+        totalPosts: number;
+      }[];
+      totalMembers: number;
+      totalPosts: number;
+    };
+    absorbFees: boolean;
+    admin: string;
+    adminType: string;
   };
   user: {
     _id: string;
-    isActive: boolean;
+    fullname: string;
+    username: string;
+    phone: string;
+    photo: string;
+    birthDate: string;
+    callingCode: string;
     isAdmin: boolean;
     blocked: boolean;
-    isDeleted: boolean;
     isAccountSetup: boolean;
     role: string;
-    fullname: string;
-    interest: string[];
-    blockedUsers: string[];
-    following: string[];
-    followers: string[];
-    importedContacts: string[];
-    fcm_tokens: string;
-    phone: string;
-    callingCode: string;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
-    email: string;
     loc: {
       type: "Point";
       coordinates: [number, number];
     };
+    email: string;
+    blockedUsers: string[];
+    followers: string[];
+    following: string[];
   };
   totalTickets: number;
   ticketType: {
-    isPayedTicket: boolean;
-    signUpLimit: number;
-    _id: string;
     ticketType: string;
     ticketPrice: number;
+    signUpLimit: number;
     salesStartDate: string;
     salesEndDate: string;
-    spotsLeft: number;
-    totalTicket: number;
   };
-  tickets: Array<{
-    isGifted: boolean;
-    giftedBy: string | null;
-    giftedAt: string | null;
-    _id: string;
+  tickets: {
     code: string;
-  }>;
+    isGifted: boolean;
+    giftedBy: string;
+    giftedAt: string;
+  }[];
   createdAt: string;
-  updatedAt: string;
-  __v: number;
 };
 
 export function useTicketSalesListQuery() {

@@ -1,3 +1,5 @@
+import { CurrencyCode } from "@/stores/currency";
+
 export type EventOrganization = {
   fundRaised: number;
   totalDonations: number;
@@ -85,6 +87,7 @@ export type Event = {
     fullname: string;
     photo: string;
   }>;
+  currency: CurrencyCode;
   name: string;
   privacy: string;
   isTicketed: boolean;
@@ -252,6 +255,7 @@ export type Member = {
 
 export type Wallet = {
   _id: string;
+  currency: CurrencyCode;
   owner: {
     name: string;
     charityRegNumber: string;
@@ -260,9 +264,8 @@ export type Wallet = {
     country: string;
     city: string;
     address: string;
-    pinSet: true;
     loc: {
-      type: string;
+      type: "Point";
       coordinates: [number, number];
     };
     subcategories: string[];
@@ -278,6 +281,7 @@ export type Wallet = {
     accountClaimed: boolean;
     latitude: string;
     longitude: string;
+    pinSet: boolean;
   };
   ownerType: string;
   balance: number;
@@ -405,6 +409,7 @@ export type WithdrawalLog = {
   eventPartner: {
     name: string;
     logo: string;
+    bio: string;
     address: string;
     email: string;
     bankAccountName: string;
@@ -420,6 +425,7 @@ export type WithdrawalLog = {
   bankAccountNumber: string;
   bankAccountName: string;
   sortCode: string;
+  currency: CurrencyCode;
   createdAt: string;
 };
 
@@ -516,102 +522,7 @@ export type Conversation = {
 
 export type EventTicket = {
   _id: string;
-  event: {
-    _id: string;
-    photo: string;
-    name: string;
-    description: string;
-    fundRaiser: {
-      fundRaised: number;
-      goalReached: boolean;
-      fundRaisingGoal: number;
-      organizations: string[];
-    };
-    ticketing: {
-      ticketType: string;
-      ticketPrice: number;
-      signUpLimit: number;
-      salesStartDate: string;
-      salesEndDate: string;
-    }[];
-    eventPledge: {
-      minimumPledge: number;
-      totalPledgedAmount: number;
-      organizations: string[];
-    };
-    recurrence: {
-      interval: number;
-      frequency: string;
-      daysOfWeek: number[];
-      endType: string;
-      occurrenceCount: number;
-    };
-    organization: string;
-    category: {
-      _id: string;
-      image: string;
-      name: string;
-      subcategories: {
-        _id: string;
-        image: string;
-        name: string;
-      }[];
-    };
-    subcategory: {
-      _id: string;
-      image: string;
-      name: string;
-    };
-    signUpLimit: string;
-    spotsLeft: string;
-    eventEndDate: string;
-    privacy: string;
-    endTime: string;
-    loc: {
-      type: "Point";
-      coordinates: [number, number];
-    };
-    members: string[];
-    community: {
-      _id: string;
-      members: string[];
-      invitees: string[];
-      moderators: string[];
-      name: string;
-      description: string;
-      privacy: string;
-      admin: {
-        _id: string;
-        fullname: string;
-        username: string;
-        phone: string;
-        photo: string;
-        birthDate: string;
-        callingCode: string;
-        isAdmin: boolean;
-        blocked: boolean;
-        isAccountSetup: boolean;
-        role: string;
-        loc: {
-          type: "Point";
-          coordinates: [number, number];
-        };
-        email: string;
-        blockedUsers: string[];
-        followers: string[];
-        following: string[];
-      };
-      adminType: string;
-      posts: {
-        totalPosts: number;
-      }[];
-      totalMembers: number;
-      totalPosts: number;
-    };
-    absorbFees: boolean;
-    admin: string;
-    adminType: string;
-  };
+  event: Event;
   user: {
     _id: string;
     fullname: string;

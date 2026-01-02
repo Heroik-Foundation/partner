@@ -1,5 +1,6 @@
 import { Event } from "@/features/app/global/types";
-import { getTimeFromISO } from "@/helpers/time";
+import { safeExtractDate, safeGetTimeFromISO } from "./time";
+import { getSafeCoordinate } from "./location";
 
 export const getInitialEventState = (eventData: Event | null | undefined) => {
   if (!eventData) {
@@ -21,41 +22,6 @@ export const getInitialEventState = (eventData: Event | null | undefined) => {
       eventId: "",
     };
   }
-
-  // Safe time extraction with fallbacks
-  const safeGetTimeFromISO = (
-    dateString: string | null | undefined
-  ): string => {
-    if (!dateString) return "";
-    try {
-      return getTimeFromISO(dateString);
-    } catch (error) {
-      console.warn("Error parsing time from ISO:", error);
-      return "";
-    }
-  };
-
-  const safeExtractDate = (dateString: string | null | undefined): string => {
-    if (!dateString || typeof dateString !== "string") return "";
-    try {
-      return dateString.split("T")[0] || "";
-    } catch (error) {
-      console.warn("Error extracting date from string:", error);
-      return "";
-    }
-  };
-
-  const getSafeCoordinate = (
-    coordinates: any[] | null | undefined,
-    index: number,
-    defaultValue: number = 0
-  ): number => {
-    if (!Array.isArray(coordinates) || coordinates.length <= index) {
-      return defaultValue;
-    }
-    const coord = coordinates[index];
-    return typeof coord === "number" ? coord : defaultValue;
-  };
 
   const startTime = safeGetTimeFromISO(eventData?.endTime);
   const endTime = safeGetTimeFromISO(eventData?.eventEndDate);

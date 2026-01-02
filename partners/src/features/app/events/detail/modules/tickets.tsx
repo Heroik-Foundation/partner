@@ -4,13 +4,15 @@ import editIcon from "../assets/edit.svg";
 import { Link } from "@tanstack/react-router";
 import { formatCurrency } from "@/helpers/text";
 import { formatISODate, isPastDate } from "@/helpers/time";
+import { CurrencyCode } from "@/stores/currency";
 
 type Props = {
   tickets: EventTicketing[];
   eventId: string;
+  currency: CurrencyCode;
 };
 
-export const Tickets = ({ tickets, eventId }: Props) => {
+export const Tickets = ({ tickets, eventId, currency }: Props) => {
   return (
     <div className="flex flex-col items-center justify-center space-y-5 w-full">
       <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex w-fit">
@@ -19,14 +21,16 @@ export const Tickets = ({ tickets, eventId }: Props) => {
 
       <ul className="w-full">
         {tickets.map((item, index) => (
-          <Ticket eventId={eventId} {...item} key={index} />
+          <Ticket eventId={eventId} currency={currency} {...item} key={index} />
         ))}
       </ul>
     </div>
   );
 };
 
-const Ticket = (props: EventTicketing & { eventId: string }) => {
+const Ticket = (
+  props: EventTicketing & { eventId: string; currency: CurrencyCode }
+) => {
   const {
     ticketType,
     ticketPrice,
@@ -35,6 +39,7 @@ const Ticket = (props: EventTicketing & { eventId: string }) => {
     _id,
     eventId,
     spotsLeft,
+    currency,
   } = props;
 
   const isPastDeadline = isPastDate(salesEndDate);
@@ -46,7 +51,7 @@ const Ticket = (props: EventTicketing & { eventId: string }) => {
           {ticketType} Tickets
         </h5>
         <h2 className="font-extrabold text-base">
-          {formatCurrency(ticketPrice)}{" "}
+          {formatCurrency(ticketPrice, currency)}{" "}
           <span className="text-xs font-semibold">
             {signUpLimit > 0 ? `${spotsLeft} Tickets Available` : "Per Ticket"}
           </span>

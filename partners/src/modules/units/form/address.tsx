@@ -107,7 +107,6 @@ const MapLocationPicker = ({
       }
 
       if (JSON.stringify(location) === JSON.stringify(defaultCenter)) {
-        console.log("Long values", initialValue.lat, initialValue.lng);
         setMapCenter({
           lat: initialValue.lat,
           lng: initialValue.lng,

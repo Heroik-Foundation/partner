@@ -115,6 +115,7 @@ const AllEvents = () => {
                 {...(uniqueEvents.length - 1 === index && {
                   nodeRef: lastEventRef,
                 })}
+                currency={event.currency}
                 key={event._id}
                 id={event._id}
                 thumbnail={event.photo || ""}

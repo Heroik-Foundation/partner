@@ -47,6 +47,7 @@ export const EventDetails = () => {
         {event && (
           <Fragment>
             <Event
+              currency={event.currency}
               className="rounded-b-none min-h-64"
               key={event._id}
               id={event._id}

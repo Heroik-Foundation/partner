@@ -36,7 +36,7 @@ export const Withdrawals = () => {
               <BadgeEuro size={40} className="fill-primary stroke-white" />
               <div>
                 <h6 className="text-xs font-bold text-emerald-500">
-                  {formatCurrency(log.amount)} Withdrawn
+                  {formatCurrency(log.amount, log.currency)} Withdrawn
                 </h6>
                 <span className="text-[10px] font-semibold text-primary/50">
                   Bank Account {formatNumberSequence(log.bankAccountNumber)}

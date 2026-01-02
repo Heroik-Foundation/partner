@@ -60,7 +60,7 @@ export const InputWithPrefix = (
     }
   }, [prefixItem, prefixItemClassName]);
 
-  const inputPaddingLeft = prefixWidth ? `${prefixWidth + 12}px` : "0.75rem";
+  const inputPaddingLeft = prefixWidth ? `${prefixWidth + 14}px` : "0.75rem";
 
   return (
     <div className="w-full relative h-12">

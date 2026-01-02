@@ -6,7 +6,7 @@ export const ImageWithPreview = ({
   setState,
   initialPreview,
   handleState,
-  buttonText = "Upload logo",
+  buttonText = "Upload Image",
 }: {
   state?: any;
   setState?: Dispatch<SetStateAction<any>>;
