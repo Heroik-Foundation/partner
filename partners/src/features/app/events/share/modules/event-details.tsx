@@ -55,7 +55,7 @@ export const EventDetails = () => {
               title={event.name}
               date={event.endTime}
               price={event.eventPledge.minimumPledge || 0}
-              location={event.address}
+              location={event.address ?? event.meetingLink ?? ""}
             />
             <div className="flex flex-col items-center justify-center space-y-2.5">
               <span className="py-2 px-5 bg-primary/15 text-primary text-xs font-extrabold rounded-lg">

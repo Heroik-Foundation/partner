@@ -9,14 +9,11 @@ import { toast } from "sonner";
 import { Event } from "@/features/app/global/types";
 import { frmz } from "frmz";
 
-export interface UpdateEventMutation {
-  event: Event | undefined;
+type UpdateEventBase = {
+  event?: Event;
   photo?: File | string;
   name: string;
   description: string;
-  address: string;
-  latitude: number;
-  longitude: number;
   category: {
     name: string;
     id: string;
@@ -33,7 +30,27 @@ export interface UpdateEventMutation {
   endTime: string;
   privacy: string;
   eventId: string;
-}
+};
+
+type OnlineUpdateEvent = UpdateEventBase & {
+  isOnlineEvent: true;
+  meetingLink: string;
+
+  address?: never;
+  latitude?: never;
+  longitude?: never;
+};
+
+type InPersonUpdateEvent = UpdateEventBase & {
+  isOnlineEvent: false;
+  address: string;
+  latitude: number;
+  longitude: number;
+
+  meetingLink?: never;
+};
+
+export type UpdateEventMutation = OnlineUpdateEvent | InPersonUpdateEvent;
 
 export function useUpdateEventMutation(props: UpdateEventMutation) {
   const {
@@ -52,6 +69,8 @@ export function useUpdateEventMutation(props: UpdateEventMutation) {
     latitude,
     longitude,
     event,
+    meetingLink,
+    isOnlineEvent,
   } = props;
 
   const queryClient = useQueryClient();
@@ -80,17 +99,22 @@ export function useUpdateEventMutation(props: UpdateEventMutation) {
         updatedFields.privacy = privacy;
       }
 
-      if (address !== event.address) {
+      if (!isOnlineEvent && address !== event.address) {
         updatedFields.address = address;
       }
 
-      // Handle location change (comparing against [longitude, latitude])
       if (
-        latitude !== event.loc.coordinates[1] ||
-        longitude !== event.loc.coordinates[0]
+        !isOnlineEvent &&
+        event.loc &&
+        (latitude !== event.loc.coordinates[1] ||
+          longitude !== event.loc.coordinates[0])
       ) {
         updatedFields.latitude = latitude;
         updatedFields.longitude = longitude;
+      }
+
+      if (isOnlineEvent && meetingLink !== event.meetingLink) {
+        updatedFields.meetingLink = meetingLink;
       }
 
       if (subCategory && subCategory.id !== "") {

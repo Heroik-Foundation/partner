@@ -38,13 +38,23 @@ export const getInitialEventState = (eventData: Event | null | undefined) => {
     image: eventData?.category?.image || "",
   };
 
+  const isOnlineEvent = eventData.meetingLink ? true : false;
+
+  const locationData = eventData.meetingLink
+    ? { meetingLink: eventData.meetingLink }
+    : {
+        address: eventData.address || "",
+        longitude,
+        latitude,
+      };
+
   return {
     absorbFees: Boolean(eventData?.absorbFees),
     name: eventData?.name || "",
     description: eventData?.description || "",
-    address: eventData?.address || "",
-    longitude,
-    latitude,
+    ...locationData,
+    isOnlineEvent,
+
     category,
     subCategory: { name: "", id: "", image: "" },
     startDate,

@@ -56,7 +56,8 @@ export type Event = {
   absorbFees: boolean;
   __v: number;
   _id: string;
-  address: string;
+
+  // Core fields
   photo?: string;
   admin: {
     _id: string;
@@ -71,6 +72,7 @@ export type Event = {
   description: string;
   endTime: string;
   eventEndDate: string;
+
   eventPledge: {
     organizations: EventOrganization[];
     totalPledgedAmount: number;
@@ -81,12 +83,14 @@ export type Event = {
     fundRaised: number;
     goalReached: boolean;
   };
+
   invitees: string[];
   members: Array<{
     _id: string;
     fullname: string;
     photo: string;
   }>;
+
   currency: CurrencyCode;
   name: string;
   privacy: string;
@@ -96,12 +100,23 @@ export type Event = {
   primaryEventId: string;
   ticketing: EventTicketing[];
   recurrence: EventRecurrence;
-  loc: {
-    type: "Point";
-    coordinates: [number, number]; // [longitude, latitude]
-  };
+
   updatedAt: string;
-};
+} & (
+  | {
+      address: string;
+      loc: {
+        type: "Point";
+        coordinates: [number, number];
+      };
+      meetingLink?: never;
+    }
+  | {
+      meetingLink: string;
+      address?: never;
+      loc?: never;
+    }
+);
 
 export type Channel = {
   adminType: string;

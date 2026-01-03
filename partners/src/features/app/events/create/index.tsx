@@ -12,7 +12,7 @@ import { ImageWithPreview } from "@/modules/units/form/image";
 import { Fragment } from "react/jsx-runtime";
 import { Header } from "../../global/header";
 
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Video } from "lucide-react";
 
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEventFormStore, defaultValue } from "../../global/hooks/logic";
@@ -23,6 +23,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { ActionDialog } from "@/modules/units/page/action";
 import { useState } from "react";
+import { InputWithPrefix } from "../../global/form";
+import { Switch } from "@/modules/ui/switch";
 
 const CreateEvent = () => {
   const { formState, updateForm, reset } = useEventFormStore();
@@ -88,6 +90,21 @@ const CreateEvent = () => {
               typeof formState.photo === "string" ? formState.photo : undefined
             }
           />
+
+          <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-sm text-primary">
+                Is this an online event ?
+              </span>
+              <Switch
+                checked={formState.isOnlineEvent}
+                onCheckedChange={(value) => {
+                  updateForm("isOnlineEvent", value);
+                }}
+              />
+            </div>
+          </div>
+
           <FormField>
             <Label>Event Name</Label>
             <Input
@@ -111,25 +128,40 @@ const CreateEvent = () => {
             />
           </FormField>
           <FormField>
-            <Label>Event Venue</Label>
-            <PlaceAutocomplete
-              required
-              placeholder="Type Event/Address here"
-              initialValue={
-                formState.address && formState.latitude && formState.longitude
-                  ? {
-                      address: formState.address,
-                      lat: formState.latitude,
-                      lng: formState.longitude,
-                    }
-                  : undefined
-              }
-              callback={(value) => {
-                updateForm("address", String(value.address));
-                updateForm("longitude", value.lng);
-                updateForm("latitude", value.lat);
-              }}
-            />
+            <Label>
+              {formState.isOnlineEvent ? "Event Meeting Link" : "Event Venue"}
+            </Label>
+            {formState.isOnlineEvent ? (
+              <InputWithPrefix
+                required
+                pattern="https://(www\.)?(zoom\.us/j/\d+|meet\.google\.com/[a-zA-Z-]+|teams\.microsoft\.com/l/meetup-join/.+)"
+                title="Enter a Zoom, Google Meet, or Microsoft Teams meeting link"
+                value={formState.meetingLink}
+                onChange={({ target }) => {
+                  updateForm("meetingLink", String(target.value));
+                }}
+                prefixItem={<Video className="stroke-primary/50" />}
+              />
+            ) : (
+              <PlaceAutocomplete
+                required
+                placeholder="Type Event/Address here"
+                initialValue={
+                  formState.address && formState.latitude && formState.longitude
+                    ? {
+                        address: formState.address,
+                        lat: formState.latitude,
+                        lng: formState.longitude,
+                      }
+                    : undefined
+                }
+                callback={(value) => {
+                  updateForm("address", String(value.address));
+                  updateForm("longitude", value.lng);
+                  updateForm("latitude", value.lat);
+                }}
+              />
+            )}
           </FormField>
 
           <FormField>

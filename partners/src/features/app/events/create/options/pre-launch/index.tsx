@@ -15,6 +15,7 @@ import { useCurrencyStore } from "@/stores/currency";
 export const PreLaunch = () => {
   const { selectedCurrency } = useCurrencyStore();
   const { formState, setFormState } = useEventFormStore();
+
   const navigate = useNavigate();
 
   const tickets = useMemo(
@@ -89,7 +90,9 @@ export const PreLaunch = () => {
         title={formState.name}
         thumbnail={thumbnailUrl}
         date={eventDate}
-        location={formState.address}
+        location={
+          formState.isOnlineEvent ? formState.meetingLink : formState.address
+        }
       />
 
       <div className="space-y-5 mt-2.5">

@@ -11,11 +11,11 @@ type Ticket = {
   ticketType: string;
   ticketPrice: number;
   signUpLimit: number;
-  salesStartDate: string; // ISO date string
-  salesEndDate: string; // ISO date string
+  salesStartDate: string;
+  salesEndDate: string;
 };
 
-type CreateEventMutation = {
+type CreateEventBase = {
   name: string;
   description: string;
   fundRaiser?: {
@@ -24,11 +24,11 @@ type CreateEventMutation = {
   };
   recurrence?: {
     interval: number;
-    frequency: "WEEKLY" | "MONTHLY"; // could extend with more if needed
+    frequency: "WEEKLY" | "MONTHLY";
     daysOfWeek: number[]; // 0 = Sunday, 6 = Saturday
     endType: "NEVER" | "UNTIL_DATE" | "AFTER_OCCURRENCES";
-    endDate?: string; // only if endType is UNTIL_DATE
-    occurrenceCount?: number; // only if endType is AFTER_OCCURRENCES
+    endDate?: string;
+    occurrenceCount?: number;
   };
   ticketing?: Ticket[];
   category: string;
@@ -36,17 +36,35 @@ type CreateEventMutation = {
   privacy: string;
   eventEndDate: string;
   endTime: string;
-  address: string;
-  latitude: number;
-  longitude: number;
   communityId?: string;
   photo?: string | File;
 };
+
+export type CreateEventMutation = CreateEventBase &
+  (
+    | {
+        address: string;
+        latitude: number;
+        longitude: number;
+        meetingLink?: never;
+      }
+    | {
+        meetingLink: string;
+        address?: never;
+        latitude?: never;
+        longitude?: never;
+      }
+  );
 
 export function useCreateEventMutation(props: CreateEventMutation) {
   const { selectedCurrency } = useCurrencyStore();
   const { subcategory, ...rest } = props;
   const { navigate } = useRouter();
+
+  const URL = rest.meetingLink
+    ? "/event-partners/create-online-event"
+    : "/event-partners/create-event";
+
   return useMutation({
     mutationFn: async () => {
       const { getFormData } = frmz({
@@ -56,15 +74,11 @@ export function useCreateEventMutation(props: CreateEventMutation) {
       });
       const formData = getFormData();
 
-      const { data } = await authenticatedInstance.post(
-        "/event-partners/create-event",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const { data } = await authenticatedInstance.post(URL, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       return data;
     },

@@ -122,7 +122,7 @@ const AllEvents = () => {
                 title={event.name}
                 date={event.endTime}
                 price={Number(event.ticketing[0].ticketPrice || 0)}
-                location={event.address}
+                location={event.address ?? event.meetingLink ?? ""}
               />
             ));
           })()}

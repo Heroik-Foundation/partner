@@ -49,9 +49,20 @@ export const Manage = ({
       });
     }
 
+    const isOnlineEvent = event.meetingLink ? true : false;
+
+    const locationDetails: any = event.meetingLink
+      ? { meetingLink: event.meetingLink }
+      : {
+          address: event.address,
+          longitude,
+          latitude,
+        };
+
     setFormState({
       name: event.name,
-      address: event.address,
+      ...locationDetails,
+      isOnlineEvent,
       category: {
         id: event.category._id,
         image: event.category.image,
@@ -63,8 +74,6 @@ export const Manage = ({
       startDate,
       startTime,
       endTime,
-      latitude,
-      longitude,
       photo: event.photo,
       eventId: event._id,
       privacy: event.privacy,

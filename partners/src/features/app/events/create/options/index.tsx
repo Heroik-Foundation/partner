@@ -305,6 +305,8 @@ const CreateEventOptions = () => {
   );
 
   const handleOptionCancellation = useCallback(() => {
+    if (!currentStepConfig?.title) return;
+
     const updates: Partial<EventFormState> =
       {
         "Event Recurrence": { recurrence: undefined },
@@ -312,12 +314,19 @@ const CreateEventOptions = () => {
         "Add Ticket Type": { currentTicketIndex: 0, ticketing: undefined },
         "Fundraising Details": { fundRaiser: undefined },
         "Review Tickets": {},
-      }[currentStepConfig?.title] || {};
+      }[currentStepConfig.title] ?? {};
 
-    if (Object.keys(updates).length > 0) {
-      setFormState({ ...formState, ...updates });
-    }
-  }, [currentStepConfig?.title, setFormState, formState]);
+    if (Object.keys(updates).length === 0) return;
+
+    const newState = {
+      ...formState,
+      ...updates,
+
+      isOnlineEvent: formState.isOnlineEvent,
+    } as EventFormState;
+
+    setFormState(newState);
+  }, [currentStepConfig?.title, formState, setFormState]);
 
   const handleTicketDetailsNext = useCallback(() => {
     if (isNavigatingRef.current) return;

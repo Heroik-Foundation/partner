@@ -1,14 +1,11 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export interface EventFormState {
+type EventFormBase = {
   absorbFees: boolean;
   photo: File | string | undefined;
   name: string;
   description: string;
-  address: string;
-  latitude: number;
-  longitude: number;
   category: {
     name: string;
     id: string;
@@ -30,7 +27,27 @@ export interface EventFormState {
   ticketing?: TicketTierState[];
   fundRaiser?: FundraiserState;
   currentTicketIndex: number;
-}
+};
+
+type OnlineEventForm = EventFormBase & {
+  isOnlineEvent: true;
+  meetingLink: string;
+
+  address?: never;
+  latitude?: never;
+  longitude?: never;
+};
+
+type InPersonEventForm = EventFormBase & {
+  isOnlineEvent: false;
+  address: string;
+  latitude: number;
+  longitude: number;
+
+  meetingLink?: never;
+};
+
+export type EventFormState = OnlineEventForm | InPersonEventForm;
 
 export type EventFormRecurrenceState = {
   interval?: number;
@@ -75,6 +92,7 @@ export const defaultValue: EventFormState = {
   eventId: "",
   currentTicketIndex: 0,
   ticketing: [],
+  isOnlineEvent: false,
 };
 
 type StaticEventFormStore = {

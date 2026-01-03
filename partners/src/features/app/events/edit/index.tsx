@@ -11,7 +11,7 @@ import { Textarea } from "@/modules/ui/textarea";
 import { ImageWithPreview } from "@/modules/units/form/image";
 import { Fragment, useEffect } from "react";
 import { Header } from "../../global/header";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Video } from "lucide-react";
 import { Link, useParams } from "@tanstack/react-router";
 import { useUpdateEventMutation } from "./hooks/mutation";
 import { useEventDetailsQuery } from "../hooks/query";
@@ -22,6 +22,7 @@ import { useEventFormStore } from "../../global/hooks/logic";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/modules/ui/switch";
 import { useMapStore } from "@/stores/maps";
+import { InputWithPrefix } from "../../global/form";
 
 const EditEvent = () => {
   const { id } = useParams({
@@ -34,6 +35,7 @@ const EditEvent = () => {
   const { resetStore } = useMapStore();
 
   const { formState, updateForm, setFormState, reset } = useEventFormStore();
+
   const { mutate, isPending, isSuccess, isError } = useUpdateEventMutation({
     event: event,
     ...formState,
@@ -99,21 +101,37 @@ const EditEvent = () => {
             />
           </FormField>
           <FormField>
-            <Label>Event Venue</Label>
-            <PlaceAutocomplete
-              initialValue={{
-                address: formState.address,
-                lat: formState.latitude,
-                lng: formState.longitude,
-              }}
-              required
-              placeholder="Type Event/Address here"
-              callback={(value) => {
-                updateForm("address", value.address);
-                updateForm("longitude", value.lng);
-                updateForm("latitude", value.lat);
-              }}
-            />
+            <Label>
+              {" "}
+              {formState.isOnlineEvent ? "Event Meeting Link" : "Event Venue"}
+            </Label>
+            {formState.isOnlineEvent ? (
+              <InputWithPrefix
+                required
+                pattern="https://(www\.)?(zoom\.us/j/\d+|meet\.google\.com/[a-zA-Z-]+|teams\.microsoft\.com/l/meetup-join/.+)"
+                title="Enter a Zoom, Google Meet, or Microsoft Teams meeting link"
+                value={formState.meetingLink}
+                onChange={({ target }) => {
+                  updateForm("meetingLink", String(target.value));
+                }}
+                prefixItem={<Video className="stroke-primary/50" />}
+              />
+            ) : (
+              <PlaceAutocomplete
+                initialValue={{
+                  address: formState.address,
+                  lat: formState.latitude,
+                  lng: formState.longitude,
+                }}
+                required
+                placeholder="Type Event/Address here"
+                callback={(value) => {
+                  updateForm("address", value.address);
+                  updateForm("longitude", value.lng);
+                  updateForm("latitude", value.lat);
+                }}
+              />
+            )}
           </FormField>
           <FormField>
             <Label>Event Category</Label>

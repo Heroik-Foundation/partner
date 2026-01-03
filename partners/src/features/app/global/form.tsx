@@ -63,18 +63,18 @@ export const InputWithPrefix = (
   const inputPaddingLeft = prefixWidth ? `${prefixWidth + 14}px` : "0.75rem";
 
   return (
-    <div className="w-full relative h-12">
+    <div className="w-full relative h-14">
       {prefixItem && (
         <div
           ref={prefixRef}
-          className={cn("absolute top-[25%] left-3", prefixItemClassName)}
+          className={cn("absolute top-[28%] left-3", prefixItemClassName)}
         >
           {prefixItem}
         </div>
       )}
       <Input
         {...rest}
-        className={cn("border-primary/50 h-full", className)}
+        className={cn("border-primary/20 h-full", className)}
         style={{ paddingLeft: inputPaddingLeft }}
       />
     </div>

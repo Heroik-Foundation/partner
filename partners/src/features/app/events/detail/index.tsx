@@ -100,7 +100,7 @@ const EventDetail = () => {
             members={event.members.length}
             date={event.endTime}
             avatars={event.members.map((member) => member.photo)}
-            location={event.address}
+            location={event.address ?? event.meetingLink ?? ""}
           />
           <Info
             currency={event.currency}

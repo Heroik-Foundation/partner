@@ -65,7 +65,7 @@ const Home = () => {
                     title={event.name}
                     date={event.endTime}
                     price={event.ticketing[0].ticketPrice || 0}
-                    location={event.address}
+                    location={event.address ?? event.meetingLink ?? ""}
                     currency={event.currency}
                   />
                 </CarouselItem>

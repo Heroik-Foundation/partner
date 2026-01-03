@@ -24,18 +24,22 @@ export const Publish = () => {
     fundRaiser,
     longitude,
     latitude,
+    meetingLink,
+    isOnlineEvent,
   } = formState;
+
+  const locationData = isOnlineEvent
+    ? { meetingLink }
+    : { address, latitude, longitude };
 
   const { mutate, isPending, isSuccess } = useCreateEventMutation({
     name,
-    address,
     category: category.id,
     description,
     subcategory: subCategory?.id,
     privacy: "public",
     ...(photo ? { photo: photo as string | File } : {}),
-    latitude,
-    longitude,
+    ...locationData,
     endTime: convertDateTimeInputToISOString(startDate, startTime),
     eventEndDate: convertDateTimeInputToISOString(endDate, endTime),
     ...(mapRecurrenceStateToMutation(recurrence) && {
