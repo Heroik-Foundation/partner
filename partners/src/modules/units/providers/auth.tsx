@@ -1,4 +1,4 @@
-import { getTokens } from "@/lib/session";
+import { getActiveSession } from "@/lib/session";
 import { useRouter, useRouterState } from "@tanstack/react-router";
 import { Fragment, ReactNode, useCallback, useEffect } from "react";
 import { toast } from "sonner";
@@ -6,7 +6,8 @@ import { toast } from "sonner";
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { navigate } = useRouter();
   const { location } = useRouterState();
-  const { sessionToken } = getTokens();
+  const session = getActiveSession();
+  const sessionToken = session?.sessionToken;
   const pathname = location.pathname;
 
   const handleAuthState = useCallback(() => {

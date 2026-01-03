@@ -14,6 +14,7 @@ import { Label } from "@/modules/ui/label";
 import {
   calculateFees,
   formatter,
+  getProcessingFeeDisplay,
 } from "../../../edit/edit-ticket-type/helper/fees";
 import infoIcon from "../../../edit/edit-ticket-type/assets/info.svg";
 import { Switch } from "@/modules/ui/switch";
@@ -212,7 +213,10 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           <span className="font-semibold text-sm">Payment Processing Fee:</span>
           <span className="font-black text-primary">
             {Math.abs(localTicketState.ticketPrice || 0) > 0
-              ? `1.5% + ${selectedCurrency.symbol}0.20`
+              ? getProcessingFeeDisplay(
+                  selectedCurrency.value,
+                  selectedCurrency.symbol
+                )
               : `${selectedCurrency.symbol}0`}
           </span>
         </div>

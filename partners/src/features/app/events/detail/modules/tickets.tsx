@@ -68,6 +68,9 @@ const Ticket = (
           id: eventId,
           ticketTypeId: _id,
         }}
+        search={{
+          currency: currency as any,
+        }}
       >
         <img src={editIcon} alt="" className="w-5 h-5" />
       </Link>

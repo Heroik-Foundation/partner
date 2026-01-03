@@ -14,19 +14,32 @@ import { Switch } from "@/modules/ui/switch";
 import { Fragment } from "react/jsx-runtime";
 
 import infoIcon from "./assets/info.svg";
-import { useParams } from "@tanstack/react-router";
+import { useParams, useSearch } from "@tanstack/react-router";
 import { useUpdateEventTicketTypeForm } from "./hooks/logic";
-import { calculateFees, formatter } from "./helper/fees";
+import {
+  calculateFees,
+  formatter,
+  getProcessingFeeDisplay,
+} from "./helper/fees";
 import { Button } from "@/modules/ui/button";
 import { useEditEventTicketMutation } from "./hooks/mutation";
 import { convertDateTimeInputToISOString } from "@/helpers/time";
 import { cn } from "@/lib/utils";
 import { sanitizeNumericInput } from "@/helpers/input";
+import { useCurrencyStore } from "@/stores/currency";
 
 const EditTicketType = () => {
   const { id, ticketTypeId } = useParams({
     strict: false,
   });
+
+  const { getSymbolByValue } = useCurrencyStore();
+
+  const { currency } = useSearch({
+    from: "/app/events/$id/edit/$ticketTypeId/",
+  });
+
+  const currencySymbol = getSymbolByValue(currency) || "£";
 
   const { formState, updateFormField, absorbFees } =
     useUpdateEventTicketTypeForm({
@@ -70,7 +83,7 @@ const EditTicketType = () => {
             <Label>Event Ticket Price</Label>
             <InputWithPrefix
               prefixItemClassName="text-primary font-bold"
-              prefixItem="£"
+              prefixItem={currencySymbol}
               placeholder="0"
               type="text"
               value={formState.ticketPrice}
@@ -90,14 +103,17 @@ const EditTicketType = () => {
             <div className="flex items-center justify-between">
               <span className="font-bold text-sm">Ticket Price</span>
               <span className="font-black text-primary">
-                £{formatter.format(ticketPrice)}
+                {currencySymbol}
+                {formatter.format(ticketPrice)}
               </span>
             </div>
             <hr className="w-full border-primary/30" />
             <div className="flex items-center justify-between">
               <span className="font-semibold text-sm">Hiroek Fee:</span>
               <span className="font-black text-primary">
-                {Math.abs(ticketPrice || 0) > 0 ? "£0.60" : "£0"}
+                {Math.abs(ticketPrice || 0) > 0
+                  ? `${currencySymbol}0.60`
+                  : `${currencySymbol}0`}
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -105,20 +121,24 @@ const EditTicketType = () => {
                 Payment Processing Fee:
               </span>
               <span className="font-black text-primary">
-                {Math.abs(ticketPrice || 0) > 0 ? "1.5% + £0.20" : "£0"}
+                {Math.abs(ticketPrice || 0) > 0
+                  ? getProcessingFeeDisplay(currency, currencySymbol)
+                  : `${currencySymbol}0`}
               </span>
             </div>
             <hr className="w-full border-primary/30" />
             <div className="flex items-center justify-between">
               <span className="font-semibold text-sm">Buyers Pay:</span>
               <span className="font-black text-primary">
-                £{formatter.format(feeBreakdown.buyersPay)}
+                {currencySymbol}
+                {formatter.format(feeBreakdown.buyersPay)}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="font-semibold text-sm">You Receive:</span>
               <span className="font-black text-primary">
-                £{formatter.format(feeBreakdown.youReceive)}
+                {currencySymbol}
+                {formatter.format(feeBreakdown.youReceive)}
               </span>
             </div>
             <hr className="w-full border-primary/30" />

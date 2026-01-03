@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
-import { getTokens } from "@/lib/session";
+import { getActiveSession } from "@/lib/session";
 import { useQueryClient } from "@tanstack/react-query";
 
 type WebSocketHook = {
@@ -10,7 +10,8 @@ type WebSocketHook = {
 
 export function useWebSocket(): WebSocketHook {
   const socketRef = useRef<Socket | null>(null);
-  const { sessionToken } = getTokens();
+  const session = getActiveSession();
+  const sessionToken = session?.sessionToken;
   const queryClient = useQueryClient();
 
   useEffect(() => {

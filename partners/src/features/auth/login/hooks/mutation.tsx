@@ -7,9 +7,9 @@ import {
   handleUserResponseToError,
   ErrorResponse,
 } from "../../../../helpers/error";
-import { setTokens } from "@/lib/session";
+import { addSession } from "@/lib/session";
 
-type LoginMutationResponse = {
+type LoginResponse = {
   eventPartner: {
     name: string;
     logo: string;
@@ -20,9 +20,9 @@ type LoginMutationResponse = {
     bankName: string;
     sortCode: string;
     telephone: string;
-    eventsPerYear: 0;
+    eventsPerYear: number;
   };
-  token: "string";
+  token: string;
 };
 
 export function useLoginMutation() {
@@ -31,7 +31,7 @@ export function useLoginMutation() {
 
   return useMutation({
     mutationFn: async () => {
-      const { data } = await baseInstance.post<LoginMutationResponse>(
+      const { data } = await baseInstance.post<LoginResponse>(
         "/event-partners/login",
         {
           email: form.email,
@@ -42,12 +42,17 @@ export function useLoginMutation() {
       return data;
     },
     onSuccess: (data) => {
-      setTokens(data.token);
+      const { token, eventPartner } = data;
+
+      addSession({
+        sessionToken: token,
+        name: eventPartner.name,
+        email: eventPartner.email,
+      });
+
       resetForm();
       toast.success("Login successful");
-      navigate({
-        to: "/app",
-      });
+      navigate({ to: "/app" });
     },
     onError: (error: ErrorResponse) => {
       handleUserResponseToError(error);

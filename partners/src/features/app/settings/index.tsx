@@ -1,58 +1,52 @@
 import { Button } from "@/modules/ui/button";
 import { Header } from "../global/header";
 import { Setting, SettingProps } from "./modules/setting";
-import { deleteTokens } from "@/lib/session";
+import {
+  clearAllSessions,
+  getAllSessions,
+  removeSession,
+  getActiveSession,
+} from "@/lib/session";
 import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 
 export const Settings = () => {
-  // const appLink =
-  //   getPlatform() === "iOS" || getPlatform() === "macOS"
-  //     ? "https://apps.apple.com/ng/app/hiroek/id6474194083"
-  //     : "https://play.google.com/store/apps/details?id=com.hiroek.app.hiroek";
+  const { navigate } = useRouter();
+
+  const sessions = getAllSessions();
+  const activeSession = getActiveSession();
+
+  const handleLogoutAll = () => {
+    clearAllSessions();
+    toast.success("Logged out of all accounts");
+    navigate({ to: "/auth/login" });
+  };
+
+  const handleRemoveSession = (email: string) => {
+    if (sessions.length === 1) {
+      clearAllSessions();
+      toast.success("Logged out successfully");
+      navigate({ to: "/auth/login" });
+      return;
+    }
+
+    removeSession(email);
+
+    if (activeSession?.email === email) {
+      toast.success("Switched to another account");
+    } else {
+      toast.success("Account removed");
+    }
+  };
 
   const settings: SettingProps[] = [
-    // {
-    //   title: "Notifications",
-    //   icon: "notification",
-    //   toggles: [
-    //     {
-    //       label: "Enable push notifications",
-    //       value: false,
-    //       setValue: (_: boolean) => {},
-    //     },
-    //     {
-    //       label: "Enable email notifications",
-    //       value: false,
-    //       setValue: (_: boolean) => {},
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "Language",
-    //   icon: "language",
-    //   link: "/app/settings/contact",
-    // },
-    // {
-    //   title: "Rate our platform",
-    //   description: "Please give us your feedback",
-    //   icon: "thumbs",
-    //   link: appLink,
-    // },
     {
       title: "Contact Support",
       description: "Please give us your feedback",
       icon: "support",
       link: "/app/settings/contact",
     },
-    // {
-    //   title: "Delete Account",
-    //   description: "Delete your account from hiroek.",
-    //   icon: "delete",
-    // },
   ];
-
-  const { navigate } = useRouter();
 
   return (
     <div>
@@ -72,20 +66,47 @@ export const Settings = () => {
         ))}
       </div>
 
+      {sessions.length > 1 && (
+        <div className="mt-8 space-y-3">
+          <p className="text-sm font-medium text-foreground">
+            Logged in accounts
+          </p>
+          {sessions.map((session) => (
+            <div
+              key={session.email}
+              className="flex items-center justify-between rounded-lg bg-muted p-4"
+            >
+              <div>
+                <p className="font-medium">{session.name}</p>
+                <p className="text-sm text-muted-foreground">{session.email}</p>
+                {activeSession?.email === session.email && (
+                  <span className="text-xs text-primary">Active</span>
+                )}
+              </div>
+              {sessions.length > 1 && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleRemoveSession(session.email)}
+                >
+                  {activeSession?.email === session.email
+                    ? "Log out"
+                    : "Remove"}
+                </Button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="my-10" />
 
       <Button
         className="w-full"
-        onClick={() => {
-          deleteTokens();
-          toast.success("Logged out successfully");
-          navigate({
-            to: "/auth/login",
-          });
-        }}
         variant="destructive"
+        onClick={handleLogoutAll}
       >
-        Log out
+        Log out of all accounts
       </Button>
     </div>
   );

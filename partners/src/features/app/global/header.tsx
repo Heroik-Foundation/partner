@@ -92,7 +92,7 @@ export const Header = (props: HeaderProps) => {
         {addOns?.content}
       </div>
       {position === "stacked" && (
-        <div className="space-y-0.5">
+        <div className="space-y-0.5 pl-1">
           <h1 className="font-black text-primary text-2xl font-axiforma">
             {title}
           </h1>
