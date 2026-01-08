@@ -26,6 +26,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { FormPassword } from "@/features/auth/global/form";
 import { ItemNotFound } from "@/modules/units/card/not-found";
 import { motion, PanInfo } from "motion/react";
+import { ManageProfileMenu } from "./modules/menu";
 
 // const dummySessions = [
 //   {
@@ -153,7 +154,9 @@ export function ManageProfiles() {
   const { mutate: addSession, isPending } = useAddSessionMutation();
   const { navigate } = useRouter();
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
@@ -220,13 +223,14 @@ export function ManageProfiles() {
             <Button
               className="relative"
               variant="secondary"
-              onClick={() => setDialogOpen(true)}
+              onClick={() => setDrawerOpen(true)}
             >
               <Plus />
             </Button>
           ),
         }}
       />
+
       <div className="flex flex-col items-center space-y-2.5 text-center">
         <img
           src={`https://api.dicebear.com/7.x/initials/svg?seed=${activeSession?.name}`}
@@ -329,6 +333,20 @@ export function ManageProfiles() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <ManageProfileMenu
+        open={drawerOpen}
+        setOpen={setDrawerOpen}
+        primaryCTAFn={() => {
+          navigate({
+            to: "/auth/signup",
+          });
+        }}
+        secondaryCTAFn={() => {
+          setDrawerOpen(false);
+          setDialogOpen(true);
+        }}
+      />
     </div>
   );
 }

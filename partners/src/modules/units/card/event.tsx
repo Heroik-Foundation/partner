@@ -23,6 +23,8 @@ export type DetailProps = {
   content: string;
 };
 
+export const linkRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[^\s]*)?$/;
+
 export const Event = (props: EventProps) => {
   const {
     id,
@@ -38,6 +40,8 @@ export const Event = (props: EventProps) => {
   } = props;
   const { date: relativeDate, time: relativeTime } = formatISODate(date);
   const imageURL = thumbnail === "" ? "/image/input-preview.jpg" : thumbnail;
+
+  const isLink = linkRegex.test(location);
 
   return (
     <Link
@@ -63,7 +67,10 @@ export const Event = (props: EventProps) => {
 
       <div className="p-4 bg-white text-primary absolute rounded-xl space-y-2.5 left-0 right-0 bottom-5 mx-auto w-[90%]">
         <p className="font-bold text-sm first-letter:uppercase">{title}</p>
-        <EventDetail icon={MapPin} content={location} />
+        <EventDetail
+          icon={MapPin}
+          content={isLink ? "Online for online event" : location}
+        />
         <div className="flex space-x-2.5">
           <EventDetail icon={Calendar} content={relativeDate} />
           <EventDetail icon={Clock} content={relativeTime} />

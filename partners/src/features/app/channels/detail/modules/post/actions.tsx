@@ -13,7 +13,6 @@ type PostActionsProps = {
 export const PostActions = ({
   likes,
   isLiked,
-
   onLikeToggle,
 }: PostActionsProps): JSX.Element => (
   <div className="flex space-x-5">
