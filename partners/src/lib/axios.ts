@@ -2,7 +2,7 @@ import axios from "axios";
 import { getActiveSession, clearAllSessions } from "./session";
 import { toast } from "sonner";
 
-const isDev = import.meta.env.DEV === true;
+// const isDev = import.meta.env.DEV === true;
 
 const baseInstance = axios.create({
   baseURL: "https://dev.hiroek.io/api",
