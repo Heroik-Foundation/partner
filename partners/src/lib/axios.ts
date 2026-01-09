@@ -5,15 +5,15 @@ import { toast } from "sonner";
 const isDev = import.meta.env.DEV === true;
 
 const baseInstance = axios.create({
-  baseURL: isDev
-    ? "https://dev.hiroek.io/api"
-    : "https://staging.hiroek.io/api",
+  baseURL: "https://dev.hiroek.io/api",
+
+  // ? isDev
+  //   ?
+  //   : "https://staging.hiroek.io/api",
 });
 
 const authenticatedInstance = axios.create({
-  baseURL: isDev
-    ? "https://dev.hiroek.io/api"
-    : "https://staging.hiroek.io/api",
+  baseURL: "https://dev.hiroek.io/api",
 });
 
 authenticatedInstance.interceptors.request.use((config) => {
