@@ -66,7 +66,13 @@ export default function Info(props: InfoProps) {
         <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex">
           About Event
         </h5>
-        <p className={cn("text-sm font-semibold text-center text-primary")}>
+        <p
+          className={cn(
+            "text-sm font-semibold text-center text-primary leading-relaxed",
+            "whitespace-pre-wrap",
+            description.length > 200 && "text-start"
+          )}
+        >
           {description}
         </p>
       </div>

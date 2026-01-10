@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { DetailProps, EventProps } from "@/modules/units/card/event";
 import { Calendar, Clock, MapPin } from "lucide-react";
 import { Fragment } from "react/jsx-runtime";
-import { linkRegex } from "@/modules/units/card/event";
+
 import ticketIcon from "../assets/ticket.svg";
 
 type HighlightProps = {
@@ -16,7 +16,7 @@ export const Highlight = (props: HighlightProps) => {
   const {
     title,
     date,
-    location,
+
     thumbnail,
     avatars,
     members,
@@ -60,7 +60,7 @@ export const Highlight = (props: HighlightProps) => {
         <EventDetail
           icon={MapPin}
           content={
-            linkRegex.test(location) ? "Online for online event" : location
+            props.meetingLink ? "Online" : props.location ? props.location : ""
           }
         />
         <div className="flex space-x-2.5 justify-between">
@@ -124,8 +124,8 @@ const EventDetail = (props: DetailProps) => {
       md:space-x-2 md:text-base"
     >
       <div
-        className="w-4 h-4
-        md:w-5 md:h-5"
+        className="w-4 h-4 min-w-4
+        md:w-5 md:h-5 md:min-w-4"
       >
         <props.icon className="fill-primary stroke-white" size="100%" />
       </div>

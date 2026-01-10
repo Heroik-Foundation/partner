@@ -53,7 +53,9 @@ const EventCreationSuccess = () => {
             title={event.name}
             date={event.endTime}
             price={event.ticketing[0].ticketPrice}
-            location={event.address ?? event.meetingLink ?? ""}
+            {...(event.meetingLink
+              ? { meetingLink: event.meetingLink || "" }
+              : { location: event.address || "" })}
           />
         ) : (
           <EventSkeletonLoader />

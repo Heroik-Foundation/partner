@@ -5,25 +5,40 @@ import { formatISODate } from "@/helpers/time";
 import { formatCurrency } from "@/helpers/text";
 import { CurrencyCode } from "@/stores/currency";
 
-export type EventProps = {
+export type PhysicalEvent = {
   id: string;
   title: string;
   date: string;
   price: number;
-  location: string;
   thumbnail: string;
+  currency: CurrencyCode;
+  location: string;
+  meetingLink?: never;
   nodeRef?: any;
   className?: string;
   availableTickets?: number;
-  currency: CurrencyCode;
 };
+
+export type VirtualEvent = {
+  id: string;
+  title: string;
+  date: string;
+  price: number;
+  thumbnail: string;
+  currency: CurrencyCode;
+  meetingLink: string;
+  location?: never;
+  nodeRef?: any;
+  className?: string;
+  availableTickets?: number;
+};
+
+export type EventProps = PhysicalEvent | VirtualEvent;
 
 export type DetailProps = {
   icon: LucideIcon;
   content: string;
 };
-
-export const linkRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[^\s]*)?$/;
 
 export const Event = (props: EventProps) => {
   const {
@@ -31,7 +46,6 @@ export const Event = (props: EventProps) => {
     title,
     date,
     price,
-    location,
     thumbnail,
     nodeRef,
     className,
@@ -40,8 +54,6 @@ export const Event = (props: EventProps) => {
   } = props;
   const { date: relativeDate, time: relativeTime } = formatISODate(date);
   const imageURL = thumbnail === "" ? "/image/input-preview.jpg" : thumbnail;
-
-  const isLink = linkRegex.test(location);
 
   return (
     <Link
@@ -69,7 +81,9 @@ export const Event = (props: EventProps) => {
         <p className="font-bold text-sm first-letter:uppercase">{title}</p>
         <EventDetail
           icon={MapPin}
-          content={isLink ? "Online for online event" : location}
+          content={
+            props.meetingLink ? "Online" : props.location ? props.location : ""
+          }
         />
         <div className="flex space-x-2.5">
           <EventDetail icon={Calendar} content={relativeDate} />
