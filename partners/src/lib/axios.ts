@@ -3,13 +3,12 @@ import { getActiveSession, clearAllSessions } from "./session";
 import { toast } from "sonner";
 
 // const isDev = import.meta.env.DEV === true;
+// const BASE_URL = isDev
+//   ? "https://dev.hiroek.io/api"
+//   : "https://staging.hiroek.io/api";
 
 const baseInstance = axios.create({
   baseURL: "https://dev.hiroek.io/api",
-
-  // ? isDev
-  //   ?
-  //   : "https://staging.hiroek.io/api",
 });
 
 const authenticatedInstance = axios.create({

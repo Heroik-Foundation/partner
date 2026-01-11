@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { UserRoundPlus } from "lucide-react";
 
 const Profile = () => {
-  const { form, setForm, resetForm } = useAuthStore();
+  const { form, setForm } = useAuthStore();
   const { data: user } = useUserPropertiesQuery();
   const { mutate, isPending } = useUpdateUserDetailsMutation({
     name: form.name,
@@ -51,10 +51,6 @@ const Profile = () => {
 
   useEffect(() => {
     handleInitialData();
-
-    return () => {
-      resetForm();
-    };
   }, [form.email, form.number, user]);
 
   return (

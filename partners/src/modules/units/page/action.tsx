@@ -54,6 +54,7 @@ type DialogProps = {
   setIsOpen?: (open: boolean) => void;
   callback: {
     fn: () => void;
+    title?: string;
     isPending?: boolean;
     isSuccess?: boolean;
   };
@@ -281,7 +282,7 @@ export const ActionDialog = (props: DialogProps) => {
               fn();
             }}
           >
-            {isPending ? <Loader /> : "Accept"}
+            {isPending ? <Loader /> : String(callback.title || "Accept")}
           </button>
         </div>
       </DialogContent>

@@ -27,6 +27,8 @@ import { convertDateTimeInputToISOString } from "@/helpers/time";
 import { cn } from "@/lib/utils";
 import { sanitizeNumericInput } from "@/helpers/input";
 import { useCurrencyStore } from "@/stores/currency";
+import { useCurrencyQuoteQuery } from "@/features/app/global/hooks/query";
+import { convertGbpTo } from "@/helpers/text";
 
 const EditTicketType = () => {
   const { id, ticketTypeId } = useParams({
@@ -38,6 +40,15 @@ const EditTicketType = () => {
   const { currency } = useSearch({
     from: "/app/events/$id/edit/$ticketTypeId/",
   });
+
+  const { data } = useCurrencyQuoteQuery();
+  const hiroekFeeGbp = 0.6;
+
+  const equivalentHiroekFee = convertGbpTo(
+    hiroekFeeGbp,
+    currency,
+    data?.quotes
+  );
 
   const currencySymbol = getSymbolByValue(currency) || "£";
 
@@ -112,7 +123,7 @@ const EditTicketType = () => {
               <span className="font-semibold text-sm">Hiroek Fee:</span>
               <span className="font-black text-primary">
                 {Math.abs(ticketPrice || 0) > 0
-                  ? `${currencySymbol}0.60`
+                  ? `${currencySymbol}${Number(equivalentHiroekFee || 0).toFixed(2)}`
                   : `${currencySymbol}0`}
               </span>
             </div>

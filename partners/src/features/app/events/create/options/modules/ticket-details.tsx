@@ -23,6 +23,8 @@ import { getValidTicketCount } from "../helper/ticket";
 import { useState, useEffect } from "react";
 import { CurrencySelect } from "@/modules/units/form/currency";
 import { useCurrencyStore } from "@/stores/currency";
+import { convertGbpTo } from "@/helpers/text";
+import { useCurrencyQuoteQuery } from "@/features/app/global/hooks/query";
 
 type Props = {
   ticketStateContext: "adding" | "creating";
@@ -40,6 +42,14 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
   const { selectedCurrency } = useCurrencyStore();
   const { formState, updateForm } = useEventFormStore();
   const { ticketing } = formState;
+  const { data } = useCurrencyQuoteQuery();
+  const hiroekFeeGbp = 0.6;
+
+  const equivalentHiroekFee = convertGbpTo(
+    hiroekFeeGbp,
+    selectedCurrency.value,
+    data?.quotes
+  );
 
   const currentIndex =
     ticketStateContext === "creating"
@@ -206,7 +216,9 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           <span className="font-semibold text-sm">Hiroek Fee:</span>
           <span className="font-black text-primary">
             {selectedCurrency.symbol}
-            {Math.abs(localTicketState.ticketPrice || 0) > 0 ? "0.60" : "0"}
+            {Math.abs(localTicketState.ticketPrice || 0) > 0
+              ? Number(equivalentHiroekFee || 0).toFixed(2)
+              : "0"}
           </span>
         </div>
         <div className="flex items-center justify-between">
@@ -263,7 +275,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         />
 
         <ul className="flex items-center w-full justify-between">
-          {["Standard", "Silver", "Gold", "Platnium"].map((option, index) => {
+          {["Standard", "Silver", "Gold", "Platinum"].map((option, index) => {
             return (
               <li
                 className={cn(

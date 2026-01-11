@@ -40,6 +40,17 @@ type PartnerStatsQueryResponse = {
   };
 };
 
+export type CurrencyQuoteQueryResponse = {
+  quotes: {
+    usd: Number;
+    cad: Number;
+    eur: Number;
+    gbp: Number;
+    aud: Number;
+    nzd: Number;
+  };
+};
+
 // Queries
 
 export function useUserPropertiesQuery() {
@@ -71,6 +82,20 @@ export function usePartnerStatsQuery({ userId }: PartnerStatsProps) {
     staleTime: timeInMinutes(5),
     retry: 5,
     enabled: userId !== undefined,
+  });
+}
+
+export function useCurrencyQuoteQuery() {
+  return useQuery({
+    queryKey: ["currency-quotes"],
+    queryFn: async () => {
+      const { data } =
+        await authenticatedInstance.get<CurrencyQuoteQueryResponse>(
+          "/donations/currency-quote"
+        );
+
+      return data;
+    },
   });
 }
 

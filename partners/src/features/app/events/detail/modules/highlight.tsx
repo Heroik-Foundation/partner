@@ -1,10 +1,13 @@
 import { formatISODate } from "@/helpers/time";
 import { cn } from "@/lib/utils";
 import { DetailProps, EventProps } from "@/modules/units/card/event";
-import { Calendar, Clock, MapPin } from "lucide-react";
+import { Calendar, Clock, MapPin, Video } from "lucide-react";
 import { Fragment } from "react/jsx-runtime";
 
 import ticketIcon from "../assets/ticket.svg";
+import { ActionDialog } from "@/modules/units/page/action";
+import { Button } from "@/modules/ui/button";
+import { extractMeetingLink } from "@/helpers/text";
 
 type HighlightProps = {
   members?: number;
@@ -13,15 +16,7 @@ type HighlightProps = {
 } & Omit<EventProps, "price" | "nodeRef" | "id">;
 
 export const Highlight = (props: HighlightProps) => {
-  const {
-    title,
-    date,
-
-    thumbnail,
-    avatars,
-    members,
-    availableTickets,
-  } = props;
+  const { title, date, thumbnail, avatars, members, availableTickets } = props;
   const { date: relativeDate, time: relativeTime } = formatISODate(date);
   const imageURL = thumbnail === "" ? "/image/input-preview.jpg" : thumbnail;
 
@@ -57,12 +52,41 @@ export const Highlight = (props: HighlightProps) => {
         >
           {title}
         </p>
-        <EventDetail
-          icon={MapPin}
-          content={
-            props.meetingLink ? "Online" : props.location ? props.location : ""
-          }
-        />
+        <div
+          className={cn(
+            props.meetingLink && "flex items-center justify-between"
+          )}
+        >
+          {props.meetingLink && (
+            <ActionDialog
+              title="Meeting Details"
+              description={`${props.meetingLink}`}
+              trigger={
+                <Button size={"sm"} variant={"accent"} className="w-fit">
+                  <Video /> View Details
+                </Button>
+              }
+              callback={{
+                fn: () => {
+                  const safeUrl = extractMeetingLink(props.meetingLink || "");
+
+                  window.open(safeUrl, "_blank", "noopener,noreferrer");
+                },
+                title: "Open Link",
+              }}
+            />
+          )}
+          <EventDetail
+            icon={MapPin}
+            content={
+              props.meetingLink
+                ? "Online"
+                : props.location
+                  ? props.location
+                  : ""
+            }
+          />
+        </div>
         <div className="flex space-x-2.5 justify-between">
           <EventDetail icon={Calendar} content={relativeDate} />
           <EventDetail icon={Clock} content={relativeTime} />
