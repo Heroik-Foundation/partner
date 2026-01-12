@@ -28,6 +28,7 @@ import { ItemNotFound } from "@/modules/units/card/not-found";
 import { motion, PanInfo } from "motion/react";
 import { ManageProfileMenu } from "./modules/menu";
 import { cn } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
 
 // const dummySessions = [
 //   {
@@ -161,6 +162,7 @@ export function ManageProfiles() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const handleAddAccount = () => {
     if (!email || !password) {
@@ -175,7 +177,9 @@ export function ManageProfiles() {
           setDialogOpen(false);
           setEmail("");
           setPassword("");
-          toast.success("Account added and switched successfully");
+          toast.success("Account added and switched successfully", {
+            id: "account-added-success",
+          });
         },
       }
     );
@@ -187,6 +191,7 @@ export function ManageProfiles() {
       toast.success("Switched account");
       navigate({ to: "/app" });
     }
+    queryClient.invalidateQueries();
   };
 
   const handleRemoveAccount = (sessionEmail: string) => {
