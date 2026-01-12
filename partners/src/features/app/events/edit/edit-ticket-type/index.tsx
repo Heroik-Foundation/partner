@@ -172,7 +172,7 @@ const EditTicketType = () => {
             />
 
             <ul className="flex items-center justify-between">
-              {["Standard", "Silver", "Gold", "Platnium"].map(
+              {["Standard", "Silver", "Gold", "Platinum"].map(
                 (option, index) => {
                   return (
                     <li

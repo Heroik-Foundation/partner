@@ -70,7 +70,7 @@ export default function Info(props: InfoProps) {
           className={cn(
             "text-sm font-semibold text-center text-primary leading-relaxed",
             "whitespace-pre-wrap",
-            description.length > 200 && "text-start"
+            "text-start"
           )}
         >
           {description}

@@ -86,19 +86,21 @@ export const Manage = ({
           salesEndDate: safeExtractDate(ticket.salesEndDate),
         })),
       }),
-      ...(event.fundRaiser && {
-        fundRaiser: {
-          fundRaisingGoal: Math.abs(
-            Number(event.eventPledge.minimumPledge / 100)
-          ),
-          organizations: event.eventPledge.organizations.map(
-            (organization) => ({
-              name: organization.name,
-              id: organization._id,
-            })
-          ),
-        },
-      }),
+      ...(event.eventPledge &&
+        event.eventPledge.organizations &&
+        event.eventPledge.minimumPledge && {
+          fundRaiser: {
+            fundRaisingGoal: Math.abs(
+              Number(event.eventPledge.minimumPledge / 100)
+            ),
+            organizations: event.eventPledge.organizations.map(
+              (organization) => ({
+                name: organization.name,
+                id: organization._id,
+              })
+            ),
+          },
+        }),
       ...(event.recurrence && {
         recurrence: event.recurrence as any,
       }),

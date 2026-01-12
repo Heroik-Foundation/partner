@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/stores/auth";
+import { AuthForm, initialValues } from "@/stores/auth";
 import { ImageWithPreview } from "@/modules/units/form/image";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
@@ -12,7 +12,7 @@ import {
 } from "@/features/auth/global/form";
 import { handleInputChangeEvent } from "@/features/auth/global/helpers/input";
 import { useUserPropertiesQuery } from "../global/hooks/query";
-import { Fragment, useCallback, useEffect } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { useUpdateUserDetailsMutation } from "./hooks/mutation";
 import { Textarea } from "@/modules/ui/textarea";
 import { Header } from "../global/header";
@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { UserRoundPlus } from "lucide-react";
 
 const Profile = () => {
-  const { form, setForm } = useAuthStore();
+  const [form, setForm] = useState<AuthForm>(initialValues);
   const { data: user } = useUserPropertiesQuery();
   const { mutate, isPending } = useUpdateUserDetailsMutation({
     name: form.name,

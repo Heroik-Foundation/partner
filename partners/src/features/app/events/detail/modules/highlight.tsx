@@ -57,6 +57,17 @@ export const Highlight = (props: HighlightProps) => {
             props.meetingLink && "flex items-center justify-between"
           )}
         >
+          <EventDetail
+            icon={MapPin}
+            content={
+              props.meetingLink
+                ? "Online"
+                : props.location
+                  ? props.location
+                  : ""
+            }
+          />
+
           {props.meetingLink && (
             <ActionDialog
               title="Meeting Details"
@@ -69,23 +80,12 @@ export const Highlight = (props: HighlightProps) => {
               callback={{
                 fn: () => {
                   const safeUrl = extractMeetingLink(props.meetingLink || "");
-
                   window.open(safeUrl, "_blank", "noopener,noreferrer");
                 },
                 title: "Open Link",
               }}
             />
           )}
-          <EventDetail
-            icon={MapPin}
-            content={
-              props.meetingLink
-                ? "Online"
-                : props.location
-                  ? props.location
-                  : ""
-            }
-          />
         </div>
         <div className="flex space-x-2.5 justify-between">
           <EventDetail icon={Calendar} content={relativeDate} />

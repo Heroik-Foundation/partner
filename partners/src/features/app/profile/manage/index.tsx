@@ -1,4 +1,4 @@
-import { Button } from "@/modules/ui/button";
+import { Button, buttonVariants } from "@/modules/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/modules/ui/avatar";
 import {
   Dialog,
@@ -17,7 +17,7 @@ import {
   clearAllSessions,
   getAllSessions,
 } from "@/lib/session";
-import { useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { useAddSessionMutation } from "./hooks";
 import { Header } from "../../global/header";
@@ -27,6 +27,7 @@ import { FormPassword } from "@/features/auth/global/form";
 import { ItemNotFound } from "@/modules/units/card/not-found";
 import { motion, PanInfo } from "motion/react";
 import { ManageProfileMenu } from "./modules/menu";
+import { cn } from "@/lib/utils";
 
 // const dummySessions = [
 //   {
@@ -313,6 +314,17 @@ export function ManageProfiles() {
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddAccount()}
               />
+              <Link
+                to="/auth/recovery"
+                className={cn(
+                  buttonVariants({
+                    variant: "ghost",
+                  }),
+                  "p-0 h-4 text-primary/50"
+                )}
+              >
+                Forgot Password ?
+              </Link>
             </div>
           </div>
           <div className="flex justify-end gap-3">

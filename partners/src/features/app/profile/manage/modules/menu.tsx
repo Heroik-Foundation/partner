@@ -44,7 +44,7 @@ export const ManageProfileMenu = ({
                   option.fn();
                 }}
               >
-                <option.icon className="stroke-background " size={16} />
+                <option.icon className="stroke-background" size={16} />
                 <span className="text-sm font-bold">{option.title}</span>
               </button>
             );
