@@ -14,7 +14,6 @@ import { Label } from "@/modules/ui/label";
 import {
   calculateFees,
   formatter,
-  getProcessingFeeDisplay,
 } from "../../../edit/edit-ticket-type/helper/fees";
 import infoIcon from "../../../edit/edit-ticket-type/assets/info.svg";
 import { Switch } from "@/modules/ui/switch";
@@ -39,7 +38,7 @@ const DEFAULT_TICKET_STATE: TicketTierState = {
 };
 
 export const TicketEventDetails = ({ ticketStateContext }: Props) => {
-  const { selectedCurrency } = useCurrencyStore();
+  const { selectedCurrency, getStripeFee } = useCurrencyStore();
   const { formState, updateForm } = useEventFormStore();
   const { ticketing } = formState;
   const { data } = useCurrencyQuoteQuery();
@@ -91,7 +90,8 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
 
   const feeBreakdown = calculateFees(
     localTicketState.ticketPrice,
-    formState.absorbFees
+    formState.absorbFees,
+    Number(equivalentHiroekFee)
   );
 
   const firstTicketHasUnlimitedSignup =
@@ -224,12 +224,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Payment Processing Fee:</span>
           <span className="font-black text-primary">
-            {Math.abs(localTicketState.ticketPrice || 0) > 0
-              ? getProcessingFeeDisplay(
-                  selectedCurrency.value,
-                  selectedCurrency.symbol
-                )
-              : `${selectedCurrency.symbol}0`}
+            {getStripeFee(selectedCurrency.value)}
           </span>
         </div>
         <hr className="w-full border-primary/30" />

@@ -16,11 +16,7 @@ import { Fragment } from "react/jsx-runtime";
 import infoIcon from "./assets/info.svg";
 import { useParams, useSearch } from "@tanstack/react-router";
 import { useUpdateEventTicketTypeForm } from "./hooks/logic";
-import {
-  calculateFees,
-  formatter,
-  getProcessingFeeDisplay,
-} from "./helper/fees";
+import { calculateFees, formatter } from "./helper/fees";
 import { Button } from "@/modules/ui/button";
 import { useEditEventTicketMutation } from "./hooks/mutation";
 import { convertDateTimeInputToISOString } from "@/helpers/time";
@@ -35,7 +31,7 @@ const EditTicketType = () => {
     strict: false,
   });
 
-  const { getSymbolByValue } = useCurrencyStore();
+  const { getSymbolByValue, getStripeFee } = useCurrencyStore();
 
   const { currency } = useSearch({
     from: "/app/events/$id/edit/$ticketTypeId/",
@@ -60,7 +56,11 @@ const EditTicketType = () => {
 
   const ticketPrice = Number(formState.ticketPrice);
 
-  const feeBreakdown = calculateFees(ticketPrice, absorbFees);
+  const feeBreakdown = calculateFees(
+    ticketPrice,
+    absorbFees,
+    Number(equivalentHiroekFee)
+  );
 
   const { mutate, isPending } = useEditEventTicketMutation({
     eventId: id || "",
@@ -132,9 +132,7 @@ const EditTicketType = () => {
                 Payment Processing Fee:
               </span>
               <span className="font-black text-primary">
-                {Math.abs(ticketPrice || 0) > 0
-                  ? getProcessingFeeDisplay(currency, currencySymbol)
-                  : `${currencySymbol}0`}
+                {getStripeFee(currency)}
               </span>
             </div>
             <hr className="w-full border-primary/30" />

@@ -91,9 +91,9 @@ export const PreLaunch = () => {
         title={formState.name}
         thumbnail={thumbnailUrl}
         date={eventDate}
-        location={
-          formState.isOnlineEvent ? formState.meetingLink : formState.address
-        }
+        {...(formState.meetingLink
+          ? { meetingLink: formState.meetingLink || "" }
+          : { location: formState.address || "" })}
       />
 
       <div className="space-y-5 mt-2.5">
