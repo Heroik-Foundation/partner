@@ -1,7 +1,5 @@
 import { baseInstance } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
-import { toast } from "sonner";
 
 import { addSession, setActiveSession } from "@/lib/session";
 import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
