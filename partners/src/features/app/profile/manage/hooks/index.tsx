@@ -15,8 +15,6 @@ type AddSessionResponse = {
 };
 
 export function useAddSessionMutation() {
-  const { navigate } = useRouter();
-
   return useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
       const { data } = await baseInstance.post<AddSessionResponse>(
@@ -36,10 +34,6 @@ export function useAddSessionMutation() {
       });
 
       setActiveSession(eventPartner.email);
-
-      toast.success(`Logged in as ${eventPartner.name}`);
-
-      navigate({ to: "/app/profile" });
     },
     onError: (error: ErrorResponse) => {
       handleUserResponseToError(error);
