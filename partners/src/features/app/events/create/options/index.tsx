@@ -50,6 +50,8 @@ const CreateEventOptions = () => {
   const navigate = useNavigate();
   const { previousPath } = useRouteStore();
 
+  console.log(formState);
+
   const [isCancellationDrawerOpen, setIsCancellationDrawerOpen] =
     useState(false);
   const [isActionDrawerOpen, setIsActionDrawerOpen] = useState(true);

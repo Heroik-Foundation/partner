@@ -4,28 +4,26 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 
-type UpdateBankDetailsMutationProps = {
-  bankAccountName: string;
-  bankAccountNumber: string;
-  bankName: string;
-  sortCode: string;
-  pin: string;
-};
+// type UpdateBankDetailsMutationProps = {
+//   bankAccountName: string;
+//   bankAccountNumber: string;
+//   bankName: string;
+//   sortCode: string;
+//   pin: string;
+// };
 
 type UpdateSecurityPinMutationProps = {
   newPin: string;
   oldPin?: string;
 };
 
-export function useUpdateBankDetailsMutation(
-  props: UpdateBankDetailsMutationProps
-) {
+export function useUpdateBankDetailsMutation() {
   const { navigate } = useRouter();
   const { selectedCurrency } = useCurrencyStore();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (props: any) => {
       const { data } = await authenticatedInstance.patch(
         `/event-partners/update-bank-details/${selectedCurrency.value}`,
         {

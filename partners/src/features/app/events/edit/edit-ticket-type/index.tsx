@@ -132,7 +132,9 @@ const EditTicketType = () => {
                 Payment Processing Fee:
               </span>
               <span className="font-black text-primary">
-                {getStripeFee(currency)}
+                {ticketPrice > 0
+                  ? getStripeFee(currency)
+                  : `${currencySymbol}0`}
               </span>
             </div>
             <hr className="w-full border-primary/30" />

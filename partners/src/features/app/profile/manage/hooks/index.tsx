@@ -1,7 +1,7 @@
 import { baseInstance } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
 
-import { addSession, setActiveSession } from "@/lib/session";
+import { addSession } from "@/lib/session";
 import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
 
 type AddSessionResponse = {
@@ -30,8 +30,6 @@ export function useAddSessionMutation() {
         name: eventPartner.name,
         email: eventPartner.email,
       });
-
-      setActiveSession(eventPartner.email);
     },
     onError: (error: ErrorResponse) => {
       handleUserResponseToError(error);

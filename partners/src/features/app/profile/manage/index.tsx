@@ -30,24 +30,6 @@ import { ManageProfileMenu } from "./modules/menu";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 
-// const dummySessions = [
-//   {
-//     sessionToken: "token_001",
-//     name: "Alice Johnson",
-//     email: "alice.johnson@example.com",
-//   },
-//   {
-//     sessionToken: "token_002",
-//     name: "Bob Smith",
-//     email: "bob.smith@example.com",
-//   },
-//   {
-//     sessionToken: "token_003",
-//     name: "Charlie Brown",
-//     email: "charlie.brown@example.com",
-//   },
-// ];
-
 interface SwipeableSessionItemProps {
   session: {
     email: string;
@@ -177,7 +159,7 @@ export function ManageProfiles() {
           setDialogOpen(false);
           setEmail("");
           setPassword("");
-          toast.success("Account added and switched successfully", {
+          toast.success("Account added successfully", {
             id: "account-added-success",
           });
         },
@@ -317,7 +299,7 @@ export function ManageProfiles() {
                 id="add-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddAccount()}
+                onKeyDown={(e) => e.key === "Enter"}
               />
               <Link
                 to="/auth/recovery"

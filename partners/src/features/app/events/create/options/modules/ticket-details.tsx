@@ -224,7 +224,9 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Payment Processing Fee:</span>
           <span className="font-black text-primary">
-            {getStripeFee(selectedCurrency.value)}
+            {localTicketState.ticketPrice > 0
+              ? getStripeFee(selectedCurrency.value)
+              : `${selectedCurrency.symbol}0`}
           </span>
         </div>
         <hr className="w-full border-primary/30" />
