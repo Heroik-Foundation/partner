@@ -1,4 +1,5 @@
 import { useConversationsQuery } from "@/features/app/global/hooks/query";
+import { truncateText } from "@/helpers/text";
 import { getReadableTime } from "@/helpers/time";
 import { useIntersectionObserver } from "@/hooks/observer";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,8 @@ export const Previews = ({ searchQuery }: { searchQuery: string }) => {
 
         const seen = preview.lastMessage.status === "read";
 
+        console.log(participant);
+
         return (
           <Link
             to="/app/events/$id/messages/$id"
@@ -45,17 +48,21 @@ export const Previews = ({ searchQuery }: { searchQuery: string }) => {
           >
             <div className="flex items-center space-x-2">
               <img
-                src={participant.participant.photo}
+                src={
+                  participant.participant.photo || participant.participant.logo
+                }
                 alt={`${participant.participant.fullname}'s Image`}
                 loading="eager"
                 className="w-10 h-10 rounded-full border-2 border-primary object-cover object-center"
               />
               <div>
                 <h5 className="text-primary font-bold text-sm">
-                  {participant.participant.fullname}
+                  {participant.participant.fullname ||
+                    participant.participant.name ||
+                    "User"}
                 </h5>
                 <p className={cn("font-bold text-xs")}>
-                  {preview.lastMessage.message}
+                  {truncateText(preview.lastMessage.message, 30)}
                 </p>
               </div>
             </div>
