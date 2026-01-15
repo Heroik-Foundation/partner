@@ -13,8 +13,8 @@ export function useOTPValidationMutation() {
     mutationFn: async () => {
       const { data } = await baseInstance.post("/event-partners/verify", {
         verificationCode: form.code,
-        password: form.password,
-        email: form.email,
+        password: form.password.trim(),
+        email: form.email.trim(),
       });
 
       return data;

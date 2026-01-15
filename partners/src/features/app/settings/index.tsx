@@ -1,44 +1,10 @@
-import { Button } from "@/modules/ui/button";
+import { buttonVariants } from "@/modules/ui/button";
 import { Header } from "../global/header";
 import { Setting, SettingProps } from "./modules/setting";
-import {
-  clearAllSessions,
-  getAllSessions,
-  removeSession,
-  getActiveSession,
-} from "@/lib/session";
-import { toast } from "sonner";
-import { useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
 
 export const Settings = () => {
-  const { navigate } = useRouter();
-
-  const sessions = getAllSessions();
-  const activeSession = getActiveSession();
-
-  const handleLogoutAll = () => {
-    clearAllSessions();
-    toast.success("Logged out of all accounts");
-    navigate({ to: "/auth/login" });
-  };
-
-  const handleRemoveSession = (email: string) => {
-    if (sessions.length === 1) {
-      clearAllSessions();
-      toast.success("Logged out successfully");
-      navigate({ to: "/auth/login" });
-      return;
-    }
-
-    removeSession(email);
-
-    if (activeSession?.email === email) {
-      toast.success("Switched to another account");
-    } else {
-      toast.success("Account removed");
-    }
-  };
-
   const settings: SettingProps[] = [
     {
       title: "Contact Support",
@@ -66,48 +32,19 @@ export const Settings = () => {
         ))}
       </div>
 
-      {sessions.length > 1 && (
-        <div className="mt-8 space-y-3">
-          <p className="text-sm font-medium text-foreground">
-            Logged in accounts
-          </p>
-          {sessions.map((session) => (
-            <div
-              key={session.email}
-              className="flex items-center justify-between rounded-lg bg-muted p-4"
-            >
-              <div>
-                <p className="font-medium">{session.name}</p>
-                <p className="text-sm text-muted-foreground">{session.email}</p>
-                {activeSession?.email === session.email && (
-                  <span className="text-xs text-primary">Active</span>
-                )}
-              </div>
-              {sessions.length > 1 && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleRemoveSession(session.email)}
-                >
-                  {activeSession?.email === session.email
-                    ? "Log out"
-                    : "Remove"}
-                </Button>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
       <div className="my-10" />
 
-      <Button
-        className="w-full"
-        variant="destructive"
-        onClick={handleLogoutAll}
+      <Link
+        className={cn(
+          buttonVariants({
+            variant: "secondary",
+          }),
+          "w-full"
+        )}
+        to="/app/profile/manage"
       >
-        Log out of all accounts
-      </Button>
+        <span>Manage Accounts</span>
+      </Link>
     </div>
   );
 };

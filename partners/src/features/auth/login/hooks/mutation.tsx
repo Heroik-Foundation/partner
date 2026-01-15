@@ -34,8 +34,8 @@ export function useLoginMutation() {
       const { data } = await baseInstance.post<LoginResponse>(
         "/event-partners/login",
         {
-          email: form.email,
-          password: form.password,
+          email: form.email.trim(),
+          password: form.password.trim(),
         }
       );
 

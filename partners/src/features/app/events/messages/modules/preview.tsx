@@ -34,8 +34,6 @@ export const Previews = ({ searchQuery }: { searchQuery: string }) => {
 
         const seen = preview.lastMessage.status === "read";
 
-        console.log(participant);
-
         return (
           <Link
             to="/app/events/$id/messages/$id"

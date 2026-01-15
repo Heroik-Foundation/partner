@@ -7,9 +7,8 @@ const Textarea = React.forwardRef<
 >(({ className, ...props }, ref) => {
   // Function to adjust height based on content
   const adjustHeight = (textarea: HTMLTextAreaElement) => {
-    // Reset height to auto to get the correct scrollHeight
     textarea.style.height = "auto";
-    // Set height to scrollHeight (content height)
+
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
 

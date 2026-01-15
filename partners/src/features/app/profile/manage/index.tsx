@@ -157,7 +157,7 @@ export function ManageProfiles() {
     }
 
     addSession(
-      { email, password },
+      { email: email.trim(), password: password.trim() },
       {
         onSuccess: () => {
           setDialogOpen(false);
