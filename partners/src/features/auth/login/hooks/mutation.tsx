@@ -48,6 +48,7 @@ export function useLoginMutation() {
         sessionToken: token,
         name: eventPartner.name,
         email: eventPartner.email,
+        photoUrl: eventPartner.logo,
       });
 
       resetForm();

@@ -8,6 +8,7 @@ type AddSessionResponse = {
   eventPartner: {
     name: string;
     email: string;
+    logo: string;
   };
   token: string;
 };
@@ -29,6 +30,7 @@ export function useAddSessionMutation() {
         sessionToken: token,
         name: eventPartner.name,
         email: eventPartner.email,
+        photoUrl: eventPartner.logo,
       });
     },
     onError: (error: ErrorResponse) => {

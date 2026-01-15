@@ -2,11 +2,12 @@ interface Session {
   sessionToken: string;
   name: string;
   email: string;
+  photoUrl?: string;
 }
 
 const SESSIONS_COOKIE = "user_sessions";
 const ACTIVE_INDEX_COOKIE = "active_session_idx";
-const SESSION_EXPIRY_DAYS = 30; // Centralized expiry constant
+const SESSION_EXPIRY_DAYS = 30;
 
 function getCookie(name: string): string | null {
   const cookies = document.cookie.split(";").reduce(

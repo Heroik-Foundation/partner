@@ -34,6 +34,7 @@ interface SwipeableSessionItemProps {
   session: {
     email: string;
     name: string;
+    photoUrl?: string;
   };
   onSwitch: (email: string) => void;
   onRemove: (email: string) => void;
@@ -100,7 +101,10 @@ function SwipeableSessionItem({
           <div className="flex items-center gap-4">
             <Avatar className="h-10 w-10">
               <AvatarImage
-                src={`https://api.dicebear.com/7.x/initials/svg?seed=${session.name}`}
+                src={
+                  session.photoUrl ||
+                  `https://api.dicebear.com/7.x/initials/svg?seed=${session.name}`
+                }
               />
               <AvatarFallback>{session.name[0]}</AvatarFallback>
             </Avatar>
@@ -221,9 +225,12 @@ export function ManageProfiles() {
 
       <div className="flex flex-col items-center space-y-2.5 text-center">
         <img
-          src={`https://api.dicebear.com/7.x/initials/svg?seed=${activeSession?.name}`}
+          src={
+            activeSession?.photoUrl ||
+            `https://api.dicebear.com/7.x/initials/svg?seed=${activeSession?.name}`
+          }
           alt="User avatar"
-          className="w-20 h-20 rounded-full"
+          className="w-20 h-20 rounded-full object-fit object-center"
         />
         <p className="text-lg font-semibold">
           Hi, {truncateText(String(activeSession?.name || "User"))}
