@@ -47,14 +47,14 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
   const equivalentHiroekFee = convertGbpTo(
     hiroekFeeGbp,
     selectedCurrency.value,
-    data?.quotes
+    data?.quotes,
   );
 
   const currentIndex =
     ticketStateContext === "creating"
       ? Math.abs(
           getValidTicketCount(ticketing) -
-            (getValidTicketCount(ticketing) === 0 ? 0 : 1)
+            (getValidTicketCount(ticketing) === 0 ? 0 : 1),
         ) || 0
       : formState.currentTicketIndex;
 
@@ -91,7 +91,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
   const feeBreakdown = calculateFees(
     localTicketState.ticketPrice,
     formState.absorbFees,
-    Number(equivalentHiroekFee)
+    Number(equivalentHiroekFee),
   );
 
   const firstTicketHasUnlimitedSignup =
@@ -104,7 +104,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
 
   const updateSpecificTicketTier = (
     index: number,
-    updates: Partial<TicketTierState>
+    updates: Partial<TicketTierState>,
   ) => {
     const currentTiers = formState.ticketing || [];
 
@@ -136,7 +136,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
     }
 
     const updatedTiers = currentTiers.map((tier, i) =>
-      i === index ? { ...tier, ...updates } : tier
+      i === index ? { ...tier, ...updates } : tier,
     );
 
     updateForm("ticketing", updatedTiers);
@@ -278,7 +278,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
                 className={cn(
                   "px-4 py-2 text-xs font-bold bg-primary text-white rounded-full cursor-pointer transition-all",
                   localTicketState.ticketType === option &&
-                    "text-primary bg-primary/10 border border-primary"
+                    "text-primary bg-primary/10 border border-primary",
                 )}
                 key={index}
                 onClick={() => {
@@ -307,7 +307,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           decrement={() => {
             const newValue = Math.max(
               0,
-              Number(localTicketState.signUpLimit) - 1
+              Number(localTicketState.signUpLimit) - 1,
             );
             handleSignUpLimitChange(newValue);
           }}
