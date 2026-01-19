@@ -33,7 +33,7 @@ export const PreLaunch = () => {
     () =>
       typeof formState.photo !== "undefined" && formState.photo instanceof File
         ? URL.createObjectURL(formState.photo)
-        : "",
+        : formState.photo,
     [formState.photo]
   );
 
@@ -89,7 +89,7 @@ export const PreLaunch = () => {
         currency={selectedCurrency.value}
         availableTickets={trimNumber(totalTickets)}
         title={formState.name}
-        thumbnail={thumbnailUrl}
+        thumbnail={thumbnailUrl || ""}
         date={eventDate}
         {...(formState.meetingLink
           ? { meetingLink: formState.meetingLink || "" }
