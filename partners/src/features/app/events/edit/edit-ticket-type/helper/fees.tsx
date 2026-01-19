@@ -6,17 +6,16 @@ interface ProcessingFeeConfig {
 }
 
 const PROCESSING_FEE_CONFIGS: Record<string, ProcessingFeeConfig> = {
-  gbp: { rate: 0.014, fixed: 0.2 },
-  usd: { rate: 0.029, fixed: 0.3 },
-  eur: { rate: 0.015, fixed: 0.25 },
-  aud: { rate: 0.0175, fixed: 0.3 },
-  cad: { rate: 0.029, fixed: 0.3 },
-  nzd: { rate: 0.0265, fixed: 0.3 },
-  default: { rate: 0.0325, fixed: 0.3 },
+  usd: { rate: 0.044, fixed: 0.3 }, // 2.9% base + 1.5% international = 4.4% + $0.30 (most accurate default for NG/global)
+  gbp: { rate: 0.029, fixed: 0.2 }, // ~1.4% domestic + 1.5% intl ≈ 2.9% + £0.20 (conservative; actual can be higher cross-border)
+  eur: { rate: 0.029, fixed: 0.25 }, // ~1.5% domestic + 1.5% intl ≈ 2.9–3% + €0.25
+  aud: { rate: 0.035, fixed: 0.3 }, // ~1.75–2% domestic + 1.5% intl ≈ 3.5% + A$0.30 (from AU examples)
+  cad: { rate: 0.044, fixed: 0.3 }, // 2.9% base + 1.5% intl = 4.4% + C$0.30
+  nzd: { rate: 0.041, fixed: 0.3 }, // Approximate 2.6% + 1.5% intl ≈ 4.1%
+  default: { rate: 0.044, fixed: 0.3 },
 };
-
-const INTERNATIONAL_FALLBACK: ProcessingFeeConfig = {
-  rate: 0.0325,
+const INTERNATIONAL_CONFIG: ProcessingFeeConfig = {
+  rate: 0.029 + 0.015,
   fixed: 0.3,
 };
 
@@ -24,7 +23,7 @@ export const calculateFees = (
   ticketPrice: number,
   absorbFees: boolean,
   hiroekFee: number,
-  isInternationalCard: boolean = false,
+  isInternationalCard: boolean = true, // Default to true — safer for NG/global audience
   overrideCurrency?: string
 ) => {
   if (ticketPrice === 0) {
@@ -38,18 +37,22 @@ export const calculateFees = (
   }
 
   const { selectedCurrency } = useCurrencyStore.getState();
-  const currencyValue = (
-    overrideCurrency || selectedCurrency.value
-  ).toLowerCase();
+  const currency = (overrideCurrency || selectedCurrency.value).toLowerCase();
 
+  // Start with per-currency (domestic) if available
   let config =
-    PROCESSING_FEE_CONFIGS[currencyValue] ?? PROCESSING_FEE_CONFIGS.default;
+    PROCESSING_FEE_CONFIGS[currency] ?? PROCESSING_FEE_CONFIGS.default;
 
+  // Override for international cards — this is the key fix
   if (isInternationalCard) {
-    config = INTERNATIONAL_FALLBACK;
+    config = INTERNATIONAL_CONFIG;
+    // If currency conversion likely applies, you could bump rate: config.rate += 0.01; // +1%
   }
 
-  const processingFee = ticketPrice * config.rate + config.fixed;
+  // Optional: round to 2 decimals to avoid floating-point issues
+  const processingFee = Number(
+    (ticketPrice * config.rate + config.fixed).toFixed(2)
+  );
 
   const totalFees = hiroekFee + processingFee;
 
@@ -59,14 +62,14 @@ export const calculateFees = (
       processingFee,
       totalFees,
       buyersPay: ticketPrice,
-      youReceive: Math.max(0, ticketPrice - totalFees),
+      youReceive: Math.max(0, Number((ticketPrice - totalFees).toFixed(2))),
     };
   } else {
     return {
       hiroekFee,
       processingFee,
       totalFees,
-      buyersPay: ticketPrice + totalFees,
+      buyersPay: Number((ticketPrice + totalFees).toFixed(2)),
       youReceive: ticketPrice,
     };
   }

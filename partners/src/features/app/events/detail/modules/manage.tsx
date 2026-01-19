@@ -66,7 +66,7 @@ export const Manage = ({
       category: {
         id: event.category._id,
         image: event.category.image,
-        name: event.name,
+        name: event.category.name,
       },
       absorbFees: event.absorbFees,
       description: event.description,

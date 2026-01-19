@@ -25,7 +25,7 @@ export function useUpdateBankDetailsMutation() {
   return useMutation({
     mutationFn: async (props: any) => {
       const { data } = await authenticatedInstance.patch(
-        `/event-partners/update-bank-details/${selectedCurrency.value}`,
+        `/event-partners/${selectedCurrency.value}/update-bank-details/`,
         {
           ...props,
         }

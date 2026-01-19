@@ -91,7 +91,15 @@ const Profile = () => {
         }}
       >
         <FormContent>
-          <ImageWithPreview initialPreview={user?.logo} />
+          <ImageWithPreview
+            handleState={(file) => {
+              setForm({
+                ...form,
+                image: file,
+              });
+            }}
+            initialPreview={user?.logo}
+          />
           <FormField>
             <Label>Name</Label>
             <Input
