@@ -64,7 +64,14 @@ const Home = () => {
                     thumbnail={event.photo || ""}
                     title={event.name}
                     date={event.endTime}
-                    price={event.ticketing[0].ticketPrice || 0}
+                    price={
+                      event.ticketing?.length > 0
+                        ? Math.min(
+                            ...event.ticketing.map((t) => t.ticketPrice ?? 0),
+                          )
+                        : 0
+                    }
+                    hasMultipletTickets={event.ticketing.length > 1}
                     {...(event.meetingLink
                       ? { meetingLink: event.meetingLink || "" }
                       : { location: event.address || "" })}

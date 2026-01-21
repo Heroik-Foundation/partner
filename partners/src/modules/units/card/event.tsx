@@ -14,6 +14,7 @@ export type PhysicalEvent = {
   currency: CurrencyCode;
   location: string;
   meetingLink?: never;
+  hasMultipletTickets?: boolean;
   nodeRef?: any;
   className?: string;
   availableTickets?: number;
@@ -27,6 +28,7 @@ export type VirtualEvent = {
   thumbnail: string;
   currency: CurrencyCode;
   meetingLink: string;
+  hasMultipletTickets?: boolean;
   location?: never;
   nodeRef?: any;
   className?: string;
@@ -51,6 +53,7 @@ export const Event = (props: EventProps) => {
     className,
     availableTickets,
     currency,
+    hasMultipletTickets,
   } = props;
   const { date: relativeDate, time: relativeTime } = formatISODate(date);
   const imageURL = thumbnail === "" ? "/image/input-preview.jpg" : thumbnail;
@@ -63,7 +66,7 @@ export const Event = (props: EventProps) => {
       }}
       className={cn(
         "rounded-2xl bg-cover relative block min-h-64 sm:min-h-80",
-        className
+        className,
       )}
       style={{
         background: `url('${imageURL}')`,
@@ -74,7 +77,7 @@ export const Event = (props: EventProps) => {
       ref={nodeRef}
     >
       <div className="absolute rounded-full px-4 py-1.5 text-accent font-black top-5 right-5 bg-white text-sm">
-        {formatCurrency(price, currency)}
+        {hasMultipletTickets && "From"} {formatCurrency(price, currency)}
       </div>
 
       <div className="p-4 bg-white text-primary absolute rounded-xl space-y-2.5 left-0 right-0 bottom-5 mx-auto w-[90%]">

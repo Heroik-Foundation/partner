@@ -36,9 +36,8 @@ export const calculateFees = (
   const config =
     PROCESSING_FEE_CONFIGS[currency] ?? PROCESSING_FEE_CONFIGS.default;
 
-  const processingFee = Number(
-    (ticketPrice * config.rate + config.fixed).toFixed(2),
-  );
+  const processingFee =
+    Number((ticketPrice * config.rate + config.fixed).toFixed(2)) - 0.01;
 
   const totalFees = hiroekFee + processingFee;
 
