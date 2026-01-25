@@ -50,8 +50,6 @@ const CreateEventOptions = () => {
   const navigate = useNavigate();
   const { previousPath } = useRouteStore();
 
-  console.log(formState);
-
   const [isCancellationDrawerOpen, setIsCancellationDrawerOpen] =
     useState(false);
   const [isActionDrawerOpen, setIsActionDrawerOpen] = useState(true);
@@ -105,7 +103,7 @@ const CreateEventOptions = () => {
         position: "stacked",
       },
     ],
-    [addAdditionalTickets]
+    [addAdditionalTickets],
   );
 
   const {
@@ -143,7 +141,7 @@ const CreateEventOptions = () => {
 
   const isTicketDetailsWithTickets = useCallback(
     () => currentStepConfig?.title === "Ticket Details" && hasTickets,
-    [currentStepConfig?.title, hasTickets]
+    [currentStepConfig?.title, hasTickets],
   );
 
   // Validate the current step
@@ -171,7 +169,7 @@ const CreateEventOptions = () => {
 
           if (hasZeroLimit && hasNonZeroLimit) {
             toast.error(
-              "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits."
+              "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits.",
             );
             return false;
           }
@@ -190,7 +188,7 @@ const CreateEventOptions = () => {
 
           if (hasZeroLimit && hasNonZeroLimit) {
             toast.error(
-              "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits."
+              "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits.",
             );
             return false;
           }
@@ -303,7 +301,7 @@ const CreateEventOptions = () => {
 
       handleNextStep();
     },
-    [handleNextStep, isTicketDetailsWithTickets]
+    [handleNextStep, isTicketDetailsWithTickets],
   );
 
   const handleOptionCancellation = useCallback(() => {
@@ -372,7 +370,7 @@ const CreateEventOptions = () => {
         </Button>
       ),
     }),
-    [isTicketDetailsWithTickets, handleTicketDetailsNext]
+    [isTicketDetailsWithTickets, handleTicketDetailsNext],
   );
 
   const isTicketStep = currentStepConfig?.title.includes("Ticket");

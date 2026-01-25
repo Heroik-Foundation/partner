@@ -6,13 +6,40 @@ interface ProcessingFeeConfig {
 }
 
 const PROCESSING_FEE_CONFIGS: Record<string, ProcessingFeeConfig> = {
-  usd: { rate: 0.044, fixed: 0.3 }, // 2.9% + 1.5% intl ≈ 4.4% (common for non-US)
-  gbp: { rate: 0.0325, fixed: 0.2 }, // ~3.25% effective for non-UK merchants (intl/cross-border)
-  eur: { rate: 0.0325, fixed: 0.25 }, // Similar for non-EEA
-  aud: { rate: 0.035, fixed: 0.3 },
-  cad: { rate: 0.044, fixed: 0.3 },
-  nzd: { rate: 0.035, fixed: 0.3 },
-  default: { rate: 0.035, fixed: 0.3 },
+  usd: {
+    rate: 0.029, // 2.9%
+    fixed: 0.3, // $0.30
+  },
+
+  eur: {
+    rate: 0.015, // 1.5%
+    fixed: 0.25, // €0.25
+  },
+
+  aud: {
+    rate: 0.0175, // 1.75%
+    fixed: 0.3, // A$0.30
+  },
+
+  cad: {
+    rate: 0.029, // 2.9%
+    fixed: 0.3, // CA$0.30
+  },
+
+  nzd: {
+    rate: 0.0265, // 2.65%
+    fixed: 0.3, // NZ$0.30
+  },
+
+  gbp: {
+    rate: 0.015,
+    fixed: 0.2,
+  },
+
+  default: {
+    rate: 0.0325,
+    fixed: 0.3,
+  },
 };
 
 export const calculateFees = (
@@ -36,8 +63,9 @@ export const calculateFees = (
   const config =
     PROCESSING_FEE_CONFIGS[currency] ?? PROCESSING_FEE_CONFIGS.default;
 
-  const processingFee =
-    Number((ticketPrice * config.rate + config.fixed).toFixed(2)) - 0.01;
+  const processingFee = Number(
+    (ticketPrice * config.rate + config.fixed).toFixed(2),
+  );
 
   const totalFees = hiroekFee + processingFee;
 

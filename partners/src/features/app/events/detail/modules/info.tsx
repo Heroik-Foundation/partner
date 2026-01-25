@@ -2,7 +2,6 @@
 
 import { Link } from "@tanstack/react-router";
 import { buttonVariants } from "@/modules/ui/button";
-import { formatCurrency } from "@/helpers/text";
 import { cn } from "@/lib/utils";
 
 import eyeIcon from "../assets/eye.svg";
@@ -33,7 +32,7 @@ export default function Info(props: InfoProps) {
             buttonVariants({
               variant: "default",
               className: "w-full max-w-[400px]",
-            })
+            }),
           )}
           to="/app/events/$id/dashboard"
           params={{
@@ -52,7 +51,7 @@ export default function Info(props: InfoProps) {
             buttonVariants({
               variant: "default",
               className: "w-full max-w-[400px]",
-            })
+            }),
           )}
           params={{
             id,
@@ -70,7 +69,7 @@ export default function Info(props: InfoProps) {
           className={cn(
             "text-sm font-semibold text-center text-primary leading-relaxed",
             "whitespace-pre-wrap",
-            "text-start"
+            "text-start",
           )}
         >
           {description}
@@ -93,7 +92,7 @@ export default function Info(props: InfoProps) {
               <span> View Charity Partners</span> <img src={eyeIcon} alt="" />
             </Link>
           </div>
-          <div className="space-y-2.5 flex flex-col items-center">
+          {/* <div className="space-y-2.5 flex flex-col items-center">
             <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex w-fit">
               Minimum Pledge
             </h5>
@@ -101,7 +100,7 @@ export default function Info(props: InfoProps) {
             <span className="font-bold text-sm w-fit mx-auto rounded-full bg-primary py-3 px-5 text-white">
               {formatCurrency(minimumPledge, currency)}
             </span>
-          </div>
+          </div> */}
         </div>
       )}
     </div>
