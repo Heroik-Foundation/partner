@@ -7,7 +7,7 @@ import { Building } from "lucide-react";
 export type CharityOrganizationProps = {
   updateForm: <K extends keyof EventFormState>(
     field: K,
-    value: EventFormState[K]
+    value: EventFormState[K],
   ) => void;
   formState: EventFormState;
   thumbnail: string;
@@ -21,7 +21,7 @@ export const CharityOrganization = (props: CharityOrganizationProps) => {
   const { thumbnail, title, address, nodeRef, id, formState, updateForm } =
     props;
   const isOrgPresent = (formState.fundRaiser?.organizations || []).some(
-    (partner) => partner.id === id
+    (partner) => partner.id === id,
   );
 
   const handleOrgArrUpdates = () => {
@@ -32,7 +32,6 @@ export const CharityOrganization = (props: CharityOrganizationProps) => {
       : [...initialData, { name: title, id }];
 
     updateForm("fundRaiser", {
-      fundRaisingGoal: formState.fundRaiser?.fundRaisingGoal,
       organizations: newData,
     });
   };
@@ -69,7 +68,7 @@ export const CharityOrganization = (props: CharityOrganizationProps) => {
         size="sm"
         className={cn(
           "transition-all rounded-full px-4 font-bold text-sm bg-accent",
-          isOrgPresent && "bg-rose-500"
+          isOrgPresent && "bg-rose-500",
         )}
       >
         {isOrgPresent ? "Unselect" : "Select"}

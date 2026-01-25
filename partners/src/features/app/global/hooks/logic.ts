@@ -101,7 +101,7 @@ type StaticEventFormStore = {
   reset: () => void;
   updateForm: <K extends keyof EventFormState>(
     field: K,
-    value: EventFormState[K]
+    value: EventFormState[K],
   ) => void;
   deleteTicketTier: (index: number) => void;
   removeAllTickets: () => void;
@@ -130,7 +130,7 @@ export const useEventFormStore = create<StaticEventFormStore>()(
           if (!state.formState.ticketing) return state;
 
           const newTicketing = state.formState.ticketing.filter(
-            (_, i) => i !== index
+            (_, i) => i !== index,
           );
           return {
             formState: {
@@ -158,7 +158,7 @@ export const useEventFormStore = create<StaticEventFormStore>()(
             formState: {
               ...state.formState,
               fundRaiser: {
-                ...state.formState.fundRaiser,
+                // ...state.formState.fundRaiser,
                 organizations: organizations.filter((org) => org.id !== id),
               },
             },
@@ -172,7 +172,7 @@ export const useEventFormStore = create<StaticEventFormStore>()(
             (ticket) =>
               ticket.ticketType &&
               ticket.salesStartDate !== null &&
-              ticket.salesEndDate !== null
+              ticket.salesEndDate !== null,
           );
           return {
             formState: {
@@ -194,6 +194,6 @@ export const useEventFormStore = create<StaticEventFormStore>()(
     {
       name: "event-form-storage",
       storage: createJSONStorage(() => sessionStorage),
-    }
-  )
+    },
+  ),
 );

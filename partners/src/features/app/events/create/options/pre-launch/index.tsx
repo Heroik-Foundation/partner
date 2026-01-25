@@ -21,12 +21,12 @@ export const PreLaunch = () => {
 
   const tickets = useMemo(
     () => formState.ticketing || [],
-    [formState.ticketing]
+    [formState.ticketing],
   );
 
   const totalTickets = useMemo(
     () => tickets.reduce((sum, ticket) => sum + ticket.signUpLimit, 0),
-    [tickets]
+    [tickets],
   );
 
   const thumbnailUrl = useMemo(
@@ -34,13 +34,13 @@ export const PreLaunch = () => {
       typeof formState.photo !== "undefined" && formState.photo instanceof File
         ? URL.createObjectURL(formState.photo)
         : formState.photo,
-    [formState.photo]
+    [formState.photo],
   );
 
   const eventDate = useMemo(
     () =>
       convertDateTimeInputToISOString(formState.startDate, formState.startTime),
-    [formState.startDate, formState.startTime]
+    [formState.startDate, formState.startTime],
   );
 
   const validatePreLaunchProps = useCallback(() => {
@@ -72,7 +72,7 @@ export const PreLaunch = () => {
         currentTicketIndex: index,
       });
     },
-    [formState, setFormState]
+    [formState, setFormState],
   );
 
   return (
@@ -105,7 +105,7 @@ export const PreLaunch = () => {
             className={cn(
               "text-sm font-semibold text-center text-primary leading-relaxed",
               "whitespace-pre-wrap",
-              "text-start"
+              "text-start",
             )}
           >
             {formState.description}
@@ -125,17 +125,6 @@ export const PreLaunch = () => {
                 <span> View Charity Partners</span> <img src={eyeIcon} alt="" />
               </Link>
             </div>
-            <div className="space-y-2.5 flex flex-col items-center">
-              <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex w-fit">
-                Minimum Pledge
-              </h5>
-              <span className="font-bold text-sm w-fit mx-auto rounded-full bg-primary py-3 px-5 text-white">
-                £
-                {decimalFormatter.format(
-                  Number(formState.fundRaiser.fundRaisingGoal || 0)
-                )}
-              </span>
-            </div>
           </div>
         )}
 
@@ -150,7 +139,7 @@ export const PreLaunch = () => {
                   ticket;
 
                 const formattedDate = formatISODate(
-                  convertDateTimeInputToISOString(String(salesEndDate))
+                  convertDateTimeInputToISOString(String(salesEndDate)),
                 ).date;
 
                 return (
