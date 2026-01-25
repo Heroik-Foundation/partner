@@ -1,6 +1,6 @@
 "use client";
 
-import { Currency, Coins, Ticket, UsersRound } from "lucide-react";
+import { Coins, Ticket, UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/helpers/text";
 import { useSearch } from "@tanstack/react-router";
@@ -14,44 +14,46 @@ type StatProps = {
   signups: number;
 };
 
-export const Stats = ({ pledge, ticket, signups }: StatProps) => {
+export const Stats = ({ ticket, signups }: StatProps) => {
   const { currency } = useSearch({
     from: "/app/events/$id/dashboard/",
   });
 
   const stats = [
-    {
-      title: "Total Pledged Amount",
-      value: formatCurrency(pledge, currency),
-      icon: Currency,
-    },
+    // {
+    //   title: "Total Pledged Amount",
+    //   value: formatCurrency(pledge, currency),
+    //   icon: Currency,
+    // },
     {
       title: "Tickets Sold",
       value: ticket.sold.toLocaleString(),
       icon: Ticket,
+    },
+
+    {
+      title: "Event Signup",
+      value: signups.toLocaleString(),
+      icon: UsersRound,
     },
     {
       title: "Total Ticket Revenue",
       value: formatCurrency(ticket.revenue, currency),
       icon: Coins,
     },
-    {
-      title: "Event Signup",
-      value: signups.toLocaleString(),
-      icon: UsersRound,
-    },
   ];
 
   return (
     <div className="grid grid-cols-2 gap-4 sm:gap-5">
-      {stats.map((stat, index) => {
+      {stats.map((stat, index, list) => {
         const Icon = stat.icon;
         return (
           <div
             key={index}
             className={cn(
               "rounded-2xl bg-secondary p-5 space-y-2.5 text-white",
-              index === 1 && "bg-primary"
+              index === 1 && "bg-primary",
+              list.length % 2 !== 0 && "last:col-span-2",
             )}
           >
             <div className="p-2 rounded-lg bg-white/20 w-10 h-10 flex items-center justify-center">
