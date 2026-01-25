@@ -20,9 +20,9 @@ type InfoProps = {
 };
 
 export default function Info(props: InfoProps) {
-  const { id, description, minimumPledge, organizations, currency } = props;
+  const { id, description, organizations, currency } = props;
 
-  const isFundraiser = Number(minimumPledge) > 0 && organizations.length >= 1;
+  const isFundraiser = organizations.length >= 1;
 
   return (
     <div className="space-y-5 w-full">

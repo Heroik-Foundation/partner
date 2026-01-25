@@ -48,7 +48,7 @@ export const Publish = () => {
     ...(ticketing &&
       ticketing.length > 0 && {
         ticketing: ticketing
-          .filter((t) => t.salesStartDate && t.salesEndDate) // only valid tickets
+          .filter((t) => t.salesStartDate && t.salesEndDate)
           .map((t) => ({
             ticketType: t.ticketType,
             ticketPrice: Math.abs(Number(t.ticketPrice) * 100),
@@ -58,10 +58,8 @@ export const Publish = () => {
           })),
       }),
     ...(fundRaiser &&
-      fundRaiser.fundRaisingGoal &&
       fundRaiser.organizations && {
         eventPledge: {
-          minimumPledge: Math.abs(Number(fundRaiser.fundRaisingGoal) * 100),
           organizations: fundRaiser.organizations.map((org) => org.id),
         },
       }),
@@ -77,6 +75,7 @@ export const Publish = () => {
     <div className="fixed bottom-0 left-0 right-0 bg-white shadow-sm flex items-center justify-center p-5">
       <Button
         onClick={() => {
+          console.log("hello here pick me");
           mutate();
         }}
         isPending={isPending}

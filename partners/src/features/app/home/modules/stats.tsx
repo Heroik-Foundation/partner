@@ -17,7 +17,7 @@ export function Stats() {
   const detail = [
     {
       label: "Events Per Year",
-      value: user?.eventsPerYear,
+      value: user?.eventsPerYear || 0,
       icon: Calendar1,
       bg: "bg-primary text-white",
     },
