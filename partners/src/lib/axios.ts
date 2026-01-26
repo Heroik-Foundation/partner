@@ -8,17 +8,17 @@ import {
 } from "./session";
 import { toast } from "sonner";
 
-// const isDev = import.meta.env.DEV === true;
-// const BASE_URL = isDev
-//   ? "https://dev.hiroek.io/api"
-//   : "https://staging.hiroek.io/api";
+const isDev = import.meta.env.DEV === true;
+const BASE_URL = isDev
+  ? "https://dev.hiroek.io/api"
+  : "https://staging.hiroek.io/api";
 
 const baseInstance = axios.create({
-  baseURL: "https://dev.hiroek.io/api",
+  baseURL: BASE_URL,
 });
 
 const authenticatedInstance = axios.create({
-  baseURL: "https://dev.hiroek.io/api",
+  baseURL: BASE_URL,
 });
 
 authenticatedInstance.interceptors.request.use((config) => {
@@ -87,7 +87,7 @@ authenticatedInstance.interceptors.response.use(
               {
                 id: "session-auto-switch",
                 duration: 5000,
-              }
+              },
             );
 
             return retryResponse;
@@ -124,7 +124,7 @@ authenticatedInstance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export { baseInstance, authenticatedInstance };
