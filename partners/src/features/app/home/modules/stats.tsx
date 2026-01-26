@@ -1,6 +1,6 @@
 "use client";
 
-import { BookImage, Calendar1, WalletCards } from "lucide-react";
+import { BookImage, WalletCards } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   usePartnerStatsQuery,
@@ -15,12 +15,12 @@ export function Stats() {
   const { data: stats } = usePartnerStatsQuery({ userId: user?._id });
 
   const detail = [
-    {
-      label: "Events Per Year",
-      value: user?.eventsPerYear || 0,
-      icon: Calendar1,
-      bg: "bg-primary text-white",
-    },
+    // {
+    //   label: "Events Per Year",
+    //   value: user?.eventsPerYear || 0,
+    //   icon: Calendar1,
+    //   bg: "bg-primary text-white",
+    // },
     {
       label: "Total Events",
       value: stats?.eventsCreated || 0,
@@ -38,6 +38,7 @@ export function Stats() {
               item.bg,
               "p-3.5 sm:p-5 rounded-xl flex items-center justify-between shadow bg-center",
               list.length % 2 !== 0 && "last:col-span-2",
+              list.length < 2 && "col-span-2",
             )}
             key={index}
           >
