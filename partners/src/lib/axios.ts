@@ -14,7 +14,7 @@ const BASE_URL = isDev
   : "https://staging.hiroek.io/api";
 
 const baseInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: "https://staging.hiroek.io/api",
 });
 
 const authenticatedInstance = axios.create({

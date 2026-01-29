@@ -56,6 +56,8 @@ const EditEvent = () => {
     };
   }, [event, id]);
 
+  console.log(formState);
+
   return (
     <Fragment>
       <Header
@@ -105,7 +107,7 @@ const EditEvent = () => {
               {" "}
               {formState.isOnlineEvent ? "Event Meeting Link" : "Event Venue"}
             </Label>
-            {formState.isOnlineEvent ? (
+            {formState.isOnlineEvent && (
               <InputWithPrefix
                 required
                 pattern="https://(www\.)?(zoom\.us/j/\d+|meet\.google\.com/[a-zA-Z-]+|teams\.microsoft\.com/l/meetup-join/.+)"
@@ -116,7 +118,9 @@ const EditEvent = () => {
                 }}
                 prefixItem={<Video className="stroke-primary/50" />}
               />
-            ) : (
+            )}
+
+            {formState.address && (
               <PlaceAutocomplete
                 initialValue={{
                   address: formState.address,
@@ -145,7 +149,7 @@ const EditEvent = () => {
                   className={cn(
                     "font-bold whitespace-nowrap text-primary/50",
                     (formState?.subCategory?.name || formState.category.name) &&
-                      "text-primary"
+                      "text-primary",
                   )}
                 >
                   {formState?.subCategory?.name ||
