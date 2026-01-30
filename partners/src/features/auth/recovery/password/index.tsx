@@ -25,17 +25,17 @@ const SetupRecoveryPassword = () => {
       previousRoute={true}
       onSubmit={(event) => {
         event.preventDefault();
-        if (
-          form.password !== "" &&
-          form.email !== "" &&
-          form.password === password
-        ) {
-          mutate();
-        } else if (
-          form.password.toLowerCase().trim() === password.toLowerCase().trim()
-        ) {
-          toast.info("Passwords don't match");
+
+        if (form.email === "" || form.password === "") {
+          return;
         }
+
+        if (form.password.trim() !== password.trim()) {
+          toast.info("Passwords don't match");
+          return;
+        }
+
+        mutate();
       }}
     >
       <FormContent>
