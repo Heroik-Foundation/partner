@@ -31,7 +31,9 @@ const SetupRecoveryPassword = () => {
           form.password === password
         ) {
           mutate();
-        } else if (form.password === password) {
+        } else if (
+          form.password.toLowerCase().trim() === password.toLowerCase().trim()
+        ) {
           toast.info("Passwords don't match");
         }
       }}
