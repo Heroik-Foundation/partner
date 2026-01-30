@@ -25,7 +25,7 @@ const SetupRecoveryPassword = () => {
     email: string;
     resetCode: string;
   } = useSearch({
-    from: "/auth/recovery/password/",
+    strict: false,
   });
 
   const { mutate, isPending } = useRecoveryValidationMutation();
@@ -58,12 +58,6 @@ const SetupRecoveryPassword = () => {
       onSubmit={handleSubmit}
     >
       <FormContent>
-        {email && (
-          <div className="mb-4 text-sm text-muted-foreground">
-            Resetting password for: <strong>{email}</strong>
-          </div>
-        )}
-
         <FormField>
           <Label htmlFor="password">New Password</Label>
           <FormPassword
