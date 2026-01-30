@@ -15,9 +15,9 @@ export function useRecoveryValidationMutation() {
         "/event-partners/password-reset",
         {
           resetCode: form.code,
-          password: form.password,
-          email: form.email,
-        }
+          password: form.password.trim(),
+          email: form.email.trim(),
+        },
       );
 
       return data;
