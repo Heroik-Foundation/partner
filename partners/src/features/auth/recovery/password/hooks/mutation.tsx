@@ -1,29 +1,31 @@
 import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
 import { baseInstance } from "@/lib/axios";
-import { useAuthStore } from "@/stores/auth";
+
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 
+type Props = {
+  resetCode: string;
+  password: string;
+  email: string;
+};
+
 export function useRecoveryValidationMutation() {
-  const { form, resetForm } = useAuthStore();
   const { navigate } = useRouter();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (props: Props) => {
       const { data } = await baseInstance.post(
         "/event-partners/password-reset",
         {
-          resetCode: form.code,
-          password: form.password.trim(),
-          email: form.email.trim(),
+          ...props,
         },
       );
 
       return data;
     },
     onSuccess: () => {
-      resetForm();
       navigate({
         to: "/auth/login",
       });
