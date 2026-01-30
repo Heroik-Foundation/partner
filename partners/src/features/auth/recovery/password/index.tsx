@@ -10,7 +10,7 @@ import { Label } from "@/modules/ui/label";
 import { Button } from "@/modules/ui/button";
 import { toast } from "sonner";
 import { useRecoveryValidationMutation } from "./hooks/mutation";
-import { useParams } from "@tanstack/react-router";
+import { useSearch } from "@tanstack/react-router";
 
 const SetupRecoveryPassword = () => {
   const [form, setForm] = useState({
@@ -24,8 +24,8 @@ const SetupRecoveryPassword = () => {
   }: {
     email: string;
     resetCode: string;
-  } = useParams({
-    strict: false,
+  } = useSearch({
+    from: "/auth/recovery/password/",
   });
 
   const { mutate, isPending } = useRecoveryValidationMutation();
