@@ -8,17 +8,14 @@ import {
 } from "./session";
 import { toast } from "sonner";
 
-const isDev = import.meta.env.DEV === true;
-const BASE_URL = isDev
-  ? "https://dev.hiroek.io/api"
-  : "https://staging.hiroek.io/api";
+// const isDev = import.meta.env.DEV === true;
 
 const baseInstance = axios.create({
   baseURL: "https://staging.hiroek.io/api",
 });
 
 const authenticatedInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: "https://staging.hiroek.io/api",
 });
 
 authenticatedInstance.interceptors.request.use((config) => {
