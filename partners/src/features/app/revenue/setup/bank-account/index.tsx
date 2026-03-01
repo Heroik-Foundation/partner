@@ -35,8 +35,8 @@ interface BankDetailsForm {
 // Most common pattern for update bank details mutation variables
 type UpdateBankDetailsVariables = {
   bankName: string;
-  accountName: string;
-  accountNumber: string;
+  bankAccountName: string;
+  bankAccountNumber: string;
   pin: string;
   sortCode?: string;
   routingNumber?: string;
@@ -110,8 +110,8 @@ const SetupBankAccount = () => {
 
     const payload: UpdateBankDetailsVariables = {
       bankName: form.bankName,
-      accountName: form.bankAccountName,
-      accountNumber: form.bankAccountNumber,
+      bankAccountName: form.bankAccountName,
+      bankAccountNumber: form.bankAccountNumber,
       pin: form.pin,
       currency: selectedCurrency.value,
       // Only include fields relevant to current currency
