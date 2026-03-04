@@ -97,12 +97,17 @@ const SetupBankAccount = () => {
   }, [owner, selectedCurrency]);
 
   const handleSubmit = () => {
-    if (
-      !form.bankName.trim() ||
-      !form.bankAccountName.trim() ||
-      !form.bankAccountNumber.trim() ||
-      !form.pin.trim()
-    ) {
+    const requiredFields: (keyof BankDetailsForm)[] = [
+      "bankName",
+      "bankAccountName",
+      "bankAccountNumber",
+    ];
+
+    if (isBeingUpdated) requiredFields.push("pin");
+
+    const hasEmptyFields = requiredFields.some((field) => !form[field]?.trim());
+
+    if (hasEmptyFields) {
       toast.info("Please complete all required fields");
       return;
     }
