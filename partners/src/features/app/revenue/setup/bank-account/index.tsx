@@ -133,14 +133,14 @@ const SetupBankAccount = () => {
         break;
     }
 
-    const payload: UpdateBankDetailsVariables = {
+    const payload = {
       bankName: form.bankName,
       bankAccountName: form.bankAccountName,
       bankAccountNumber: form.bankAccountNumber,
-      pin: form.pin,
       currency: selectedCurrency.value,
+      ...(isBeingUpdated && { pin: form.pin }),
       ...currencyPayload,
-    };
+    } as UpdateBankDetailsVariables;
 
     mutate(payload);
   };
