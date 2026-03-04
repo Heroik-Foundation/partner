@@ -53,6 +53,7 @@ export const Balance = () => {
 
       <div className="w-full bg-gradient-to-b from-white/10 to-white/5 p-3.5 flex items-center justify-between space-x-3.5">
         <Button
+          disabled={wallet === undefined}
           className="shadow-xl bg-white/30 disabled:opacity-30 text-sm font-semibold w-full"
           onClick={() => {
             const path =
