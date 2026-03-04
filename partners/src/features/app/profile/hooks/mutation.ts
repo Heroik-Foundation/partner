@@ -1,7 +1,7 @@
 import { authenticatedInstance } from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { frmz } from "frmz";
+import { frmz } from "@/lib/frmz";
 import { AxiosError } from "axios";
 
 type Props = {

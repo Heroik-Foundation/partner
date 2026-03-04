@@ -7,7 +7,7 @@ import { authenticatedInstance } from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Event } from "@/features/app/global/types";
-import { frmz } from "frmz";
+import { frmz } from "@/lib/frmz";
 
 type UpdateEventBase = {
   event?: Event;

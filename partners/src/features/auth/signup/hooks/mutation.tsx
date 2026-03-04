@@ -7,7 +7,7 @@ import {
   ErrorResponse,
   handleUserResponseToError,
 } from "../../../../helpers/error";
-import { frmz } from "frmz";
+import { frmz } from "@/lib/frmz";
 
 export function useSignUpMutation() {
   const { form } = useAuthStore();

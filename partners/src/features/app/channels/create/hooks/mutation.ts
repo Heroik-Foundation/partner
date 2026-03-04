@@ -2,7 +2,7 @@ import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
 import { authenticatedInstance } from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { frmz } from "frmz";
+import { frmz } from "@/lib/frmz";
 import { toast } from "sonner";
 
 type CreateChannelMutationProps = {
