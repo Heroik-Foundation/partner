@@ -60,7 +60,7 @@ export const WithdrawalOptions = () => {
           <span>
             {bankAccountNumber === ""
               ? "Setup Bank Account"
-              : "Choose Another Bank Account"}
+              : "Update Bank Account"}
           </span>
         </Button>
       </div>
