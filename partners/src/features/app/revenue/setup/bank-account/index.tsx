@@ -34,70 +34,67 @@ interface BankDetailsForm {
   bsbNumber?: string;
 }
 
-// Most common pattern for update bank details mutation variables
-type UpdateBankDetailsVariables = {
-  bankName: string;
-  bankAccountName: string;
-  bankAccountNumber: string;
-  pin: string;
-  sortCode?: string;
-  routingNumber?: string;
-  iban?: string;
-  transitNumber?: string;
-  institutionNumber?: string;
-  bsbNumber?: string;
-  currency: Currency;
+type UpdateBankDetailsVariables = BankDetailsForm & { currency: Currency };
+
+const EMPTY_FORM: BankDetailsForm = {
+  bankName: "",
+  bankAccountName: "",
+  bankAccountNumber: "",
+  pin: "",
 };
+
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === "string" && value.trim().length > 0;
 
 const SetupBankAccount = () => {
   const { data: wallet } = useWalletDetailsQuery();
   const { selectedCurrency } = useCurrencyStore();
 
-  const [form, setForm] = useState<BankDetailsForm>({
-    bankName: "",
-    bankAccountName: "",
-    bankAccountNumber: "",
-    pin: "",
-  });
+  const [form, setForm] = useState<BankDetailsForm>(EMPTY_FORM);
+
+  const owner = wallet?.owner;
+
+  const isBeingUpdated =
+    !!owner &&
+    isNonEmptyString(owner.bankName) &&
+    isNonEmptyString(owner.bankAccountName) &&
+    isNonEmptyString(owner.bankAccountNumber);
 
   const { mutate, isPending } = useUpdateBankDetailsMutation();
 
   useEffect(() => {
-    if (!wallet?.owner) return;
-
-    const base = {
-      bankName: wallet.owner.bankName || "",
-      bankAccountName: wallet.owner.bankAccountName || "",
-      bankAccountNumber: wallet.owner.bankAccountNumber || "",
-      pin: "",
-    };
+    if (!owner) return;
 
     const currencyFields: Partial<BankDetailsForm> = {};
 
     switch (selectedCurrency.value) {
       case "gbp":
-        currencyFields.sortCode = (wallet.owner as any).sortCode || "";
+        currencyFields.sortCode = (owner as any).sortCode ?? "";
         break;
       case "usd":
-        currencyFields.routingNumber =
-          (wallet.owner as any).routingNumber || "";
+        currencyFields.routingNumber = (owner as any).routingNumber ?? "";
         break;
       case "eur":
-        currencyFields.iban = (wallet.owner as any).iban || "";
+        currencyFields.iban = (owner as any).iban ?? "";
         break;
       case "cad":
-        currencyFields.transitNumber =
-          (wallet.owner as any).transitNumber || "";
+        currencyFields.transitNumber = (owner as any).transitNumber ?? "";
         currencyFields.institutionNumber =
-          (wallet.owner as any).institutionNumber || "";
+          (owner as any).institutionNumber ?? "";
         break;
       case "aud":
-        currencyFields.bsbNumber = (wallet.owner as any).bsbNumber || "";
+        currencyFields.bsbNumber = (owner as any).bsbNumber ?? "";
         break;
     }
 
-    setForm({ ...base, ...currencyFields });
-  }, [wallet, selectedCurrency]);
+    setForm({
+      bankName: owner.bankName ?? "",
+      bankAccountName: owner.bankAccountName ?? "",
+      bankAccountNumber: owner.bankAccountNumber ?? "",
+      pin: "",
+      ...currencyFields,
+    });
+  }, [owner, selectedCurrency]);
 
   const handleSubmit = () => {
     if (
@@ -110,23 +107,34 @@ const SetupBankAccount = () => {
       return;
     }
 
+    const currencyPayload: Partial<BankDetailsForm> = {};
+
+    switch (selectedCurrency.value) {
+      case "gbp":
+        currencyPayload.sortCode = form.sortCode;
+        break;
+      case "usd":
+        currencyPayload.routingNumber = form.routingNumber;
+        break;
+      case "eur":
+        currencyPayload.iban = form.iban;
+        break;
+      case "cad":
+        currencyPayload.transitNumber = form.transitNumber;
+        currencyPayload.institutionNumber = form.institutionNumber;
+        break;
+      case "aud":
+        currencyPayload.bsbNumber = form.bsbNumber;
+        break;
+    }
+
     const payload: UpdateBankDetailsVariables = {
       bankName: form.bankName,
       bankAccountName: form.bankAccountName,
       bankAccountNumber: form.bankAccountNumber,
       pin: form.pin,
       currency: selectedCurrency.value,
-      // Only include fields relevant to current currency
-      ...(selectedCurrency.value === "gbp" && { sortCode: form.sortCode }),
-      ...(selectedCurrency.value === "usd" && {
-        routingNumber: form.routingNumber,
-      }),
-      ...(selectedCurrency.value === "eur" && { iban: form.iban }),
-      ...(selectedCurrency.value === "cad" && {
-        transitNumber: form.transitNumber,
-        institutionNumber: form.institutionNumber,
-      }),
-      ...(selectedCurrency.value === "aud" && { bsbNumber: form.bsbNumber }),
+      ...currencyPayload,
     };
 
     mutate(payload);
@@ -140,7 +148,7 @@ const SetupBankAccount = () => {
             <Label>Sort Code</Label>
             <Input
               required
-              value={form.sortCode || ""}
+              value={form.sortCode ?? ""}
               onChange={(e) =>
                 setForm((p) => ({ ...p, sortCode: e.target.value }))
               }
@@ -154,7 +162,7 @@ const SetupBankAccount = () => {
             <Label>Routing Number (ABA)</Label>
             <Input
               required
-              value={form.routingNumber || ""}
+              value={form.routingNumber ?? ""}
               onChange={(e) =>
                 setForm((p) => ({ ...p, routingNumber: e.target.value }))
               }
@@ -168,7 +176,7 @@ const SetupBankAccount = () => {
             <Label>IBAN</Label>
             <Input
               required
-              value={form.iban || ""}
+              value={form.iban ?? ""}
               onChange={(e) =>
                 setForm((p) => ({ ...p, iban: e.target.value.toUpperCase() }))
               }
@@ -184,7 +192,7 @@ const SetupBankAccount = () => {
               <Label>Transit Number</Label>
               <Input
                 required
-                value={form.transitNumber || ""}
+                value={form.transitNumber ?? ""}
                 onChange={(e) =>
                   setForm((p) => ({ ...p, transitNumber: e.target.value }))
                 }
@@ -194,9 +202,12 @@ const SetupBankAccount = () => {
               <Label>Institution Number</Label>
               <Input
                 required
-                value={form.institutionNumber || ""}
+                value={form.institutionNumber ?? ""}
                 onChange={(e) =>
-                  setForm((p) => ({ ...p, institutionNumber: e.target.value }))
+                  setForm((p) => ({
+                    ...p,
+                    institutionNumber: e.target.value,
+                  }))
                 }
               />
             </FormField>
@@ -209,7 +220,7 @@ const SetupBankAccount = () => {
             <Label>BSB Number</Label>
             <Input
               required
-              value={form.bsbNumber || ""}
+              value={form.bsbNumber ?? ""}
               onChange={(e) =>
                 setForm((p) => ({ ...p, bsbNumber: e.target.value }))
               }
@@ -227,9 +238,7 @@ const SetupBankAccount = () => {
     <Fragment>
       <Header
         header={{
-          title: wallet?.owner?.bankName
-            ? "Update Bank Details"
-            : "Setup Bank Account",
+          title: isBeingUpdated ? "Update Bank Details" : "Setup Bank Account",
           position: "stacked",
           subtitle: `Bank details for ${selectedCurrency.value.toUpperCase()}`,
         }}
@@ -280,15 +289,19 @@ const SetupBankAccount = () => {
 
           {renderCurrencySpecificFields()}
 
-          <FormField>
-            <Label>Pin</Label>
-            <Input
-              required
-              type="password"
-              value={form.pin}
-              onChange={(e) => setForm((p) => ({ ...p, pin: e.target.value }))}
-            />
-          </FormField>
+          {isBeingUpdated && (
+            <FormField>
+              <Label>Pin</Label>
+              <Input
+                required
+                type="password"
+                value={form.pin}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, pin: e.target.value }))
+                }
+              />
+            </FormField>
+          )}
         </FormContent>
 
         <FormFooter className="pt-5 space-y-2.5">
