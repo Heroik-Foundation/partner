@@ -1,3 +1,4 @@
+import { CurrencySelect } from "@/modules/units/form/currency";
 import { Header } from "../../global/header";
 import { WithdrawalOptions } from "./modules/options";
 
@@ -9,6 +10,7 @@ const WithdrawRevenue = () => {
           title: "Withdraw Funds",
           position: "stacked",
         }}
+        addOns={{ content: <CurrencySelect /> }}
       />
       <WithdrawalOptions />
     </div>

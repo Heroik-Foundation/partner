@@ -7,15 +7,17 @@ import {
   FormFooter,
   FormField,
 } from "@/features/auth/global/form";
-import { Button } from "@/modules/ui/button";
+import { Button, buttonVariants } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
 import { Header } from "@/features/app/global/header";
 import { CurrencySelect } from "@/modules/units/form/currency";
 
-import { useWalletDetailsByCurrencyQuery } from "../../hooks/query";
+import { useWalletDetailsQuery } from "../../hooks/query";
 import { useUpdateBankDetailsMutation } from "../hooks/mutation";
 import { useCurrencyStore } from "@/stores/currency";
+import { Link } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
 
 type Currency = "gbp" | "usd" | "eur" | "cad" | "aud" | "nzd";
 
@@ -48,7 +50,7 @@ type UpdateBankDetailsVariables = {
 };
 
 const SetupBankAccount = () => {
-  const { data: wallet } = useWalletDetailsByCurrencyQuery();
+  const { data: wallet } = useWalletDetailsQuery();
   const { selectedCurrency } = useCurrencyStore();
 
   const [form, setForm] = useState<BankDetailsForm>({
@@ -289,10 +291,23 @@ const SetupBankAccount = () => {
           </FormField>
         </FormContent>
 
-        <FormFooter className="pt-5">
+        <FormFooter className="pt-5 space-y-2.5">
           <Button isPending={isPending} size="lg" className="w-full">
             Save Bank Account
           </Button>
+
+          <Link
+            className={cn(
+              buttonVariants({
+                variant: "secondary",
+                size: "lg",
+                className: "w-full",
+              }),
+            )}
+            to="/app/revenue/setup-pin"
+          >
+            <span>Update Security Pin</span>
+          </Link>
         </FormFooter>
       </Form>
     </Fragment>
