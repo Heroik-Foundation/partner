@@ -12,11 +12,9 @@ export type ErrorResponse = AxiosError<{
 export function handleUserResponseToError(error: ErrorResponse) {
   const message = error.response?.data?.error.details.message;
 
-  console.error(error);
-
   if (message) {
     toast.error(message);
   } else {
-    console.log("An error occured, please try again");
+    toast.error("An error occured, please try again");
   }
 }

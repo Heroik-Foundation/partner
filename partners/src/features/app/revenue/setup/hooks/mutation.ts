@@ -1,3 +1,4 @@
+import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
 import { authenticatedInstance } from "@/lib/axios";
 import { useCurrencyStore } from "@/stores/currency";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -28,7 +29,7 @@ export function useUpdateBankDetailsMutation() {
         `/event-partners/${selectedCurrency.value}/update-bank-details/`,
         {
           ...props,
-        }
+        },
       );
 
       return data;
@@ -42,9 +43,8 @@ export function useUpdateBankDetailsMutation() {
         to: "/app/revenue/setup-pin",
       });
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("An error occured, please try again");
+    onError: (error: ErrorResponse) => {
+      handleUserResponseToError(error);
     },
   });
 }
@@ -58,7 +58,7 @@ export function useUpdateSecurityPinMutation() {
         "/event-partners/update-pin",
         {
           ...props,
-        }
+        },
       );
 
       return data;
@@ -69,9 +69,8 @@ export function useUpdateSecurityPinMutation() {
         to: "/app/revenue",
       });
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("An error occured, please try again");
+    onError: (error: ErrorResponse) => {
+      handleUserResponseToError(error);
     },
   });
 }
