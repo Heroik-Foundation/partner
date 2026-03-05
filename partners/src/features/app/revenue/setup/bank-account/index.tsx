@@ -52,7 +52,7 @@ const SetupBankAccount = () => {
 
   const [form, setForm] = useState<BankDetailsForm>(EMPTY_FORM);
 
-  const owner = wallet?.owner;
+  const owner: any = wallet;
 
   const isBeingUpdated =
     !!owner &&

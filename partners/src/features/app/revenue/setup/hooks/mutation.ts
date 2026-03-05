@@ -19,7 +19,6 @@ type UpdateSecurityPinMutationProps = {
 };
 
 export function useUpdateBankDetailsMutation() {
-  const { navigate } = useRouter();
   const { selectedCurrency } = useCurrencyStore();
   const queryClient = useQueryClient();
 
@@ -38,9 +37,6 @@ export function useUpdateBankDetailsMutation() {
       toast.success("Details updated successfully");
       queryClient.invalidateQueries({
         queryKey: ["user-wallet-by-currency"],
-      });
-      navigate({
-        to: "/app/revenue/setup-pin",
       });
     },
     onError: (error: ErrorResponse) => {

@@ -270,7 +270,7 @@ export type Member = {
 
 export type Wallet = {
   _id: string;
-  currency: CurrencyCode;
+  currency: "gbp";
   owner: {
     name: string;
     charityRegNumber: string;
