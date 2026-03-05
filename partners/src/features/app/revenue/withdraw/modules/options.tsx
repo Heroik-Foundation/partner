@@ -1,4 +1,3 @@
-import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
 import { BankOption } from "./bank-option";
 import { useState } from "react";
@@ -9,9 +8,12 @@ import { useWithdrawalInitMutation } from "../hooks/mutate";
 import { ActionDrawer } from "@/modules/units/page/action";
 import { useWalletDetailsQuery } from "../../hooks/query";
 import { safeAmount } from "../helpers/number";
+import { InputWithPrefix } from "@/features/app/global/form";
+import { useCurrencyStore } from "@/stores/currency";
 
 export const WithdrawalOptions = () => {
   const { data: wallet } = useWalletDetailsQuery();
+  const { selectedCurrency } = useCurrencyStore();
   const [amount, setAmount] = useState("");
   const { navigate } = useRouter();
 
@@ -28,13 +30,18 @@ export const WithdrawalOptions = () => {
     <div className="space-y-5">
       <div>
         <Label>Amount</Label>
-        <Input
+        <InputWithPrefix
           disabled={bankAccountNumber === ""}
           value={amount}
           onChange={({ target }) => {
             setAmount(target.value);
           }}
-          placeholder="£0"
+          placeholder="0"
+          prefixItem={
+            <span className="font-bold text-primary/50">
+              {selectedCurrency.symbol}
+            </span>
+          }
         />
       </div>
 
