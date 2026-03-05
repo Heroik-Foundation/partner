@@ -137,7 +137,7 @@ const SetupBankAccount = () => {
       bankName: form.bankName,
       bankAccountName: form.bankAccountName,
       bankAccountNumber: form.bankAccountNumber,
-      currency: selectedCurrency.value,
+
       ...(isBeingUpdated && { pin: form.pin }),
       ...currencyPayload,
     } as UpdateBankDetailsVariables;
