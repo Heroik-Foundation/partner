@@ -29,13 +29,14 @@ export const BankOption = (props: Props) => {
           {account_number === ""
             ? "Not set"
             : formatNumberSequence(account_number)}
+          {account_number !== "" && `)`}
         </span>
       </div>
 
       <div
         className={cn(
           "transition-all rounded-full w-6 h-6 border-4 border-white",
-          selected && "bg-white border-primary/50"
+          selected && "bg-white border-primary/50",
         )}
       />
     </button>
