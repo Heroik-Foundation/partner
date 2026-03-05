@@ -19,8 +19,10 @@ export const WithdrawalOptions = () => {
     amount: safeAmount(amount) * 100,
   });
 
-  const bankAccountName = wallet?.owner?.bankAccountName || "";
-  const bankAccountNumber = wallet?.owner?.bankAccountNumber || "";
+  //@ts-ignore
+  const bankAccountName = wallet?.bankAccountName || "";
+  //@ts-ignore
+  const bankAccountNumber = wallet?.bankAccountNumber || "";
 
   return (
     <div className="space-y-5">
