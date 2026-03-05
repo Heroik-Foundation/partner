@@ -10,8 +10,10 @@ export const Balance = () => {
   const { data: wallet } = useWalletDetailsQuery();
 
   const balance = wallet?.balance || 0;
-  const bankName = wallet?.owner?.bankName || "-";
-  const bankAccountNumber = wallet?.owner?.bankAccountNumber || "-";
+  //@ts-ignore
+  const bankName = wallet?.bankName || "-";
+  //@ts-ignore
+  const bankAccountNumber = wallet?.bankAccountNumber || "-";
   const hasPin = wallet?.owner.pinSet;
 
   const details = [

@@ -296,10 +296,11 @@ const SetupBankAccount = () => {
 
           {isBeingUpdated && (
             <FormField>
-              <Label>Pin</Label>
+              <Label>Security Pin</Label>
               <Input
                 required
                 type="password"
+                placeholder="••••"
                 value={form.pin}
                 onChange={(e) =>
                   setForm((p) => ({ ...p, pin: e.target.value }))
@@ -311,7 +312,8 @@ const SetupBankAccount = () => {
 
         <FormFooter className="pt-5 space-y-2.5">
           <Button isPending={isPending} size="lg" className="w-full">
-            Save Bank Account
+            {isBeingUpdated ? "Update" : "Save"} Bank{" "}
+            {isBeingUpdated ? "Details" : "Account"}
           </Button>
 
           <Link
