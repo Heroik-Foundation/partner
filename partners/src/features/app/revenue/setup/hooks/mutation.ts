@@ -36,7 +36,11 @@ export function useUpdateBankDetailsMutation() {
     onSuccess: () => {
       toast.success("Details updated successfully");
       queryClient.invalidateQueries({
-        queryKey: ["user-wallet-by-currency"],
+        queryKey: ["user-wallet"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["user-wallet", selectedCurrency.value],
       });
     },
     onError: (error: ErrorResponse) => {

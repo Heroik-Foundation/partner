@@ -1,12 +1,11 @@
 import { authenticatedInstance } from "@/lib/axios";
 import { useCurrencyStore } from "@/stores/currency";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 export function useWithdrawalInitMutation({ amount }: { amount: number }) {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+
   const { selectedCurrency } = useCurrencyStore();
 
   return useMutation({
@@ -16,18 +15,20 @@ export function useWithdrawalInitMutation({ amount }: { amount: number }) {
         {
           amount: amount,
           currency: selectedCurrency.value,
-        }
+        },
       );
 
       return data;
     },
     onSuccess: () => {
       toast.success("Withdrawal successful");
+
       queryClient.invalidateQueries({
-        queryKey: ["user-wallet-by-currency"],
+        queryKey: ["user-wallet"],
       });
-      navigate({
-        to: "/app/revenue/withdraw",
+
+      queryClient.invalidateQueries({
+        queryKey: ["user-wallet", selectedCurrency.value],
       });
     },
     onError: () => {

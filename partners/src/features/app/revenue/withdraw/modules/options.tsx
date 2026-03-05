@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/modules/ui/button";
 import { Plus } from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
-import { useWithdrawalInitMutation } from "../hooks/mutate";
+import { useWithdrawalInitMutation } from "../hooks/mutation";
 import { ActionDrawer } from "@/modules/units/page/action";
 import { useWalletDetailsQuery } from "../../hooks/query";
 import { safeAmount } from "../helpers/number";
