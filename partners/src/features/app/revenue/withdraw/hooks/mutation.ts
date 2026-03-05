@@ -26,10 +26,6 @@ export function useWithdrawalInitMutation({ amount }: { amount: number }) {
       queryClient.invalidateQueries({
         queryKey: ["user-wallet"],
       });
-
-      queryClient.invalidateQueries({
-        queryKey: ["user-wallet", selectedCurrency.value],
-      });
     },
     onError: () => {
       toast.error("An error occured");
