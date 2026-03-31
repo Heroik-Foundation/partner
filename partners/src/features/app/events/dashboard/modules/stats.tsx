@@ -1,6 +1,6 @@
 "use client";
 
-import { Coins, Ticket, UsersRound } from "lucide-react";
+import { Coins, Landmark, Ticket, UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/helpers/text";
 import { useSearch } from "@tanstack/react-router";
@@ -12,19 +12,20 @@ type StatProps = {
     revenue: number;
   };
   signups: number;
+  todayDonations: number;
 };
 
-export const Stats = ({ ticket, signups }: StatProps) => {
+export const Stats = ({ ticket, signups, todayDonations }: StatProps) => {
   const { currency } = useSearch({
     from: "/app/events/$id/dashboard/",
   });
 
   const stats = [
-    // {
-    //   title: "Total Pledged Amount",
-    //   value: formatCurrency(pledge, currency),
-    //   icon: Currency,
-    // },
+    {
+      title: "Daily Donation",
+      value: formatCurrency(todayDonations, currency),
+      icon: Landmark,
+    },
     {
       title: "Tickets Sold",
       value: ticket.sold.toLocaleString(),

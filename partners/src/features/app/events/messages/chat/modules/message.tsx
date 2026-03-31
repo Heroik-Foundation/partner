@@ -51,9 +51,9 @@ export const Message = ({ content, author, index }: Props) => {
     >
       <motion.p
         className={cn(
-          "bg-primary/10 max-w-[70%] w-fit p-2.5 rounded-t-2xl text-primary text-xs font-semibold",
+          "bg-primary/10 max-w-[83%] w-fit p-2.5 rounded-t-2xl text-primary text-xs font-semibold leading-6 tracking-wider",
           author === "sender" && "rounded-bl-2xl ml-auto bg-primary text-white",
-          author === "receiver" && "rounded-br-2xl mr-auto"
+          author === "receiver" && "rounded-br-2xl mr-auto",
         )}
         whileHover={{ scale: 1.02 }}
         transition={bounceTransition}

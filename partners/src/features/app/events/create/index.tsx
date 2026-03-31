@@ -127,6 +127,7 @@ const CreateEvent = () => {
               placeholder="Type Event Description here..."
             />
           </FormField>
+
           <FormField>
             <Label>
               {formState.isOnlineEvent ? "Event Meeting Link" : "Event Venue"}
@@ -176,7 +177,7 @@ const CreateEvent = () => {
                   className={cn(
                     "font-bold whitespace-nowrap text-primary/50",
                     (formState?.subCategory?.name || formState.category.name) &&
-                      "text-primary"
+                      "text-primary",
                   )}
                 >
                   {formState?.subCategory?.name ||
@@ -239,6 +240,19 @@ const CreateEvent = () => {
                 }}
               />
             </FormField>
+          </div>
+          <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-sm text-primary">
+                Is this event refundable ?
+              </span>
+              <Switch
+                checked={formState.isRefundable}
+                onCheckedChange={(value) => {
+                  updateForm("isRefundable", value);
+                }}
+              />
+            </div>
           </div>
         </FormContent>
         <FormFooter>

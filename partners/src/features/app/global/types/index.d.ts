@@ -92,6 +92,7 @@ export type Event = {
   }>;
 
   currency: CurrencyCode;
+  eventStatus: "canceled" | "upcoming" | "ongoing" | "past";
   name: string;
   privacy: string;
   isTicketed: boolean;
@@ -100,6 +101,7 @@ export type Event = {
   primaryEventId: string;
   ticketing: EventTicketing[];
   recurrence: EventRecurrence;
+  isRefundable: boolean;
 
   updatedAt: string;
 } & (

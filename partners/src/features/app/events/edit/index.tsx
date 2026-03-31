@@ -37,6 +37,8 @@ const EditEvent = () => {
   const { formState, updateForm, setFormState, reset } = useEventFormStore();
 
   const { mutate, isPending, isSuccess, isError } = useUpdateEventMutation({
+    mode: "diff",
+    //@ts-ignore
     event: event,
     ...formState,
   });
@@ -55,8 +57,6 @@ const EditEvent = () => {
       resetStore();
     };
   }, [event, id]);
-
-  console.log(formState);
 
   return (
     <Fragment>
@@ -80,6 +80,19 @@ const EditEvent = () => {
             //@ts-ignore
             initialPreview={event?.photo}
           />
+          <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-sm text-primary">
+                Do you want to absorb all the ticket fees?
+              </span>
+              <Switch
+                checked={formState.absorbFees}
+                onCheckedChange={(value) => {
+                  updateForm("absorbFees", value);
+                }}
+              />
+            </div>
+          </div>
           <FormField>
             <Label>Event Name</Label>
             <Input
@@ -218,12 +231,12 @@ const EditEvent = () => {
           <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
             <div className="flex items-center justify-between">
               <span className="font-semibold text-sm text-primary">
-                Do you want to absorb all the ticket fees?
+                Is this event refundable ?
               </span>
               <Switch
-                checked={formState.absorbFees}
+                checked={formState.isRefundable}
                 onCheckedChange={(value) => {
-                  updateForm("absorbFees", value);
+                  updateForm("isRefundable", value);
                 }}
               />
             </div>

@@ -64,5 +64,6 @@ export const getInitialEventState = (eventData: Event | null | undefined) => {
     privacy: eventData?.privacy || "",
     photo: eventData?.photo || undefined,
     eventId: eventData?._id || "",
+    isRefundable: eventData?.isRefundable || false,
   };
 };

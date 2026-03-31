@@ -11,6 +11,10 @@ type EventFormBase = {
     id: string;
     image: string;
   };
+  promoCode?: {
+    code: string;
+    discount: number;
+  };
   subCategory?: {
     name: string;
     id: string;
@@ -27,12 +31,12 @@ type EventFormBase = {
   ticketing?: TicketTierState[];
   fundRaiser?: FundraiserState;
   currentTicketIndex: number;
+  isRefundable: boolean;
 };
 
 type OnlineEventForm = EventFormBase & {
   isOnlineEvent: true;
   meetingLink: string;
-
   address?: never;
   latitude?: never;
   longitude?: never;
@@ -93,6 +97,7 @@ export const defaultValue: EventFormState = {
   currentTicketIndex: 0,
   ticketing: [],
   isOnlineEvent: false,
+  isRefundable: false,
 };
 
 type StaticEventFormStore = {

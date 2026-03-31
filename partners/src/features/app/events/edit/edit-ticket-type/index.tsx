@@ -14,7 +14,7 @@ import { Switch } from "@/modules/ui/switch";
 import { Fragment } from "react/jsx-runtime";
 
 import infoIcon from "./assets/info.svg";
-import { useParams, useSearch } from "@tanstack/react-router";
+import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { useUpdateEventTicketTypeForm } from "./hooks/logic";
 import { calculateFees, formatter } from "./helper/fees";
 import { Button } from "@/modules/ui/button";
@@ -25,59 +25,75 @@ import { sanitizeNumericInput } from "@/helpers/input";
 import { useCurrencyStore } from "@/stores/currency";
 import { useCurrencyQuoteQuery } from "@/features/app/global/hooks/query";
 import { convertGbpTo } from "@/helpers/text";
+import { CurrencySelect } from "@/modules/units/form/currency";
+import { useUpdateEventMutation } from "../hooks/mutation";
+import { useEffect } from "react";
 
 const EditTicketType = () => {
-  const { id, ticketTypeId } = useParams({
-    strict: false,
-  });
-
-  const { getSymbolByValue, getStripeFee } = useCurrencyStore();
+  const { id, ticketTypeId } = useParams({ strict: false });
+  const navigate = useNavigate();
 
   const { currency } = useSearch({
     from: "/app/events/$id/edit/$ticketTypeId/",
   });
 
-  const { data } = useCurrencyQuoteQuery();
-  const hiroekFeeGbp = 0.6;
-
-  const equivalentHiroekFee = convertGbpTo(
-    hiroekFeeGbp,
-    currency,
-    data?.quotes
-  );
+  const { getSymbolByValue, getStripeFee, selectedCurrency } =
+    useCurrencyStore();
+  const { data: currencyQuotes } = useCurrencyQuoteQuery();
 
   const currencySymbol = getSymbolByValue(currency) || "£";
+  const equivalentHiroekFee = convertGbpTo(
+    0.6,
+    currency,
+    currencyQuotes?.quotes,
+  );
 
   const { formState, updateFormField, absorbFees } =
-    useUpdateEventTicketTypeForm({
-      id,
-      ticketTypeId,
-    });
+    useUpdateEventTicketTypeForm({ id, ticketTypeId });
 
   const ticketPrice = Number(formState.ticketPrice);
-
   const feeBreakdown = calculateFees(
     ticketPrice,
     absorbFees,
-    Number(equivalentHiroekFee)
+    Number(equivalentHiroekFee),
   );
 
   const { mutate, isPending } = useEditEventTicketMutation({
     eventId: id || "",
     ticketTypeId: ticketTypeId || "",
     ...formState,
-    ticketPrice: Math.abs(Number(ticketPrice * 100)),
+    ticketPrice: Math.abs(ticketPrice * 100),
     ticketType: formState.ticketType.toLowerCase(),
     ...(formState.salesEndDate !== null &&
       formState.salesStartDate !== null && {
         salesEndDate: convertDateTimeInputToISOString(
-          String(formState.salesEndDate)
+          String(formState.salesEndDate),
         ),
         salesStartDate: convertDateTimeInputToISOString(
-          String(formState.salesStartDate)
+          String(formState.salesStartDate),
         ),
       }),
   });
+
+  const {
+    mutate: updateEvent,
+    isPending: isUpdatingEvent,
+    isSuccess,
+  } = useUpdateEventMutation({
+    mode: "direct",
+    eventId: String(id),
+    updatedFields: { currency: selectedCurrency.value },
+  });
+
+  const hasCurrencyChanged = currency !== selectedCurrency.value;
+  const isUpdatingFields = hasCurrencyChanged
+    ? isPending || isUpdatingEvent
+    : isPending;
+
+  useEffect(() => {
+    if (isSuccess)
+      navigate({ to: "/app/events/$id", params: { id: String(id) } });
+  }, [isSuccess]);
 
   return (
     <Fragment>
@@ -91,6 +107,16 @@ const EditTicketType = () => {
       <Form>
         <FormContent>
           <FormField>
+            <Label>Event Ticket Currency</Label>
+            <CurrencySelect
+              classNames={{
+                trigger: "w-full h-12 border-primary/50",
+              }}
+              initialCurrency={currency}
+            />
+          </FormField>
+
+          <FormField>
             <Label>Event Ticket Price</Label>
             <InputWithPrefix
               prefixItemClassName="text-primary font-bold"
@@ -101,7 +127,7 @@ const EditTicketType = () => {
               onChange={({ target }) => {
                 updateFormField(
                   "ticketPrice",
-                  sanitizeNumericInput(target.value)
+                  sanitizeNumericInput(target.value),
                 );
               }}
             />
@@ -179,7 +205,7 @@ const EditTicketType = () => {
                       className={cn(
                         "px-4 py-2 text-xs font-bold bg-primary text-white rounded-full cursor-pointer transition-all",
                         formState.ticketType === option &&
-                          "text-primary bg-primary/10 border border-primary"
+                          "text-primary bg-primary/10 border border-primary",
                       )}
                       key={index}
                       onClick={() => {
@@ -189,7 +215,7 @@ const EditTicketType = () => {
                       {option}
                     </li>
                   );
-                }
+                },
               )}
             </ul>
           </FormField>
@@ -204,13 +230,13 @@ const EditTicketType = () => {
               increment={() => {
                 updateFormField(
                   "signUpLimit",
-                  Math.abs(Number(formState.signUpLimit + 1))
+                  Math.abs(Number(formState.signUpLimit + 1)),
                 );
               }}
               decrement={() => {
                 updateFormField(
                   "signUpLimit",
-                  Math.abs(Number(formState.signUpLimit - 1))
+                  Math.abs(Number(formState.signUpLimit - 1)),
                 );
               }}
             />
@@ -246,8 +272,12 @@ const EditTicketType = () => {
           <Button
             onClick={() => {
               mutate();
+
+              if (currency !== selectedCurrency.value) {
+                updateEvent();
+              }
             }}
-            isPending={isPending}
+            isPending={isUpdatingFields}
             className="w-full"
             disabled={
               formState.salesStartDate === null ||

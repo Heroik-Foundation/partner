@@ -19,6 +19,20 @@ import { Header } from "../global/header";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { UserRoundPlus } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/modules/ui/select";
+
+const FONT_SIZE_OPTIONS = [
+  { label: "sm", value: "text-xs" },
+  { label: "md", value: "text-sm" },
+  { label: "lg", value: "text-base" },
+  { label: "xl", value: "text-lg" },
+] as const;
 
 const Profile = () => {
   const [form, setForm] = useState<AuthForm>(initialValues);
@@ -31,6 +45,7 @@ const Profile = () => {
     telephone: form.number,
     bio: form.bio,
   });
+  const [bioFontSize, setBioFontSize] = useState<string>("text-base");
 
   const handleInitialData = useCallback(() => {
     if (user) {
@@ -68,7 +83,7 @@ const Profile = () => {
               className={cn(
                 buttonVariants({
                   variant: "secondary",
-                })
+                }),
               )}
             >
               <span>Manage</span>
@@ -145,8 +160,30 @@ const Profile = () => {
           </FormField>
 
           <FormField>
-            <Label htmlFor="number">Partner Bio</Label>
+            <div className="relative flex items-center justify-between">
+              <Label htmlFor="bio">Partner Bio</Label>
+              <Select value={bioFontSize} onValueChange={setBioFontSize}>
+                <SelectTrigger
+                  className="w-fit gap-1.5 text-xs border-primary/20 text-primary border-2 font-semibold focus:ring-primary h-7 px-2.5 rounded-md cursor-pointer"
+                  aria-label="Select bio font size"
+                >
+                  <SelectValue placeholder="Size" />
+                </SelectTrigger>
+                <SelectContent>
+                  {FONT_SIZE_OPTIONS.map((option) => (
+                    <SelectItem
+                      key={option.value}
+                      value={option.value}
+                      className="text-xs font-semibold cursor-pointer"
+                    >
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Textarea
+              className={bioFontSize}
               name="bio"
               placeholder="Write something about you"
               value={form.bio}

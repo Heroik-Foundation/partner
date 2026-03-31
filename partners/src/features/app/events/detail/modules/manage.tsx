@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/modules/ui/button";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Edit, Copy } from "lucide-react";
+import { Edit, Copy, Trash } from "lucide-react";
 // import { useEventTerminationByIDMutation } from "../hooks/mutation";
 // import { ActionDrawer } from "@/modules/units/page/action";
 // import { toast } from "sonner";
@@ -11,6 +11,9 @@ import { Event } from "@/features/app/global/types";
 import { safeExtractDate, safeGetTimeFromISO } from "../../edit/helpers/time";
 import { getSafeCoordinate } from "../../edit/helpers/location";
 import { useCurrencyStore } from "@/stores/currency";
+import { ActionDrawer } from "@/modules/units/page/action";
+import { toast } from "sonner";
+import { useEventTerminationByIDMutation } from "../hooks/mutation";
 
 export const Manage = ({
   id,
@@ -21,9 +24,10 @@ export const Manage = ({
   endDate: string;
   event: Event;
 }) => {
-  // const { isPending, isSuccess, isError } = useEventTerminationByIDMutation({
-  //   id,
-  // });
+  const { isPending, isSuccess, isError } = useEventTerminationByIDMutation({
+    id,
+    isRefundable: event.isRefundable,
+  });
   const { setSelectedCurrency, getSymbolByValue } = useCurrencyStore();
   const { setFormState } = useEventFormStore();
   const navigate = useNavigate();
@@ -91,13 +95,13 @@ export const Manage = ({
         event.eventPledge.minimumPledge && {
           fundRaiser: {
             fundRaisingGoal: Math.abs(
-              Number(event.eventPledge.minimumPledge / 100)
+              Number(event.eventPledge.minimumPledge / 100),
             ),
             organizations: event.eventPledge.organizations.map(
               (organization) => ({
                 name: organization.name,
                 id: organization._id,
-              })
+              }),
             ),
           },
         }),
@@ -113,25 +117,27 @@ export const Manage = ({
 
   return (
     <div className="space-y-2.5 sm:space-y-0 flex flex-col sm:flex-row items-center sm:space-x-2.5">
-      <Link
-        to={"/app/events/$id/edit"}
-        className={cn(
-          buttonVariants({
-            size: "lg",
-            className: "w-full",
-          })
-        )}
-        params={{
-          id,
-        }}
-      >
-        <Edit size="16" />
-        <span className="mt-0.5">Edit Event</span>
-      </Link>
+      {!isPastDate && (
+        <Link
+          to={"/app/events/$id/edit"}
+          className={cn(
+            buttonVariants({
+              size: "lg",
+              className: "w-full",
+            }),
+          )}
+          params={{
+            id,
+          }}
+        >
+          <Edit size="16" />
+          <span className="mt-0.5">Edit Event</span>
+        </Link>
+      )}
 
-      {/* <ActionDrawer
+      <ActionDrawer
         trigger={
-          <Button disabled size="lg" variant="destructive" className="w-full">
+          <Button size="lg" variant="destructive" className="w-full">
             <Trash size="16" />
             <span className="mt-0.5">Delete Event</span>
           </Button>
@@ -152,7 +158,7 @@ export const Manage = ({
         isSuccess={isSuccess}
         isPending={isPending}
         isError={isError}
-      /> */}
+      />
 
       {isPastEvent && (
         <Button

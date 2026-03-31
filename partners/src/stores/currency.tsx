@@ -84,6 +84,7 @@ interface CurrencyStore {
   getSymbolByValue: (value: string) => string | undefined;
   getCurrencyBySymbol: (symbol: string) => CurrencyDetails | undefined;
   getStripeFee: (value: string) => string | undefined;
+  getCurrencyByCode: (code: string) => CurrencyDetails | undefined;
 }
 
 const DEFAULT_CURRENCY: Currency = { value: "gbp", symbol: "£" };
@@ -97,7 +98,7 @@ export const useCurrencyStore = create<CurrencyStore>()(
 
       getSymbolByValue: (value: string) => {
         const found = currencies.find(
-          (c) => c.value.toLowerCase() === value.toLowerCase()
+          (c) => c.value.toLowerCase() === value.toLowerCase(),
         );
         return found?.symbol;
       },
@@ -108,15 +109,21 @@ export const useCurrencyStore = create<CurrencyStore>()(
 
       getStripeFee: (value: string) => {
         const found = currencies.find(
-          (c) => c.value.toLowerCase() === value.toLowerCase()
+          (c) => c.value.toLowerCase() === value.toLowerCase(),
         );
         return found?.stripeFee;
+      },
+
+      getCurrencyByCode: (code: CurrencyCode | string) => {
+        return currencies.find(
+          (c) => c.value.toLowerCase() === code.toLowerCase(),
+        );
       },
     }),
     {
       name: "currency-store",
       storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({ selectedCurrency: state.selectedCurrency }),
-    }
-  )
+    },
+  ),
 );

@@ -23,6 +23,7 @@ const EventDashboard = () => {
       {stats && id && (
         <Fragment>
           <Stats
+            todayDonations={stats.todayDonations}
             pledge={Number(stats.pledges || 0)}
             signups={stats.members}
             ticket={{

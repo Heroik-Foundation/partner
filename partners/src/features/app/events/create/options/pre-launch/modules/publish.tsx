@@ -26,6 +26,8 @@ export const Publish = () => {
     latitude,
     meetingLink,
     isOnlineEvent,
+    isRefundable,
+    promoCode,
   } = formState;
 
   const locationData = isOnlineEvent
@@ -38,6 +40,7 @@ export const Publish = () => {
     description,
     subcategory: subCategory?.id,
     privacy: "public",
+    isRefundable,
     ...(photo ? { photo: photo as string | File } : {}),
     ...locationData,
     endTime: convertDateTimeInputToISOString(startDate, startTime),
@@ -45,6 +48,16 @@ export const Publish = () => {
     ...(mapRecurrenceStateToMutation(recurrence) && {
       recurrence: mapRecurrenceStateToMutation(recurrence)!,
     }),
+    ...(promoCode &&
+      promoCode.code &&
+      promoCode.discount &&
+      promoCode.discount > 0 &&
+      promoCode.discount <= 100 && {
+        promoCode: {
+          code: promoCode.code,
+          discount: Number(promoCode.discount) * 100,
+        },
+      }),
     ...(ticketing &&
       ticketing.length > 0 && {
         ticketing: ticketing

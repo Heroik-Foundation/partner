@@ -1,5 +1,5 @@
 import type { Post } from "@/features/app/global/types";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Scaling } from "lucide-react"; // Added Scaling icon
 import {
   useCreatePostDislikeMutation,
   useCreatePostLikeMutation,
@@ -8,6 +8,101 @@ import { useState } from "react";
 import { PostMenu } from "./menu";
 import { UserAvatar } from "./avatar";
 import { PostActions } from "./actions";
+import { Dialog, DialogContent } from "@/modules/ui/dialog"; // Assuming shadcn/ui dialog is available
+
+const PostImages = ({
+  attachments,
+}: {
+  attachments?: Array<{ image: string }>;
+}) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [naturalSizes, setNaturalSizes] = useState<
+    Record<number, { w: number; h: number }>
+  >({});
+
+  const images = attachments?.filter((a) => a.image) || [];
+
+  if (images.length === 0) return null;
+
+  const hasMultiple = images.length > 1;
+  const firstSize = naturalSizes[0];
+  const MAX_PREVIEW_PX = 120;
+  const previewW = firstSize
+    ? Math.min(firstSize.w, MAX_PREVIEW_PX)
+    : MAX_PREVIEW_PX;
+  const previewH = firstSize
+    ? Math.round((firstSize.h / firstSize.w) * previewW)
+    : MAX_PREVIEW_PX;
+
+  const handleSizeLoad = (
+    e: React.SyntheticEvent<HTMLImageElement>,
+    idx: number,
+  ) => {
+    const el = e.currentTarget;
+    setNaturalSizes((prev: Record<number, { w: number; h: number }>) => ({
+      ...prev,
+      [idx]: { w: el.naturalWidth, h: el.naturalHeight },
+    }));
+  };
+
+  return (
+    <>
+      <div className="relative" style={{ width: previewW, height: previewH }}>
+        {images.map((img, idx) => (
+          <img
+            key={idx}
+            src={img.image}
+            alt=""
+            onLoad={(e) => handleSizeLoad(e, idx)}
+            className="absolute top-0 left-0 w-full h-full rounded-xl object-cover"
+            style={{
+              transform:
+                hasMultiple && idx > 0
+                  ? `rotate(${idx * 3}deg) translate(${idx * 3}px, ${idx * 3}px)`
+                  : undefined,
+              zIndex: images.length - idx,
+              boxShadow: idx > 0 ? "0 2px 8px rgba(0,0,0,0.15)" : undefined,
+            }}
+          />
+        ))}
+        <button
+          onClick={() => setDialogOpen(true)}
+          className="absolute top-1.5 right-1.5 p-1 bg-white/80 rounded-md shadow hover:bg-white transition-colors z-20"
+          aria-label="View images"
+        >
+          <Scaling className="w-3.5 h-3.5 stroke-primary" />
+        </button>
+      </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="p-0 bg-black/90 border-0 max-w-[90vw] w-auto">
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            {images.map((img, idx) => {
+              const size = naturalSizes[idx];
+              return (
+                <img
+                  key={idx}
+                  src={img.image}
+                  alt=""
+                  onLoad={(e) => handleSizeLoad(e, idx)}
+                  className="rounded-lg object-contain"
+                  style={{
+                    maxHeight: "80vh",
+                    maxWidth: size
+                      ? `min(80vw, calc(80vh * ${size.w / size.h}))`
+                      : "80vw",
+                    width: "auto",
+                    height: "auto",
+                  }}
+                />
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
 
 type PostProps = Post & {
   nodeRef?: React.RefObject<HTMLDivElement>;
@@ -29,7 +124,7 @@ export const UserPost = ({
 }: PostProps) => {
   const [likes, setLikes] = useState<string[]>(initialLikes);
   const [isLiked, setIsLiked] = useState<boolean>(
-    Boolean(userId && initialLikes.includes(userId))
+    Boolean(userId && initialLikes.includes(userId)),
   );
 
   const { mutate: likePost } = useCreatePostLikeMutation({
@@ -67,6 +162,7 @@ export const UserPost = ({
       <div className="flex items-center justify-between">
         <UserAvatar user={user} createdAt={createdAt} />
         <div className="flex items-center space-x-2.5">
+          {/* The original SVG (unchanged) */}
           <svg
             width="20"
             height="20"
@@ -96,19 +192,16 @@ export const UserPost = ({
           />
         </div>
       </div>
+
       <div className="space-y-2.5">
-        {/* @ts-ignore  */}
-        {attachments && attachments[0] && attachments[0].image && (
-          <img
-            className="rounded-xl object-cover object-center w-28 h-28"
-            src={attachments[0].image}
-            alt=""
-          />
-        )}
+        {/* Replaced single image with stacked preview */}
+        <PostImages attachments={attachments} />
+
         <p className="font-medium text-sm text-primary break-words">
           {content}
         </p>
       </div>
+
       <PostActions
         likes={likes}
         isLiked={isLiked}

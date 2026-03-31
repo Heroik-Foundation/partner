@@ -30,6 +30,10 @@ type CreateEventBase = {
     endDate?: string;
     occurrenceCount?: number;
   };
+  promoCode?: {
+    discount: number;
+    code: string;
+  };
   ticketing?: Ticket[];
   category: string;
   subcategory?: string;
@@ -38,6 +42,7 @@ type CreateEventBase = {
   endTime: string;
   communityId?: string;
   photo?: string | File;
+  isRefundable: boolean;
 };
 
 export type CreateEventMutation = CreateEventBase &
