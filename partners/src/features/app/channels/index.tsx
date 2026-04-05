@@ -17,7 +17,8 @@ const AllChannels = () => {
   const { data: user } = useUserPropertiesQuery();
   const {
     data: channels,
-    isFetching,
+    isPending,
+    isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
   } = useUserChannelsQuery({
@@ -44,9 +45,9 @@ const AllChannels = () => {
         }}
       />
       <h2 className="text-primary font-extrabold text-sm">All Channels</h2>
-      {channels && (
-        <div className="gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {channels.pages.map((channel, index, all_channels) => (
+      <div className="gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {channels &&
+          channels.pages.map((channel, index, all_channels) => (
             <Channel
               {...(all_channels.length - 1 === index && {
                 nodeRef: lastChannelRef,
@@ -60,17 +61,19 @@ const AllChannels = () => {
               avatars={channel.members.map((member) => member.photo)}
             />
           ))}
-          {isFetching && (
-            <Fragment>
-              <ChannelSkeletonLoader />
-              <ChannelSkeletonLoader />
-            </Fragment>
-          )}
-        </div>
-      )}
-      {channels && channels?.pages.length < 1 && !isFetching && (
-        <ChannelNotFound />
-      )}
+
+        {(isPending || isFetchingNextPage) && (
+          <Fragment>
+            <ChannelSkeletonLoader />
+            <ChannelSkeletonLoader />
+            <ChannelSkeletonLoader />
+          </Fragment>
+        )}
+      </div>
+      {channels &&
+        channels?.pages.flat().length <= 1 &&
+        !isPending &&
+        !isFetchingNextPage && <ChannelNotFound />}
     </div>
   );
 };

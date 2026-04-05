@@ -2,10 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { Button, Loader } from "@/modules/ui/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -24,6 +22,7 @@ import { ReactNode } from "react";
 import { CheckCircle, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/media-query";
 
 type DrawerState = "initial" | "pending" | "success" | "error";
 
@@ -72,15 +71,14 @@ export const ActionDrawer = (props: DrawerProps) => {
     onOpenChange,
   } = props;
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [currentState, setCurrentState] = useState<DrawerState>("initial");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
-  // Reset state function using useCallback
-  const resetDrawerState = useCallback(() => {
-    setCurrentState("initial");
-  }, []);
+  // Reset state
+  const resetState = useCallback(() => setCurrentState("initial"), []);
 
-  // Update state based on external props using useCallback
+  // Sync with external props
   const updateStateFromProps = useCallback(() => {
     if (externalPending) setCurrentState("pending");
     else if (externalSuccess) setCurrentState("success");
@@ -89,36 +87,27 @@ export const ActionDrawer = (props: DrawerProps) => {
   }, [externalPending, externalSuccess, externalError]);
 
   useEffect(() => {
-    if (!drawerOpen) {
-      // Delayed reset to allow closing animation to complete
-      const timeout = setTimeout(() => {
-        resetDrawerState();
-      }, 300);
+    if (!open) {
+      const timeout = setTimeout(resetState, 300);
       return () => clearTimeout(timeout);
     }
-  }, [drawerOpen, resetDrawerState]);
+  }, [open, resetState]);
 
-  // Update state based on external props
   useEffect(() => {
     updateStateFromProps();
   }, [updateStateFromProps]);
 
-  // Handle drawer open state changes
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      setDrawerOpen(open);
+      setOpen(open);
       onOpenChange?.(open);
     },
-    [onOpenChange]
+    [onOpenChange],
   );
 
-  // Get title based on current state
-  const getCurrentTitle = useCallback(
-    () => title[currentState],
-    [title, currentState]
-  );
+  const getCurrentTitle = () => title[currentState];
 
-  // Animation variants
+  // Shared animations
   const contentVariants = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0, transition: { duration: 0.3 } },
@@ -135,113 +124,156 @@ export const ActionDrawer = (props: DrawerProps) => {
     exit: { scale: 0.8, opacity: 0, transition: { duration: 0.2 } },
   };
 
+  // Shared content (body + footer) to avoid duplication
+  const ContentBody = () => (
+    <>
+      <div
+        className={cn(
+          "flex items-center justify-center",
+          currentState !== "initial" && "pb-10",
+        )}
+      >
+        <AnimatePresence mode="wait">
+          {currentState === "error" && (
+            <motion.div
+              key="error"
+              variants={iconVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <XCircle className="stroke-white fill-rose-500" size={60} />
+            </motion.div>
+          )}
+          {currentState === "success" && (
+            <motion.div
+              key="success"
+              variants={iconVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <CheckCircle
+                className="stroke-white fill-emerald-500"
+                size={60}
+              />
+            </motion.div>
+          )}
+          {currentState === "pending" && (
+            <motion.div
+              key="pending"
+              variants={iconVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <img
+                src="/loader/loading.gif"
+                className="w-10 h-10"
+                alt="Loading"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <AnimatePresence>
+        {currentState === "initial" && (
+          <motion.div
+            key="footer"
+            variants={contentVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <div className="flex items-center justify-center gap-4 pt-4">
+              <Button className="rounded-full w-fit" onClick={callback.fn}>
+                {callback.title}
+              </Button>
+              <DialogClose asChild>
+                <Button variant="ghost" className="bg-none text-rose-500">
+                  Cancel
+                </Button>
+              </DialogClose>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+
+  // Mobile: Drawer
+  if (!isDesktop) {
+    return (
+      <Drawer open={open} onOpenChange={handleOpenChange}>
+        {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
+        <DrawerContent>
+          <motion.div
+            variants={contentVariants}
+            initial="initial"
+            animate="animate"
+          >
+            <DrawerHeader>
+              <DrawerTitle className="text-primary text-lg font-extrabold text-center">
+                {getCurrentTitle()}
+              </DrawerTitle>
+              <AnimatePresence>
+                {currentState === "initial" && (
+                  <motion.div
+                    key="description"
+                    variants={contentVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                  >
+                    <DrawerDescription className="text-primary/50 text-sm font-semibold text-center">
+                      {description}
+                    </DrawerDescription>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </DrawerHeader>
+            <ContentBody />
+          </motion.div>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  // Desktop: Dialog
   return (
-    <Drawer open={drawerOpen} onOpenChange={handleOpenChange}>
-      {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
-      <DrawerContent>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+      <DialogContent className="sm:max-w-md">
         <motion.div
+          variants={contentVariants}
           initial="initial"
           animate="animate"
-          variants={contentVariants}
         >
-          <DrawerHeader>
-            <DrawerTitle className="text-primary text-lg font-extrabold text-center">
+          <DialogHeader>
+            <DialogTitle className="text-primary text-lg font-extrabold text-center">
               {getCurrentTitle()}
-            </DrawerTitle>
+            </DialogTitle>
             <AnimatePresence>
               {currentState === "initial" && (
                 <motion.div
                   key="description"
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
                   variants={contentVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
                 >
-                  <DrawerDescription className="text-primary/50 text-sm font-semibold text-center">
+                  <DialogDescription className="text-primary/50 text-sm font-semibold text-center">
                     {description}
-                  </DrawerDescription>
+                  </DialogDescription>
                 </motion.div>
               )}
             </AnimatePresence>
-          </DrawerHeader>
-
-          <div
-            className={cn(
-              "flex items-center justify-center",
-              currentState !== "initial" && "pb-10"
-            )}
-          >
-            <AnimatePresence mode="wait">
-              {currentState === "error" && (
-                <motion.div
-                  key="error"
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={iconVariants}
-                >
-                  <XCircle className="stroke-white fill-rose-500" size={60} />
-                </motion.div>
-              )}
-
-              {currentState === "success" && (
-                <motion.div
-                  key="success"
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={iconVariants}
-                >
-                  <CheckCircle
-                    className="stroke-white fill-emerald-500"
-                    size={60}
-                  />
-                </motion.div>
-              )}
-
-              {currentState === "pending" && (
-                <motion.div
-                  key="pending"
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={iconVariants}
-                >
-                  <img
-                    src="/loader/loading.gif"
-                    className="w-10 h-10"
-                    alt="Loading"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <AnimatePresence>
-            {currentState === "initial" && (
-              <motion.div
-                key="footer"
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                variants={contentVariants}
-              >
-                <DrawerFooter className="flex items-center justify-center">
-                  <Button className="rounded-full w-fit" onClick={callback.fn}>
-                    {callback.title}
-                  </Button>
-                  <DrawerClose>
-                    <Button variant="ghost" className="bg-none text-rose-500">
-                      Cancel
-                    </Button>
-                  </DrawerClose>
-                </DrawerFooter>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          </DialogHeader>
+          <ContentBody />
         </motion.div>
-      </DrawerContent>
-    </Drawer>
+      </DialogContent>
+    </Dialog>
   );
 };
 

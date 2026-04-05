@@ -41,7 +41,7 @@ export default function Info(props: InfoProps) {
   const isFundraiser = organizations.length >= 1;
 
   return (
-    <div className="space-y-5 w-full">
+    <div className="space-y-5 lg:space-y-10 w-full">
       <div className="w-full flex items-center justify-center space-x-2.5">
         <Link
           className={cn(

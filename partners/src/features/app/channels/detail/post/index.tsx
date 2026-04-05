@@ -1,7 +1,7 @@
 import { Header } from "@/features/app/global/header";
 import { useParams } from "@tanstack/react-router";
 import { usePostCommentsQuery, usePostDetailsQuery } from "./hooks/query";
-import { UserPost, UserPostLoader } from "../modules/post";
+import { UserPost, UserPostSkeleton } from "../modules/post";
 import { useUserPropertiesQuery } from "@/features/app/global/hooks/query";
 import { UserComment, UserCommentLoader } from "./modules/comment";
 
@@ -26,7 +26,7 @@ const PostDetails = () => {
       />
       {/* <CreateComment id={postId} /> */}
       {post && <UserPost {...post} userId={user?._id} channelId={id} />}
-      {isPending && <UserPostLoader />}
+      {isPending && <UserPostSkeleton />}
       {comments && (
         <div className="space-y-5 pt-2.5">
           <h4 className="text-primary/50 text-sm font-extrabold">Comments</h4>

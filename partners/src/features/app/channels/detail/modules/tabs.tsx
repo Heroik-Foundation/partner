@@ -2,9 +2,9 @@ import { Button } from "@/modules/ui/button";
 import { useChannelAnnouncementsQuery } from "../hooks/query";
 import { useUserPropertiesQuery } from "@/features/app/global/hooks/query";
 import { Post } from "@/features/app/global/types";
-import { UserPost, UserPostLoader } from "./post";
+import { UserPost, UserPostSkeleton } from "./post";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 interface Props {
   id: string;
@@ -51,7 +51,7 @@ export function ChannelDetailTabs({ id, isPublic }: Props) {
     <div className="space-y-6">
       <div
         className={cn(
-          "w-full flex items-center justify-center space-x-5"
+          "w-full flex items-center justify-center space-x-5",
           // isPublic && "justify-center"
         )}
       >
@@ -63,7 +63,7 @@ export function ChannelDetailTabs({ id, isPublic }: Props) {
               className={cn(
                 "rounded-full w-fit py-6 px-6 first-letter:uppercase",
                 !isActive && "bg-primary/10 text-primary",
-                "transition-all"
+                "transition-all",
               )}
               key={item.name}
               onClick={() => setTab(item.name)}
@@ -72,7 +72,7 @@ export function ChannelDetailTabs({ id, isPublic }: Props) {
               <div
                 className={cn(
                   "bg-accent h-5 w-5 rounded-full text-[10px] font-extrabold flex items-center justify-center",
-                  !isActive && "text-white"
+                  !isActive && "text-white",
                 )}
               >
                 <span className="h-[18px] w-fit">{item.value}</span>
@@ -89,13 +89,19 @@ export function ChannelDetailTabs({ id, isPublic }: Props) {
 
 function PostTab({ id }: Props) {
   const { data: user } = useUserPropertiesQuery();
-  const { data: announcements } = useChannelAnnouncementsQuery({ id });
+  const {
+    data: announcements,
+    isPending,
+    isFetchingNextPage,
+  } = useChannelAnnouncementsQuery({ id });
 
   const filteredPosts = announcements?.pages || [];
 
+  console.log(filteredPosts);
+
   return (
     <div className="space-y-10">
-      {filteredPosts.length > 0 ? (
+      {filteredPosts.length > 0 &&
         filteredPosts.map((post: Post) => (
           <UserPost
             userId={user?._id}
@@ -103,11 +109,13 @@ function PostTab({ id }: Props) {
             channelId={id}
             key={post._id}
           />
-        ))
-      ) : (
-        <>
-          <UserPostLoader /> <UserPostLoader />
-        </>
+        ))}
+
+      {(isPending || isFetchingNextPage) && (
+        <Fragment>
+          <UserPostSkeleton />
+          <UserPostSkeleton />
+        </Fragment>
       )}
     </div>
   );

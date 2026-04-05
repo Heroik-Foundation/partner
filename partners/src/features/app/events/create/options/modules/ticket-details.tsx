@@ -200,6 +200,77 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         />
       </FormField>
 
+      <div className="flex items-center space-x-5">
+        <FormField>
+          <Label>Promo Code</Label>
+          <InputWithPrefix
+            required={
+              typeof formState.promoCode?.discount !== undefined &&
+              String(formState.promoCode?.discount).length > 0
+            }
+            value={formState.promoCode?.code}
+            onChange={({ target }) => {
+              updateForm("promoCode", {
+                code: target.value,
+                discount: Number(formState.promoCode?.discount || 0),
+              });
+            }}
+            placeholder="HSIK3XXX"
+          />
+        </FormField>
+        <FormField>
+          <Label>Promo Discount</Label>
+          <InputWithPrefix
+            required={
+              typeof formState.promoCode?.code !== undefined &&
+              String(formState.promoCode?.code).length > 0
+            }
+            prefixItem={<span className="font-bold text-primary/50">%</span>}
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={3}
+            value={formState.promoCode?.discount || ""}
+            onChange={({ target }) => {
+              // Allow empty string
+              if (target.value === "") {
+                updateForm("promoCode", {
+                  //@ts-ignore
+                  discount: "",
+                  code: String(formState.promoCode?.code || ""),
+                });
+                return;
+              }
+
+              // Only allow numbers
+              const numericValue = target.value.replace(/[^0-9]/g, "");
+              let num = Number(numericValue);
+
+              // Limit to 100
+              if (num > 100) {
+                num = 100;
+              }
+
+              updateForm("promoCode", {
+                discount: num,
+                code: String(formState.promoCode?.code || ""),
+              });
+            }}
+            onKeyDown={(e) => {
+              if (
+                e.key === "e" ||
+                e.key === "E" ||
+                e.key === "-" ||
+                e.key === "+" ||
+                e.key === "."
+              ) {
+                e.preventDefault();
+              }
+            }}
+          />
+        </FormField>
+      </div>
+
       <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary space-y-4">
         <div className="flex items-end justify-end w-full">
           <img src={infoIcon} alt="" className="w-fit" />

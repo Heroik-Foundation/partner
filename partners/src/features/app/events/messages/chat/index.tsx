@@ -23,7 +23,7 @@ const Chat = () => {
     if (!data) return [];
     return [...data].sort(
       (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     );
   }, [data]);
 

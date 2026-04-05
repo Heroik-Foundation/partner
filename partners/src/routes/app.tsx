@@ -1,13 +1,13 @@
 import { AuthProvider } from "@/modules/units/providers/auth";
+import { ViewProvider } from "@/modules/units/providers/view";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { NuqsAdapter } from "nuqs/adapters/react";
 
 export const Route = createFileRoute("/app")({
   component: () => (
-    <NuqsAdapter>
-      <AuthProvider>
+    <AuthProvider>
+      <ViewProvider>
         <Outlet />
-      </AuthProvider>
-    </NuqsAdapter>
+      </ViewProvider>
+    </AuthProvider>
   ),
 });

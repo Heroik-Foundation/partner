@@ -19,7 +19,7 @@ export const ChatHeader = (props: Props) => {
   const { user } = props;
 
   return (
-    <header className="shadow-sm fixed w-full top-0 left-0 right-0 py-5 px-2 flex items-center justify-between">
+    <header className="shadow-sm fixed w-full top-0 left-0 right-0 py-5 px-2 flex items-center justify-between lg:ml-64 2xl:ml-72">
       <div className="flex items-center space-x-2.5">
         <PreviousButton />
 
@@ -27,7 +27,7 @@ export const ChatHeader = (props: Props) => {
           <div
             className={cn(
               "w-10 h-10 rounded-full border/20 border-primary flex items-center justify-center",
-              !user?.photo && "bg-primary/10"
+              !user?.photo && "bg-primary/10",
             )}
           >
             {user.photo ? (

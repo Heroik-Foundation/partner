@@ -117,23 +117,21 @@ export const Manage = ({
 
   return (
     <div className="space-y-2.5 sm:space-y-0 flex flex-col sm:flex-row items-center sm:space-x-2.5">
-      {!isPastDate && (
-        <Link
-          to={"/app/events/$id/edit"}
-          className={cn(
-            buttonVariants({
-              size: "lg",
-              className: "w-full",
-            }),
-          )}
-          params={{
-            id,
-          }}
-        >
-          <Edit size="16" />
-          <span className="mt-0.5">Edit Event</span>
-        </Link>
-      )}
+      <Link
+        to={"/app/events/$id/edit"}
+        className={cn(
+          buttonVariants({
+            size: "lg",
+            className: "w-full",
+          }),
+        )}
+        params={{
+          id,
+        }}
+      >
+        <Edit size="16" />
+        <span className="mt-0.5">Edit Event</span>
+      </Link>
 
       <ActionDrawer
         trigger={

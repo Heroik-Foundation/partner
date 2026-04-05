@@ -11,6 +11,7 @@ import { useSignUpMutation } from "./hooks/mutation";
 import { toast } from "sonner";
 import PlaceAutocomplete from "@/modules/units/form/address";
 import { Textarea } from "@/modules/ui/textarea";
+import { Link } from "@tanstack/react-router";
 
 const SignUp = () => {
   const { form, setForm } = useAuthStore();
@@ -123,6 +124,15 @@ const SignUp = () => {
         <Button isPending={isPending} className="w-full" size="lg">
           Sign Up
         </Button>
+
+        <ul className="mx-auto w-fit text-center mt-5 space-y-5">
+          <li className="font-normal text-black/50">
+            Already Have An Account ?{" "}
+            <Link to="/auth/login" className="font-bold text-primary underline">
+              Login
+            </Link>
+          </li>
+        </ul>
       </FormFooter>
     </Form>
   );

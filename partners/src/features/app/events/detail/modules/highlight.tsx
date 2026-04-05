@@ -2,7 +2,6 @@ import { formatISODate } from "@/helpers/time";
 import { cn } from "@/lib/utils";
 import { DetailProps, EventProps } from "@/modules/units/card/event";
 import { Calendar, Clock, MapPin, Video } from "lucide-react";
-import { Fragment } from "react/jsx-runtime";
 
 import ticketIcon from "../assets/ticket.svg";
 import { ActionDialog } from "@/modules/units/page/action";
@@ -23,7 +22,7 @@ export const Highlight = (props: HighlightProps) => {
   const hasAttendees = (members || 0) > 0 && (avatars || []).length > 0;
 
   return (
-    <Fragment>
+    <div className="lg:relative">
       <div
         className="absolute -top-20 rounded-b-xl w-full left-0 right-0 max-w-lg mx-auto
         md:-top-24 md:max-w-2xl
@@ -39,6 +38,7 @@ export const Highlight = (props: HighlightProps) => {
           alt={title}
         />
       </div>
+
       <div
         className="p-4 bg-white text-primary absolute rounded-3xl space-y-2.5 left-0 right-0 top-40 shadow-lg mx-auto w-[90%] max-w-md
         md:top-48 md:max-w-xl
@@ -54,7 +54,7 @@ export const Highlight = (props: HighlightProps) => {
         </p>
         <div
           className={cn(
-            props.meetingLink && "flex items-center justify-between"
+            props.meetingLink && "flex items-center justify-between",
           )}
         >
           <EventDetail
@@ -94,7 +94,7 @@ export const Highlight = (props: HighlightProps) => {
         <div
           className={cn(
             "w-full flex items-center justify-between space-x-2.5 md:space-x-4",
-            !hasAttendees && "justify-center"
+            !hasAttendees && "justify-center",
           )}
         >
           {hasAttendees && (
@@ -120,7 +120,7 @@ export const Highlight = (props: HighlightProps) => {
           <div
             className={cn(
               "flex items-center space-x-1",
-              !hasAttendees && "justify-center"
+              !hasAttendees && "justify-center",
             )}
           >
             <img src={ticketIcon} alt="" className="w-2.5" />
@@ -134,10 +134,9 @@ export const Highlight = (props: HighlightProps) => {
       <div
         className="pb-64
         md:pb-72
-        lg:pb-80
-        xl:pb-96"
+        lg:pb-[450px]"
       />
-    </Fragment>
+    </div>
   );
 };
 

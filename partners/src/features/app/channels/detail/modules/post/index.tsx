@@ -1,5 +1,5 @@
 import type { Post } from "@/features/app/global/types";
-import { MoreHorizontal, Scaling } from "lucide-react"; // Added Scaling icon
+import { MoreHorizontal, Scaling, Heart } from "lucide-react"; // Added Scaling icon
 import {
   useCreatePostDislikeMutation,
   useCreatePostLikeMutation,
@@ -214,8 +214,84 @@ export const UserPost = ({
   );
 };
 
-export const UserPostLoader = (): JSX.Element => (
-  <div className="h-40 w-full rounded-lg bg-gray-300 animate-pulse" />
-);
+export const UserPostSkeleton = () => {
+  return (
+    <div className="w-full space-y-2.5 animate-pulse">
+      {/* Header section: Avatar + actions */}
+      <div className="flex items-center justify-between">
+        {/* UserAvatar skeleton */}
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-full bg-gray-200" />
+          <div className="space-y-1">
+            <div className="h-3 w-24 bg-gray-200 rounded" />
+            <div className="h-2 w-16 bg-gray-200 rounded" />
+          </div>
+        </div>
+
+        {/* Right side icons - actual icons with skeleton styling */}
+        <div className="flex items-center space-x-2.5">
+          {/* Original custom SVG (grayed out) */}
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="opacity-40"
+          >
+            <g clipPath="url(#clip0_530_3000_skeleton)">
+              <path
+                d="M19.7491 1.43213L4.32422 16.8529C4.65769 17.0154 5.02345 17.1008 5.3944 17.1027H8.03613C8.25713 17.1021 8.46915 17.19 8.62495 17.3467L10.0566 18.7776C10.833 19.5593 11.8889 19.9993 12.9906 20.0001C13.4455 19.9997 13.8973 19.9251 14.3282 19.7795C15.8136 19.2924 16.894 18.0047 17.1157 16.4573L19.9298 3.09031C20.0642 2.53334 20.0003 1.94701 19.7491 1.43213Z"
+                fill="#9ca3af" // gray-400
+              />
+              <path
+                d="M16.9338 0.064502L3.59936 2.87367C1.32096 3.18669 -0.272298 5.28745 0.0407171 7.56585C0.164354 8.46562 0.578753 9.30035 1.22079 9.94274L2.65161 11.3736C2.808 11.5299 2.8958 11.742 2.89564 11.9632V14.6049C2.89755 14.9759 2.98297 15.3417 3.14549 15.6751L18.5679 0.25025C18.0611 0.00118071 17.4836 -0.0644439 16.9338 0.064502Z"
+                fill="#9ca3af"
+              />
+            </g>
+            <defs>
+              <clipPath id="clip0_530_3000_skeleton">
+                <rect width="20" height="20" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+
+          {/* PostMenu icon (MoreHorizontal) skeleton */}
+          <MoreHorizontal className="stroke-gray-400 w-5 h-5" />
+        </div>
+      </div>
+
+      {/* Content section: images + text */}
+      <div className="space-y-2.5">
+        {/* PostImages skeleton - stacked preview look */}
+        <div className="relative w-32 h-32 rounded-xl bg-gray-200" />
+
+        {/* Content text skeleton */}
+        <div className="space-y-1.5">
+          <div className="h-4 bg-gray-200 rounded w-full" />
+          <div className="h-4 bg-gray-200 rounded w-5/6" />
+          <div className="h-4 bg-gray-200 rounded w-4/6" />
+        </div>
+      </div>
+
+      {/* PostActions skeleton - includes actual Heart icon */}
+      <div className="flex space-x-5">
+        {/* Like button skeleton */}
+        <div className="flex items-center space-x-1">
+          <Heart
+            size={24}
+            className="stroke-gray-400 fill-none transition-all"
+          />
+          <span className="text-gray-400 font-extrabold text-sm">0</span>
+        </div>
+        {/* Comment button skeleton (matching your commented code) */}
+        <div className="flex items-center space-x-1">
+          <div className="w-6 h-6 bg-gray-200 rounded-full" />
+          <div className="h-4 w-6 bg-gray-200 rounded" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const UserPostNotFound = (): JSX.Element => <div />;

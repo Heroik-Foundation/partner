@@ -22,9 +22,9 @@ import { useState } from "react";
 import { useAddSessionMutation } from "./hooks";
 import { Header } from "../../global/header";
 import { truncateText } from "@/helpers/text";
-import { Plus, Trash2 } from "lucide-react";
+import { ChevronUpCircle, PlusCircle, Trash2 } from "lucide-react";
 import { FormPassword } from "@/features/auth/global/form";
-import { ItemNotFound } from "@/modules/units/card/not-found";
+
 import { motion, PanInfo } from "motion/react";
 import { ManageProfileMenu } from "./modules/menu";
 import { cn } from "@/lib/utils";
@@ -167,7 +167,7 @@ export function ManageProfiles() {
             id: "account-added-success",
           });
         },
-      }
+      },
     );
   };
 
@@ -197,7 +197,7 @@ export function ManageProfiles() {
       toast.success(
         activeSession?.email === sessionEmail
           ? "Logged out of this account"
-          : "Account removed"
+          : "Account removed",
       );
       setIsDeleting(null);
     }, 300);
@@ -207,19 +207,8 @@ export function ManageProfiles() {
     <div className="bg-background space-y-5">
       <Header
         header={{
-          title: truncateText(String(activeSession?.email || "Profile"), 22),
+          title: "",
           position: "inline",
-        }}
-        addOns={{
-          content: (
-            <Button
-              className="relative"
-              variant="secondary"
-              onClick={() => setDrawerOpen(true)}
-            >
-              <Plus />
-            </Button>
-          ),
         }}
       />
 
@@ -237,12 +226,13 @@ export function ManageProfiles() {
         </p>
       </div>
 
-      <div className="rounded-xl bg-primary/10 space-y-4">
-        <div className="p-3.5 flex items-center justify-center">
+      <div className="rounded-2xl bg-primary/10">
+        <div className="p-5 flex items-center justify-between">
           <span className="font-semibold text-primary">Switch account</span>
+          <ChevronUpCircle className="fill-primary stroke-white" />
         </div>
 
-        {sessions.length > 1 ? (
+        {sessions.length > 1 && (
           <ul className="">
             {sessions
               .filter((s) => s.email !== activeSession?.email)
@@ -270,12 +260,20 @@ export function ManageProfiles() {
                 </motion.li>
               ))}
           </ul>
-        ) : (
-          <ItemNotFound
-            message="No other existing accounts"
-            className="bg-primary/15 text-primary rounded-t-2xl"
-          />
         )}
+
+        <button
+          onClick={() => {
+            setDrawerOpen(true);
+          }}
+          className="border p-5 bg-white rounded-b-2xl w-full flex items-center gap-2"
+        >
+          <PlusCircle className="fill-primary stroke-white" />
+
+          <span className="text-primary font-semibold">
+            Add Another Creator Account
+          </span>
+        </button>
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -314,7 +312,7 @@ export function ManageProfiles() {
                   buttonVariants({
                     variant: "ghost",
                   }),
-                  "p-0 h-4 text-primary/50"
+                  "p-0 h-4 text-primary/50",
                 )}
               >
                 Forgot Password ?

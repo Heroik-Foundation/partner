@@ -102,9 +102,10 @@ const AllEvents = () => {
         })}
       </div>
 
-      {events && (
-        <div className="gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {(() => {
+      <div className="gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {events &&
+          events.pages.flat().length >= 1 &&
+          (() => {
             const seen = new Set();
             const uniqueEvents = events.pages.filter((event) => {
               if (seen.has(event._id)) return false;
@@ -137,18 +138,19 @@ const AllEvents = () => {
             ));
           })()}
 
-          {(isPending || isFetchingNextPage) && (
-            <Fragment>
-              <EventSkeletonLoader />
-              <EventSkeletonLoader />
-            </Fragment>
-          )}
-        </div>
-      )}
+        {(isPending || isFetchingNextPage) && (
+          <Fragment>
+            <EventSkeletonLoader />
+            <EventSkeletonLoader />
+            <EventSkeletonLoader />
+          </Fragment>
+        )}
+      </div>
 
       {events &&
-        events?.pages.length < 1 &&
-        (isPending || isFetchingNextPage) && <EventNotFound />}
+        events?.pages.flat().length <= 0 &&
+        !isPending &&
+        !isFetchingNextPage && <EventNotFound />}
     </div>
   );
 };

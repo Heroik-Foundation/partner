@@ -55,16 +55,9 @@ const Login = () => {
             onChange={(event) => handleInputChangeEvent(event, form, setForm)}
           />
         </FormField>
-        <Link
-          to="/auth/recovery"
-          className="text-sm font-axiforma font-bold float-right text-primary"
-        >
-          Forgot Password ?
-        </Link>
-
         {/* <AutoCompleteInput /> */}
       </FormContent>
-      <FormFooter absolute>
+      <FormFooter>
         <Button
           className="w-full font-axiforma font-semibold text-sm"
           color="primary"
@@ -73,6 +66,28 @@ const Login = () => {
         >
           Log In
         </Button>
+
+        <ul className="mx-auto w-fit text-center mt-5 space-y-5">
+          <li className="font-normal text-black/50">
+            Don't Have An Account ?{" "}
+            <Link
+              to="/auth/signup"
+              className="font-bold text-primary underline"
+            >
+              Register
+            </Link>
+          </li>
+
+          <li className="font-normal text-black/50">
+            Forgot Password ?{" "}
+            <Link
+              to="/auth/recovery"
+              className="font-bold text-primary underline"
+            >
+              Reset
+            </Link>
+          </li>
+        </ul>
       </FormFooter>
     </Form>
   );

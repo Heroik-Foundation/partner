@@ -91,20 +91,6 @@ const CreateEvent = () => {
             }
           />
 
-          <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-sm text-primary">
-                Is this an online event ?
-              </span>
-              <Switch
-                checked={formState.isOnlineEvent}
-                onCheckedChange={(value) => {
-                  updateForm("isOnlineEvent", value);
-                }}
-              />
-            </div>
-          </div>
-
           <FormField>
             <Label>Event Name</Label>
             <Input
