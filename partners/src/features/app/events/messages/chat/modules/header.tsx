@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/modules/ui/dropdown-menu";
 import { PreviousButton } from "@/modules/units/page/button";
-import { MoreVertical, User } from "lucide-react";
+import { MoreVertical, UserCircle2Icon } from "lucide-react";
 
 type Props = {
   user: {
@@ -19,7 +19,7 @@ export const ChatHeader = (props: Props) => {
   const { user } = props;
 
   return (
-    <header className="shadow-sm fixed w-full top-0 left-0 right-0 py-5 px-2 flex items-center justify-between lg:ml-64 2xl:ml-72">
+    <header className="shadow-sm fixed w-full top-0 left-0 right-0 py-5 px-2 flex items-center justify-between lg:ml-64 2xl:ml-72 bg-white z-10">
       <div className="flex items-center space-x-2.5">
         <PreviousButton />
 
@@ -35,9 +35,10 @@ export const ChatHeader = (props: Props) => {
                 src={user.photo}
                 className="h-full w-full rounded-full object-cover object-center"
                 alt=""
+                loading="eager"
               />
             ) : (
-              <User className="stroke-primary" />
+              <UserCircle2Icon className="stroke-primary" />
             )}
           </div>
 

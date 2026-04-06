@@ -73,11 +73,11 @@ const Chat = () => {
     );
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-x-hidden">
       <ChatHeader user={sender} />
 
       <motion.div
-        className="flex-1 overflow-y-auto px-4"
+        className="flex-1 overflow-y-auto px-4 overflow-x-hidden"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
