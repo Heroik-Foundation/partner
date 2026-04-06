@@ -4,6 +4,7 @@ import { Coins, Landmark, Ticket, UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/helpers/text";
 import { useSearch } from "@tanstack/react-router";
+import backgroundImage from "../assets/event-dashboard-bg.png";
 
 type StatProps = {
   pledge: number;
@@ -31,16 +32,15 @@ export const Stats = ({ ticket, signups, todayDonations }: StatProps) => {
       value: ticket.sold.toLocaleString(),
       icon: Ticket,
     },
-
-    {
-      title: "Event Signup",
-      value: signups.toLocaleString(),
-      icon: UsersRound,
-    },
     {
       title: "Total Ticket Revenue",
       value: formatCurrency(ticket.revenue, currency),
       icon: Coins,
+    },
+    {
+      title: "Event Sign-Ups",
+      value: signups.toLocaleString(),
+      icon: UsersRound,
     },
   ];
 
@@ -50,10 +50,14 @@ export const Stats = ({ ticket, signups, todayDonations }: StatProps) => {
         const Icon = stat.icon;
         return (
           <div
+            style={{
+              backgroundImage: `url(${backgroundImage})`,
+              backgroundSize: "cover",
+            }}
             key={index}
             className={cn(
               "rounded-2xl bg-secondary p-5 space-y-2.5 text-white",
-              index === 1 && "bg-primary",
+              index === 0 && "bg-primary",
               list.length % 2 !== 0 && "last:col-span-2",
             )}
           >
