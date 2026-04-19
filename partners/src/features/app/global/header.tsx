@@ -128,7 +128,8 @@ export function HomeHeader() {
       <div className="flex items-center space-x-2.5">
         <div className="flex flex-col">
           <span className="text-sm md:text-base font-black text-primary font-axiforma truncate">
-            {user?.name || "Partner"},
+            <span className="md:hidden">Welcome</span> {user?.name || "Partner"}
+            ,
           </span>
           <span className="text-xs md:text-sm text-black/40 font-semibold">
             Creator Account
