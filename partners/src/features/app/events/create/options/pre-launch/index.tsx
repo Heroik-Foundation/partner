@@ -12,6 +12,7 @@ import { Publish } from "./modules/publish";
 import { toast } from "sonner";
 import { useCurrencyStore } from "@/stores/currency";
 import { cn } from "@/lib/utils";
+import { MarkdownPreview } from "@/modules/ui/markdown-preview";
 
 export const PreLaunch = () => {
   const { selectedCurrency } = useCurrencyStore();
@@ -101,14 +102,8 @@ export const PreLaunch = () => {
           <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex">
             About Event
           </h5>
-          <p
-            className={cn(
-              "text-sm font-semibold text-center text-primary leading-relaxed",
-              "whitespace-pre-wrap",
-              "text-start",
-            )}
-          >
-            {formState.description}
+          <p className={cn("text-sm font-semibold text-primary", "text-start")}>
+            <MarkdownPreview content={formState.description} />
           </p>
         </div>
 

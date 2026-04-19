@@ -128,7 +128,7 @@ const Profile = () => {
           </FormField>
 
           <FormField>
-            <Label htmlFor="bio">Partner Bio</Label>
+            <Label htmlFor="bio">Bio</Label>
 
             <MarkdownEditor
               value={form.bio}

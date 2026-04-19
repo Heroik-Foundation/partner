@@ -76,7 +76,7 @@ const CreateEventOptions = () => {
         title: "Event Recurrence",
         description: "Set how often your event should recur.",
         component: <RecurringEventDetails />,
-        cta: "Is this a recurring event?",
+        cta: "Is This A Recurring Event?",
         position: "stacked",
       },
       {
@@ -85,7 +85,7 @@ const CreateEventOptions = () => {
         component: (
           <TicketEventDetails ticketStateContext={ticketStateContext} />
         ),
-        cta: "Is this a paid ticketed event?",
+        cta: "Is This A Paid Ticketed Event?",
         position: "stacked",
       },
       {
@@ -100,7 +100,7 @@ const CreateEventOptions = () => {
         title: "Fundraising Details",
         description: "Enter the required fundraising information.",
         component: <FundraisingEventDetails />,
-        cta: "Do you want to use this event for fundraising?",
+        cta: "Would You Like To Add Donation To This Event?",
         position: "stacked",
       },
     ],

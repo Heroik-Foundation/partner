@@ -35,6 +35,7 @@ type DrawerProps = {
     title: string;
     fn: () => void;
   };
+  initialContent?: ReactNode;
   title: {
     initial: string;
     pending: string;
@@ -69,6 +70,7 @@ export const ActionDrawer = (props: DrawerProps) => {
     trigger,
     callback,
     onOpenChange,
+    initialContent,
   } = props;
 
   const [open, setOpen] = useState(false);
@@ -186,6 +188,7 @@ export const ActionDrawer = (props: DrawerProps) => {
             animate="animate"
             exit="exit"
           >
+            {initialContent}
             <div className="flex items-center justify-center gap-4 pt-4">
               <Button className="rounded-full w-fit" onClick={callback.fn}>
                 {callback.title}

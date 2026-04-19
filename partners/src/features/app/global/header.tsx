@@ -131,7 +131,7 @@ export function HomeHeader() {
             <span className="md:hidden">Welcome</span> {user?.name || "Partner"}
             ,
           </span>
-          <span className="text-xs md:text-sm text-black/40 font-semibold">
+          <span className="text-xs md:text-sm hidden md:block text-black/40 font-semibold">
             Creator Account
           </span>
         </div>
