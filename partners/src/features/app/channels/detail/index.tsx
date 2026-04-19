@@ -14,7 +14,7 @@ const ChannelDetails = () => {
   const { data: channel } = useChannelDetailsQuery({ id });
 
   return (
-    <div className="space-y-5 min-h-screen">
+    <div className="min-h-screen">
       <Header
         header={{
           title: truncateText(String(channel?.name || ""), 20) || "Channel",
@@ -35,21 +35,23 @@ const ChannelDetails = () => {
         }}
       />
 
-      {channel && (
-        <Highlight
-          title={channel.name}
-          members={channel.members.length}
-          avatars={channel.members.map((member) => member.photo)}
-          thumbnail={channel.photo}
-          id={id}
-        />
-      )}
+      <div className="space-y-5">
+        {channel && (
+          <Highlight
+            title={channel.name}
+            members={channel.members.length}
+            avatars={channel.members.map((member) => member.photo)}
+            thumbnail={channel.photo}
+            id={id}
+          />
+        )}
 
-      {!channel && <SuspenseLoader />}
+        {!channel && <SuspenseLoader />}
 
-      <ChannelDetailTabs isPublic={channel?.privacy === "public"} id={id} />
+        <ChannelDetailTabs isPublic={channel?.privacy === "public"} id={id} />
 
-      <Actions id={id} />
+        <Actions id={id} />
+      </div>
     </div>
   );
 };

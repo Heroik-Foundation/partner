@@ -18,7 +18,7 @@ type UpdateSecurityPinMutationProps = {
   oldPin?: string;
 };
 
-export function useUpdateBankDetailsMutation() {
+export function useUpdateBankDetailsMutation(callback?: () => void) {
   const { selectedCurrency } = useCurrencyStore();
   const queryClient = useQueryClient();
 
@@ -39,6 +39,10 @@ export function useUpdateBankDetailsMutation() {
       queryClient.invalidateQueries({
         queryKey: ["user-wallet"],
       });
+
+      if (callback) {
+        callback();
+      }
     },
     onError: (error: ErrorResponse) => {
       handleUserResponseToError(error);

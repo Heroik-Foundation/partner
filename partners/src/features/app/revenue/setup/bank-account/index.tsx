@@ -16,7 +16,7 @@ import { CurrencySelect } from "@/modules/units/form/currency";
 import { useWalletDetailsQuery } from "../../hooks/query";
 import { useUpdateBankDetailsMutation } from "../hooks/mutation";
 import { useCurrencyStore } from "@/stores/currency";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
 type Currency = "gbp" | "usd" | "eur" | "cad" | "aud" | "nzd";
@@ -49,10 +49,12 @@ const isNonEmptyString = (value: unknown): value is string =>
 const SetupBankAccount = () => {
   const { data: wallet } = useWalletDetailsQuery();
   const { selectedCurrency } = useCurrencyStore();
+  const navigate = useNavigate();
 
   const [form, setForm] = useState<BankDetailsForm>(EMPTY_FORM);
 
   const owner: any = wallet;
+  const hasPin = wallet?.owner.pinSet;
 
   const isBeingUpdated =
     !!owner &&
@@ -60,7 +62,13 @@ const SetupBankAccount = () => {
     isNonEmptyString(owner.bankAccountName) &&
     isNonEmptyString(owner.bankAccountNumber);
 
-  const { mutate, isPending } = useUpdateBankDetailsMutation();
+  const { mutate, isPending, isSuccess } = useUpdateBankDetailsMutation(() => {
+    if (!hasPin) {
+      navigate({
+        to: "/app/revenue/setup-pin",
+      });
+    }
+  });
 
   useEffect(() => {
     if (!owner) return;
@@ -94,7 +102,7 @@ const SetupBankAccount = () => {
       pin: "",
       ...currencyFields,
     });
-  }, [owner, selectedCurrency]);
+  }, [owner, selectedCurrency, isSuccess]);
 
   const handleSubmit = () => {
     const requiredFields: (keyof BankDetailsForm)[] = [

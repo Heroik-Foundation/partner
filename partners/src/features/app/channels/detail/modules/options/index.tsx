@@ -18,11 +18,12 @@ import channelDescriptionIcon from "./assets/channel-description.svg";
 import channelEditIcon from "./assets/channel-edit.svg";
 import channelShareIcon from "./assets/channel-share.svg";
 import channelDeleteIcon from "./assets/channel-delete.svg";
-import { MoreVertical } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ShareDialog } from "@/modules/units/page/share";
+import { MarkdownPreview } from "@/modules/ui/markdown-preview";
 
 interface Props {
   id: string;
@@ -74,7 +75,7 @@ export function ChannelOptions({ privacy, id, description }: Props) {
         <DropdownMenuTrigger asChild>
           <button className="flex items-center justify-center bg-primary/10 w-11 h-11 rounded-full">
             <div className="h-6 w-6 bg-primary rounded-full flex items-center justify-center text-white">
-              <MoreVertical size={20} />
+              <MoreHorizontal size={20} />
             </div>
           </button>
         </DropdownMenuTrigger>
@@ -89,7 +90,7 @@ export function ChannelOptions({ privacy, id, description }: Props) {
                   className={cn(
                     "w-[260px] h-[48px] text-primary focus:text-primary flex gap-2",
                     variant === "primary" &&
-                      "bg-primary text-white hover:bg-primary hover:text-white rounded-t focus:bg-primary focus:text-white"
+                      "bg-primary text-white hover:bg-primary hover:text-white rounded-t focus:bg-primary focus:text-white",
                   )}
                 >
                   <img src={icon} className="w-4 h-4" alt="" />
@@ -124,7 +125,7 @@ export function ChannelOptions({ privacy, id, description }: Props) {
               ) : (
                 item
               );
-            }
+            },
           )}
         </DropdownMenuContent>
       </DropdownMenu>
@@ -148,7 +149,7 @@ function DescriptionDialog({
             Channel Description
           </DialogTitle>
           <DialogDescription className="text-primary text-sm font-semibold">
-            {description}
+            <MarkdownPreview content={description} />
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

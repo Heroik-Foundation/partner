@@ -5,6 +5,7 @@ import { Post } from "@/features/app/global/types";
 import { UserPost, UserPostSkeleton } from "./post";
 import { cn } from "@/lib/utils";
 import { Fragment, useState } from "react";
+import { Megaphone } from "lucide-react";
 
 interface Props {
   id: string;
@@ -56,23 +57,23 @@ export function ChannelDetailTabs({ id, isPublic }: Props) {
         )}
       >
         {tabs.map((item) => {
-          const isActive = item.name === tab;
           return (
             <Button
               size="lg"
               className={cn(
                 "rounded-full w-fit py-6 px-6 first-letter:uppercase",
-                !isActive && "bg-primary/10 text-primary",
+                "bg-primary/10 text-primary",
                 "transition-all",
               )}
               key={item.name}
               onClick={() => setTab(item.name)}
             >
+              <Megaphone className="" />
               <p className="first-letter:uppercase">{item.name}</p>
               <div
                 className={cn(
                   "bg-accent h-5 w-5 rounded-full text-[10px] font-extrabold flex items-center justify-center",
-                  !isActive && "text-white",
+                  "text-white",
                 )}
               >
                 <span className="h-[18px] w-fit">{item.value}</span>

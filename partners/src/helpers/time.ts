@@ -1,3 +1,5 @@
+type DateState = "past" | "present" | "upcoming";
+
 export function formatISODate(isoString: string): {
   date: string;
   time: string;
@@ -23,10 +25,10 @@ export function formatISODate(isoString: string): {
   };
 
   const formattedDate = new Intl.DateTimeFormat("en-US", dateOptions).format(
-    date
+    date,
   );
   const formattedTime = new Intl.DateTimeFormat("en-US", timeOptions).format(
-    date
+    date,
   );
 
   return {
@@ -95,11 +97,21 @@ export function isPastDate(dateString: string): boolean {
 
 export function convertDateTimeInputToISOString(
   date: string,
-  time?: string
+  time?: string,
 ): string {
   if (!date) return "";
 
   const timePart = time ? `${time}:00` : "00:00:00";
   const localDateTime = new Date(`${date}T${timePart}`);
   return localDateTime.toISOString();
+}
+
+export function getDateStatePrecise(date1: string, date2: string): DateState {
+  const now = new Date();
+  const start = new Date(date1);
+  const end = new Date(date2);
+
+  if (now < start) return "upcoming";
+  if (now > end) return "past";
+  return "present";
 }

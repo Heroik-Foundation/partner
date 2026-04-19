@@ -3,6 +3,7 @@ import { Sidebar } from "../navigation/sidebar";
 
 import { useSidebarStore } from "@/stores/sidebar";
 import { useMediaQuery } from "@/hooks/media-query";
+import authAsideImg from "@/assets/images/auth.jpeg";
 
 type Children = {
   children: React.ReactNode;
@@ -35,9 +36,9 @@ export const AuthViewProvider = ({ children }: Children) => {
         {/* Left side - Image */}
         <div className="w-1/2 h-full relative">
           <img
-            src="https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c3BvcnRzfGVufDB8fDB8fHww"
+            src={authAsideImg}
             alt="Auth background"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-left"
           />
         </div>
 

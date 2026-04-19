@@ -1,10 +1,11 @@
-import { buttonVariants } from "@/modules/ui/button";
+import { Button } from "@/modules/ui/button";
 import { Header } from "../global/header";
 import { Setting, SettingProps } from "./modules/setting";
-import { Link } from "@tanstack/react-router";
-import { cn } from "@/lib/utils";
+import { getActiveSession, removeSession } from "@/lib/session";
 
 export const Settings = () => {
+  const session = getActiveSession();
+
   const settings: SettingProps[] = [
     {
       title: "Contact Support",
@@ -21,9 +22,6 @@ export const Settings = () => {
           title: "App Settings",
           position: "inline",
         }}
-        addOns={{
-          notification: true,
-        }}
       />
 
       <div className="space-y-2.5">
@@ -34,17 +32,15 @@ export const Settings = () => {
 
       <div className="my-10" />
 
-      <Link
-        className={cn(
-          buttonVariants({
-            variant: "secondary",
-          }),
-          "w-full"
-        )}
-        to="/app/profile/manage"
+      <Button
+        onClick={() => {
+          removeSession(session?.email || "");
+        }}
+        className="w-full"
+        variant={"destructive"}
       >
-        <span>Manage Accounts</span>
-      </Link>
+        Log out of this account
+      </Button>
     </div>
   );
 };

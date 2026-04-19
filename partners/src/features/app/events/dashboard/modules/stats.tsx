@@ -23,7 +23,7 @@ export const Stats = ({ ticket, signups, todayDonations }: StatProps) => {
 
   const stats = [
     {
-      title: "Daily Donation",
+      title: "Donations",
       value: formatCurrency(todayDonations, currency),
       icon: Landmark,
     },

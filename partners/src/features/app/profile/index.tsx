@@ -2,7 +2,7 @@ import { AuthForm, initialValues } from "@/stores/auth";
 import { ImageWithPreview } from "@/modules/units/form/image";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
-import { Button, buttonVariants } from "@/modules/ui/button";
+import { Button } from "@/modules/ui/button";
 import { toast } from "sonner";
 import {
   Form,
@@ -14,25 +14,9 @@ import { handleInputChangeEvent } from "@/features/auth/global/helpers/input";
 import { useUserPropertiesQuery } from "../global/hooks/query";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { useUpdateUserDetailsMutation } from "./hooks/mutation";
-import { Textarea } from "@/modules/ui/textarea";
-import { Header } from "../global/header";
-import { Link } from "@tanstack/react-router";
-import { cn } from "@/lib/utils";
-import { UserRoundPlus } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/modules/ui/select";
 
-const FONT_SIZE_OPTIONS = [
-  { label: "sm", value: "text-xs" },
-  { label: "md", value: "text-sm" },
-  { label: "lg", value: "text-base" },
-  { label: "xl", value: "text-lg" },
-] as const;
+import { Header } from "../global/header";
+import MarkdownEditor from "@/modules/ui/markdown-editor";
 
 const Profile = () => {
   const [form, setForm] = useState<AuthForm>(initialValues);
@@ -45,7 +29,6 @@ const Profile = () => {
     telephone: form.number,
     bio: form.bio,
   });
-  const [bioFontSize, setBioFontSize] = useState<string>("text-base");
 
   const handleInitialData = useCallback(() => {
     if (user) {
@@ -75,21 +58,6 @@ const Profile = () => {
           title: "Profile",
           position: "stacked",
           subtitle: "Please Update Your Profile Details",
-        }}
-        addOns={{
-          content: (
-            <Link
-              to="/app/profile/manage"
-              className={cn(
-                buttonVariants({
-                  variant: "secondary",
-                }),
-              )}
-            >
-              <span>Manage</span>
-              <UserRoundPlus className="mb-1" />
-            </Link>
-          ),
         }}
       />
       <Form
@@ -160,36 +128,16 @@ const Profile = () => {
           </FormField>
 
           <FormField>
-            <div className="relative flex items-center justify-between">
-              <Label htmlFor="bio">Partner Bio</Label>
-              <Select value={bioFontSize} onValueChange={setBioFontSize}>
-                <SelectTrigger
-                  className="w-fit gap-1.5 text-xs border-primary/20 text-primary border-2 font-semibold focus:ring-primary h-7 px-2.5 rounded-md cursor-pointer"
-                  aria-label="Select bio font size"
-                >
-                  <SelectValue placeholder="Size" />
-                </SelectTrigger>
-                <SelectContent>
-                  {FONT_SIZE_OPTIONS.map((option) => (
-                    <SelectItem
-                      key={option.value}
-                      value={option.value}
-                      className="text-xs font-semibold cursor-pointer"
-                    >
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <Textarea
-              className={bioFontSize}
-              name="bio"
-              placeholder="Write something about you"
+            <Label htmlFor="bio">Partner Bio</Label>
+
+            <MarkdownEditor
               value={form.bio}
-              onChange={(event: any) =>
-                handleInputChangeEvent(event, form, setForm)
-              }
+              onChange={(markdownContent) => {
+                setForm({
+                  ...form,
+                  bio: markdownContent,
+                });
+              }}
             />
           </FormField>
 

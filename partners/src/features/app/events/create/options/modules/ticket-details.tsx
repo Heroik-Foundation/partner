@@ -1,4 +1,7 @@
-import { InputWithPrefix } from "@/features/app/global/form";
+import {
+  InputWithPrefix,
+  InputWithPrefixSuffix,
+} from "@/features/app/global/form";
 import {
   TicketTierState,
   useEventFormStore,
@@ -24,6 +27,7 @@ import { CurrencySelect } from "@/modules/units/form/currency";
 import { useCurrencyStore } from "@/stores/currency";
 import { convertGbpTo } from "@/helpers/text";
 import { useCurrencyQuoteQuery } from "@/features/app/global/hooks/query";
+import MarkdownEditor from "@/modules/ui/markdown-editor";
 
 type Props = {
   ticketStateContext: "adding" | "creating";
@@ -35,6 +39,7 @@ const DEFAULT_TICKET_STATE: TicketTierState = {
   signUpLimit: 0,
   ticketPrice: 0,
   ticketType: "Standard",
+  ticketDetails: "",
 };
 
 export const TicketEventDetails = ({ ticketStateContext }: Props) => {
@@ -169,7 +174,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
   return (
     <FormContent>
       <FormField>
-        <Label>Payout Currency</Label>
+        <Label>Choose Currency</Label>
         <CurrencySelect
           classNames={{
             trigger: "w-full h-12 border-primary/50",
@@ -202,11 +207,18 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
 
       <div className="flex items-center space-x-5">
         <FormField>
-          <Label>Promo Code</Label>
-          <InputWithPrefix
+          <Label className="sm:hidden">Enter Promo Code</Label>
+          <InputWithPrefixSuffix
             required={
               typeof formState.promoCode?.discount !== undefined &&
               String(formState.promoCode?.discount).length > 0
+            }
+            prefixItem={
+              <div className="bg-primary h-full py-1.5 px-2.5 rounded-md hidden sm:block">
+                <span className="text-white text-xs font-extrabold">
+                  Enter Promo Code
+                </span>
+              </div>
             }
             value={formState.promoCode?.code}
             onChange={({ target }) => {
@@ -219,13 +231,20 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           />
         </FormField>
         <FormField>
-          <Label>Promo Discount</Label>
+          <Label className="sm:hidden">Promo Discount</Label>
           <InputWithPrefix
             required={
               typeof formState.promoCode?.code !== undefined &&
               String(formState.promoCode?.code).length > 0
             }
-            prefixItem={<span className="font-bold text-primary/50">%</span>}
+            prefixItem={
+              <div className="bg-primary h-full py-1.5 px-2.5 rounded-md hidden sm:block">
+                <span className="text-white text-xs font-extrabold">
+                  Promo Discount
+                </span>
+              </div>
+            }
+            suffixItem={<span className="font-bold text-primary/50">%</span>}
             type="text"
             inputMode="numeric"
             pattern="[0-9]*"
@@ -363,6 +382,18 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
             );
           })}
         </ul>
+      </FormField>
+
+      <FormField>
+        <Label>Ticket Details</Label>
+        <MarkdownEditor
+          value={localTicketState.ticketDetails || ""}
+          onChange={(markdownContent) => {
+            updateLocalState({
+              ticketDetails: markdownContent,
+            });
+          }}
+        />
       </FormField>
 
       <FormField>

@@ -6,13 +6,12 @@ import {
   usePartnerStatsQuery,
   useUserPropertiesQuery,
 } from "../../global/hooks/query";
-import { Link } from "@tanstack/react-router";
-import { useMediaQuery } from "@/hooks/media-query";
+
+import { formatCurrency } from "@/helpers/text";
 
 export function Stats() {
   const { data: user } = useUserPropertiesQuery();
   const { data: stats } = usePartnerStatsQuery({ userId: user?._id });
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const detail = [
     {
@@ -29,20 +28,20 @@ export function Stats() {
     },
     {
       label: "Balance",
-      value: `$${Number(Number(stats?.walletBalance || 0) / 100).toFixed(3)}`,
+      value: formatCurrency(Number(stats?.walletBalance || 0), "gbp"),
       icon: CoinsIcon,
       bg: "bg-accent text-white",
     },
     {
       label: "Ticket Sales",
-      value: `$${Number(Number(stats?.ticketSales || 0) / 100).toFixed(3)}`,
+      value: formatCurrency(Number(stats?.ticketSales || 0), "gbp"),
       icon: CoinsIcon,
       bg: "bg-accent text-white",
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-2.5">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
       {detail.map((item, index, list) => {
         return (
           <div
@@ -62,15 +61,6 @@ export function Stats() {
             <div className="p-1.5 rounded-lg bg-white/20">
               <item.icon size="16" />
             </div>
-
-            {index === 2 && !isDesktop && (
-              <Link
-                to="/app/revenue"
-                className="absolute bg-white text-primary px-5 py-1 border-2 border-primary/20 rounded-full text-sm font-semibold -bottom-5 left-1/2 -translate-x-1/2"
-              >
-                Manage
-              </Link>
-            )}
           </div>
         );
       })}

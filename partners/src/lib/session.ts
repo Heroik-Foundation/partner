@@ -16,7 +16,7 @@ function getCookie(name: string): string | null {
       if (k) acc[k] = v || "";
       return acc;
     },
-    {} as Record<string, string>
+    {} as Record<string, string>,
   );
   return cookies[name] ?? null;
 }
@@ -61,7 +61,7 @@ export function addSession(session: Session, switchTo: boolean = false): void {
   setCookie(
     SESSIONS_COOKIE,
     encodeURIComponent(JSON.stringify(sessions)),
-    SESSION_EXPIRY_DAYS
+    SESSION_EXPIRY_DAYS,
   );
 
   if (switchTo || !currentActive) {
@@ -87,20 +87,20 @@ export function removeSession(email: string): void {
   setCookie(
     SESSIONS_COOKIE,
     encodeURIComponent(JSON.stringify(sessions)),
-    SESSION_EXPIRY_DAYS
+    SESSION_EXPIRY_DAYS,
   );
   const currentIdxRaw = getCookie(ACTIVE_INDEX_COOKIE);
   const currentIdx = currentIdxRaw ? parseInt(currentIdxRaw, 10) : 0;
   if (removedIndex === currentIdx || currentIdx >= sessions.length) {
     setCookie(ACTIVE_INDEX_COOKIE, "0", SESSION_EXPIRY_DAYS);
     updateActiveTokenCookie(
-      sessions.length > 0 ? sessions[0].sessionToken : ""
+      sessions.length > 0 ? sessions[0].sessionToken : "",
     );
   } else if (removedIndex < currentIdx) {
     setCookie(
       ACTIVE_INDEX_COOKIE,
       (currentIdx - 1).toString(),
-      SESSION_EXPIRY_DAYS
+      SESSION_EXPIRY_DAYS,
     );
   }
 }

@@ -5,6 +5,8 @@ import { Link } from "@tanstack/react-router";
 import { formatCurrency } from "@/helpers/text";
 import { formatISODate, isPastDate } from "@/helpers/time";
 import { CurrencyCode } from "@/stores/currency";
+import { PlusIcon } from "lucide-react";
+import { MarkdownPreview } from "@/modules/ui/markdown-preview";
 
 type Props = {
   tickets: EventTicketing[];
@@ -24,12 +26,23 @@ export const Tickets = ({ tickets, eventId, currency }: Props) => {
           <Ticket eventId={eventId} currency={currency} {...item} key={index} />
         ))}
       </ul>
+
+      <Link
+        params={{
+          id: eventId,
+        }}
+        to="/app/events/$id/edit/add-tickets"
+        className="text-primary shadow py-4 px-4 flex items-center space-x-1.5 rounded-lg w-full border"
+      >
+        <PlusIcon size={16} />
+        <span className="text-xs font-bold">Add more ticket types</span>
+      </Link>
     </div>
   );
 };
 
 const Ticket = (
-  props: EventTicketing & { eventId: string; currency: CurrencyCode }
+  props: EventTicketing & { eventId: string; currency: CurrencyCode },
 ) => {
   const {
     ticketType,
@@ -40,40 +53,51 @@ const Ticket = (
     eventId,
     spotsLeft,
     currency,
+    ticketDetails,
   } = props;
 
   const isPastDeadline = isPastDate(salesEndDate);
 
   return (
-    <li className="text-primary flex items-center justify-between w-full p-4 shadow rounded-lg">
-      <div className="space-y-2.5">
-        <h5 className="first-letter:uppercase text-xs font-semibold text">
-          {ticketType} Tickets
-        </h5>
-        <h2 className="font-extrabold text-base">
-          {formatCurrency(ticketPrice, currency)}{" "}
+    <li className="text-primary flex flex-col space-y-5 w-full p-4 shadow rounded-lg">
+      <div className="flex items-center justify-between">
+        <div className="space-y-2.5">
+          <h5 className="first-letter:uppercase text-xs font-semibold text">
+            {ticketType} Tickets
+          </h5>
+          <h2 className="font-extrabold text-base">
+            {formatCurrency(ticketPrice, currency)}{" "}
+            <span className="text-xs font-semibold">
+              {signUpLimit > 0
+                ? `${spotsLeft} Tickets Available`
+                : "Per Ticket"}
+            </span>
+          </h2>
           <span className="text-xs font-semibold">
-            {signUpLimit > 0 ? `${spotsLeft} Tickets Available` : "Per Ticket"}
+            Sales End{isPastDeadline && "ed"} On{" "}
+            {formatISODate(salesEndDate).date}
           </span>
-        </h2>
-        <span className="text-xs font-semibold">
-          Sales End{isPastDeadline && "ed"} On{" "}
-          {formatISODate(salesEndDate).date}
-        </span>
+        </div>
+
+        <Link
+          to="/app/events/$id/edit/$ticketTypeId"
+          params={{
+            id: eventId,
+            ticketTypeId: _id,
+          }}
+          search={{
+            currency: currency as any,
+          }}
+        >
+          <img src={editIcon} alt="" className="w-5 h-5" />
+        </Link>
       </div>
 
-      <Link
-        to="/app/events/$id/edit/$ticketTypeId"
-        params={{
-          id: eventId,
-          ticketTypeId: _id,
-        }}
-        search={{
-          currency: currency as any,
-        }}
-      >
-        <img src={editIcon} alt="" className="w-5 h-5" />
-      </Link>
+      {ticketDetails && (
+        <div className="text-xs sm:text-sm font-medium">
+          <MarkdownPreview content={ticketDetails} />
+        </div>
+      )}
     </li>
   );
 };

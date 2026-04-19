@@ -5,7 +5,7 @@ import { Edit, Copy, Trash } from "lucide-react";
 // import { useEventTerminationByIDMutation } from "../hooks/mutation";
 // import { ActionDrawer } from "@/modules/units/page/action";
 // import { toast } from "sonner";
-import { isPastDate } from "@/helpers/time";
+import { getDateStatePrecise } from "@/helpers/time";
 import { useEventFormStore } from "@/features/app/global/hooks/logic";
 import { Event } from "@/features/app/global/types";
 import { safeExtractDate, safeGetTimeFromISO } from "../../edit/helpers/time";
@@ -17,7 +17,6 @@ import { useEventTerminationByIDMutation } from "../hooks/mutation";
 
 export const Manage = ({
   id,
-  endDate,
   event,
 }: {
   id: string;
@@ -31,7 +30,7 @@ export const Manage = ({
   const { setSelectedCurrency, getSymbolByValue } = useCurrencyStore();
   const { setFormState } = useEventFormStore();
   const navigate = useNavigate();
-  const isPastEvent = isPastDate(endDate);
+  const dateState = getDateStatePrecise(event.endTime, event.eventEndDate);
 
   const handleEventDuplication = () => {
     const startTime = safeGetTimeFromISO(event.endTime);
@@ -117,48 +116,52 @@ export const Manage = ({
 
   return (
     <div className="space-y-2.5 sm:space-y-0 flex flex-col sm:flex-row items-center sm:space-x-2.5">
-      <Link
-        to={"/app/events/$id/edit"}
-        className={cn(
-          buttonVariants({
-            size: "lg",
-            className: "w-full",
-          }),
-        )}
-        params={{
-          id,
-        }}
-      >
-        <Edit size="16" />
-        <span className="mt-0.5">Edit Event</span>
-      </Link>
+      {(dateState === "present" || dateState === "upcoming") && (
+        <Link
+          to={"/app/events/$id/edit"}
+          className={cn(
+            buttonVariants({
+              size: "lg",
+              className: "w-full",
+            }),
+          )}
+          params={{
+            id,
+          }}
+        >
+          <Edit size="16" />
+          <span className="mt-0.5">Edit Event</span>
+        </Link>
+      )}
 
-      <ActionDrawer
-        trigger={
-          <Button size="lg" variant="destructive" className="w-full">
-            <Trash size="16" />
-            <span className="mt-0.5">Delete Event</span>
-          </Button>
-        }
-        callback={{
-          fn: () => {
-            toast.info("Unauthorized to perform this action");
-          },
-          title: "Delete Event",
-        }}
-        title={{
-          error: "Unable To Delete Event",
-          initial: "Delete Event",
-          pending: "Deleting Event",
-          success: "Event Deleted",
-        }}
-        description="This action cannot be reversed, are you sure ?"
-        isSuccess={isSuccess}
-        isPending={isPending}
-        isError={isError}
-      />
+      {dateState === "upcoming" && (
+        <ActionDrawer
+          trigger={
+            <Button size="lg" variant="destructive" className="w-full">
+              <Trash size="16" />
+              <span className="mt-0.5">Delete Event</span>
+            </Button>
+          }
+          callback={{
+            fn: () => {
+              toast.info("Unauthorized to perform this action");
+            },
+            title: "Delete Event",
+          }}
+          title={{
+            error: "Unable To Delete Event",
+            initial: "Delete Event",
+            pending: "Deleting Event",
+            success: "Event Deleted",
+          }}
+          description="This action cannot be reversed, are you sure ?"
+          isSuccess={isSuccess}
+          isPending={isPending}
+          isError={isError}
+        />
+      )}
 
-      {isPastEvent && (
+      {dateState === "past" && (
         <Button
           onClick={handleEventDuplication}
           className="w-full"

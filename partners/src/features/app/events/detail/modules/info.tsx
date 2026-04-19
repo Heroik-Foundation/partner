@@ -1,21 +1,22 @@
 "use client";
 
-import { useState } from "react";
+// import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { buttonVariants } from "@/modules/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/modules/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/modules/ui/select";
 
 import eyeIcon from "../assets/eye.svg";
 import messagesIcon from "../assets/messages.svg";
 import dashboardIcon from "../assets/dashboard.svg";
 import { CurrencyCode, CurrencyCodeEnum } from "@/stores/currency";
+import { MarkdownPreview } from "@/modules/ui/markdown-preview";
 
 type InfoProps = {
   id: string;
@@ -27,16 +28,16 @@ type InfoProps = {
   currency: CurrencyCode;
 };
 
-const FONT_SIZE_OPTIONS = [
-  { label: "sm", value: "text-xs" },
-  { label: "md", value: "text-sm" },
-  { label: "lg", value: "text-base" },
-  { label: "xl", value: "text-lg" },
-] as const;
+// const FONT_SIZE_OPTIONS = [
+//   { label: "sm", value: "text-xs" },
+//   { label: "md", value: "text-sm" },
+//   { label: "lg", value: "text-base" },
+//   { label: "xl", value: "text-lg" },
+// ] as const;
 
 export default function Info(props: InfoProps) {
   const { id, description, organizations, currency } = props;
-  const [fontSize, setFontSize] = useState<string>("text-sm");
+  // const [fontSize, setFontSize] = useState<string>("text-sm");
 
   const isFundraiser = organizations.length >= 1;
 
@@ -78,7 +79,7 @@ export default function Info(props: InfoProps) {
             About Event
           </h5>
 
-          <div className="absolute right-0">
+          {/* <div className="absolute right-0">
             <Select value={fontSize} onValueChange={setFontSize}>
               <SelectTrigger
                 className="w-fit gap-1.5 text-xs border-primary/20 text-primary font-semibold border-2 focus:ring-primary h-7 px-2.5 rounded-md cursor-pointer"
@@ -98,18 +99,11 @@ export default function Info(props: InfoProps) {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
         </div>
 
-        <p
-          className={cn(
-            fontSize,
-            "font-semibold text-primary leading-relaxed",
-            "whitespace-pre-wrap",
-            "text-start",
-          )}
-        >
-          {description}
+        <p className={cn("whitespace-pre-wrap text-primary", "text-start")}>
+          <MarkdownPreview content={description} />
         </p>
       </div>
 

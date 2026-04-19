@@ -6,7 +6,7 @@ import {
 } from "@/features/auth/global/form";
 import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
-import { Textarea } from "@/modules/ui/textarea";
+
 import { ImageWithPreview } from "@/modules/units/form/image";
 
 import { useParams } from "@tanstack/react-router";
@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { ActionDrawer } from "@/modules/units/page/action";
 // import { Switch } from "@/modules/ui/switch";
 import { Label } from "@/modules/ui/label";
+import MarkdownEditor from "@/modules/ui/markdown-editor";
 
 const EditChannel = () => {
   const { id } = useParams({
@@ -67,12 +68,12 @@ const EditChannel = () => {
         </FormField>
         <FormField>
           <Label>Channel Description</Label>
-          <Textarea
-            value={form.description}
-            onChange={({ target }) => {
+          <MarkdownEditor
+            value={form.description || ""}
+            onChange={(markdownContent) => {
               setForm((prev) => ({
                 ...prev,
-                description: target.value,
+                description: markdownContent,
               }));
             }}
             placeholder="Type Channel Name here ..."

@@ -7,6 +7,7 @@ import {
   FormField,
   FormFooter,
 } from "@/features/auth/global/form";
+
 import { Input } from "@/modules/ui/input";
 
 import { Label } from "@/modules/ui/label";
@@ -28,6 +29,7 @@ import { convertGbpTo } from "@/helpers/text";
 import { CurrencySelect } from "@/modules/units/form/currency";
 import { useUpdateEventMutation } from "../hooks/mutation";
 import { useEffect } from "react";
+import MarkdownEditor from "@/modules/ui/markdown-editor";
 
 const EditTicketType = () => {
   const { id, ticketTypeId } = useParams({ strict: false });
@@ -107,7 +109,7 @@ const EditTicketType = () => {
       <Form>
         <FormContent>
           <FormField>
-            <Label>Event Ticket Currency</Label>
+            <Label>Update Currency</Label>
             <CurrencySelect
               classNames={{
                 trigger: "w-full h-12 border-primary/50",
@@ -218,6 +220,16 @@ const EditTicketType = () => {
                 },
               )}
             </ul>
+          </FormField>
+
+          <FormField>
+            <Label>Ticket Details</Label>
+            <MarkdownEditor
+              value={formState.ticketDetails || ""}
+              onChange={(markdownContent: string) => {
+                updateFormField("ticketDetails", markdownContent);
+              }}
+            />
           </FormField>
 
           <FormField>

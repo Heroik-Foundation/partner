@@ -50,7 +50,7 @@ export const Sales = () => {
               <span className="text-sm text-emerald-500 font-extrabold">
                 {formatCurrency(
                   sale.ticketType.ticketPrice * Number(quantity),
-                  sale.event.currency
+                  sale.event.currency,
                 )}
               </span>
               <span className="text-[10px] text-primary/50 font-extrabold">
@@ -61,14 +61,14 @@ export const Sales = () => {
         );
       })}
 
-      {isPending && (
+      {(isPending || isFetchingNextPage) && (
         <Fragment>
           <SaleSkeletonLoader />
           <SaleSkeletonLoader />
         </Fragment>
       )}
 
-      {(!isPending || !isFetchingNextPage) && rows.length < 1 && (
+      {!isPending && !isFetchingNextPage && rows.length < 1 && (
         <ItemNotFound message="No sales record found" />
       )}
     </div>

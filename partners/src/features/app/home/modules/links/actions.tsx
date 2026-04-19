@@ -11,7 +11,6 @@ import {
   X,
   MapPin,
   Globe,
-  Blend,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
@@ -76,13 +75,13 @@ export function Actions() {
       isOnlineEvent: true,
       id: 2,
     },
-    {
-      title: "Create Hybrid Event",
-      icon: Blend,
-      path: "/app/events/create",
-      isOnlineEvent: true,
-      id: 3,
-    },
+    // {
+    //   title: "Create Hybrid Event",
+    //   icon: Blend,
+    //   path: "/app/events/create",
+    //   isOnlineEvent: true,
+    //   id: 3,
+    // },
   ];
 
   const handleEventTypeSelect = (path: string, isOnlineEvent: boolean) => {

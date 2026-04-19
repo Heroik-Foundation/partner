@@ -2,12 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { buttonVariants } from "@/modules/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowRightCircle } from "lucide-react";
+import bgImg from "@/assets/images/landing-page.jpeg";
 
 const Onboarding = () => {
   return (
-    <div className="flex flex-col items-center relative space-y-12 pb-4 pt-0 h-screen overflow-y-hidden text-center">
+    <div className="flex flex-col items-center relative space-y-12 pb-4 pt-0 max-h-screen min-h-screen overflow-y-hidden text-center">
       <img
-        src="https://images.unsplash.com/photo-1718248028293-934f04a578db?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHJ1bm5pbmd8ZW58MHx8MHx8fDA%3D"
+        src={bgImg}
         className="h-[55vh] w-full bg-cover rounded-b-[30px] object-cover"
       />
 
@@ -36,7 +37,7 @@ const Onboarding = () => {
               className: "w-full rounded-full",
             }),
           )}
-          to="/auth/signup"
+          to="/auth/login"
         >
           <span>Get Started</span> <ArrowRightCircle />
         </Link>

@@ -31,7 +31,7 @@ interface StepConfig {
     | "Event Recurrence"
     | "Add Ticket Type"
     | "Ticket Details"
-    | "Review Tickets"
+    | "Ticket Details Preview"
     | "Fundraising Details";
   description: string;
   component: JSX.Element;
@@ -89,8 +89,9 @@ const CreateEventOptions = () => {
         position: "stacked",
       },
       {
-        title: "Review Tickets",
-        description: "Review your ticket information.",
+        title: "Ticket Details Preview",
+        description:
+          "Drag & Drop ticket types to arrange in your preferred order ⇅",
         component: <TicketsOverview previousStep={addAdditionalTickets} />,
         cta: "Would you like to review your tickets?",
         position: "stacked",
@@ -153,18 +154,19 @@ const CreateEventOptions = () => {
     const stepValidations: { [key: number]: () => boolean } = {
       1: () => !recurrence || !objectHasNullOrUndefined(recurrence),
       2: () => {
-        if (
-          ticketing?.[currentTicketIndex] &&
-          objectHasNullOrUndefined(ticketing[currentTicketIndex])
-        ) {
-          return false;
+        if (!recurrence && !ticketing?.[currentTicketIndex] && !fundRaiser) {
+          // Only skip validation if there are no existing tickets either
+          if (!ticketing || ticketing.length === 0) {
+            return true;
+          }
         }
+
         if (ticketing && ticketing.length > 1) {
           const signUpLimits = ticketing
             .filter((ticket) => ticket && !objectHasNullOrUndefined(ticket))
             .map((ticket) => Number(ticket.signUpLimit) || 0);
 
-          const hasZeroLimit = signUpLimits.some((limit) => limit === 0);
+          const hasZeroLimit = signUpLimits.some((limit) => limit <= 0);
           const hasNonZeroLimit = signUpLimits.some((limit) => limit > 0);
 
           if (hasZeroLimit && hasNonZeroLimit) {
@@ -313,7 +315,7 @@ const CreateEventOptions = () => {
         "Ticket Details": { currentTicketIndex: 0, ticketing: undefined },
         "Add Ticket Type": { currentTicketIndex: 0, ticketing: undefined },
         "Fundraising Details": { fundRaiser: undefined },
-        "Review Tickets": {},
+        "Ticket Details Preview": {},
       }[currentStepConfig.title] ?? {};
 
     if (Object.keys(updates).length === 0) return;

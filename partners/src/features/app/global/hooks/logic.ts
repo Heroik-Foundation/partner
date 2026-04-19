@@ -68,6 +68,7 @@ export type TicketTierState = {
   signUpLimit: number;
   salesStartDate: string | null;
   salesEndDate: string | null;
+  ticketDetails?: string;
 };
 
 export type FundraiserState = {
@@ -113,6 +114,7 @@ type StaticEventFormStore = {
   removeOrganization: (id: string) => void;
   pruneRedundantTickets: () => void;
   recalculateTicketIndex: () => void;
+  reorderTickets: (fromIndex: number, toIndex: number) => void;
 };
 
 export const useEventFormStore = create<StaticEventFormStore>()(
@@ -143,6 +145,19 @@ export const useEventFormStore = create<StaticEventFormStore>()(
               ticketing: newTicketing,
               currentTicketIndex:
                 newTicketing.length > 0 ? newTicketing.length : 0,
+            },
+          };
+        }),
+      reorderTickets: (fromIndex: number, toIndex: number) =>
+        set((state) => {
+          if (!state.formState.ticketing) return state;
+          const tickets = [...state.formState.ticketing];
+          const [moved] = tickets.splice(fromIndex, 1);
+          tickets.splice(toIndex, 0, moved);
+          return {
+            formState: {
+              ...state.formState,
+              ticketing: tickets,
             },
           };
         }),

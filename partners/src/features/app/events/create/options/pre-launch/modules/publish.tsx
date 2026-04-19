@@ -68,6 +68,9 @@ export const Publish = () => {
             signUpLimit: t.signUpLimit,
             salesStartDate: t.salesStartDate!,
             salesEndDate: t.salesEndDate!,
+            ...(t.ticketDetails && {
+              ticketDetails: t.ticketDetails!,
+            }),
           })),
       }),
     ...(fundRaiser &&

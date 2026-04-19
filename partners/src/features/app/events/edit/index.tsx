@@ -7,7 +7,7 @@ import {
 import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
-import { Textarea } from "@/modules/ui/textarea";
+
 import { ImageWithPreview } from "@/modules/units/form/image";
 import { Fragment, useEffect } from "react";
 import { Header } from "../../global/header";
@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { Switch } from "@/modules/ui/switch";
 import { useMapStore } from "@/stores/maps";
 import { InputWithPrefix } from "../../global/form";
+import MarkdownEditor from "@/modules/ui/markdown-editor";
 
 const EditEvent = () => {
   const { id } = useParams({
@@ -106,13 +107,11 @@ const EditEvent = () => {
           </FormField>
           <FormField>
             <Label>Event Description</Label>
-            <Textarea
-              required
+            <MarkdownEditor
               value={formState.description}
-              onChange={({ target }) => {
-                updateForm("description", target.value);
+              onChange={(markdownContent) => {
+                updateForm("description", markdownContent);
               }}
-              placeholder="Type Event Description here..."
             />
           </FormField>
           <FormField>

@@ -56,7 +56,7 @@ export function TeamSwitcher() {
   };
 
   const handleGoToProfile = () => {
-    navigate({ to: "/app/profile" });
+    navigate({ to: "/app/profile/manage" });
   };
 
   if (!activeTeam) {

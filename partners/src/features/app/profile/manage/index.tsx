@@ -221,9 +221,21 @@ export function ManageProfiles() {
           alt="User avatar"
           className="w-20 h-20 rounded-full object-fit object-center"
         />
-        <p className="text-lg font-semibold">
-          Hi, {truncateText(String(activeSession?.name || "User"))}
+        <p className="text-lg font-semibold text-primary">
+          Hi, {truncateText(String(activeSession?.name || "User"))}!
         </p>
+
+        <Button
+          onClick={() => {
+            navigate({
+              to: "/app/profile",
+            });
+          }}
+          variant={"accent"}
+          className="rounded-full"
+        >
+          Manage Your Creator Account
+        </Button>
       </div>
 
       <div className="rounded-2xl bg-primary/10">

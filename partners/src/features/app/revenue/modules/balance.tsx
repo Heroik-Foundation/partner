@@ -14,7 +14,6 @@ export const Balance = () => {
   const bankName = wallet?.bankName || "-";
   //@ts-ignore
   const bankAccountNumber = wallet?.bankAccountNumber || "-";
-  const hasPin = wallet?.owner.pinSet;
 
   const details = [
     {
@@ -58,12 +57,8 @@ export const Balance = () => {
           disabled={wallet === undefined}
           className="shadow-xl bg-white/30 disabled:opacity-30 text-sm font-semibold w-full"
           onClick={() => {
-            const path =
-              wallet && hasPin
-                ? "/app/revenue/setup-account"
-                : "/app/revenue/setup-pin";
             navigate({
-              to: path,
+              to: "/app/revenue/setup-account",
             });
           }}
         >

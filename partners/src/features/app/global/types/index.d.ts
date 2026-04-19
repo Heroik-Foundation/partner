@@ -37,6 +37,7 @@ export type EventTicketing = {
   signUpLimit: number;
   spotsLeft: number;
   isPayedTicket: boolean;
+  ticketDetails?: string;
   absorbFees: boolean;
   salesStartDate: string;
   salesEndDate: string;
@@ -151,6 +152,28 @@ export type Channel = {
 export type Location = {
   type: string;
   coordinates: [number, number];
+};
+
+export type CurrentUser = {
+  _id: string;
+  fullname: string;
+  username: string;
+  phone: string;
+  photo: string;
+  birthDate: string;
+  callingCode: string;
+  isAdmin: boolean;
+  blocked: boolean;
+  isAccountSetup: boolean;
+  role: string;
+  loc: {
+    type: "Point";
+    coordinates: [number, number];
+  };
+  email: string;
+  blockedUsers: string[];
+  followers: string[];
+  following: string[];
 };
 
 export type User = {

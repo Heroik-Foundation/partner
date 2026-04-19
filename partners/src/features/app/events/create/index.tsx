@@ -7,7 +7,7 @@ import {
 import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
-import { Textarea } from "@/modules/ui/textarea";
+
 import { ImageWithPreview } from "@/modules/units/form/image";
 import { Fragment } from "react/jsx-runtime";
 import { Header } from "../../global/header";
@@ -25,6 +25,7 @@ import { ActionDialog } from "@/modules/units/page/action";
 import { useState } from "react";
 import { InputWithPrefix } from "../../global/form";
 import { Switch } from "@/modules/ui/switch";
+import MarkdownEditor from "@/modules/ui/markdown-editor";
 
 const CreateEvent = () => {
   const { formState, updateForm, reset } = useEventFormStore();
@@ -104,13 +105,11 @@ const CreateEvent = () => {
           </FormField>
           <FormField>
             <Label>Event Description</Label>
-            <Textarea
-              required
+            <MarkdownEditor
               value={formState.description}
-              onChange={({ target }) => {
-                updateForm("description", target.value);
+              onChange={(markdownContent) => {
+                updateForm("description", markdownContent);
               }}
-              placeholder="Type Event Description here..."
             />
           </FormField>
 
