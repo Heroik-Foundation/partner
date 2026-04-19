@@ -32,7 +32,7 @@ const Login = () => {
         }
       }}
     >
-      <div className="flex flex-col items-center justify-center text-center xs:pt-0 px-4">
+      <div className="flex flex-col items-center justify-center text-center">
         <img
           src="/logo/logo-purple.svg"
           alt=""

@@ -39,7 +39,7 @@ const SignUp = () => {
         }
       }}
     >
-      <div className="flex flex-col items-center justify-center text-center xs:pt-0 px-4">
+      <div className="flex flex-col items-center justify-center text-center">
         <img
           src="/logo/logo-purple.svg"
           alt=""
@@ -61,9 +61,12 @@ const SignUp = () => {
         </h1>
       </div>
       <FormContent>
-        <ImageWithPreview />
         <FormField>
-          <Label>Name</Label>
+          <Label>Setup Profile</Label>
+          <ImageWithPreview />
+        </FormField>
+        <FormField>
+          <Label>Company Name / Fullname</Label>
           <Input
             required
             name="name"
