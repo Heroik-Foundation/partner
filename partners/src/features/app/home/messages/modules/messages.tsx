@@ -28,7 +28,7 @@ export const Messages = ({ searchQuery }: { searchQuery: string }) => {
 
   const lastConversationRef = useIntersectionObserver<HTMLDivElement>(
     fetchNextPage,
-    [hasNextPage]
+    [hasNextPage],
   );
 
   const messages: any[] = data?.pages.flat() || [];
@@ -37,7 +37,7 @@ export const Messages = ({ searchQuery }: { searchQuery: string }) => {
 
   const renderMessage = (message: Message, index: number, list: Message[]) => {
     const participantWithEvent = message.participants.find(
-      (p) => p.event?._id && p.event?.name && p.event?.photo
+      (p) => p.event?._id && p.event?.name && p.event?.photo,
     );
 
     if (!participantWithEvent?.event) return null;

@@ -1,3 +1,4 @@
+// components/action-drawer.tsx
 import { useState, useEffect, useCallback } from "react";
 import { Button, Loader } from "@/modules/ui/button";
 import {
@@ -17,14 +18,13 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/modules/ui/dialog";
-
 import { ReactNode } from "react";
 import { CheckCircle, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/media-query";
 
-type DrawerState = "initial" | "pending" | "success" | "error";
+type DrawerState = "initial" | "step" | "pending" | "success" | "error";
 
 type DrawerProps = {
   trigger?: ReactNode;
@@ -36,13 +36,15 @@ type DrawerProps = {
     fn: () => void;
   };
   initialContent?: ReactNode;
+  /** Optional extra confirmation steps rendered after initial, before pending */
+  extraSteps?: ReactNode[];
   title: {
     initial: string;
     pending: string;
     success: string;
     error: string;
   };
-  description: string;
+  description: string | ReactNode;
   onOpenChange?: (open: boolean) => void;
 };
 
@@ -71,21 +73,27 @@ export const ActionDrawer = (props: DrawerProps) => {
     callback,
     onOpenChange,
     initialContent,
+    extraSteps = [],
   } = props;
 
   const [open, setOpen] = useState(false);
   const [currentState, setCurrentState] = useState<DrawerState>("initial");
+  // Which extra step we're on (0-indexed)
+  const [stepIndex, setStepIndex] = useState(0);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
-  // Reset state
-  const resetState = useCallback(() => setCurrentState("initial"), []);
+  const hasSteps = extraSteps.length > 0;
 
-  // Sync with external props
+  const resetState = useCallback(() => {
+    setCurrentState("initial");
+    setStepIndex(0);
+  }, []);
+
   const updateStateFromProps = useCallback(() => {
     if (externalPending) setCurrentState("pending");
     else if (externalSuccess) setCurrentState("success");
     else if (externalError) setCurrentState("error");
-    else setCurrentState("initial");
+    // Don't reset to "initial" here — let the drawer manage step/initial itself
   }, [externalPending, externalSuccess, externalError]);
 
   useEffect(() => {
@@ -100,16 +108,53 @@ export const ActionDrawer = (props: DrawerProps) => {
   }, [updateStateFromProps]);
 
   const handleOpenChange = useCallback(
-    (open: boolean) => {
-      setOpen(open);
-      onOpenChange?.(open);
+    (next: boolean) => {
+      setOpen(next);
+      onOpenChange?.(next);
     },
     [onOpenChange],
   );
 
-  const getCurrentTitle = () => title[currentState];
+  // "Next" from initial — either advance to first extra step or fire callback
+  const handleInitialNext = () => {
+    if (hasSteps) {
+      setStepIndex(0);
+      setCurrentState("step");
+    } else {
+      callback.fn();
+    }
+  };
 
-  // Shared animations
+  // "Next" from an extra step
+  const handleStepNext = () => {
+    const isLastStep = stepIndex === extraSteps.length - 1;
+    if (isLastStep) {
+      callback.fn();
+    } else {
+      setStepIndex((i) => i + 1);
+    }
+  };
+
+  // "Back" from an extra step
+  const handleStepBack = () => {
+    if (stepIndex === 0) {
+      setCurrentState("initial");
+    } else {
+      setStepIndex((i) => i - 1);
+    }
+  };
+
+  const isNonInteractive =
+    currentState === "pending" ||
+    currentState === "success" ||
+    currentState === "error";
+
+  const getCurrentTitle = () => {
+    if (currentState === "step") return ""; // no title on extra steps
+    return title[currentState as Exclude<DrawerState, "step">];
+  };
+
+  // Animations
   const contentVariants = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0, transition: { duration: 0.3 } },
@@ -126,13 +171,13 @@ export const ActionDrawer = (props: DrawerProps) => {
     exit: { scale: 0.8, opacity: 0, transition: { duration: 0.2 } },
   };
 
-  // Shared content (body + footer) to avoid duplication
   const ContentBody = () => (
     <>
+      {/* Status icons for pending/success/error */}
       <div
         className={cn(
           "flex items-center justify-center",
-          currentState !== "initial" && "pb-10",
+          isNonInteractive && "pb-10",
         )}
       >
         <AnimatePresence mode="wait">
@@ -179,10 +224,11 @@ export const ActionDrawer = (props: DrawerProps) => {
         </AnimatePresence>
       </div>
 
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
+        {/* ── Initial page ── */}
         {currentState === "initial" && (
           <motion.div
-            key="footer"
+            key="initial"
             variants={contentVariants}
             initial="initial"
             animate="animate"
@@ -190,8 +236,11 @@ export const ActionDrawer = (props: DrawerProps) => {
           >
             {initialContent}
             <div className="flex items-center justify-center gap-4 pt-4">
-              <Button className="rounded-full w-fit" onClick={callback.fn}>
-                {callback.title}
+              <Button
+                className="rounded-full w-fit"
+                onClick={handleInitialNext}
+              >
+                {hasSteps ? "Proceed" : callback.title}
               </Button>
               <DialogClose asChild>
                 <Button variant="ghost" className="bg-none text-rose-500">
@@ -201,11 +250,39 @@ export const ActionDrawer = (props: DrawerProps) => {
             </div>
           </motion.div>
         )}
+
+        {/* ── Extra steps ── */}
+        {currentState === "step" && (
+          <motion.div
+            // key changes on stepIndex so AnimatePresence remounts between steps
+            key={`step-${stepIndex}`}
+            variants={contentVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            {/* User-supplied step content — no title/description wrapper */}
+            <div className="py-2">{extraSteps[stepIndex]}</div>
+
+            <div className="flex items-center justify-center gap-4 pt-4">
+              <Button className="rounded-full w-fit" onClick={handleStepNext}>
+                {stepIndex === extraSteps.length - 1 ? callback.title : "Next"}
+              </Button>
+              <Button
+                variant="ghost"
+                className="bg-none text-rose-500"
+                onClick={handleStepBack}
+              >
+                Back
+              </Button>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </>
   );
 
-  // Mobile: Drawer
+  // ── Mobile: Drawer ──────────────────────────────────────────────────────────
   if (!isDesktop) {
     return (
       <Drawer open={open} onOpenChange={handleOpenChange}>
@@ -217,23 +294,26 @@ export const ActionDrawer = (props: DrawerProps) => {
             animate="animate"
           >
             <DrawerHeader>
-              <DrawerTitle className="text-primary text-lg font-extrabold text-center">
-                {getCurrentTitle()}
-              </DrawerTitle>
-              <AnimatePresence>
-                {currentState === "initial" && (
-                  <motion.div
-                    key="description"
-                    variants={contentVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                  >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentState === "step" ? "step-header" : currentState}
+                  variants={contentVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                >
+                  {/* Title hidden on extra steps */}
+                  {currentState !== "step" && (
+                    <DrawerTitle className="text-primary text-lg font-extrabold text-center">
+                      {getCurrentTitle()}
+                    </DrawerTitle>
+                  )}
+                  {currentState === "initial" && (
                     <DrawerDescription className="text-primary/50 text-sm font-semibold text-center">
                       {description}
                     </DrawerDescription>
-                  </motion.div>
-                )}
+                  )}
+                </motion.div>
               </AnimatePresence>
             </DrawerHeader>
             <ContentBody />
@@ -243,7 +323,7 @@ export const ActionDrawer = (props: DrawerProps) => {
     );
   }
 
-  // Desktop: Dialog
+  // ── Desktop: Dialog ─────────────────────────────────────────────────────────
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
@@ -254,23 +334,26 @@ export const ActionDrawer = (props: DrawerProps) => {
           animate="animate"
         >
           <DialogHeader>
-            <DialogTitle className="text-primary text-lg font-extrabold text-center">
-              {getCurrentTitle()}
-            </DialogTitle>
-            <AnimatePresence>
-              {currentState === "initial" && (
-                <motion.div
-                  key="description"
-                  variants={contentVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentState === "step" ? "step-header" : currentState}
+                variants={contentVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                {/* Title hidden on extra steps */}
+                {currentState !== "step" && (
+                  <DialogTitle className="text-primary text-lg font-extrabold text-center">
+                    {getCurrentTitle()}
+                  </DialogTitle>
+                )}
+                {currentState === "initial" && (
                   <DialogDescription className="text-primary/50 text-sm font-semibold text-center">
                     {description}
                   </DialogDescription>
-                </motion.div>
-              )}
+                )}
+              </motion.div>
             </AnimatePresence>
           </DialogHeader>
           <ContentBody />
@@ -279,6 +362,8 @@ export const ActionDrawer = (props: DrawerProps) => {
     </Dialog>
   );
 };
+
+// ── ActionDialog (unchanged) ───────────────────────────────────────────────────
 
 export const ActionDialog = (props: DialogProps) => {
   const [open, setOpen] = useState(false);
@@ -313,9 +398,7 @@ export const ActionDialog = (props: DialogProps) => {
           </DialogClose>
           <button
             className="w-full text-emerald-500 py-4 border-l flex items-center justify-center"
-            onClick={() => {
-              fn();
-            }}
+            onClick={() => fn()}
           >
             {isPending ? <Loader /> : String(callback.title || "Accept")}
           </button>

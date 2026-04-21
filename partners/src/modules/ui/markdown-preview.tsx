@@ -1,4 +1,3 @@
-// components/markdown-preview.tsx
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -6,7 +5,6 @@ interface MarkdownPreviewProps extends React.HTMLAttributes<HTMLDivElement> {
   content: string;
   className?: string;
   paragraphClassName?: string;
-  /** Milliseconds to wait after last keystroke before parsing. Default: 150 */
   debounceMs?: number;
 }
 

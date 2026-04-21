@@ -146,15 +146,45 @@ export const Manage = ({
             fn: () => {
               toast.info("Unauthorized to perform this action");
             },
-            title: "Delete Event",
+            title: "Proceed",
           }}
+          extraSteps={[
+            <div className="px-5 space-y-5">
+              <div className="text-primary text-sm font-bold flex flex-col items-start">
+                <span>Event Name: {event.name}</span>
+                <span>
+                  Refund Status:{" "}
+                  {Boolean(event.isRefundable)
+                    ? "Refund Activated"
+                    : "Refund Unactivated"}
+                </span>
+              </div>
+
+              <div className="text-sm font-semibold">
+                <h6 className="text-accent font-extrabold">Issue Voucher</h6>
+                <p>
+                  {Boolean(event.isRefundable)
+                    ? `Issue Refund Attendees will be issued with a refund.`
+                    : `Attendees will receive a voucher they can use for a future
+                  event. Voucher valid for 1 year.`}
+                </p>
+              </div>
+            </div>,
+          ]}
           title={{
             error: "Unable To Delete Event",
             initial: "Delete Event",
-            pending: "Deleting Event",
+            pending: "Processing Request",
             success: "Event Deleted",
           }}
-          description="This action cannot be reversed, are you sure ?"
+          description={
+            <p>
+              Are you sure you want to delete this event ? <br />{" "}
+              <span className="text-primary font-extrabold">
+                This action cannot be undone
+              </span>
+            </p>
+          }
           isSuccess={isSuccess}
           isPending={isPending}
           isError={isError}
