@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Event } from "@/features/app/global/types";
 import { frmz } from "@/lib/frmz";
+import { useNavigate } from "@tanstack/react-router";
 
 // --- Types ---
 
@@ -67,6 +68,7 @@ type UpdateEventMutationProps = (DiffModeProps | DirectModeProps) & {
 export function useUpdateEventMutation(props: UpdateEventMutationProps) {
   const { eventId } = props;
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Kept outside mutationFn so onSuccess can reference it
   let resolvedFields: Record<string, any> = {};
@@ -96,6 +98,13 @@ export function useUpdateEventMutation(props: UpdateEventMutationProps) {
         predicate: (query) =>
           query.queryKey.includes("event-details") ||
           query.queryKey.includes("user-events"),
+      });
+
+      navigate({
+        to: "/app/events/$id",
+        params: {
+          id: eventId,
+        },
       });
     },
     onError: (error: ErrorResponse) => {

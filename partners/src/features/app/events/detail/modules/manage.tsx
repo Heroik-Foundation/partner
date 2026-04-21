@@ -2,9 +2,6 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/modules/ui/button";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Edit, Copy, Trash } from "lucide-react";
-// import { useEventTerminationByIDMutation } from "../hooks/mutation";
-// import { ActionDrawer } from "@/modules/units/page/action";
-// import { toast } from "sonner";
 import { getDateStatePrecise } from "@/helpers/time";
 import { useEventFormStore } from "@/features/app/global/hooks/logic";
 import { Event } from "@/features/app/global/types";
@@ -12,7 +9,6 @@ import { safeExtractDate, safeGetTimeFromISO } from "../../edit/helpers/time";
 import { getSafeCoordinate } from "../../edit/helpers/location";
 import { useCurrencyStore } from "@/stores/currency";
 import { ActionDrawer } from "@/modules/units/page/action";
-import { toast } from "sonner";
 import { useEventTerminationByIDMutation } from "../hooks/mutation";
 
 export const Manage = ({
@@ -23,10 +19,11 @@ export const Manage = ({
   endDate: string;
   event: Event;
 }) => {
-  const { isPending, isSuccess, isError } = useEventTerminationByIDMutation({
-    id,
-    isRefundable: event.isRefundable,
-  });
+  const { mutate, isPending, isSuccess, isError } =
+    useEventTerminationByIDMutation({
+      id,
+      isRefundable: event.isRefundable,
+    });
   const { setSelectedCurrency, getSymbolByValue } = useCurrencyStore();
   const { setFormState } = useEventFormStore();
   const navigate = useNavigate();
@@ -144,7 +141,7 @@ export const Manage = ({
           }
           callback={{
             fn: () => {
-              toast.info("Unauthorized to perform this action");
+              mutate();
             },
             title: "Proceed",
           }}
