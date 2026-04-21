@@ -54,10 +54,10 @@ type InPersonEventForm = EventFormBase & {
 export type EventFormState = OnlineEventForm | InPersonEventForm;
 
 export type EventFormRecurrenceState = {
-  interval?: number;
-  frequency?: "WEEKLY" | "MONTHLY";
+  interval: number;
+  frequency: "WEEKLY" | "MONTHLY";
   daysOfWeek?: number[]; // 0=Sunday, 6=Saturday (for weekly recurrence)
-  endType?: "NEVER" | "UNTIL_DATE" | "AFTER_OCCURRENCES";
+  endType: "NEVER" | "UNTIL_DATE" | "AFTER_OCCURRENCES";
   endDate?: string; // ISO string (required if endType is 'UNTIL_DATE')
   occurrenceCount?: number; // Required if endType is 'AFTER_OCCURRENCES'
 };

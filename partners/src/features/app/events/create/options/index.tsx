@@ -152,7 +152,10 @@ const CreateEventOptions = () => {
     }
 
     const stepValidations: { [key: number]: () => boolean } = {
-      1: () => !recurrence || !objectHasNullOrUndefined(recurrence),
+      1: () =>
+        !recurrence ||
+        !objectHasNullOrUndefined(recurrence) ||
+        !recurrence.frequency,
       2: () => {
         if (!recurrence && !ticketing?.[currentTicketIndex] && !fundRaiser) {
           // Only skip validation if there are no existing tickets either
