@@ -91,7 +91,7 @@ const CreateEventOptions = () => {
       {
         title: "Ticket Details Preview",
         description:
-          "Drag & Drop ticket types to arrange in your preferred order ⇅",
+          "Drag & Drop ticket types to arrange in your preferred order",
         component: <TicketsOverview previousStep={addAdditionalTickets} />,
         cta: "Would you like to review your tickets?",
         position: "stacked",
@@ -391,6 +391,50 @@ const CreateEventOptions = () => {
           subtitle: currentStepConfig?.description || "",
         }}
         previousRouteCallback={handlePreviousStep}
+        addOns={{
+          content: (
+            <div className="absolute top-[96px] left-[calc(100%-12px)] xs:left-[430px]">
+              <svg
+                width="11"
+                height="14"
+                viewBox="0 0 11 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="3.32275"
+                  width="1.66146"
+                  height="13.2917"
+                  rx="0.830729"
+                  fill="#37137F"
+                />
+                <rect
+                  width="4.85657"
+                  height="1.52698"
+                  rx="0.763491"
+                  transform="matrix(0.68421 -0.729285 0.942293 0.33479 0 3.54199)"
+                  fill="#37137F"
+                />
+                <rect
+                  x="7.67725"
+                  y="13.2915"
+                  width="1.66146"
+                  height="13.2917"
+                  rx="0.830729"
+                  transform="rotate(-180 7.67725 13.2915)"
+                  fill="#37137F"
+                />
+                <rect
+                  width="4.85657"
+                  height="1.52698"
+                  rx="0.763491"
+                  transform="matrix(-0.684211 0.729285 -0.942293 -0.33479 11 9.74951)"
+                  fill="#37137F"
+                />
+              </svg>
+            </div>
+          ),
+        }}
       />
       <Form onSubmit={handleFormSubmit}>
         {stepComponent}

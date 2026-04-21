@@ -22,7 +22,7 @@ const Onboarding = () => {
 
   return (
     <div className="flex flex-col items-center relative space-y-12 pb-4 pt-0 max-h-screen min-h-screen overflow-y-hidden text-center">
-      <div className="relative w-full overflow-hidden rounded-b-[30px] h-[55vh]">
+      <div className="relative w-full overflow-hidden rounded-b-[30px] h-[50vh]">
         {images.map((img, index) => (
           <img
             key={index}

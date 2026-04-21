@@ -109,7 +109,7 @@ export const TicketsOverview = ({ previousStep }: Props) => {
                 </Button>
               </div>
               {ticketDetails && (
-                <div className="px-4 py-2 text-xs sm:text-sm font-medium">
+                <div className="px-4 py-2 text-xs sm:text-sm font-medium text-[#000000]">
                   <MarkdownPreview content={ticketDetails} />
                 </div>
               )}
