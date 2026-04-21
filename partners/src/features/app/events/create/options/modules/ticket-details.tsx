@@ -210,8 +210,9 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           <Label className="sm:hidden">Enter Promo Code</Label>
           <InputWithPrefixSuffix
             required={
-              typeof formState.promoCode?.discount !== undefined &&
-              String(formState.promoCode?.discount).length > 0
+              formState.promoCode?.discount !== undefined &&
+              String(formState.promoCode?.discount) !== "" &&
+              String(formState.promoCode?.discount) !== "0"
             }
             prefixItem={
               <div className="bg-primary h-full py-1.5 px-2.5 rounded-md hidden sm:block">
@@ -224,7 +225,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
             onChange={({ target }) => {
               updateForm("promoCode", {
                 code: target.value,
-                discount: Number(formState.promoCode?.discount || 0),
+                discount: formState.promoCode?.discount || 0,
               });
             }}
             placeholder="HSIK3XXX"
@@ -234,8 +235,8 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           <Label className="sm:hidden">Promo Discount</Label>
           <InputWithPrefix
             required={
-              typeof formState.promoCode?.code !== undefined &&
-              String(formState.promoCode?.code).length > 0
+              formState.promoCode?.code !== undefined &&
+              String(formState.promoCode?.code) !== ""
             }
             prefixItem={
               <div className="bg-primary h-full py-1.5 px-2.5 rounded-md hidden sm:block">
@@ -254,9 +255,8 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
               // Allow empty string
               if (target.value === "") {
                 updateForm("promoCode", {
-                  //@ts-ignore
-                  discount: "",
-                  code: String(formState.promoCode?.code || ""),
+                  discount: 0,
+                  code: formState.promoCode?.code || "",
                 });
                 return;
               }
@@ -272,7 +272,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
 
               updateForm("promoCode", {
                 discount: num,
-                code: String(formState.promoCode?.code || ""),
+                code: formState.promoCode?.code || "",
               });
             }}
             onKeyDown={(e) => {
