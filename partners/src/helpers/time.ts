@@ -115,3 +115,18 @@ export function getDateStatePrecise(date1: string, date2: string): DateState {
   if (now > end) return "past";
   return "present";
 }
+
+export function isAtLeast7DaysAhead(startDate: Date | string): boolean {
+  const currentDate = new Date();
+  const targetDate = new Date(startDate);
+
+  // Reset time portions to compare only dates
+  currentDate.setHours(0, 0, 0, 0);
+  targetDate.setHours(0, 0, 0, 0);
+
+  // Calculate the difference in days
+  const diffTime = targetDate.getTime() - currentDate.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return diffDays >= 7;
+}
