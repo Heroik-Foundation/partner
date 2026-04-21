@@ -10,6 +10,7 @@ import { getSafeCoordinate } from "../../edit/helpers/location";
 import { useCurrencyStore } from "@/stores/currency";
 import { ActionDrawer } from "@/modules/units/page/action";
 import { useEventTerminationByIDMutation } from "../hooks/mutation";
+import { useState } from "react";
 
 export const Manage = ({
   id,
@@ -19,11 +20,15 @@ export const Manage = ({
   endDate: string;
   event: Event;
 }) => {
+  const [refundType, setRefundType] = useState<"payment" | "voucher">(
+    "voucher",
+  );
   const { mutate, isPending, isSuccess, isError } =
     useEventTerminationByIDMutation({
       id,
-      isRefundable: event.isRefundable,
+      refundType,
     });
+
   const { setSelectedCurrency, getSymbolByValue } = useCurrencyStore();
   const { setFormState } = useEventFormStore();
   const navigate = useNavigate();
@@ -147,11 +152,32 @@ export const Manage = ({
           }}
           extraSteps={[
             <div className="px-5 space-y-5">
+              <div className="w-full flex border rounded-full border-primary">
+                <Button
+                  className="w-full rounded-l-full"
+                  variant={refundType === "payment" ? "default" : "ghost"}
+                  onClick={() => {
+                    setRefundType("payment");
+                  }}
+                >
+                  Offer Refund
+                </Button>
+                <Button
+                  className="w-full rounded-r-full"
+                  variant={refundType === "voucher" ? "default" : "ghost"}
+                  onClick={() => {
+                    setRefundType("voucher");
+                  }}
+                >
+                  Issue Voucher
+                </Button>
+              </div>
+
               <div className="text-primary text-sm font-bold flex flex-col items-start">
                 <span>Event Name: {event.name}</span>
                 <span>
                   Refund Status:{" "}
-                  {Boolean(event.isRefundable)
+                  {Boolean(refundType === "payment")
                     ? "Refund Activated"
                     : "Refund Unactivated"}
                 </span>
@@ -160,7 +186,7 @@ export const Manage = ({
               <div className="text-sm font-semibold">
                 <h6 className="text-accent font-extrabold">Issue Voucher</h6>
                 <p>
-                  {Boolean(event.isRefundable)
+                  {Boolean(refundType === "payment")
                     ? `Issue Refund Attendees will be issued with a refund.`
                     : `Attendees will receive a voucher they can use for a future
                   event. Voucher valid for 1 year.`}

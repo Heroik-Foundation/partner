@@ -5,17 +5,17 @@ import { toast } from "sonner";
 
 export function useEventTerminationByIDMutation({
   id,
-  isRefundable,
+  refundType,
 }: {
   id: string;
-  isRefundable: boolean;
+  refundType: "payment" | "voucher";
 }) {
   const { navigate } = useRouter();
   return useMutation({
     mutationFn: async () => {
       const { data } = await authenticatedInstance.delete(`/events/${id}`, {
         data: {
-          shouldRefund: isRefundable,
+          refundType,
         },
       });
 
