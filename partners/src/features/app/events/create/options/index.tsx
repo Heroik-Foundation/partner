@@ -392,7 +392,7 @@ const CreateEventOptions = () => {
         }}
         previousRouteCallback={handlePreviousStep}
         addOns={{
-          content: (
+          content: currentStepConfig.title === "Ticket Details Preview" && (
             <div className="absolute top-[96px] left-[calc(100%-12px)] xs:left-[430px]">
               <svg
                 width="11"
