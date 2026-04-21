@@ -75,7 +75,7 @@ export const Publish = () => {
       }),
     ...(fundRaiser &&
       fundRaiser.organizations && {
-        eventPledge: {
+        fundRaiser: {
           organizations: fundRaiser.organizations.map((org) => org.id),
         },
       }),
