@@ -2,17 +2,18 @@ import axios from "axios";
 import { getActiveSession, clearAllSessions } from "./session";
 import { toast } from "sonner";
 
-// const isDev = import.meta.env.DEV === true;
-// const BASE_URL = isDev
-//   ? "https://dev.hiroek.io/api"
-//   : "https://staging.hiroek.io/api";
+const isDev = (import.meta.env.VITE_ENVIRONMENT || "") === "development";
+
+const baseURL = isDev
+  ? "https://dev.hiroek.io/api"
+  : "https://staging.hiroek.io/api";
 
 const baseInstance = axios.create({
-  baseURL: "https://dev.hiroek.io/api",
+  baseURL: baseURL,
 });
 
 const authenticatedInstance = axios.create({
-  baseURL: "https://dev.hiroek.io/api",
+  baseURL: baseURL,
 });
 
 authenticatedInstance.interceptors.request.use((config) => {
@@ -49,7 +50,7 @@ authenticatedInstance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export { baseInstance, authenticatedInstance };
