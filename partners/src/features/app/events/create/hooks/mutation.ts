@@ -4,7 +4,7 @@ import { authenticatedInstance } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { frmz } from "frmz";
+import { frmz } from "@/lib/frmz";
 import { useCurrencyStore } from "@/stores/currency";
 
 type Ticket = {

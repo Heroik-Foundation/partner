@@ -1,8 +1,9 @@
 import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
 import { authenticatedInstance } from "@/lib/axios";
+import { frmz } from "@/lib/frmz";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { frmz } from "frmz";
+
 import { toast } from "sonner";
 
 type CreateChannelMutationProps = {
@@ -32,7 +33,7 @@ export function useCreateChannelMutation(props: CreateChannelMutationProps) {
     mutationFn: async () => {
       const { data } = await authenticatedInstance.post(
         "/event-partners/create-community",
-        formData
+        formData,
       );
 
       return data;
