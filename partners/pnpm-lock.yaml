@@ -71,9 +71,6 @@ importers:
       embla-carousel-react:
         specifier: ^8.5.2
         version: 8.5.2(react@18.3.1)
-      frmz:
-        specifier: ^0.0.111
-        version: 0.0.111(zod@3.24.1)
       input-otp:
         specifier: ^1.4.1
         version: 1.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2308,11 +2305,6 @@ packages:
         optional: true
       react-dom:
         optional: true
-
-  frmz@0.0.111:
-    resolution: {integrity: sha512-Pfe/4nS1Gqn5ab+7NsQFkJ+Pph6QgfutTHRZuLUpkJzePUv61sTvryaRxX1dDGRIWMuhl9i2xpFEzJuzHqzZLw==}
-    peerDependencies:
-      zod: ^3.0.0
 
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
@@ -5199,10 +5191,6 @@ snapshots:
     optionalDependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-
-  frmz@0.0.111(zod@3.24.1):
-    dependencies:
-      zod: 3.24.1
 
   fsevents@2.3.3:
     optional: true
