@@ -55,7 +55,7 @@ export const Publish = () => {
       promoCode.discount <= 100 && {
         promoCode: {
           code: promoCode.code,
-          discount: Number(promoCode.discount) * 100,
+          discount: Number(promoCode.discount),
         },
       }),
     ...(ticketing &&
