@@ -1,17 +1,19 @@
-import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
 import { BankOption } from "./bank-option";
 import { useState } from "react";
 import { Button } from "@/modules/ui/button";
 import { Plus } from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
-import { useWithdrawalInitMutation } from "../hooks/mutate";
+import { useWithdrawalInitMutation } from "../hooks/mutation";
 import { ActionDrawer } from "@/modules/units/page/action";
 import { useWalletDetailsQuery } from "../../hooks/query";
 import { safeAmount } from "../helpers/number";
+import { InputWithPrefix } from "@/features/app/global/form";
+import { useCurrencyStore } from "@/stores/currency";
 
 export const WithdrawalOptions = () => {
   const { data: wallet } = useWalletDetailsQuery();
+  const { selectedCurrency } = useCurrencyStore();
   const [amount, setAmount] = useState("");
   const { navigate } = useRouter();
 
@@ -19,20 +21,27 @@ export const WithdrawalOptions = () => {
     amount: safeAmount(amount) * 100,
   });
 
-  const bankAccountName = wallet?.owner?.bankAccountName || "";
-  const bankAccountNumber = wallet?.owner?.bankAccountNumber || "";
+  //@ts-ignore
+  const bankAccountName = wallet?.bankAccountName || "";
+  //@ts-ignore
+  const bankAccountNumber = wallet?.bankAccountNumber || "";
 
   return (
     <div className="space-y-5">
       <div>
         <Label>Amount</Label>
-        <Input
+        <InputWithPrefix
           disabled={bankAccountNumber === ""}
           value={amount}
           onChange={({ target }) => {
             setAmount(target.value);
           }}
-          placeholder="£0"
+          placeholder="0"
+          prefixItem={
+            <span className="font-bold text-primary/50">
+              {selectedCurrency.symbol}
+            </span>
+          }
         />
       </div>
 
@@ -60,7 +69,7 @@ export const WithdrawalOptions = () => {
           <span>
             {bankAccountNumber === ""
               ? "Setup Bank Account"
-              : "Choose Another Bank Account"}
+              : "Update Bank Account"}
           </span>
         </Button>
       </div>

@@ -1,22 +1,19 @@
 import { baseInstance } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
-import { toast } from "sonner";
 
-import { addSession, setActiveSession } from "@/lib/session";
+import { addSession } from "@/lib/session";
 import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
 
 type AddSessionResponse = {
   eventPartner: {
     name: string;
     email: string;
+    logo: string;
   };
   token: string;
 };
 
 export function useAddSessionMutation() {
-  const { navigate } = useRouter();
-
   return useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
       const { data } = await baseInstance.post<AddSessionResponse>(
@@ -33,13 +30,8 @@ export function useAddSessionMutation() {
         sessionToken: token,
         name: eventPartner.name,
         email: eventPartner.email,
+        photoUrl: eventPartner.logo,
       });
-
-      setActiveSession(eventPartner.email);
-
-      toast.success(`Logged in as ${eventPartner.name}`);
-
-      navigate({ to: "/app/profile" });
     },
     onError: (error: ErrorResponse) => {
       handleUserResponseToError(error);

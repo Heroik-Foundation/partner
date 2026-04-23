@@ -19,6 +19,9 @@ export function useUpdateUserDetailsMutation(props: Props) {
 
   const { getFormData } = frmz({
     ...rest,
+    ...(typeof logo !== "string" && {
+      logo: logo,
+    }),
   });
 
   return useMutation({

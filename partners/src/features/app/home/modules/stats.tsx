@@ -1,14 +1,13 @@
 "use client";
 
-import { BookCheck, BookImage, WalletCards } from "lucide-react";
+import { BookImage, CoinsIcon, UsersRoundIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   usePartnerStatsQuery,
   useUserPropertiesQuery,
 } from "../../global/hooks/query";
+
 import { formatCurrency } from "@/helpers/text";
-import { buttonVariants } from "@/modules/ui/button";
-import { Link } from "@tanstack/react-router";
 
 export function Stats() {
   const { data: user } = useUserPropertiesQuery();
@@ -16,27 +15,41 @@ export function Stats() {
 
   const detail = [
     {
-      label: "Total Pledges",
-      value: formatCurrency(stats?.totalPledgeValue || 0),
-      icon: BookCheck,
-      bg: "bg-primary text-white",
-    },
-    {
       label: "Total Events",
       value: stats?.eventsCreated || 0,
       icon: BookImage,
       bg: "bg-secondary text-white",
     },
+    {
+      label: "Channels",
+      value: stats?.totalCreatedCommunities || 0,
+      icon: UsersRoundIcon,
+      bg: "bg-secondary text-white",
+    },
+    {
+      label: "Balance",
+      value: formatCurrency(Number(stats?.walletBalance || 0), "gbp"),
+      icon: CoinsIcon,
+      bg: "bg-accent text-white",
+    },
+    {
+      label: "Ticket Sales",
+      value: formatCurrency(Number(stats?.ticketSales || 0), "gbp"),
+      icon: CoinsIcon,
+      bg: "bg-accent text-white",
+    },
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-2.5">
-      {detail.map((item, index) => {
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
+      {detail.map((item, index, list) => {
         return (
           <div
             className={cn(
               item.bg,
-              "p-3.5 sm:p-5 rounded-xl flex items-center justify-between shadow bg-center"
+              "p-3.5 sm:p-5 rounded-xl flex items-center justify-between shadow bg-center relative",
+              list.length % 2 !== 0 && "last:col-span-2",
+              list.length < 2 && "col-span-2",
             )}
             key={index}
           >
@@ -51,20 +64,6 @@ export function Stats() {
           </div>
         );
       })}
-
-      <Link
-        to="/app/revenue"
-        className={cn(
-          buttonVariants({
-            variant: "default",
-            className: "w-full h-14 sm:h-20 bg-accent rounded-xl col-span-2",
-            size: "lg",
-          })
-        )}
-      >
-        <WalletCards />
-        <p className="font-bold">Event Revenue</p>
-      </Link>
     </div>
   );
 }

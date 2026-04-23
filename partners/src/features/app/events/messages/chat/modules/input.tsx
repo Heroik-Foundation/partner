@@ -27,7 +27,7 @@ export const MessageInputBox = (props: Props) => {
   }, [isSuccess]);
 
   return (
-    <div className="fixed bottom-0 w-full left-0 right-0 p-2 bg-background">
+    <div className="fixed bottom-0 w-full left-0 right-0 p-2 bg-background lg:ml-64 2xl:ml-72">
       <div className="rounded-full relative h-12">
         <input
           value={messageInput}

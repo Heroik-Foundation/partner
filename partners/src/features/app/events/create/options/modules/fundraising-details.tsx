@@ -1,35 +1,29 @@
-import { InputWithPrefix } from "@/features/app/global/form";
-import {
-  FundraiserState,
-  useEventFormStore,
-} from "@/features/app/global/hooks/logic";
+import { useEventFormStore } from "@/features/app/global/hooks/logic";
 import { FormContent, FormField } from "@/features/auth/global/form";
 import { Label } from "@/modules/ui/label";
-import { useCurrencyStore } from "@/stores/currency";
+
 import { Link } from "@tanstack/react-router";
 import { Building2, ChevronRight, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export const FundraisingEventDetails = () => {
-  const { selectedCurrency } = useCurrencyStore();
-  const { formState, updateForm, removeOrganization } = useEventFormStore();
+  const { formState, removeOrganization } = useEventFormStore();
 
-  const fundRaiserState = formState.fundRaiser || {};
   const organizations = formState.fundRaiser?.organizations || [];
 
-  const updateFundraiserField = <K extends keyof FundraiserState>(
-    field: K,
-    value: FundraiserState[K]
-  ) => {
-    updateForm("fundRaiser", {
-      ...(formState.fundRaiser || {}),
-      [field]: value,
-    });
-  };
+  // const updateFundraiserField = <K extends keyof FundraiserState>(
+  //   field: K,
+  //   value: FundraiserState[K],
+  // ) => {
+  //   updateForm("fundRaiser", {
+  //     ...(formState.fundRaiser || {}),
+  //     [field]: value,
+  //   });
+  // };
 
   return (
     <FormContent>
-      <FormField>
+      {/* <FormField>
         <Label>Set Minimum Pledge</Label>
         <InputWithPrefix
           required
@@ -44,7 +38,7 @@ export const FundraisingEventDetails = () => {
             updateFundraiserField("fundRaisingGoal", Number(target.value));
           }}
         />
-      </FormField>
+      </FormField> */}
 
       <FormField>
         <Label>Add Charity Partner</Label>

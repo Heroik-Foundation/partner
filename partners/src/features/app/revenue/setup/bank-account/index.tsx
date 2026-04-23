@@ -1,77 +1,249 @@
+import { Fragment, useEffect, useState } from "react";
+import { toast } from "sonner";
+
 import {
   Form,
   FormContent,
   FormFooter,
   FormField,
 } from "@/features/auth/global/form";
-import { Button } from "@/modules/ui/button";
+import { Button, buttonVariants } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
-import { useWalletDetailsByCurrencyQuery } from "../../hooks/query";
-import { Fragment, useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
-import { useUpdateBankDetailsMutation } from "../hooks/mutation";
 import { Header } from "@/features/app/global/header";
 import { CurrencySelect } from "@/modules/units/form/currency";
 
-type Form = {
+import { useWalletDetailsQuery } from "../../hooks/query";
+import { useUpdateBankDetailsMutation } from "../hooks/mutation";
+import { useCurrencyStore } from "@/stores/currency";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
+
+type Currency = "gbp" | "usd" | "eur" | "cad" | "aud" | "nzd";
+
+interface BankDetailsForm {
   bankName: string;
   bankAccountName: string;
   bankAccountNumber: string;
-  sortCode: string;
   pin: string;
+  sortCode?: string;
+  routingNumber?: string;
+  iban?: string;
+  transitNumber?: string;
+  institutionNumber?: string;
+  bsbNumber?: string;
+}
+
+type UpdateBankDetailsVariables = BankDetailsForm & { currency: Currency };
+
+const EMPTY_FORM: BankDetailsForm = {
+  bankName: "",
+  bankAccountName: "",
+  bankAccountNumber: "",
+  pin: "",
 };
 
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === "string" && value.trim().length > 0;
+
 const SetupBankAccount = () => {
-  const { data: wallet } = useWalletDetailsByCurrencyQuery();
-  const [form, setForm] = useState<Form>({
-    bankName: "",
-    bankAccountName: "",
-    bankAccountNumber: "",
-    sortCode: "",
-    pin: "",
+  const { data: wallet } = useWalletDetailsQuery();
+  const { selectedCurrency } = useCurrencyStore();
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState<BankDetailsForm>(EMPTY_FORM);
+
+  const owner: any = wallet;
+  const hasPin = wallet?.owner.pinSet;
+
+  const isBeingUpdated =
+    !!owner &&
+    isNonEmptyString(owner.bankName) &&
+    isNonEmptyString(owner.bankAccountName) &&
+    isNonEmptyString(owner.bankAccountNumber);
+
+  const { mutate, isPending, isSuccess } = useUpdateBankDetailsMutation(() => {
+    if (!hasPin) {
+      navigate({
+        to: "/app/revenue/setup-pin",
+      });
+    }
   });
-  const { mutate, isPending } = useUpdateBankDetailsMutation(form);
-
-  const pageTitle = wallet?.owner?.bankName
-    ? "Update Bank Details"
-    : "Setup Bank Account";
-
-  const handleBankDetails = useCallback(() => {
-    const bankName = wallet?.owner?.bankName || "";
-    const bankAccountName = wallet?.owner?.bankAccountName || "";
-    const bankAccountNumber = wallet?.owner?.bankAccountNumber || "";
-    const sortCode = wallet?.owner.sortCode || "";
-    const pin = "";
-
-    const defaultBankDetails = {
-      bankName,
-      bankAccountName,
-      bankAccountNumber,
-      sortCode,
-      pin,
-    };
-
-    setForm(defaultBankDetails);
-  }, [wallet]);
 
   useEffect(() => {
-    handleBankDetails();
-  }, []);
+    if (!owner) return;
+
+    const currencyFields: Partial<BankDetailsForm> = {};
+
+    switch (selectedCurrency.value) {
+      case "gbp":
+        currencyFields.sortCode = (owner as any).sortCode ?? "";
+        break;
+      case "usd":
+        currencyFields.routingNumber = (owner as any).routingNumber ?? "";
+        break;
+      case "eur":
+        currencyFields.iban = (owner as any).iban ?? "";
+        break;
+      case "cad":
+        currencyFields.transitNumber = (owner as any).transitNumber ?? "";
+        currencyFields.institutionNumber =
+          (owner as any).institutionNumber ?? "";
+        break;
+      case "aud":
+        currencyFields.bsbNumber = (owner as any).bsbNumber ?? "";
+        break;
+    }
+
+    setForm({
+      bankName: owner.bankName ?? "",
+      bankAccountName: owner.bankAccountName ?? "",
+      bankAccountNumber: owner.bankAccountNumber ?? "",
+      pin: "",
+      ...currencyFields,
+    });
+  }, [owner, selectedCurrency, isSuccess]);
 
   const handleSubmit = () => {
-    const { bankAccountName, bankAccountNumber, bankName, sortCode, pin } =
-      form;
-    if (
-      bankAccountName === "" ||
-      bankAccountNumber === "" ||
-      bankName === "" ||
-      sortCode === "" ||
-      pin === ""
-    ) {
-      toast.info("Please complete the form to continue");
-    } else {
-      mutate();
+    const requiredFields: (keyof BankDetailsForm)[] = [
+      "bankName",
+      "bankAccountName",
+      "bankAccountNumber",
+    ];
+
+    if (isBeingUpdated) requiredFields.push("pin");
+
+    const hasEmptyFields = requiredFields.some((field) => !form[field]?.trim());
+
+    if (hasEmptyFields) {
+      toast.info("Please complete all required fields");
+      return;
+    }
+
+    const currencyPayload: Partial<BankDetailsForm> = {};
+
+    switch (selectedCurrency.value) {
+      case "gbp":
+        currencyPayload.sortCode = form.sortCode;
+        break;
+      case "usd":
+        currencyPayload.routingNumber = form.routingNumber;
+        break;
+      case "eur":
+        currencyPayload.iban = form.iban;
+        break;
+      case "cad":
+        currencyPayload.transitNumber = form.transitNumber;
+        currencyPayload.institutionNumber = form.institutionNumber;
+        break;
+      case "aud":
+        currencyPayload.bsbNumber = form.bsbNumber;
+        break;
+    }
+
+    const payload = {
+      bankName: form.bankName,
+      bankAccountName: form.bankAccountName,
+      bankAccountNumber: form.bankAccountNumber,
+
+      ...(isBeingUpdated && { pin: form.pin }),
+      ...currencyPayload,
+    } as UpdateBankDetailsVariables;
+
+    mutate(payload);
+  };
+
+  const renderCurrencySpecificFields = () => {
+    switch (selectedCurrency.value) {
+      case "gbp":
+        return (
+          <FormField>
+            <Label>Sort Code</Label>
+            <Input
+              required
+              value={form.sortCode ?? ""}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, sortCode: e.target.value }))
+              }
+            />
+          </FormField>
+        );
+
+      case "usd":
+        return (
+          <FormField>
+            <Label>Routing Number (ABA)</Label>
+            <Input
+              required
+              value={form.routingNumber ?? ""}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, routingNumber: e.target.value }))
+              }
+            />
+          </FormField>
+        );
+
+      case "eur":
+        return (
+          <FormField>
+            <Label>IBAN</Label>
+            <Input
+              required
+              value={form.iban ?? ""}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, iban: e.target.value.toUpperCase() }))
+              }
+              placeholder="DE89370400440532013000"
+            />
+          </FormField>
+        );
+
+      case "cad":
+        return (
+          <>
+            <FormField>
+              <Label>Transit Number</Label>
+              <Input
+                required
+                value={form.transitNumber ?? ""}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, transitNumber: e.target.value }))
+                }
+              />
+            </FormField>
+            <FormField>
+              <Label>Institution Number</Label>
+              <Input
+                required
+                value={form.institutionNumber ?? ""}
+                onChange={(e) =>
+                  setForm((p) => ({
+                    ...p,
+                    institutionNumber: e.target.value,
+                  }))
+                }
+              />
+            </FormField>
+          </>
+        );
+
+      case "aud":
+        return (
+          <FormField>
+            <Label>BSB Number</Label>
+            <Input
+              required
+              value={form.bsbNumber ?? ""}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, bsbNumber: e.target.value }))
+              }
+              placeholder="062-000"
+            />
+          </FormField>
+        );
+
+      default:
+        return null;
     }
   };
 
@@ -79,18 +251,17 @@ const SetupBankAccount = () => {
     <Fragment>
       <Header
         header={{
-          title: pageTitle,
+          title: isBeingUpdated ? "Update Bank Details" : "Setup Bank Account",
           position: "stacked",
-          subtitle: "Update your bank details",
+          subtitle: `Bank details for ${selectedCurrency.value.toUpperCase()}`,
         }}
-        addOns={{
-          content: <CurrencySelect />,
-        }}
+        addOns={{ content: <CurrencySelect /> }}
       />
+
       <Form
         className="min-h-fit"
-        onSubmit={(event) => {
-          event.preventDefault();
+        onSubmit={(e) => {
+          e.preventDefault();
           handleSubmit();
         }}
       >
@@ -100,74 +271,71 @@ const SetupBankAccount = () => {
             <Input
               required
               value={form.bankName}
-              onChange={({ target }) => {
-                setForm((prev) => ({
-                  ...prev,
-                  bankName: target.value,
-                }));
-              }}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, bankName: e.target.value }))
+              }
             />
           </FormField>
+
           <FormField>
             <Label>Account Name</Label>
             <Input
               required
               value={form.bankAccountName}
-              onChange={({ target }) => {
-                setForm((prev) => ({
-                  ...prev,
-                  bankAccountName: target.value,
-                }));
-              }}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, bankAccountName: e.target.value }))
+              }
             />
           </FormField>
+
           <FormField>
             <Label>Account Number</Label>
             <Input
               required
-              type="number"
+              type="tel"
               value={form.bankAccountNumber}
-              onChange={({ target }) => {
-                setForm((prev) => ({
-                  ...prev,
-                  bankAccountNumber: target.value,
-                }));
-              }}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, bankAccountNumber: e.target.value }))
+              }
             />
           </FormField>
-          <FormField>
-            <Label>Sort Code</Label>
-            <Input
-              required
-              value={form.sortCode}
-              onChange={({ target }) => {
-                setForm((prev) => ({
-                  ...prev,
-                  sortCode: target.value,
-                }));
-              }}
-            />
-          </FormField>
-          <FormField>
-            <Label>Pin</Label>
-            <Input
-              required
-              type="number"
-              value={form.pin}
-              onChange={({ target }) => {
-                setForm((prev) => ({
-                  ...prev,
-                  pin: target.value,
-                }));
-              }}
-            />
-          </FormField>
+
+          {renderCurrencySpecificFields()}
+
+          {isBeingUpdated && (
+            <FormField>
+              <Label>Security Pin</Label>
+              <Input
+                required
+                type="password"
+                placeholder="••••"
+                value={form.pin}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, pin: e.target.value }))
+                }
+              />
+            </FormField>
+          )}
         </FormContent>
 
-        <FormFooter className="pt-5">
+        <FormFooter className="pt-5 space-y-2.5">
           <Button isPending={isPending} size="lg" className="w-full">
-            Save Bank Account
+            {isBeingUpdated ? "Update" : "Save"} Bank{" "}
+            {isBeingUpdated ? "Details" : "Account"}
           </Button>
+
+          <Link
+            className={cn(
+              buttonVariants({
+                variant: "secondary",
+                size: "lg",
+                className: "w-full",
+              }),
+            )}
+            to="/app/revenue/setup-pin"
+          >
+            <span>Update Security Pin</span>
+          </Link>
         </FormFooter>
       </Form>
     </Fragment>

@@ -1,11 +1,19 @@
 "use client";
 
 import { useEventMembersTicketPurchasesQuery } from "../hooks/query";
-import { useParams } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { Fragment } from "react";
 import { ItemNotFound } from "@/modules/units/card/not-found";
 import { getReadableTime } from "@/helpers/time";
 import { formatCurrency } from "@/helpers/text";
+import { BanknoteArrowDownIcon, MoreVerticalIcon } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/modules/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 export const TicketSales = () => {
   const { id } = useParams({
@@ -28,18 +36,43 @@ export const TicketSales = () => {
             Event Tickets Sold So Far
           </p>
         </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <MoreVerticalIcon />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem
+              className={cn(
+                "w-[170px] h-[48px] text-primary focus:text-primary",
+              )}
+            >
+              <Link
+                to="/app/events/$id/refunds"
+                params={{
+                  id: String(id),
+                }}
+                className="flex items-center gap-2"
+              >
+                <BanknoteArrowDownIcon />
+                <span className="text-sm font-bold">Manage Refunds</span>
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="space-y-5">
         {rows.map((sale, index) => {
           const quantity = sale.tickets.length;
+          const ticketTypeName = sale.ticketType.ticketType;
           return (
             <div key={index} className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <img
                   src={sale.user.photo}
                   loading="eager"
-                  className="w-10 h-10 rounded-lg object-cover object-center"
+                  className="w-12 h-12 rounded-lg object-cover object-center"
                 />
                 <div>
                   <h5 className="text-primary font-bold text-sm">
@@ -49,13 +82,16 @@ export const TicketSales = () => {
                     <span>{getReadableTime(sale.updatedAt)}</span> |{" "}
                     <span>Tickets: {sale.totalTickets}</span>
                   </p>
+                  <p className="text-xs font-bold text-primary/50">
+                    {ticketTypeName} Ticket(s)
+                  </p>
                 </div>
               </div>
 
               <span className="font-extrabold text-primary">
                 {formatCurrency(
                   sale.ticketType.ticketPrice * Number(quantity),
-                  sale.event.currency
+                  sale.event.currency,
                 )}
               </span>
             </div>

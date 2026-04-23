@@ -3,7 +3,6 @@
 import { Link } from "@tanstack/react-router";
 import { useAuthStore } from "@/stores/auth";
 import {
-  Form,
   FormContent,
   FormField,
   FormFooter,
@@ -21,10 +20,8 @@ const Login = () => {
   const { mutate, isPending } = useLoginMutation();
 
   return (
-    <Form
-      title="Log In"
-      description="Please enter your account details."
-      previousRoute={true}
+    <form
+      className="space-y-10"
       onSubmit={(event) => {
         event.preventDefault();
 
@@ -35,6 +32,27 @@ const Login = () => {
         }
       }}
     >
+      <div className="flex flex-col items-center justify-center text-center">
+        <img
+          src="/logo/logo-purple.svg"
+          alt=""
+          className="size-11 lg:size-24"
+        />
+        <div className="space-y-2.5">
+          <h1 className="text-primary font-bold text-3xl">Hiroek</h1>
+
+          <p className="text font-semibold text-primary">
+            Event Creator Platform <br />
+            Built for <span className="text-accent">Creators</span>. Designed
+            For <span className="text-accent">Growth</span>.
+          </p>
+        </div>
+      </div>
+      <div className="text-center">
+        <h1 className="font-black text-primary text-2xl font-axiforma">
+          Login
+        </h1>
+      </div>
       <FormContent>
         <FormField>
           <Label htmlFor="email">Email Address</Label>
@@ -55,16 +73,9 @@ const Login = () => {
             onChange={(event) => handleInputChangeEvent(event, form, setForm)}
           />
         </FormField>
-        <Link
-          to="/auth/recovery"
-          className="text-sm font-axiforma font-bold float-right text-primary"
-        >
-          Forgot Password ?
-        </Link>
-
         {/* <AutoCompleteInput /> */}
       </FormContent>
-      <FormFooter absolute>
+      <FormFooter>
         <Button
           className="w-full font-axiforma font-semibold text-sm"
           color="primary"
@@ -73,8 +84,30 @@ const Login = () => {
         >
           Log In
         </Button>
+
+        <ul className="mx-auto w-fit text-center mt-5 space-y-5">
+          <li className="font-normal text-black/50">
+            Don't Have An Account ?{" "}
+            <Link
+              to="/auth/signup"
+              className="font-bold text-primary underline"
+            >
+              Register
+            </Link>
+          </li>
+
+          <li className="font-normal text-black/50">
+            Forgot Password ?{" "}
+            <Link
+              to="/auth/recovery"
+              className="font-bold text-primary underline"
+            >
+              Reset
+            </Link>
+          </li>
+        </ul>
       </FormFooter>
-    </Form>
+    </form>
   );
 };
 

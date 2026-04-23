@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useParams, useSearch } from "@tanstack/react-router";
 import { SendHorizonal } from "lucide-react";
-import { toast } from "sonner";
 
 import { Header } from "../../global/header";
 import { Button } from "@/modules/ui/button";
@@ -25,11 +24,7 @@ const CreatePost = () => {
   });
 
   const handlePostCreation = () => {
-    if (content.trim().length > 3) {
-      mutate();
-    } else {
-      toast.error("Post is too short");
-    }
+    mutate();
   };
 
   const calculatedRows = Math.min(Math.ceil(content.length / 34), 20);
@@ -63,7 +58,7 @@ const CreatePost = () => {
         }
         rows={calculatedRows}
         className={cn(
-          "max-h-96 border-none focus:border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-transparent"
+          "max-h-96 border-none focus:border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-transparent",
         )}
       />
 

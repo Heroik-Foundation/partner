@@ -22,35 +22,19 @@ import { useState } from "react";
 import { useAddSessionMutation } from "./hooks";
 import { Header } from "../../global/header";
 import { truncateText } from "@/helpers/text";
-import { Plus, Trash2 } from "lucide-react";
+import { ChevronUpCircle, PlusCircle, Trash2 } from "lucide-react";
 import { FormPassword } from "@/features/auth/global/form";
-import { ItemNotFound } from "@/modules/units/card/not-found";
+
 import { motion, PanInfo } from "motion/react";
 import { ManageProfileMenu } from "./modules/menu";
 import { cn } from "@/lib/utils";
-
-// const dummySessions = [
-//   {
-//     sessionToken: "token_001",
-//     name: "Alice Johnson",
-//     email: "alice.johnson@example.com",
-//   },
-//   {
-//     sessionToken: "token_002",
-//     name: "Bob Smith",
-//     email: "bob.smith@example.com",
-//   },
-//   {
-//     sessionToken: "token_003",
-//     name: "Charlie Brown",
-//     email: "charlie.brown@example.com",
-//   },
-// ];
+import { useQueryClient } from "@tanstack/react-query";
 
 interface SwipeableSessionItemProps {
   session: {
     email: string;
     name: string;
+    photoUrl?: string;
   };
   onSwitch: (email: string) => void;
   onRemove: (email: string) => void;
@@ -117,7 +101,10 @@ function SwipeableSessionItem({
           <div className="flex items-center gap-4">
             <Avatar className="h-10 w-10">
               <AvatarImage
-                src={`https://api.dicebear.com/7.x/initials/svg?seed=${session.name}`}
+                src={
+                  session.photoUrl ||
+                  `https://api.dicebear.com/7.x/initials/svg?seed=${session.name}`
+                }
               />
               <AvatarFallback>{session.name[0]}</AvatarFallback>
             </Avatar>
@@ -161,6 +148,7 @@ export function ManageProfiles() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const handleAddAccount = () => {
     if (!email || !password) {
@@ -169,15 +157,17 @@ export function ManageProfiles() {
     }
 
     addSession(
-      { email, password },
+      { email: email.trim(), password: password.trim() },
       {
         onSuccess: () => {
           setDialogOpen(false);
           setEmail("");
           setPassword("");
-          toast.success("Account added and switched successfully");
+          toast.success("Account added successfully", {
+            id: "account-added-success",
+          });
         },
-      }
+      },
     );
   };
 
@@ -187,6 +177,7 @@ export function ManageProfiles() {
       toast.success("Switched account");
       navigate({ to: "/app" });
     }
+    queryClient.invalidateQueries();
   };
 
   const handleRemoveAccount = (sessionEmail: string) => {
@@ -206,7 +197,7 @@ export function ManageProfiles() {
       toast.success(
         activeSession?.email === sessionEmail
           ? "Logged out of this account"
-          : "Account removed"
+          : "Account removed",
       );
       setIsDeleting(null);
     }, 300);
@@ -216,39 +207,44 @@ export function ManageProfiles() {
     <div className="bg-background space-y-5">
       <Header
         header={{
-          title: truncateText(String(activeSession?.email || "Profile"), 22),
+          title: "",
           position: "inline",
-        }}
-        addOns={{
-          content: (
-            <Button
-              className="relative"
-              variant="secondary"
-              onClick={() => setDrawerOpen(true)}
-            >
-              <Plus />
-            </Button>
-          ),
         }}
       />
 
       <div className="flex flex-col items-center space-y-2.5 text-center">
         <img
-          src={`https://api.dicebear.com/7.x/initials/svg?seed=${activeSession?.name}`}
+          src={
+            activeSession?.photoUrl ||
+            `https://api.dicebear.com/7.x/initials/svg?seed=${activeSession?.name}`
+          }
           alt="User avatar"
-          className="w-20 h-20 rounded-full"
+          className="w-20 h-20 rounded-full object-fit object-center"
         />
-        <p className="text-lg font-semibold">
-          Hi, {truncateText(String(activeSession?.name || "User"))}
+        <p className="text-lg font-semibold text-primary">
+          Hi, {truncateText(String(activeSession?.name || "User"))}!
         </p>
+
+        <Button
+          onClick={() => {
+            navigate({
+              to: "/app/profile",
+            });
+          }}
+          variant={"accent"}
+          className="rounded-full"
+        >
+          Manage Your Creator Account
+        </Button>
       </div>
 
-      <div className="rounded-xl bg-primary/10 space-y-4">
-        <div className="p-3.5 flex items-center justify-center">
+      <div className="rounded-2xl bg-primary/10">
+        <div className="p-5 flex items-center justify-between">
           <span className="font-semibold text-primary">Switch account</span>
+          <ChevronUpCircle className="fill-primary stroke-white" />
         </div>
 
-        {sessions.length > 1 ? (
+        {sessions.length > 1 && (
           <ul className="">
             {sessions
               .filter((s) => s.email !== activeSession?.email)
@@ -276,12 +272,20 @@ export function ManageProfiles() {
                 </motion.li>
               ))}
           </ul>
-        ) : (
-          <ItemNotFound
-            message="No other existing accounts"
-            className="bg-primary/15 text-primary rounded-t-2xl"
-          />
         )}
+
+        <button
+          onClick={() => {
+            setDrawerOpen(true);
+          }}
+          className="border p-5 bg-white rounded-b-2xl w-full flex items-center gap-2"
+        >
+          <PlusCircle className="fill-primary stroke-white" />
+
+          <span className="text-primary font-semibold">
+            Add Another Creator Account
+          </span>
+        </button>
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -312,7 +316,7 @@ export function ManageProfiles() {
                 id="add-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddAccount()}
+                onKeyDown={(e) => e.key === "Enter"}
               />
               <Link
                 to="/auth/recovery"
@@ -320,7 +324,7 @@ export function ManageProfiles() {
                   buttonVariants({
                     variant: "ghost",
                   }),
-                  "p-0 h-4 text-primary/50"
+                  "p-0 h-4 text-primary/50",
                 )}
               >
                 Forgot Password ?

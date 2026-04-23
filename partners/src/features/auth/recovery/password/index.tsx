@@ -1,5 +1,3 @@
-import { useAuthStore } from "@/stores/auth";
-import { handleInputChangeEvent } from "../../global/helpers/input";
 import { useState } from "react";
 import {
   Form,
@@ -12,54 +10,89 @@ import { Label } from "@/modules/ui/label";
 import { Button } from "@/modules/ui/button";
 import { toast } from "sonner";
 import { useRecoveryValidationMutation } from "./hooks/mutation";
+import { useSearch } from "@tanstack/react-router";
 
 const SetupRecoveryPassword = () => {
-  const [password, setPassword] = useState("");
-  const { form, setForm } = useAuthStore();
+  const [form, setForm] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+
+  const {
+    email,
+    resetCode,
+  }: {
+    email: string;
+    resetCode: string;
+  } = useSearch({
+    strict: false,
+  });
+
   const { mutate, isPending } = useRecoveryValidationMutation();
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!email || !form.password || !form.confirmPassword) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    if (form.password.trim() !== form.confirmPassword.trim()) {
+      toast.info("Passwords don't match");
+      return;
+    }
+
+    mutate({
+      email,
+      password: form.password.trim(),
+      resetCode,
+    });
+  };
 
   return (
     <Form
       title="Reset Password"
       description="Please setup your password for better security."
       previousRoute={true}
-      onSubmit={(event) => {
-        event.preventDefault();
-        if (
-          form.password !== "" &&
-          form.email !== "" &&
-          form.password === password
-        ) {
-          mutate();
-        } else if (form.password === password) {
-          toast.info("Passwords don't match");
-        }
-      }}
+      onSubmit={handleSubmit}
     >
       <FormContent>
         <FormField>
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">New Password</Label>
           <FormPassword
+            id="password"
             name="password"
             value={form.password}
-            onChange={(event) => handleInputChangeEvent(event, form, setForm)}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, password: e.target.value }))
+            }
+            autoComplete="new-password"
           />
         </FormField>
+
         <FormField>
           <Label htmlFor="confirm_password">Confirm Password</Label>
           <FormPassword
+            id="confirm_password"
             name="confirm_password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            value={form.confirmPassword}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, confirmPassword: e.target.value }))
+            }
+            autoComplete="new-password"
           />
         </FormField>
       </FormContent>
+
       <FormFooter absolute>
         <Button
+          type="submit"
           className="w-full font-axiforma font-semibold text-sm"
           color="primary"
           size="lg"
           isPending={isPending}
+          disabled={isPending}
         >
           Reset Password
         </Button>

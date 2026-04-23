@@ -2,10 +2,12 @@ interface Session {
   sessionToken: string;
   name: string;
   email: string;
+  photoUrl?: string;
 }
 
 const SESSIONS_COOKIE = "user_sessions";
 const ACTIVE_INDEX_COOKIE = "active_session_idx";
+const SESSION_EXPIRY_DAYS = 30;
 
 function getCookie(name: string): string | null {
   const cookies = document.cookie.split(";").reduce(
@@ -14,7 +16,7 @@ function getCookie(name: string): string | null {
       if (k) acc[k] = v || "";
       return acc;
     },
-    {} as Record<string, string>
+    {} as Record<string, string>,
   );
   return cookies[name] ?? null;
 }
@@ -49,20 +51,31 @@ export function getActiveSession(): Session | null {
     : (sessions[0] ?? null);
 }
 
-export function addSession(session: Session): void {
+export function addSession(session: Session, switchTo: boolean = false): void {
   let sessions = getAllSessions();
+  const currentActive = getActiveSession();
+
   sessions = sessions.filter((s) => s.email !== session.email);
-  sessions.unshift(session);
-  setCookie(SESSIONS_COOKIE, encodeURIComponent(JSON.stringify(sessions)), 30);
-  setCookie(ACTIVE_INDEX_COOKIE, "0", 30);
-  updateActiveTokenCookie(session.sessionToken);
+  sessions.push(session);
+
+  setCookie(
+    SESSIONS_COOKIE,
+    encodeURIComponent(JSON.stringify(sessions)),
+    SESSION_EXPIRY_DAYS,
+  );
+
+  if (switchTo || !currentActive) {
+    const newIndex = sessions.findIndex((s) => s.email === session.email);
+    setCookie(ACTIVE_INDEX_COOKIE, newIndex.toString(), SESSION_EXPIRY_DAYS);
+    updateActiveTokenCookie(session.sessionToken);
+  }
 }
 
 export function setActiveSession(email: string): boolean {
   const sessions = getAllSessions();
   const index = sessions.findIndex((s) => s.email === email);
   if (index === -1) return false;
-  setCookie(ACTIVE_INDEX_COOKIE, index.toString(), 30);
+  setCookie(ACTIVE_INDEX_COOKIE, index.toString(), SESSION_EXPIRY_DAYS);
   updateActiveTokenCookie(sessions[index].sessionToken);
   return true;
 }
@@ -71,16 +84,24 @@ export function removeSession(email: string): void {
   let sessions = getAllSessions();
   const removedIndex = sessions.findIndex((s) => s.email === email);
   sessions = sessions.filter((s) => s.email !== email);
-  setCookie(SESSIONS_COOKIE, encodeURIComponent(JSON.stringify(sessions)), 30);
+  setCookie(
+    SESSIONS_COOKIE,
+    encodeURIComponent(JSON.stringify(sessions)),
+    SESSION_EXPIRY_DAYS,
+  );
   const currentIdxRaw = getCookie(ACTIVE_INDEX_COOKIE);
   const currentIdx = currentIdxRaw ? parseInt(currentIdxRaw, 10) : 0;
   if (removedIndex === currentIdx || currentIdx >= sessions.length) {
-    setCookie(ACTIVE_INDEX_COOKIE, "0", 30);
+    setCookie(ACTIVE_INDEX_COOKIE, "0", SESSION_EXPIRY_DAYS);
     updateActiveTokenCookie(
-      sessions.length > 0 ? sessions[0].sessionToken : ""
+      sessions.length > 0 ? sessions[0].sessionToken : "",
     );
   } else if (removedIndex < currentIdx) {
-    setCookie(ACTIVE_INDEX_COOKIE, (currentIdx - 1).toString(), 30);
+    setCookie(
+      ACTIVE_INDEX_COOKIE,
+      (currentIdx - 1).toString(),
+      SESSION_EXPIRY_DAYS,
+    );
   }
 }
 
@@ -92,7 +113,7 @@ export function clearAllSessions(): void {
 
 function updateActiveTokenCookie(token: string): void {
   if (token) {
-    setCookie("sessionToken", token, 7);
+    setCookie("sessionToken", token, SESSION_EXPIRY_DAYS);
   } else {
     deleteCookie("sessionToken");
   }

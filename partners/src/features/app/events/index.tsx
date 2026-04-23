@@ -20,12 +20,13 @@ import { Share2 } from "lucide-react";
 const AllEvents = () => {
   const [query, setQuery] = useState<string>("");
   const [filter, setFilter] = useState<"past" | "present" | "future">(
-    "present"
+    "present",
   );
   const { data: user } = useUserPropertiesQuery();
   const {
     data: events,
-    isFetching,
+    isFetchingNextPage,
+    isPending,
     fetchNextPage,
     hasNextPage,
   } = useUserEventsQuery({
@@ -75,7 +76,7 @@ const AllEvents = () => {
             <button
               className={cn(
                 "relative w-full p-4 text-primary transition-all",
-                isActive && "text-white"
+                isActive && "text-white",
               )}
               key={index}
               onClick={() => {
@@ -101,9 +102,10 @@ const AllEvents = () => {
         })}
       </div>
 
-      {events && (
-        <div className="gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {(() => {
+      <div className="gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {events &&
+          events.pages.flat().length >= 1 &&
+          (() => {
             const seen = new Set();
             const uniqueEvents = events.pages.filter((event) => {
               if (seen.has(event._id)) return false;
@@ -121,7 +123,14 @@ const AllEvents = () => {
                 thumbnail={event.photo || ""}
                 title={event.name}
                 date={event.endTime}
-                price={Number(event.ticketing[0].ticketPrice || 0)}
+                price={
+                  event.ticketing?.length > 0
+                    ? Math.min(
+                        ...event.ticketing.map((t) => t.ticketPrice ?? 0),
+                      )
+                    : 0
+                }
+                hasMultipletTickets={event.ticketing.length > 1}
                 {...(event.meetingLink
                   ? { meetingLink: event.meetingLink || "" }
                   : { location: event.address || "" })}
@@ -129,16 +138,19 @@ const AllEvents = () => {
             ));
           })()}
 
-          {isFetching && (
-            <Fragment>
-              <EventSkeletonLoader />
-              <EventSkeletonLoader />
-            </Fragment>
-          )}
-        </div>
-      )}
+        {(isPending || isFetchingNextPage) && (
+          <Fragment>
+            <EventSkeletonLoader />
+            <EventSkeletonLoader />
+            <EventSkeletonLoader />
+          </Fragment>
+        )}
+      </div>
 
-      {events && events?.pages.length < 1 && !isFetching && <EventNotFound />}
+      {events &&
+        events?.pages.flat().length <= 0 &&
+        !isPending &&
+        !isFetchingNextPage && <EventNotFound />}
     </div>
   );
 };

@@ -17,9 +17,9 @@ const SignUpSuccess = () => {
           Account Created <br /> Successfully!
         </h1>
         <p className="font-axiforma text-center font-semibold text-sm text-primary">
-          Once your account is approved by the administrator, a verification
-          link will be sent to your email. Please check your inbox within a
-          couple of hours to complete the verification process.
+          Your account has been approved. A verification link has been sent to
+          your email address. Please check your inbox to complete the
+          verification process.
         </p>
       </div>
 

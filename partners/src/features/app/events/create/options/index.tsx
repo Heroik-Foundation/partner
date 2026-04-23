@@ -31,7 +31,7 @@ interface StepConfig {
     | "Event Recurrence"
     | "Add Ticket Type"
     | "Ticket Details"
-    | "Review Tickets"
+    | "Ticket Details Preview"
     | "Fundraising Details";
   description: string;
   component: JSX.Element;
@@ -76,7 +76,7 @@ const CreateEventOptions = () => {
         title: "Event Recurrence",
         description: "Set how often your event should recur.",
         component: <RecurringEventDetails />,
-        cta: "Is this a recurring event?",
+        cta: "Is This A Recurring Event?",
         position: "stacked",
       },
       {
@@ -85,12 +85,13 @@ const CreateEventOptions = () => {
         component: (
           <TicketEventDetails ticketStateContext={ticketStateContext} />
         ),
-        cta: "Is this a paid ticketed event?",
+        cta: "Is This A Paid Ticketed Event?",
         position: "stacked",
       },
       {
-        title: "Review Tickets",
-        description: "Review your ticket information.",
+        title: "Ticket Details Preview",
+        description:
+          "Drag & Drop ticket types to arrange in your preferred order",
         component: <TicketsOverview previousStep={addAdditionalTickets} />,
         cta: "Would you like to review your tickets?",
         position: "stacked",
@@ -99,11 +100,11 @@ const CreateEventOptions = () => {
         title: "Fundraising Details",
         description: "Enter the required fundraising information.",
         component: <FundraisingEventDetails />,
-        cta: "Do you want to use this event for fundraising?",
+        cta: "Would You Like To Add Donation To This Event?",
         position: "stacked",
       },
     ],
-    [addAdditionalTickets]
+    [addAdditionalTickets],
   );
 
   const {
@@ -141,7 +142,7 @@ const CreateEventOptions = () => {
 
   const isTicketDetailsWithTickets = useCallback(
     () => currentStepConfig?.title === "Ticket Details" && hasTickets,
-    [currentStepConfig?.title, hasTickets]
+    [currentStepConfig?.title, hasTickets],
   );
 
   // Validate the current step
@@ -151,25 +152,29 @@ const CreateEventOptions = () => {
     }
 
     const stepValidations: { [key: number]: () => boolean } = {
-      1: () => !recurrence || !objectHasNullOrUndefined(recurrence),
+      1: () =>
+        !recurrence ||
+        !objectHasNullOrUndefined(recurrence) ||
+        !recurrence.frequency,
       2: () => {
-        if (
-          ticketing?.[currentTicketIndex] &&
-          objectHasNullOrUndefined(ticketing[currentTicketIndex])
-        ) {
-          return false;
+        if (!recurrence && !ticketing?.[currentTicketIndex] && !fundRaiser) {
+          // Only skip validation if there are no existing tickets either
+          if (!ticketing || ticketing.length === 0) {
+            return true;
+          }
         }
+
         if (ticketing && ticketing.length > 1) {
           const signUpLimits = ticketing
             .filter((ticket) => ticket && !objectHasNullOrUndefined(ticket))
             .map((ticket) => Number(ticket.signUpLimit) || 0);
 
-          const hasZeroLimit = signUpLimits.some((limit) => limit === 0);
+          const hasZeroLimit = signUpLimits.some((limit) => limit <= 0);
           const hasNonZeroLimit = signUpLimits.some((limit) => limit > 0);
 
           if (hasZeroLimit && hasNonZeroLimit) {
             toast.error(
-              "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits."
+              "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits.",
             );
             return false;
           }
@@ -188,7 +193,7 @@ const CreateEventOptions = () => {
 
           if (hasZeroLimit && hasNonZeroLimit) {
             toast.error(
-              "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits."
+              "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits.",
             );
             return false;
           }
@@ -301,7 +306,7 @@ const CreateEventOptions = () => {
 
       handleNextStep();
     },
-    [handleNextStep, isTicketDetailsWithTickets]
+    [handleNextStep, isTicketDetailsWithTickets],
   );
 
   const handleOptionCancellation = useCallback(() => {
@@ -313,7 +318,7 @@ const CreateEventOptions = () => {
         "Ticket Details": { currentTicketIndex: 0, ticketing: undefined },
         "Add Ticket Type": { currentTicketIndex: 0, ticketing: undefined },
         "Fundraising Details": { fundRaiser: undefined },
-        "Review Tickets": {},
+        "Ticket Details Preview": {},
       }[currentStepConfig.title] ?? {};
 
     if (Object.keys(updates).length === 0) return;
@@ -370,7 +375,7 @@ const CreateEventOptions = () => {
         </Button>
       ),
     }),
-    [isTicketDetailsWithTickets, handleTicketDetailsNext]
+    [isTicketDetailsWithTickets, handleTicketDetailsNext],
   );
 
   const isTicketStep = currentStepConfig?.title.includes("Ticket");
@@ -389,6 +394,50 @@ const CreateEventOptions = () => {
           subtitle: currentStepConfig?.description || "",
         }}
         previousRouteCallback={handlePreviousStep}
+        addOns={{
+          content: currentStepConfig.title === "Ticket Details Preview" && (
+            <div className="absolute top-[96px] left-[calc(100%-12px)] xs:left-[430px]">
+              <svg
+                width="11"
+                height="14"
+                viewBox="0 0 11 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="3.32275"
+                  width="1.66146"
+                  height="13.2917"
+                  rx="0.830729"
+                  fill="#37137F"
+                />
+                <rect
+                  width="4.85657"
+                  height="1.52698"
+                  rx="0.763491"
+                  transform="matrix(0.68421 -0.729285 0.942293 0.33479 0 3.54199)"
+                  fill="#37137F"
+                />
+                <rect
+                  x="7.67725"
+                  y="13.2915"
+                  width="1.66146"
+                  height="13.2917"
+                  rx="0.830729"
+                  transform="rotate(-180 7.67725 13.2915)"
+                  fill="#37137F"
+                />
+                <rect
+                  width="4.85657"
+                  height="1.52698"
+                  rx="0.763491"
+                  transform="matrix(-0.684211 0.729285 -0.942293 -0.33479 11 9.74951)"
+                  fill="#37137F"
+                />
+              </svg>
+            </div>
+          ),
+        }}
       />
       <Form onSubmit={handleFormSubmit}>
         {stepComponent}

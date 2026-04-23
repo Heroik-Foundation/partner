@@ -4,6 +4,7 @@ import { useEventDetailsQuery } from "../../../hooks/query";
 interface EventFormState {
   salesEndDate: string | null;
   salesStartDate: string | null;
+  ticketDetails?: string;
   signUpLimit: number;
   ticketPrice: string;
   ticketType: string;
@@ -50,11 +51,18 @@ export const useUpdateEventTicketTypeForm = ({
       salesStartDate:
         currentTicketDetails.salesStartDate.split("T")[0] ??
         DEFAULT_FORM_STATE.salesStartDate,
+      ...(currentTicketDetails.ticketDetails && {
+        ticketDetails: currentTicketDetails.ticketDetails,
+      }),
       signUpLimit:
         currentTicketDetails.signUpLimit ?? DEFAULT_FORM_STATE.signUpLimit,
       ticketPrice: String(convertTicketPrice(currentTicketDetails.ticketPrice)),
       ticketType:
         currentTicketDetails.ticketType || DEFAULT_FORM_STATE.ticketType,
+      ...(currentTicketDetails.ticketDetails &&
+        currentTicketDetails.ticketDetails.length >= 1 && {
+          ticketDetails: currentTicketDetails.ticketDetails,
+        }),
     };
   }, [currentTicketDetails]);
 
@@ -72,7 +80,7 @@ export const useUpdateEventTicketTypeForm = ({
 
   const updateFormField = <K extends keyof EventFormState>(
     field: K,
-    value: EventFormState[K]
+    value: EventFormState[K],
   ) => {
     setFormState((prevState) => ({
       ...prevState,

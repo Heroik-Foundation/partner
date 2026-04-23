@@ -1,33 +1,35 @@
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/modules/ui/button";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Edit, Copy } from "lucide-react";
-// import { useEventTerminationByIDMutation } from "../hooks/mutation";
-// import { ActionDrawer } from "@/modules/units/page/action";
-// import { toast } from "sonner";
-import { isPastDate } from "@/helpers/time";
+import { Edit, Copy, Trash } from "lucide-react";
+import { getDateStatePrecise, isAtLeast7DaysAhead } from "@/helpers/time";
 import { useEventFormStore } from "@/features/app/global/hooks/logic";
 import { Event } from "@/features/app/global/types";
 import { safeExtractDate, safeGetTimeFromISO } from "../../edit/helpers/time";
 import { getSafeCoordinate } from "../../edit/helpers/location";
 import { useCurrencyStore } from "@/stores/currency";
+import { ActionDrawer } from "@/modules/units/page/action";
+import { useEventTerminationByIDMutation } from "../hooks/mutation";
 
 export const Manage = ({
   id,
-  endDate,
   event,
 }: {
   id: string;
   endDate: string;
   event: Event;
 }) => {
-  // const { isPending, isSuccess, isError } = useEventTerminationByIDMutation({
-  //   id,
-  // });
+  const issueRefund = isAtLeast7DaysAhead(event.endTime);
+  const { mutate, isPending, isSuccess, isError } =
+    useEventTerminationByIDMutation({
+      id,
+      shouldRefund: issueRefund,
+    });
+
   const { setSelectedCurrency, getSymbolByValue } = useCurrencyStore();
   const { setFormState } = useEventFormStore();
   const navigate = useNavigate();
-  const isPastEvent = isPastDate(endDate);
+  const dateState = getDateStatePrecise(event.endTime, event.eventEndDate);
 
   const handleEventDuplication = () => {
     const startTime = safeGetTimeFromISO(event.endTime);
@@ -66,7 +68,7 @@ export const Manage = ({
       category: {
         id: event.category._id,
         image: event.category.image,
-        name: event.name,
+        name: event.category.name,
       },
       absorbFees: event.absorbFees,
       description: event.description,
@@ -91,13 +93,13 @@ export const Manage = ({
         event.eventPledge.minimumPledge && {
           fundRaiser: {
             fundRaisingGoal: Math.abs(
-              Number(event.eventPledge.minimumPledge / 100)
+              Number(event.eventPledge.minimumPledge / 100),
             ),
             organizations: event.eventPledge.organizations.map(
               (organization) => ({
                 name: organization.name,
                 id: organization._id,
-              })
+              }),
             ),
           },
         }),
@@ -113,48 +115,80 @@ export const Manage = ({
 
   return (
     <div className="space-y-2.5 sm:space-y-0 flex flex-col sm:flex-row items-center sm:space-x-2.5">
-      <Link
-        to={"/app/events/$id/edit"}
-        className={cn(
-          buttonVariants({
-            size: "lg",
-            className: "w-full",
-          })
-        )}
-        params={{
-          id,
-        }}
-      >
-        <Edit size="16" />
-        <span className="mt-0.5">Edit Event</span>
-      </Link>
+      {(dateState === "present" || dateState === "upcoming") && (
+        <Link
+          to={"/app/events/$id/edit"}
+          className={cn(
+            buttonVariants({
+              size: "lg",
+              className: "w-full",
+            }),
+          )}
+          params={{
+            id,
+          }}
+        >
+          <Edit size="16" />
+          <span className="mt-0.5">Edit Event</span>
+        </Link>
+      )}
 
-      {/* <ActionDrawer
-        trigger={
-          <Button disabled size="lg" variant="destructive" className="w-full">
-            <Trash size="16" />
-            <span className="mt-0.5">Delete Event</span>
-          </Button>
-        }
-        callback={{
-          fn: () => {
-            toast.info("Unauthorized to perform this action");
-          },
-          title: "Delete Event",
-        }}
-        title={{
-          error: "Unable To Delete Event",
-          initial: "Delete Event",
-          pending: "Deleting Event",
-          success: "Event Deleted",
-        }}
-        description="This action cannot be reversed, are you sure ?"
-        isSuccess={isSuccess}
-        isPending={isPending}
-        isError={isError}
-      /> */}
+      {dateState === "upcoming" && (
+        <ActionDrawer
+          trigger={
+            <Button size="lg" variant="destructive" className="w-full">
+              <Trash size="16" />
+              <span className="mt-0.5">Delete Event</span>
+            </Button>
+          }
+          callback={{
+            fn: () => {
+              mutate();
+            },
+            title: "Proceed",
+          }}
+          extraSteps={[
+            <div className="px-5 space-y-5">
+              <div className="text-primary text-sm font-bold flex flex-col items-start">
+                <span>Event Name: {event.name}</span>
+                <span>
+                  Refund Status:{" "}
+                  {issueRefund ? "Refund Activated" : "Refund Unactivated"}
+                </span>
+              </div>
 
-      {isPastEvent && (
+              <div className="text-sm font-semibold">
+                <h6 className="text-accent font-extrabold">Issue Voucher</h6>
+                <p>
+                  {issueRefund
+                    ? `Issue Refund Attendees will be issued with a refund.`
+                    : `Attendees will receive a voucher they can use for a future
+                  event. Voucher valid for 1 year.`}
+                </p>
+              </div>
+            </div>,
+          ]}
+          title={{
+            error: "Unable To Delete Event",
+            initial: "Delete Event",
+            pending: "Processing Request",
+            success: "Event Deleted",
+          }}
+          description={
+            <p>
+              Are you sure you want to delete this event ? <br />{" "}
+              <span className="text-primary font-extrabold">
+                This action cannot be undone
+              </span>
+            </p>
+          }
+          isSuccess={isSuccess}
+          isPending={isPending}
+          isError={isError}
+        />
+      )}
+
+      {dateState === "past" && (
         <Button
           onClick={handleEventDuplication}
           className="w-full"

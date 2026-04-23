@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthStore } from "@/stores/auth";
-import { Form, FormContent, FormField, FormFooter } from "../global/form";
+import { FormContent, FormField, FormFooter } from "../global/form";
 import { ImageWithPreview } from "@/modules/units/form/image";
 import { Input } from "@/modules/ui/input";
 import { handleInputChangeEvent } from "../global/helpers/input";
@@ -11,16 +11,15 @@ import { useSignUpMutation } from "./hooks/mutation";
 import { toast } from "sonner";
 import PlaceAutocomplete from "@/modules/units/form/address";
 import { Textarea } from "@/modules/ui/textarea";
+import { Link } from "@tanstack/react-router";
 
 const SignUp = () => {
   const { form, setForm } = useAuthStore();
   const { mutate, isPending } = useSignUpMutation();
 
   return (
-    <Form
-      title="Sign Up"
-      description="Please enter your details."
-      previousRoute
+    <form
+      className="space-y-10"
       onSubmit={(event) => {
         event.preventDefault();
 
@@ -40,10 +39,34 @@ const SignUp = () => {
         }
       }}
     >
+      <div className="flex flex-col items-center justify-center text-center">
+        <img
+          src="/logo/logo-purple.svg"
+          alt=""
+          className="size-11 lg:size-24"
+        />
+        <div className="space-y-2.5">
+          <h1 className="text-primary font-bold text-3xl">Hiroek</h1>
+
+          <p className="text font-semibold text-primary">
+            Event Creator Platform <br />
+            Built for <span className="text-accent">Creators</span>. Designed
+            For <span className="text-accent">Growth</span>.
+          </p>
+        </div>
+      </div>
+      <div className="text-center">
+        <h1 className="font-black text-primary text-2xl font-axiforma">
+          Signup
+        </h1>
+      </div>
       <FormContent>
-        <ImageWithPreview />
         <FormField>
-          <Label>Name</Label>
+          <Label>Setup Profile</Label>
+          <ImageWithPreview />
+        </FormField>
+        <FormField>
+          <Label>Company Name / Fullname</Label>
           <Input
             required
             name="name"
@@ -123,8 +146,17 @@ const SignUp = () => {
         <Button isPending={isPending} className="w-full" size="lg">
           Sign Up
         </Button>
+
+        <ul className="mx-auto w-fit text-center mt-5 space-y-5">
+          <li className="font-normal text-black/50">
+            Already Have An Account ?{" "}
+            <Link to="/auth/login" className="font-bold text-primary underline">
+              Login
+            </Link>
+          </li>
+        </ul>
       </FormFooter>
-    </Form>
+    </form>
   );
 };
 

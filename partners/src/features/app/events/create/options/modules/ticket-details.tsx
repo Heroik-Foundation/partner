@@ -1,4 +1,7 @@
-import { InputWithPrefix } from "@/features/app/global/form";
+import {
+  InputWithPrefix,
+  InputWithPrefixSuffix,
+} from "@/features/app/global/form";
 import {
   TicketTierState,
   useEventFormStore,
@@ -14,7 +17,6 @@ import { Label } from "@/modules/ui/label";
 import {
   calculateFees,
   formatter,
-  getProcessingFeeDisplay,
 } from "../../../edit/edit-ticket-type/helper/fees";
 import infoIcon from "../../../edit/edit-ticket-type/assets/info.svg";
 import { Switch } from "@/modules/ui/switch";
@@ -25,6 +27,7 @@ import { CurrencySelect } from "@/modules/units/form/currency";
 import { useCurrencyStore } from "@/stores/currency";
 import { convertGbpTo } from "@/helpers/text";
 import { useCurrencyQuoteQuery } from "@/features/app/global/hooks/query";
+import MarkdownEditor from "@/modules/ui/markdown-editor";
 
 type Props = {
   ticketStateContext: "adding" | "creating";
@@ -36,10 +39,11 @@ const DEFAULT_TICKET_STATE: TicketTierState = {
   signUpLimit: 0,
   ticketPrice: 0,
   ticketType: "Standard",
+  ticketDetails: "",
 };
 
 export const TicketEventDetails = ({ ticketStateContext }: Props) => {
-  const { selectedCurrency } = useCurrencyStore();
+  const { selectedCurrency, getStripeFee } = useCurrencyStore();
   const { formState, updateForm } = useEventFormStore();
   const { ticketing } = formState;
   const { data } = useCurrencyQuoteQuery();
@@ -48,14 +52,14 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
   const equivalentHiroekFee = convertGbpTo(
     hiroekFeeGbp,
     selectedCurrency.value,
-    data?.quotes
+    data?.quotes,
   );
 
   const currentIndex =
     ticketStateContext === "creating"
       ? Math.abs(
           getValidTicketCount(ticketing) -
-            (getValidTicketCount(ticketing) === 0 ? 0 : 1)
+            (getValidTicketCount(ticketing) === 0 ? 0 : 1),
         ) || 0
       : formState.currentTicketIndex;
 
@@ -91,7 +95,8 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
 
   const feeBreakdown = calculateFees(
     localTicketState.ticketPrice,
-    formState.absorbFees
+    formState.absorbFees,
+    Number(equivalentHiroekFee),
   );
 
   const firstTicketHasUnlimitedSignup =
@@ -104,7 +109,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
 
   const updateSpecificTicketTier = (
     index: number,
-    updates: Partial<TicketTierState>
+    updates: Partial<TicketTierState>,
   ) => {
     const currentTiers = formState.ticketing || [];
 
@@ -136,7 +141,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
     }
 
     const updatedTiers = currentTiers.map((tier, i) =>
-      i === index ? { ...tier, ...updates } : tier
+      i === index ? { ...tier, ...updates } : tier,
     );
 
     updateForm("ticketing", updatedTiers);
@@ -169,7 +174,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
   return (
     <FormContent>
       <FormField>
-        <Label>Payout Currency</Label>
+        <Label>Choose Currency</Label>
         <CurrencySelect
           classNames={{
             trigger: "w-full h-12 border-primary/50",
@@ -200,6 +205,91 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         />
       </FormField>
 
+      <div className="flex items-center space-x-5">
+        <FormField>
+          <Label className="sm:hidden">Enter Promo Code</Label>
+          <InputWithPrefixSuffix
+            required={
+              formState.promoCode?.discount !== undefined &&
+              String(formState.promoCode?.discount) !== "" &&
+              String(formState.promoCode?.discount) !== "0"
+            }
+            prefixItem={
+              <div className="bg-primary h-full py-1.5 px-2.5 rounded-md hidden sm:block">
+                <span className="text-white text-xs font-extrabold">
+                  Enter Promo Code
+                </span>
+              </div>
+            }
+            value={formState.promoCode?.code}
+            onChange={({ target }) => {
+              updateForm("promoCode", {
+                code: target.value,
+                discount: formState.promoCode?.discount || 0,
+              });
+            }}
+            placeholder="HSIK3XXX"
+          />
+        </FormField>
+        <FormField>
+          <Label className="sm:hidden">Promo Discount</Label>
+          <InputWithPrefix
+            required={
+              formState.promoCode?.code !== undefined &&
+              String(formState.promoCode?.code) !== ""
+            }
+            prefixItem={
+              <div className="bg-primary h-full py-1.5 px-2.5 rounded-md hidden sm:block">
+                <span className="text-white text-xs font-extrabold">
+                  Promo Discount
+                </span>
+              </div>
+            }
+            suffixItem={<span className="font-bold text-primary/50">%</span>}
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={3}
+            value={formState.promoCode?.discount || ""}
+            onChange={({ target }) => {
+              // Allow empty string
+              if (target.value === "") {
+                updateForm("promoCode", {
+                  discount: 0,
+                  code: formState.promoCode?.code || "",
+                });
+                return;
+              }
+
+              // Only allow numbers
+              const numericValue = target.value.replace(/[^0-9]/g, "");
+              let num = Number(numericValue);
+
+              // Limit to 100
+              if (num > 100) {
+                num = 100;
+              }
+
+              updateForm("promoCode", {
+                discount: num,
+                code: formState.promoCode?.code || "",
+              });
+            }}
+            onKeyDown={(e) => {
+              if (
+                e.key === "e" ||
+                e.key === "E" ||
+                e.key === "-" ||
+                e.key === "+" ||
+                e.key === "."
+              ) {
+                e.preventDefault();
+              }
+            }}
+          />
+        </FormField>
+      </div>
+
       <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary space-y-4">
         <div className="flex items-end justify-end w-full">
           <img src={infoIcon} alt="" className="w-fit" />
@@ -224,11 +314,8 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Payment Processing Fee:</span>
           <span className="font-black text-primary">
-            {Math.abs(localTicketState.ticketPrice || 0) > 0
-              ? getProcessingFeeDisplay(
-                  selectedCurrency.value,
-                  selectedCurrency.symbol
-                )
+            {localTicketState.ticketPrice > 0
+              ? getStripeFee(selectedCurrency.value)
               : `${selectedCurrency.symbol}0`}
           </span>
         </div>
@@ -281,7 +368,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
                 className={cn(
                   "px-4 py-2 text-xs font-bold bg-primary text-white rounded-full cursor-pointer transition-all",
                   localTicketState.ticketType === option &&
-                    "text-primary bg-primary/10 border border-primary"
+                    "text-primary bg-primary/10 border border-primary",
                 )}
                 key={index}
                 onClick={() => {
@@ -298,6 +385,18 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
       </FormField>
 
       <FormField>
+        <Label>Ticket Details</Label>
+        <MarkdownEditor
+          value={localTicketState.ticketDetails || ""}
+          onChange={(markdownContent) => {
+            updateLocalState({
+              ticketDetails: markdownContent,
+            });
+          }}
+        />
+      </FormField>
+
+      <FormField>
         <Label>No of Tickets Available</Label>
         <FormCounter
           required
@@ -310,7 +409,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           decrement={() => {
             const newValue = Math.max(
               0,
-              Number(localTicketState.signUpLimit) - 1
+              Number(localTicketState.signUpLimit) - 1,
             );
             handleSignUpLimitChange(newValue);
           }}

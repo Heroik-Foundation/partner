@@ -14,7 +14,7 @@ export const Withdrawals = () => {
 
   const lastWithdrawalRef = useIntersectionObserver<HTMLDivElement>(
     fetchNextPage,
-    [hasNextPage]
+    [hasNextPage],
   );
 
   const rows: WithdrawalLog[] = data?.pages || [];
@@ -28,7 +28,7 @@ export const Withdrawals = () => {
             key={index}
             className={cn(
               "flex items-end justify-between border-b py-2.5",
-              isLast && "border-none"
+              isLast && "border-none",
             )}
             ref={isLast ? lastWithdrawalRef : undefined}
           >
@@ -56,7 +56,7 @@ export const Withdrawals = () => {
           <LogSkeletonLoader />
         </Fragment>
       )}
-      {(!isPending || !isFetchingNextPage) && rows.length < 1 && (
+      {!isPending && !isFetchingNextPage && rows.length < 1 && (
         <ItemNotFound message="No withdrawal record found" />
       )}
     </div>

@@ -28,13 +28,13 @@ const EventDetail = () => {
 
   if (Array.isArray(event?.ticketing)) {
     const hasZeroSignUpLimit = event.ticketing.some(
-      (obj) => obj.signUpLimit === 0
+      (obj) => obj.signUpLimit === 0,
     );
 
     if (!hasZeroSignUpLimit) {
       ticketsAvailable = event.ticketing.reduce(
         (sum, obj) => sum + (obj.spotsLeft || 0),
-        0
+        0,
       );
     }
   }
@@ -43,12 +43,12 @@ const EventDetail = () => {
     Number(event?.eventPledge.minimumPledge || 0) > 0 &&
     (
       event?.eventPledge.organizations.map(
-        (organization) => organization.name
+        (organization) => organization.name,
       ) || []
     ).length >= 1;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 lg:space-y-10">
       <Header
         header={{
           title: "",
@@ -65,7 +65,7 @@ const EventDetail = () => {
                     variant: "default",
                     className:
                       "bg-white text-primary font-bold z-10 hover:bg-white rounded-lg px-5 items-center",
-                  })
+                  }),
                 )}
               >
                 <span>Scan Tickets</span>
@@ -110,7 +110,7 @@ const EventDetail = () => {
             description={event.description}
             id={id}
             organizations={event.eventPledge.organizations.map(
-              (organization) => organization.name
+              (organization) => organization.name,
             )}
             percentage={event.eventPledge.totalPledgedAmount}
             minimumPledge={event.eventPledge.minimumPledge}

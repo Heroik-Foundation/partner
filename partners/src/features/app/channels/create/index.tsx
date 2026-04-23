@@ -7,12 +7,13 @@ import {
 import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
-import { Textarea } from "@/modules/ui/textarea";
+
 import { ImageWithPreview } from "@/modules/units/form/image";
 import { useEffect, useState } from "react";
 import { useCreateChannelMutation } from "./hooks/mutation";
 import { toast } from "sonner";
 import { ActionDrawer } from "@/modules/units/page/action";
+import MarkdownEditor from "@/modules/ui/markdown-editor";
 
 const CreateChannel = () => {
   const [form, setForm] = useState({
@@ -44,7 +45,7 @@ const CreateChannel = () => {
   return (
     <Form
       title="Create Channel"
-      description="Effortless Event Creation and Community Engagement."
+      description="Stay connected with your audience before, during and after every event."
       previousRoute={true}
       onSubmit={(event) => {
         event.preventDefault();
@@ -74,12 +75,12 @@ const CreateChannel = () => {
         </FormField>
         <FormField>
           <Label>Channel Description</Label>
-          <Textarea
+          <MarkdownEditor
             value={form.description}
-            onChange={({ target }) => {
+            onChange={(markdownContent) => {
               setForm((prev) => ({
                 ...prev,
-                description: target.value,
+                description: markdownContent,
               }));
             }}
             placeholder="Type channel description here ..."

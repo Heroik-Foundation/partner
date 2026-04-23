@@ -4,6 +4,7 @@ import { UserRound } from "lucide-react";
 type UserAvatarProps = {
   user: {
     photo?: string;
+    logo?: string;
     fullname?: string;
   };
   createdAt: string;
@@ -14,9 +15,9 @@ export const UserAvatar = ({
   createdAt,
 }: UserAvatarProps): JSX.Element => (
   <div className="flex items-center space-x-2">
-    {user.photo ? (
+    {user.photo || user.logo ? (
       <img
-        src={user.photo}
+        src={user.photo || user.logo}
         alt="Profile"
         className="w-10 h-10 rounded-full border border-primary object-cover"
       />

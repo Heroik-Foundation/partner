@@ -1,11 +1,16 @@
 import { cn } from "@/lib/utils";
-import { DialogHeader } from "@/modules/ui/dialog";
+
 import { Drawer, DrawerContent, DrawerTrigger } from "@/modules/ui/drawer";
+import { Dialog, DialogContent, DialogTrigger } from "@/modules/ui/dialog";
 import { ActionDialog } from "@/modules/units/page/action";
-import { DialogTitle } from "@radix-ui/react-dialog";
 import { ReactNode } from "react";
 import { Trash2 } from "lucide-react";
-import { useDeletePostMutation } from "../../hooks/mutation";
+import {
+  useDeletePostMutation,
+  // useFlagPostMutation,
+  // usePostToAnnouncementMutation,
+} from "../../hooks/mutation";
+import { useMediaQuery } from "@/hooks/media-query";
 
 type Props = {
   trigger: ReactNode;
@@ -14,6 +19,8 @@ type Props = {
 
 export const PostMenu = (props: Props) => {
   const { trigger, id } = props;
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+
   const {
     mutate: deletePost,
     isPending: isDeletingPost,
@@ -76,43 +83,58 @@ export const PostMenu = (props: Props) => {
     // },
   ];
 
-  return (
-    <Drawer>
-      <DrawerTrigger>{trigger}</DrawerTrigger>
-      <DialogHeader>
-        <DialogTitle></DialogTitle>
-      </DialogHeader>
-      <DrawerContent>
-        <div className="py-5 flex items-start flex-col w-full">
-          {options.map((option, index, list) => {
-            const { prompt } = option;
-            return (
-              <ActionDialog
+  // Shared content (the list of action buttons)
+  const OptionsList = () => (
+    <div className="py-5 flex items-start flex-col w-full">
+      {options.map((option, index, list) => {
+        const { prompt } = option;
+        return (
+          <ActionDialog
+            key={index}
+            title={prompt.title}
+            description={prompt.description}
+            callback={{
+              fn: prompt.callback.fn,
+              isPending: prompt.callback.isPending,
+              isSuccess: prompt.callback.isSuccess,
+            }}
+            trigger={
+              <button
                 key={index}
-                title={prompt.title}
-                description={prompt.description}
-                callback={{
-                  fn: prompt.callback.fn,
-                  isPending: prompt.callback.isPending,
-                  isSuccess: prompt.callback.isSuccess,
-                }}
-                trigger={
-                  <button
-                    key={index}
-                    className={cn(
-                      "flex text-primary py-3.5 space-x-1.5 px-2 w-full",
-                      list.length - 1 !== index && "border-b"
-                    )}
-                  >
-                    <option.icon className="stroke-background " size={16} />
-                    <span className="text-sm font-bold">{option.title}</span>
-                  </button>
-                }
-              />
-            );
-          })}
-        </div>
-      </DrawerContent>
-    </Drawer>
+                className={cn(
+                  "flex text-primary py-3.5 space-x-1.5 px-2 w-full",
+                  list.length - 1 !== index && "border-b",
+                )}
+              >
+                <option.icon className="stroke-background " size={16} />
+                <span className="text-sm font-bold">{option.title}</span>
+              </button>
+            }
+          />
+        );
+      })}
+    </div>
+  );
+
+  // Mobile: Drawer
+  if (!isDesktop) {
+    return (
+      <Drawer>
+        <DrawerTrigger>{trigger}</DrawerTrigger>
+        <DrawerContent>
+          <OptionsList />
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  // Desktop: Dialog
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogContent className="sm:max-w-md p-0 py-0">
+        <OptionsList />
+      </DialogContent>
+    </Dialog>
   );
 };

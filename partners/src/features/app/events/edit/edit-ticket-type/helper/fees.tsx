@@ -1,30 +1,52 @@
 import { useCurrencyStore } from "@/stores/currency";
 
-const HIROEK_FIXED_EQUIVALENTS: Record<string, number> = {
-  gbp: 0.6,
-  usd: 0.6, // Changed from 0.81 to USD equivalent of £0.60
-  eur: 0.6, // Changed from 0.71 to EUR equivalent of £0.60
-  aud: 0.6, // Changed from 1.21 to AUD equivalent of £0.60
-  cad: 0.6, // Changed from 1.11 to CAD equivalent of £0.60
-  nzd: 0.6, // Changed from 1.4 to NZD equivalent of £0.60
-};
-
 interface ProcessingFeeConfig {
   rate: number;
   fixed: number;
 }
 
 const PROCESSING_FEE_CONFIGS: Record<string, ProcessingFeeConfig> = {
-  gbp: { rate: 0.014, fixed: 0.2 }, // Existing GBP config (already set up)
-  usd: { rate: 0.029, fixed: 0.3 }, // Stripe: 2.9% + $0.30
-  eur: { rate: 0.015, fixed: 0.25 }, // Stripe: 1.5% + €0.25
-  aud: { rate: 0.0175, fixed: 0.3 }, // Stripe: 1.75% + A$0.30
-  cad: { rate: 0.029, fixed: 0.3 }, // Stripe: 2.9% + CA$0.30
-  nzd: { rate: 0.0265, fixed: 0.3 }, // Stripe: 2.65% + NZ$0.30
-  default: { rate: 0.0325, fixed: 0.3 }, // Other international: 3.25% + 0.30
+  usd: {
+    rate: 0.029, // 2.9%
+    fixed: 0.3, // $0.30
+  },
+
+  eur: {
+    rate: 0.015, // 1.5%
+    fixed: 0.25, // €0.25
+  },
+
+  aud: {
+    rate: 0.0175, // 1.75%
+    fixed: 0.3, // A$0.30
+  },
+
+  cad: {
+    rate: 0.029, // 2.9%
+    fixed: 0.3, // CA$0.30
+  },
+
+  nzd: {
+    rate: 0.0265, // 2.65%
+    fixed: 0.3, // NZ$0.30
+  },
+
+  gbp: {
+    rate: 0.015,
+    fixed: 0.2,
+  },
+
+  default: {
+    rate: 0.0325,
+    fixed: 0.3,
+  },
 };
 
-export const calculateFees = (ticketPrice: number, absorbFees: boolean) => {
+export const calculateFees = (
+  ticketPrice: number,
+  absorbFees: boolean,
+  hiroekFee: number,
+) => {
   if (ticketPrice === 0) {
     return {
       hiroekFee: 0,
@@ -36,14 +58,14 @@ export const calculateFees = (ticketPrice: number, absorbFees: boolean) => {
   }
 
   const { selectedCurrency } = useCurrencyStore.getState();
-  const currencyValue = selectedCurrency.value.toLowerCase();
-
-  const hiroekFee =
-    HIROEK_FIXED_EQUIVALENTS[currencyValue] ?? HIROEK_FIXED_EQUIVALENTS.gbp;
+  const currency = selectedCurrency.value.toLowerCase();
 
   const config =
-    PROCESSING_FEE_CONFIGS[currencyValue] ?? PROCESSING_FEE_CONFIGS.default;
-  const processingFee = ticketPrice * config.rate + config.fixed;
+    PROCESSING_FEE_CONFIGS[currency] ?? PROCESSING_FEE_CONFIGS.default;
+
+  const processingFee = Number(
+    (ticketPrice * config.rate + config.fixed).toFixed(2),
+  );
 
   const totalFees = hiroekFee + processingFee;
 
@@ -53,14 +75,14 @@ export const calculateFees = (ticketPrice: number, absorbFees: boolean) => {
       processingFee,
       totalFees,
       buyersPay: ticketPrice,
-      youReceive: ticketPrice - totalFees,
+      youReceive: Math.max(0, Number((ticketPrice - totalFees).toFixed(2))),
     };
   } else {
     return {
       hiroekFee,
       processingFee,
       totalFees,
-      buyersPay: ticketPrice + totalFees,
+      buyersPay: Number((ticketPrice + totalFees).toFixed(2)),
       youReceive: ticketPrice,
     };
   }
@@ -68,15 +90,17 @@ export const calculateFees = (ticketPrice: number, absorbFees: boolean) => {
 
 export const getProcessingFeeDisplay = (currency: string, symbol: string) => {
   const currencyValue = currency.toLowerCase();
+
   const feeDisplay: Record<string, string> = {
-    gbp: `1.4% + ${symbol}0.20`,
-    usd: `2.9% + ${symbol}0.30`,
-    eur: `1.5% + ${symbol}0.25`,
-    aud: `1.75% + ${symbol}0.30`,
-    cad: `2.9% + ${symbol}0.30`,
-    nzd: `2.65% + ${symbol}0.30`,
+    usd: `4.4% + ${symbol}0.30`, // 2.9% base + 1.5% international (common for non-US merchants)
+    gbp: `2.9% + ${symbol}0.20`, // Effective with international/cross-border addon
+    eur: `2.9% + ${symbol}0.25`,
+    aud: `3.5% + ${symbol}0.30`, // Domestic + international addon
+    cad: `4.4% + ${symbol}0.30`,
+    nzd: `3.5% + ${symbol}0.30`, // Updated lower international rates in 2026; conservative
   };
-  return feeDisplay[currencyValue] || `3.25% + ${symbol}0.30`;
+
+  return feeDisplay[currencyValue] || `4.4% + ${symbol}0.30`;
 };
 
 export const formatter = new Intl.NumberFormat("en-US", {

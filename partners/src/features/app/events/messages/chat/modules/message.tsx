@@ -49,17 +49,18 @@ export const Message = ({ content, author, index }: Props) => {
       custom={index}
       variants={variants}
     >
-      <motion.p
+      <motion.pre
         className={cn(
-          "bg-primary/10 max-w-[70%] w-fit p-2.5 rounded-t-2xl text-primary text-xs font-semibold",
-          author === "sender" && "rounded-bl-2xl ml-auto bg-primary text-white",
-          author === "receiver" && "rounded-br-2xl mr-auto"
+          "bg-primary/10 max-w-[83%] w-fit p-3.5 rounded-t-3xl text-primary text-xs font-semibold leading-6 tracking-wider font-axiforma",
+          author === "sender" && "rounded-bl-3xl ml-auto bg-primary text-white",
+          author === "receiver" && "rounded-br-3xl mr-auto",
+          "whitespace-pre-wrap break-words",
         )}
         whileHover={{ scale: 1.02 }}
         transition={bounceTransition}
       >
         {content}
-      </motion.p>
+      </motion.pre>
     </motion.div>
   );
 };

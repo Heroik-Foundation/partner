@@ -9,7 +9,7 @@ const ManageMembers = () => {
         header={{
           position: "stacked",
           title: "Channel Members",
-          subtitle: "Assign moderators to your channel.",
+          subtitle: "",
         }}
       />
       <ChannelModerators />

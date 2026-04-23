@@ -16,7 +16,7 @@ export function useSignUpMutation() {
   const { getFormData } = frmz({
     name: form.name,
     address: form.address,
-    email: form.email,
+    email: form.email.trim(),
     telephone: form.number,
     eventsPerYear: form.events,
     bio: form.bio,

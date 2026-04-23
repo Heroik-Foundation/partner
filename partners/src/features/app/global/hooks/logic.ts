@@ -11,6 +11,10 @@ type EventFormBase = {
     id: string;
     image: string;
   };
+  promoCode?: {
+    code: string;
+    discount: number;
+  };
   subCategory?: {
     name: string;
     id: string;
@@ -27,12 +31,12 @@ type EventFormBase = {
   ticketing?: TicketTierState[];
   fundRaiser?: FundraiserState;
   currentTicketIndex: number;
+  isRefundable: boolean;
 };
 
 type OnlineEventForm = EventFormBase & {
   isOnlineEvent: true;
   meetingLink: string;
-
   address?: never;
   latitude?: never;
   longitude?: never;
@@ -50,10 +54,10 @@ type InPersonEventForm = EventFormBase & {
 export type EventFormState = OnlineEventForm | InPersonEventForm;
 
 export type EventFormRecurrenceState = {
-  interval?: number;
-  frequency?: "WEEKLY" | "MONTHLY";
+  interval: number;
+  frequency: "WEEKLY" | "MONTHLY";
   daysOfWeek?: number[]; // 0=Sunday, 6=Saturday (for weekly recurrence)
-  endType?: "NEVER" | "UNTIL_DATE" | "AFTER_OCCURRENCES";
+  endType: "NEVER" | "UNTIL_DATE" | "AFTER_OCCURRENCES";
   endDate?: string; // ISO string (required if endType is 'UNTIL_DATE')
   occurrenceCount?: number; // Required if endType is 'AFTER_OCCURRENCES'
 };
@@ -64,6 +68,7 @@ export type TicketTierState = {
   signUpLimit: number;
   salesStartDate: string | null;
   salesEndDate: string | null;
+  ticketDetails?: string;
 };
 
 export type FundraiserState = {
@@ -93,6 +98,7 @@ export const defaultValue: EventFormState = {
   currentTicketIndex: 0,
   ticketing: [],
   isOnlineEvent: false,
+  isRefundable: false,
 };
 
 type StaticEventFormStore = {
@@ -101,13 +107,14 @@ type StaticEventFormStore = {
   reset: () => void;
   updateForm: <K extends keyof EventFormState>(
     field: K,
-    value: EventFormState[K]
+    value: EventFormState[K],
   ) => void;
   deleteTicketTier: (index: number) => void;
   removeAllTickets: () => void;
   removeOrganization: (id: string) => void;
   pruneRedundantTickets: () => void;
   recalculateTicketIndex: () => void;
+  reorderTickets: (fromIndex: number, toIndex: number) => void;
 };
 
 export const useEventFormStore = create<StaticEventFormStore>()(
@@ -130,7 +137,7 @@ export const useEventFormStore = create<StaticEventFormStore>()(
           if (!state.formState.ticketing) return state;
 
           const newTicketing = state.formState.ticketing.filter(
-            (_, i) => i !== index
+            (_, i) => i !== index,
           );
           return {
             formState: {
@@ -138,6 +145,19 @@ export const useEventFormStore = create<StaticEventFormStore>()(
               ticketing: newTicketing,
               currentTicketIndex:
                 newTicketing.length > 0 ? newTicketing.length : 0,
+            },
+          };
+        }),
+      reorderTickets: (fromIndex: number, toIndex: number) =>
+        set((state) => {
+          if (!state.formState.ticketing) return state;
+          const tickets = [...state.formState.ticketing];
+          const [moved] = tickets.splice(fromIndex, 1);
+          tickets.splice(toIndex, 0, moved);
+          return {
+            formState: {
+              ...state.formState,
+              ticketing: tickets,
             },
           };
         }),
@@ -158,7 +178,7 @@ export const useEventFormStore = create<StaticEventFormStore>()(
             formState: {
               ...state.formState,
               fundRaiser: {
-                ...state.formState.fundRaiser,
+                // ...state.formState.fundRaiser,
                 organizations: organizations.filter((org) => org.id !== id),
               },
             },
@@ -172,7 +192,7 @@ export const useEventFormStore = create<StaticEventFormStore>()(
             (ticket) =>
               ticket.ticketType &&
               ticket.salesStartDate !== null &&
-              ticket.salesEndDate !== null
+              ticket.salesEndDate !== null,
           );
           return {
             formState: {
@@ -194,6 +214,6 @@ export const useEventFormStore = create<StaticEventFormStore>()(
     {
       name: "event-form-storage",
       storage: createJSONStorage(() => sessionStorage),
-    }
-  )
+    },
+  ),
 );

@@ -22,6 +22,15 @@ import {
 } from "@/modules/ui/drawer";
 import { Button } from "@/modules/ui/button";
 import { useEffect } from "react";
+import { useMediaQuery } from "@/hooks/media-query";
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/modules/ui/dialog";
 
 const getNotificationIcon = (type: Notification["type"]): string => {
   const communityTypes = [
@@ -79,27 +88,57 @@ const NotificationDrawerContent = ({
   notification,
 }: {
   notification: Notification;
-}) => (
-  <DrawerContent>
-    <DrawerHeader>
-      <DrawerTitle className="font-extrabold text-lg text-primary">
-        {notification.title
-          .replace("community", "channel")
-          .replace("Community", "Channel")}
-      </DrawerTitle>
-      <DrawerDescription className="text-primary/50 font-semibold">
-        {notification.message
-          .replace("community", "channel")
-          .replace("Community", "Channel")}
-      </DrawerDescription>
-    </DrawerHeader>
-    <DrawerFooter>
-      <DrawerClose>
-        <Button className="w-full">Close</Button>
-      </DrawerClose>
-    </DrawerFooter>
-  </DrawerContent>
-);
+}) => {
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+
+  const formattedTitle = notification.title
+    .replace("community", "channel")
+    .replace("Community", "Channel");
+
+  const formattedMessage = notification.message
+    .replace("community", "channel")
+    .replace("Community", "Channel");
+
+  // Mobile: Drawer
+  if (!isDesktop) {
+    return (
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle className="font-extrabold text-lg text-primary">
+            {formattedTitle}
+          </DrawerTitle>
+          <DrawerDescription className="text-primary/50 font-semibold">
+            {formattedMessage}
+          </DrawerDescription>
+        </DrawerHeader>
+        <DrawerFooter>
+          <DrawerClose>
+            <Button className="w-full">Close</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    );
+  }
+
+  // Desktop: Dialog
+  return (
+    <DialogContent className="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle className="font-extrabold text-lg text-primary">
+          {formattedTitle}
+        </DialogTitle>
+        <DialogDescription className="text-primary/50 font-semibold">
+          {formattedMessage}
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button className="w-full">Close</Button>
+        </DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  );
+};
 
 const NotificationItem = ({
   notification,
@@ -171,7 +210,7 @@ export const NotificationsList = () => {
 
   const lastNotificationRef = useIntersectionObserver<HTMLDivElement>(
     fetchNextPage,
-    [hasNextPage]
+    [hasNextPage],
   );
 
   const handleMarkAsRead = (notificationId: string) => {

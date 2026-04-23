@@ -7,7 +7,7 @@ import {
 import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
-import { Textarea } from "@/modules/ui/textarea";
+
 import { ImageWithPreview } from "@/modules/units/form/image";
 import { Fragment, useEffect } from "react";
 import { Header } from "../../global/header";
@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { Switch } from "@/modules/ui/switch";
 import { useMapStore } from "@/stores/maps";
 import { InputWithPrefix } from "../../global/form";
+import MarkdownEditor from "@/modules/ui/markdown-editor";
 
 const EditEvent = () => {
   const { id } = useParams({
@@ -37,6 +38,8 @@ const EditEvent = () => {
   const { formState, updateForm, setFormState, reset } = useEventFormStore();
 
   const { mutate, isPending, isSuccess, isError } = useUpdateEventMutation({
+    mode: "diff",
+    //@ts-ignore
     event: event,
     ...formState,
   });
@@ -78,6 +81,19 @@ const EditEvent = () => {
             //@ts-ignore
             initialPreview={event?.photo}
           />
+          <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-sm text-primary">
+                Do you want to absorb all the ticket fees?
+              </span>
+              <Switch
+                checked={formState.absorbFees}
+                onCheckedChange={(value) => {
+                  updateForm("absorbFees", value);
+                }}
+              />
+            </div>
+          </div>
           <FormField>
             <Label>Event Name</Label>
             <Input
@@ -91,13 +107,11 @@ const EditEvent = () => {
           </FormField>
           <FormField>
             <Label>Event Description</Label>
-            <Textarea
-              required
+            <MarkdownEditor
               value={formState.description}
-              onChange={({ target }) => {
-                updateForm("description", target.value);
+              onChange={(markdownContent) => {
+                updateForm("description", markdownContent);
               }}
-              placeholder="Type Event Description here..."
             />
           </FormField>
           <FormField>
@@ -105,7 +119,7 @@ const EditEvent = () => {
               {" "}
               {formState.isOnlineEvent ? "Event Meeting Link" : "Event Venue"}
             </Label>
-            {formState.isOnlineEvent ? (
+            {formState.isOnlineEvent && (
               <InputWithPrefix
                 required
                 pattern="https://(www\.)?(zoom\.us/j/\d+|meet\.google\.com/[a-zA-Z-]+|teams\.microsoft\.com/l/meetup-join/.+)"
@@ -116,7 +130,9 @@ const EditEvent = () => {
                 }}
                 prefixItem={<Video className="stroke-primary/50" />}
               />
-            ) : (
+            )}
+
+            {formState.address && (
               <PlaceAutocomplete
                 initialValue={{
                   address: formState.address,
@@ -145,7 +161,7 @@ const EditEvent = () => {
                   className={cn(
                     "font-bold whitespace-nowrap text-primary/50",
                     (formState?.subCategory?.name || formState.category.name) &&
-                      "text-primary"
+                      "text-primary",
                   )}
                 >
                   {formState?.subCategory?.name ||
@@ -214,12 +230,12 @@ const EditEvent = () => {
           <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
             <div className="flex items-center justify-between">
               <span className="font-semibold text-sm text-primary">
-                Do you want to absorb all the ticket fees?
+                Is this event refundable ?
               </span>
               <Switch
-                checked={formState.absorbFees}
+                checked={formState.isRefundable}
                 onCheckedChange={(value) => {
-                  updateForm("absorbFees", value);
+                  updateForm("isRefundable", value);
                 }}
               />
             </div>

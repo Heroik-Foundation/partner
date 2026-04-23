@@ -7,7 +7,7 @@ import {
 import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
-import { Textarea } from "@/modules/ui/textarea";
+
 import { ImageWithPreview } from "@/modules/units/form/image";
 import { Fragment } from "react/jsx-runtime";
 import { Header } from "../../global/header";
@@ -25,6 +25,7 @@ import { ActionDialog } from "@/modules/units/page/action";
 import { useState } from "react";
 import { InputWithPrefix } from "../../global/form";
 import { Switch } from "@/modules/ui/switch";
+import MarkdownEditor from "@/modules/ui/markdown-editor";
 
 const CreateEvent = () => {
   const { formState, updateForm, reset } = useEventFormStore();
@@ -91,20 +92,6 @@ const CreateEvent = () => {
             }
           />
 
-          <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-sm text-primary">
-                Is this an online event ?
-              </span>
-              <Switch
-                checked={formState.isOnlineEvent}
-                onCheckedChange={(value) => {
-                  updateForm("isOnlineEvent", value);
-                }}
-              />
-            </div>
-          </div>
-
           <FormField>
             <Label>Event Name</Label>
             <Input
@@ -118,15 +105,14 @@ const CreateEvent = () => {
           </FormField>
           <FormField>
             <Label>Event Description</Label>
-            <Textarea
-              required
+            <MarkdownEditor
               value={formState.description}
-              onChange={({ target }) => {
-                updateForm("description", target.value);
+              onChange={(markdownContent) => {
+                updateForm("description", markdownContent);
               }}
-              placeholder="Type Event Description here..."
             />
           </FormField>
+
           <FormField>
             <Label>
               {formState.isOnlineEvent ? "Event Meeting Link" : "Event Venue"}
@@ -176,7 +162,7 @@ const CreateEvent = () => {
                   className={cn(
                     "font-bold whitespace-nowrap text-primary/50",
                     (formState?.subCategory?.name || formState.category.name) &&
-                      "text-primary"
+                      "text-primary",
                   )}
                 >
                   {formState?.subCategory?.name ||
@@ -239,6 +225,19 @@ const CreateEvent = () => {
                 }}
               />
             </FormField>
+          </div>
+          <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-sm text-primary">
+                Is this event refundable ?
+              </span>
+              <Switch
+                checked={formState.isRefundable}
+                onCheckedChange={(value) => {
+                  updateForm("isRefundable", value);
+                }}
+              />
+            </div>
           </div>
         </FormContent>
         <FormFooter>

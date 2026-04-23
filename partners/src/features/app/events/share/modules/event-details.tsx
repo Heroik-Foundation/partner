@@ -54,8 +54,15 @@ export const EventDetails = () => {
               thumbnail={event.photo || ""}
               title={event.name}
               date={event.endTime}
-              price={event.eventPledge.minimumPledge || 0}
-              location={event.address ?? event.meetingLink ?? ""}
+              price={
+                event.ticketing?.length > 0
+                  ? Math.min(...event.ticketing.map((t) => t.ticketPrice ?? 0))
+                  : 0
+              }
+              hasMultipletTickets={event.ticketing.length > 1}
+              {...(event.meetingLink
+                ? { meetingLink: event.meetingLink || "" }
+                : { location: event.address || "" })}
             />
             <div className="flex flex-col items-center justify-center space-y-2.5">
               <span className="py-2 px-5 bg-primary/15 text-primary text-xs font-extrabold rounded-lg">

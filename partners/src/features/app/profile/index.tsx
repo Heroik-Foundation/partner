@@ -2,7 +2,7 @@ import { AuthForm, initialValues } from "@/stores/auth";
 import { ImageWithPreview } from "@/modules/units/form/image";
 import { Input } from "@/modules/ui/input";
 import { Label } from "@/modules/ui/label";
-import { Button, buttonVariants } from "@/modules/ui/button";
+import { Button } from "@/modules/ui/button";
 import { toast } from "sonner";
 import {
   Form,
@@ -14,11 +14,9 @@ import { handleInputChangeEvent } from "@/features/auth/global/helpers/input";
 import { useUserPropertiesQuery } from "../global/hooks/query";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { useUpdateUserDetailsMutation } from "./hooks/mutation";
-import { Textarea } from "@/modules/ui/textarea";
+
 import { Header } from "../global/header";
-import { Link } from "@tanstack/react-router";
-import { cn } from "@/lib/utils";
-import { UserRoundPlus } from "lucide-react";
+import MarkdownEditor from "@/modules/ui/markdown-editor";
 
 const Profile = () => {
   const [form, setForm] = useState<AuthForm>(initialValues);
@@ -61,21 +59,6 @@ const Profile = () => {
           position: "stacked",
           subtitle: "Please Update Your Profile Details",
         }}
-        addOns={{
-          content: (
-            <Link
-              to="/app/profile/manage"
-              className={cn(
-                buttonVariants({
-                  variant: "secondary",
-                })
-              )}
-            >
-              <span>Manage</span>
-              <UserRoundPlus className="mb-1" />
-            </Link>
-          ),
-        }}
       />
       <Form
         onSubmit={(event) => {
@@ -91,7 +74,15 @@ const Profile = () => {
         }}
       >
         <FormContent>
-          <ImageWithPreview initialPreview={user?.logo} />
+          <ImageWithPreview
+            handleState={(file) => {
+              setForm({
+                ...form,
+                image: file,
+              });
+            }}
+            initialPreview={user?.logo}
+          />
           <FormField>
             <Label>Name</Label>
             <Input
@@ -137,14 +128,16 @@ const Profile = () => {
           </FormField>
 
           <FormField>
-            <Label htmlFor="number">Partner Bio</Label>
-            <Textarea
-              name="bio"
-              placeholder="Write something about you"
+            <Label htmlFor="bio">Bio</Label>
+
+            <MarkdownEditor
               value={form.bio}
-              onChange={(event: any) =>
-                handleInputChangeEvent(event, form, setForm)
-              }
+              onChange={(markdownContent) => {
+                setForm({
+                  ...form,
+                  bio: markdownContent,
+                });
+              }}
             />
           </FormField>
 

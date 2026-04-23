@@ -26,6 +26,8 @@ export const Publish = () => {
     latitude,
     meetingLink,
     isOnlineEvent,
+    isRefundable,
+    promoCode,
   } = formState;
 
   const locationData = isOnlineEvent
@@ -38,6 +40,7 @@ export const Publish = () => {
     description,
     subcategory: subCategory?.id,
     privacy: "public",
+    isRefundable,
     ...(photo ? { photo: photo as string | File } : {}),
     ...locationData,
     endTime: convertDateTimeInputToISOString(startDate, startTime),
@@ -45,23 +48,34 @@ export const Publish = () => {
     ...(mapRecurrenceStateToMutation(recurrence) && {
       recurrence: mapRecurrenceStateToMutation(recurrence)!,
     }),
+    ...(promoCode &&
+      promoCode.code &&
+      promoCode.discount &&
+      promoCode.discount > 0 &&
+      promoCode.discount <= 100 && {
+        promoCode: {
+          code: promoCode.code,
+          discount: Number(promoCode.discount),
+        },
+      }),
     ...(ticketing &&
       ticketing.length > 0 && {
         ticketing: ticketing
-          .filter((t) => t.salesStartDate && t.salesEndDate) // only valid tickets
+          .filter((t) => t.salesStartDate && t.salesEndDate)
           .map((t) => ({
             ticketType: t.ticketType,
             ticketPrice: Math.abs(Number(t.ticketPrice) * 100),
             signUpLimit: t.signUpLimit,
             salesStartDate: t.salesStartDate!,
             salesEndDate: t.salesEndDate!,
+            ...(t.ticketDetails && {
+              ticketDetails: t.ticketDetails!,
+            }),
           })),
       }),
     ...(fundRaiser &&
-      fundRaiser.fundRaisingGoal &&
       fundRaiser.organizations && {
-        eventPledge: {
-          minimumPledge: Math.abs(Number(fundRaiser.fundRaisingGoal) * 100),
+        fundRaiser: {
           organizations: fundRaiser.organizations.map((org) => org.id),
         },
       }),
@@ -77,6 +91,7 @@ export const Publish = () => {
     <div className="fixed bottom-0 left-0 right-0 bg-white shadow-sm flex items-center justify-center p-5">
       <Button
         onClick={() => {
+          console.log("hello here pick me");
           mutate();
         }}
         isPending={isPending}

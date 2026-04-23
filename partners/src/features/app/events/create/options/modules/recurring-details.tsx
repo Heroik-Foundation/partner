@@ -28,12 +28,12 @@ export const RecurringEventDetails = () => {
 
   const updateRecurrenceField = <K extends keyof EventFormRecurrenceState>(
     field: K,
-    value: EventFormRecurrenceState[K]
+    value: EventFormRecurrenceState[K],
   ) => {
     updateForm("recurrence", {
       ...(formState.recurrence || {}),
       [field]: value,
-    });
+    } as EventFormRecurrenceState);
   };
 
   const days = [
@@ -90,7 +90,7 @@ export const RecurringEventDetails = () => {
         updateRecurrenceField(
           "occurrenceCount",
           //@ts-ignore
-          sanitizeNumericInput(event.target.value)
+          sanitizeNumericInput(event.target.value),
         );
       },
     },
@@ -108,19 +108,19 @@ export const RecurringEventDetails = () => {
               updateRecurrenceField(
                 "interval",
                 //@ts-ignore
-                sanitizeNumericInput(target.value)
+                sanitizeNumericInput(target.value),
               );
             }}
             increment={() => {
               updateRecurrenceField(
                 "interval",
-                Math.abs(Number(formState.recurrence?.interval || 0) + 1)
+                Math.abs(Number(formState.recurrence?.interval || 0) + 1),
               );
             }}
             decrement={() => {
               updateRecurrenceField(
                 "interval",
-                Math.abs(Number(formState.recurrence?.interval || 0) - 1)
+                Math.abs(Number(formState.recurrence?.interval || 0) - 1),
               );
             }}
           />
@@ -188,7 +188,7 @@ export const RecurringEventDetails = () => {
         <RadioGroup
           className="space-y-5"
           onValueChange={(
-            value: "NEVER" | "UNTIL_DATE" | "AFTER_OCCURRENCES"
+            value: "NEVER" | "UNTIL_DATE" | "AFTER_OCCURRENCES",
           ) => {
             updateRecurrenceField("endType", value);
           }}
@@ -226,7 +226,7 @@ export const RecurringEventDetails = () => {
                       }}
                       className={cn(
                         "w-fit h-10",
-                        item.input === "number" && "w-20"
+                        item.input === "number" && "w-20",
                       )}
                     />
                   )}

@@ -6,7 +6,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import { currencies, useCurrencyStore } from "@/stores/currency";
+import { currencies, CurrencyCode, useCurrencyStore } from "@/stores/currency";
+import { useEffect } from "react";
 
 type Props = {
   classNames?: {
@@ -14,11 +15,23 @@ type Props = {
     content?: string;
     item?: string;
   };
+  initialCurrency?: CurrencyCode;
 };
 
 export function CurrencySelect(props: Props) {
   const { classNames } = props;
-  const { selectedCurrency, setSelectedCurrency } = useCurrencyStore();
+  const { selectedCurrency, setSelectedCurrency, getCurrencyByCode } =
+    useCurrencyStore();
+
+  useEffect(() => {
+    if (props.initialCurrency) {
+      const data = getCurrencyByCode(props.initialCurrency);
+
+      if (data) {
+        setSelectedCurrency(data);
+      }
+    }
+  }, []);
 
   return (
     <Select
@@ -35,7 +48,7 @@ export function CurrencySelect(props: Props) {
       <SelectTrigger
         className={cn(
           "w-[100px] border-primary/20 border-2 rounded-xl",
-          classNames?.trigger
+          classNames?.trigger,
         )}
       >
         <SelectValue placeholder="Select wallet" />

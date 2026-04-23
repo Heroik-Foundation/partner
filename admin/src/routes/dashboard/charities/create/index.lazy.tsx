@@ -13,14 +13,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { toast } from "sonner";
+
 import { useCreateOrganizationMutation } from "@/hooks/mutation/organization";
-import { useInterests } from "@/hooks/fetch/organization";
-import { Label } from "@/components/ui/label";
-import { findObjectById, removeObjectById } from "@/helpers/array";
-import { cn } from "@/lib/utils";
+
 import { PageTitle } from "@/components/layout/page-title";
-import useIntersectionObserver from "@/hooks/logic/observer";
 
 export const Route = createLazyFileRoute("/dashboard/charities/create/")({
   component: Page,
@@ -104,27 +100,10 @@ function Page() {
 
   const [logo, setLogo] = useState<any>(null);
 
-  const [interests, setInterests] = useState<string[]>([]);
-
   const { mutate, isPending } = useCreateOrganizationMutation();
-
-  const { data, hasNextPage, fetchNextPage } = useInterests();
-
-  const interestsList = data?.pages.flat() || [];
-
-  const lastInterestRef = useIntersectionObserver(fetchNextPage, [hasNextPage]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
-
-    if (interests.length < 1) {
-      toast.error("Please select at least one interest");
-      return;
-    }
-
-    const interestString = JSON.stringify(interests);
-
-    formData.append("interests[]", interestString);
 
     for (const [key, value] of Object.entries(values)) {
       formData.append(String(key), String(value));
@@ -143,51 +122,7 @@ function Page() {
       />
       <div className="p-5 rounded-xl bg-white border space-y-5">
         <h1 className="font-cairo font-bold text-xl">Add organization</h1>
-        <div className="flex flex-col space-y-1">
-          <Label className="text-base font-cairo">Interests</Label>
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {data &&
-              interestsList.map((interest: any, index, interestsList) => {
-                const foundObject = findObjectById(interests, interest._id);
 
-                return (
-                  //@ts-ignore
-                  <button
-                    key={index}
-                    onClick={() => {
-                      if (foundObject) {
-                        const newArr = removeObjectById(
-                          interests,
-                          interest._id
-                        );
-                        setInterests([...newArr]);
-
-                        return;
-                      } else {
-                        setInterests([...interests, interest]);
-                      }
-                    }}
-                    className={cn(
-                      "rounded-full w-full sm:min-w-[300px] flex justify-center items-center py-2 font-medium text-sm relative",
-                      foundObject
-                        ? "bg-violet-500 text-white"
-                        : "bg-violet-500/10 text-violet-500 border border-violet-500"
-                    )}
-                    {...(interestsList.length - 1 === index && {
-                      ref: lastInterestRef,
-                    })}
-                  >
-                    <img
-                      src={interest.image}
-                      className="w-5 h-5 rounded-full absolute left-2 top-2 bg-white"
-                      alt=""
-                    />
-                    <span> {interest.name}</span>
-                  </button>
-                );
-              })}
-          </div>
-        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField

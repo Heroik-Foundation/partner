@@ -1,52 +1,51 @@
+import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
 import { authenticatedInstance } from "@/lib/axios";
 import { useCurrencyStore } from "@/stores/currency";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 
-type UpdateBankDetailsMutationProps = {
-  bankAccountName: string;
-  bankAccountNumber: string;
-  bankName: string;
-  sortCode: string;
-  pin: string;
-};
+// type UpdateBankDetailsMutationProps = {
+//   bankAccountName: string;
+//   bankAccountNumber: string;
+//   bankName: string;
+//   sortCode: string;
+//   pin: string;
+// };
 
 type UpdateSecurityPinMutationProps = {
   newPin: string;
   oldPin?: string;
 };
 
-export function useUpdateBankDetailsMutation(
-  props: UpdateBankDetailsMutationProps
-) {
-  const { navigate } = useRouter();
+export function useUpdateBankDetailsMutation(callback?: () => void) {
   const { selectedCurrency } = useCurrencyStore();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (props: any) => {
       const { data } = await authenticatedInstance.patch(
-        `/event-partners/update-bank-details/${selectedCurrency.value}`,
+        `/event-partners/${selectedCurrency.value}/update-bank-details/`,
         {
           ...props,
-        }
+        },
       );
 
       return data;
     },
     onSuccess: () => {
       toast.success("Details updated successfully");
+
       queryClient.invalidateQueries({
-        queryKey: ["user-wallet-by-currency"],
+        queryKey: ["user-wallet"],
       });
-      navigate({
-        to: "/app/revenue/setup-pin",
-      });
+
+      if (callback) {
+        callback();
+      }
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("An error occured, please try again");
+    onError: (error: ErrorResponse) => {
+      handleUserResponseToError(error);
     },
   });
 }
@@ -60,7 +59,7 @@ export function useUpdateSecurityPinMutation() {
         "/event-partners/update-pin",
         {
           ...props,
-        }
+        },
       );
 
       return data;
@@ -71,9 +70,8 @@ export function useUpdateSecurityPinMutation() {
         to: "/app/revenue",
       });
     },
-    onError: (error) => {
-      console.log(error);
-      toast.error("An error occured, please try again");
+    onError: (error: ErrorResponse) => {
+      handleUserResponseToError(error);
     },
   });
 }

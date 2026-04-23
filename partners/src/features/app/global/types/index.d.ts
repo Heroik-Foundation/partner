@@ -37,6 +37,7 @@ export type EventTicketing = {
   signUpLimit: number;
   spotsLeft: number;
   isPayedTicket: boolean;
+  ticketDetails?: string;
   absorbFees: boolean;
   salesStartDate: string;
   salesEndDate: string;
@@ -92,6 +93,7 @@ export type Event = {
   }>;
 
   currency: CurrencyCode;
+  eventStatus: "canceled" | "upcoming" | "ongoing" | "past";
   name: string;
   privacy: string;
   isTicketed: boolean;
@@ -100,6 +102,7 @@ export type Event = {
   primaryEventId: string;
   ticketing: EventTicketing[];
   recurrence: EventRecurrence;
+  isRefundable: boolean;
 
   updatedAt: string;
 } & (
@@ -149,6 +152,28 @@ export type Channel = {
 export type Location = {
   type: string;
   coordinates: [number, number];
+};
+
+export type CurrentUser = {
+  _id: string;
+  fullname: string;
+  username: string;
+  phone: string;
+  photo: string;
+  birthDate: string;
+  callingCode: string;
+  isAdmin: boolean;
+  blocked: boolean;
+  isAccountSetup: boolean;
+  role: string;
+  loc: {
+    type: "Point";
+    coordinates: [number, number];
+  };
+  email: string;
+  blockedUsers: string[];
+  followers: string[];
+  following: string[];
 };
 
 export type User = {
@@ -270,7 +295,7 @@ export type Member = {
 
 export type Wallet = {
   _id: string;
-  currency: CurrencyCode;
+  currency: "gbp";
   owner: {
     name: string;
     charityRegNumber: string;
