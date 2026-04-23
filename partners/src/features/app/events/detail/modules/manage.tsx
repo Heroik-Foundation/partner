@@ -23,7 +23,7 @@ export const Manage = ({
   const { mutate, isPending, isSuccess, isError } =
     useEventTerminationByIDMutation({
       id,
-      refundType: issueRefund ? "payment" : "voucher",
+      shouldRefund: issueRefund,
     });
 
   const { setSelectedCurrency, getSymbolByValue } = useCurrencyStore();

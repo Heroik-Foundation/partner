@@ -5,26 +5,27 @@ import { toast } from "sonner";
 
 export function useEventTerminationByIDMutation({
   id,
-  refundType,
+  shouldRefund,
 }: {
   id: string;
-  refundType: "payment" | "voucher";
+  shouldRefund: boolean;
 }) {
   const { navigate } = useRouter();
   return useMutation({
     mutationFn: async () => {
-      const { data } = await authenticatedInstance.delete(`/events/${id}`, {
-        data: {
-          refundType,
+      const { data } = await authenticatedInstance.post(
+        `/event-partners/cancel-event/${id}`,
+        {
+          shouldRefund,
         },
-      });
+      );
 
       return data;
     },
     onSuccess: () => {
       toast.success("Event deleted successfully");
       navigate({
-        to: "/app",
+        to: "/app/events",
       });
     },
     onError: (error) => {
