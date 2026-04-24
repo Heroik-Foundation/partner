@@ -234,7 +234,7 @@ const CreateEvent = () => {
               <Switch
                 checked={formState.isRefundable}
                 onCheckedChange={(value) => {
-                  updateForm("isRefundable", value);
+                  updateForm("isRefundable", Boolean(value));
                 }}
               />
             </div>

@@ -40,7 +40,7 @@ export const Publish = () => {
     description,
     subcategory: subCategory?.id,
     privacy: "public",
-    isRefundable,
+    isRefundable: Boolean(isRefundable),
     ...(photo ? { photo: photo as string | File } : {}),
     ...locationData,
     endTime: convertDateTimeInputToISOString(startDate, startTime),
