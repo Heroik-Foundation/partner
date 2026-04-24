@@ -111,8 +111,6 @@ const EventDetail = () => {
             organizations={event.fundRaiser.organizations.map(
               (organization) => organization.name,
             )}
-            percentage={event.eventPledge.totalPledgedAmount}
-            minimumPledge={event.eventPledge.minimumPledge}
           />
           <Tickets
             currency={event.currency}

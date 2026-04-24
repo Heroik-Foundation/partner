@@ -21,8 +21,6 @@ import { MarkdownPreview } from "@/modules/ui/markdown-preview";
 type InfoProps = {
   id: string;
   description: string;
-  percentage: number;
-  minimumPledge: number;
   startDate: string;
   organizations: string[];
   currency: CurrencyCode;
