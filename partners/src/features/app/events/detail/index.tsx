@@ -113,6 +113,7 @@ const EventDetail = () => {
             )}
           />
           <Tickets
+            donationAmount={event.fundRaiser.fundRaised}
             currency={event.currency}
             eventId={id}
             tickets={event.ticketing}

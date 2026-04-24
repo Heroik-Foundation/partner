@@ -12,9 +12,15 @@ type Props = {
   tickets: EventTicketing[];
   eventId: string;
   currency: CurrencyCode;
+  donationAmount: number;
 };
 
-export const Tickets = ({ tickets, eventId, currency }: Props) => {
+export const Tickets = ({
+  tickets,
+  eventId,
+  currency,
+  donationAmount,
+}: Props) => {
   return (
     <div className="flex flex-col items-center justify-center space-y-5 w-full">
       <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex w-fit">
@@ -26,6 +32,13 @@ export const Tickets = ({ tickets, eventId, currency }: Props) => {
           <Ticket eventId={eventId} currency={currency} {...item} key={index} />
         ))}
       </ul>
+
+      <div className="text-primary shadow py-4 px-4 flex rounded-lg w-full border flex-col items-start space-y-1">
+        <span className="text-xs font-bold">Donations</span>
+        <h2 className="font-extrabold text-base">
+          {formatCurrency(donationAmount, currency)}
+        </h2>
+      </div>
 
       <Link
         params={{

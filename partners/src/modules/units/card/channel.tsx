@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { Hash } from "lucide-react";
-import { ItemNotFound } from "./not-found";
 
 export type ChannelProps = {
   id: string;
@@ -64,5 +63,7 @@ export const ChannelSkeletonLoader = () => (
 );
 
 export const ChannelNotFound = () => (
-  <ItemNotFound message="Channel not found" />
+  <div className="flex items-center justify-center bg-red-100 text-red-500 rounded-xl h-28">
+    <span className="font-bold">Channel Not Found</span>
+  </div>
 );
