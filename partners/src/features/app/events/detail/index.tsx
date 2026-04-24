@@ -40,7 +40,6 @@ const EventDetail = () => {
   }
 
   const isFundraiser =
-    Number(event?.eventPledge.minimumPledge || 0) > 0 &&
     (
       event?.fundRaiser.organizations.map(
         (organization) => organization.name,
@@ -109,7 +108,7 @@ const EventDetail = () => {
             startDate={event.endTime}
             description={event.description}
             id={id}
-            organizations={event.eventPledge.organizations.map(
+            organizations={event.fundRaiser.organizations.map(
               (organization) => organization.name,
             )}
             percentage={event.eventPledge.totalPledgedAmount}
