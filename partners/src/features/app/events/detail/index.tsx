@@ -42,7 +42,7 @@ const EventDetail = () => {
   const isFundraiser =
     Number(event?.eventPledge.minimumPledge || 0) > 0 &&
     (
-      event?.eventPledge.organizations.map(
+      event?.fundRaiser.organizations.map(
         (organization) => organization.name,
       ) || []
     ).length >= 1;
