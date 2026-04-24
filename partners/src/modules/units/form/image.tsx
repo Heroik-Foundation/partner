@@ -8,12 +8,14 @@ import {
   useState,
 } from "react";
 import { Dialog, DialogContent } from "@/modules/ui/dialog";
+import { toast } from "sonner";
 
 type CropBox = { x: number; y: number; w: number; h: number };
 type Handle = "tl" | "tr" | "bl" | "br" | "t" | "b" | "l" | "r" | "move";
 
+const ASPECT = 16 / 9;
 const MIN_CROP = 40;
-const OUTPUT_PX = 800;
+const OUTPUT_PX = 1080;
 
 function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v));
@@ -35,13 +37,52 @@ function useCropEditor() {
     handle: Handle;
   } | null>(null);
 
+  // ── helpers ──────────────────────────────────────────────────────────────
+
+  /** Enforce 9:16 on a {w,h} pair, clamped to imgRect bounds from a given origin */
+  const enforceAspect = useCallback(
+    (x: number, y: number, w: number, h: number, anchor: "w" | "h") => {
+      const { w: imgW, h: imgH } = imgRect;
+      if (anchor === "w") {
+        h = Math.round(w / ASPECT);
+      } else {
+        w = Math.round(h * ASPECT);
+      }
+      // clamp so crop doesn't escape the image
+      if (x + w > imgW) {
+        w = imgW - x;
+        h = Math.round(w / ASPECT);
+      }
+      if (y + h > imgH) {
+        h = imgH - y;
+        w = Math.round(h * ASPECT);
+      }
+      w = Math.max(w, MIN_CROP);
+      h = Math.max(h, Math.round(MIN_CROP / ASPECT));
+      return { w, h };
+    },
+    [imgRect],
+  );
+
+  // ── measure ───────────────────────────────────────────────────────────────
+
   const measureImg = useCallback(() => {
     const el = imgElRef.current;
     if (!el) return;
-    const w = el.offsetWidth;
-    const h = el.offsetHeight;
-    setImgRect({ w, h });
-    setCrop({ x: 0, y: 0, w, h });
+    const imgW = el.offsetWidth;
+    const imgH = el.offsetHeight;
+    setImgRect({ w: imgW, h: imgH });
+
+    // initialise crop as the largest 9:16 box that fits
+    let w = imgW;
+    let h = Math.round(w / ASPECT);
+    if (h > imgH) {
+      h = imgH;
+      w = Math.round(h * ASPECT);
+    }
+    const x = Math.round((imgW - w) / 2);
+    const y = Math.round((imgH - h) / 2);
+    setCrop({ x, y, w, h });
   }, []);
 
   useEffect(() => {
@@ -50,6 +91,12 @@ function useCropEditor() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, [editingSrc, measureImg]);
+
+  // ── open / close ──────────────────────────────────────────────────────────
+
+  const pendingResolve = useRef<((f: File) => void) | null>(null);
+  const pendingFile = useRef<File | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const openEditor = (file: File): Promise<File> =>
     new Promise((resolve) => {
@@ -68,14 +115,12 @@ function useCropEditor() {
       reader.readAsDataURL(file);
     });
 
-  const pendingResolve = useRef<((f: File) => void) | null>(null);
-  const pendingFile = useRef<File | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
   const handleImgLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     imgElRef.current = e.currentTarget;
     requestAnimationFrame(measureImg);
   };
+
+  // ── pointer interactions ──────────────────────────────────────────────────
 
   const getHandleAtPoint = (
     mx: number,
@@ -141,30 +186,69 @@ function useCropEditor() {
     const dy = my - dragRef.current.startMy;
     const sc = dragRef.current.startCrop;
     const { w: imgW, h: imgH } = imgRect;
-    let { x, y, w, h } = sc;
     const handle = dragRef.current.handle;
+    let { x, y, w, h } = sc;
 
     if (handle === "move") {
       x = clamp(sc.x + dx, 0, imgW - w);
       y = clamp(sc.y + dy, 0, imgH - h);
-    } else {
-      if (handle === "tl" || handle === "l" || handle === "bl") {
+      setCrop({ x, y, w, h });
+      return;
+    }
+
+    // ── resize handles: drive off whichever axis the handle touches ──────────
+    // Horizontal-primary handles (l / r) → anchor on width
+    // Vertical-primary handles (t / b)   → anchor on height
+    // Corner handles → use whichever delta is larger so motion feels natural
+
+    if (handle === "l" || handle === "r") {
+      if (handle === "l") {
         const newX = clamp(sc.x + dx, 0, sc.x + sc.w - MIN_CROP);
         w = sc.w - (newX - sc.x);
         x = newX;
-      }
-      if (handle === "tr" || handle === "r" || handle === "br") {
+      } else {
         w = clamp(sc.w + dx, MIN_CROP, imgW - sc.x);
       }
-      if (handle === "tl" || handle === "t" || handle === "tr") {
+      const sized = enforceAspect(x, y, w, h, "w");
+      w = sized.w;
+      h = sized.h;
+    } else if (handle === "t" || handle === "b") {
+      if (handle === "t") {
         const newY = clamp(sc.y + dy, 0, sc.y + sc.h - MIN_CROP);
         h = sc.h - (newY - sc.y);
         y = newY;
-      }
-      if (handle === "bl" || handle === "b" || handle === "br") {
+      } else {
         h = clamp(sc.h + dy, MIN_CROP, imgH - sc.y);
       }
+      const sized = enforceAspect(x, y, w, h, "h");
+      w = sized.w;
+      h = sized.h;
+    } else {
+      // corners — drive off the dominant axis
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+
+      if (handle === "tl" || handle === "bl") {
+        const newX = clamp(sc.x + dx, 0, sc.x + sc.w - MIN_CROP);
+        w = sc.w - (newX - sc.x);
+        x = newX;
+      } else {
+        w = clamp(sc.w + dx, MIN_CROP, imgW - sc.x);
+      }
+      if (handle === "tl" || handle === "tr") {
+        const newY = clamp(sc.y + dy, 0, sc.y + sc.h - MIN_CROP);
+        h = sc.h - (newY - sc.y);
+        y = newY;
+      } else {
+        h = clamp(sc.h + dy, MIN_CROP, imgH - sc.y);
+      }
+
+      // pick dominant axis to enforce aspect ratio
+      const sized = enforceAspect(x, y, w, h, absDx >= absDy ? "w" : "h");
+      w = sized.w;
+      h = sized.h;
     }
+
     setCrop({ x, y, w, h });
   };
 
@@ -174,8 +258,22 @@ function useCropEditor() {
     setActiveHandle(null);
   };
 
+  // ── confirm ───────────────────────────────────────────────────────────────
+
   const confirm = () => {
     if (!editingSrc || !canvasRef.current || !pendingFile.current) return;
+
+    // ── aspect-ratio guard ────────────────────────────────────────────────
+    const actualRatio = crop.w / crop.h; // should be ~0.5625 (9/16)
+    const tolerance = 0.01;
+    if (Math.abs(actualRatio - ASPECT) > tolerance) {
+      toast.warning("Heads up: your crop will be trimmed", {
+        description:
+          "The selection isn't quite 16:9. The top and bottom will be cropped in post to fit the horizontal aspect ratio.",
+        duration: 5000,
+      });
+    }
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
