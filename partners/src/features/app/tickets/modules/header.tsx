@@ -18,7 +18,7 @@ export function Header() {
         <div className="flex items-center space-x-1">
           <Lock size="16" />
           <span className="text-xs font-semibold">
-            partners.hiroek.io/ticket/scan
+            create.hiroek.io/ticket/scan
           </span>
         </div>
         <div>
@@ -41,7 +41,7 @@ export function Header() {
         <Link
           to="/app/tickets/history"
           className={cn(
-            "inline-flex items-center justify-center px-4 min-w-20 h-10 gap-2 bg-white text-primary rounded-full text-sm font-bold"
+            "inline-flex items-center justify-center px-4 min-w-20 h-10 gap-2 bg-white text-primary rounded-full text-sm font-bold",
           )}
         >
           <HistoryIcon />

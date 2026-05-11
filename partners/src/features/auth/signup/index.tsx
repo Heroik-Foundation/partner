@@ -66,7 +66,7 @@ const SignUp = () => {
           <ImageWithPreview />
         </FormField>
         <FormField>
-          <Label>Company Name / Fullname</Label>
+          <Label>Company Name / Full Name</Label>
           <Input
             required
             name="name"
@@ -118,7 +118,7 @@ const SignUp = () => {
         </FormField>
 
         <FormField>
-          <Label htmlFor="number">Partner Bio</Label>
+          <Label htmlFor="number">Bio</Label>
           <Textarea
             required
             name="bio"

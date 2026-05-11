@@ -109,10 +109,12 @@ export const EventSkeletonLoader = () => {
   );
 };
 
-export const EventNotFound = () => {
+export const EventNotFound = ({ type }: { type?: string }) => {
   return (
     <div className="flex items-center justify-center bg-red-100 text-red-500 rounded-2xl h-64">
-      <span className="text-sm font-semibold">No active event found</span>
+      <span className="text-sm font-semibold">
+        No {type || "active"} event found
+      </span>
     </div>
   );
 };

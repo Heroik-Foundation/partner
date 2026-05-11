@@ -206,8 +206,10 @@ const Home = () => {
             </div>
           </>
         ) : (
-          <div className="text-center py-8 text-gray-500">
-            No channels found
+          <div className="flex items-center justify-center bg-red-100 text-red-500 rounded-2xl h-64">
+            <span className="text-sm font-semibold">
+              No active channel found
+            </span>
           </div>
         )}
       </Content>

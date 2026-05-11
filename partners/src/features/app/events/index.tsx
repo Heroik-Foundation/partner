@@ -150,7 +150,17 @@ const AllEvents = () => {
       {events &&
         events?.pages.flat().length <= 0 &&
         !isPending &&
-        !isFetchingNextPage && <EventNotFound />}
+        !isFetchingNextPage && (
+          <EventNotFound
+            type={
+              filter === "future"
+                ? "upcoming"
+                : filter === "present"
+                  ? "current"
+                  : filter
+            }
+          />
+        )}
     </div>
   );
 };

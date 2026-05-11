@@ -12,7 +12,9 @@ export const Sidebar = () => {
         <div className="flex w-full h-full relative flex-col space-y-5">
           {/* logo and nav content – same as original */}
           <div className="flex flex-col items-start px-8 border-b pb-5">
-            <h1 className="text-lg font-extrabold text-primary">Hiroek</h1>
+            <Link to="/app">
+              <h1 className="text-lg font-extrabold text-primary">Hiroek</h1>
+            </Link>
             <span className="text-black/40 text-sm font-semibold">
               Creator Platform
             </span>

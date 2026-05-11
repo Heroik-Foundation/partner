@@ -22,12 +22,12 @@ const Onboarding = () => {
 
   return (
     <div className="flex flex-col items-center relative space-y-12 pb-4 pt-0 max-h-screen min-h-screen overflow-y-hidden text-center">
-      <div className="relative w-full overflow-hidden rounded-b-[30px] h-[50vh]">
+      <div className="relative w-full overflow-hidden rounded-b-[30px] h-[60vh]">
         {images.map((img, index) => (
           <img
             key={index}
             src={img}
-            className={`absolute top-0 left-0 w-full h-full bg-cover object-cover transition-opacity duration-500 ease-in-out ${
+            className={`absolute top-0 left-0 w-full h-full bg-cover object-cover object-top transition-opacity duration-500 ease-in-out ${
               index === currentImageIndex ? "opacity-100" : "opacity-0"
             }`}
             alt={`Onboarding slide ${index + 1}`}
