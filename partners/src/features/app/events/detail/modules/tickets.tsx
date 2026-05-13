@@ -13,6 +13,7 @@ type Props = {
   eventId: string;
   currency: CurrencyCode;
   donationAmount: number;
+  isFundraiser: boolean;
 };
 
 export const Tickets = ({
@@ -20,6 +21,7 @@ export const Tickets = ({
   eventId,
   currency,
   donationAmount,
+  isFundraiser,
 }: Props) => {
   return (
     <div className="flex flex-col items-center justify-center space-y-5 w-full">
@@ -33,12 +35,14 @@ export const Tickets = ({
         ))}
       </ul>
 
-      <div className="text-primary shadow py-4 px-4 flex rounded-lg w-full border flex-col items-start space-y-1">
-        <span className="text-xs font-bold">Donations</span>
-        <h2 className="font-extrabold text-base">
-          {formatCurrency(donationAmount, currency)}
-        </h2>
-      </div>
+      {isFundraiser && (
+        <div className="text-primary shadow py-4 px-4 flex rounded-lg w-full border flex-col items-start space-y-1">
+          <span className="text-xs font-bold">Donations</span>
+          <h2 className="font-extrabold text-base">
+            {formatCurrency(donationAmount, currency)}
+          </h2>
+        </div>
+      )}
 
       <Link
         params={{

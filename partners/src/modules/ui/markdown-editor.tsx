@@ -1,23 +1,34 @@
 import React, { useRef, useEffect, useCallback } from "react";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Markdown ↔ HTML helpers
+// Markdown ↔ HTML helpers (block‑aware, preserves paragraph spacing)
 // ─────────────────────────────────────────────────────────────────────────────
 function mdToHtml(md: string): string {
-  return md
+  const escaped = md
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
+    .replace(/>/g, "&gt;");
+
+  const withInline = escaped
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/~~(.*?)~~/g, "<del>$1</del>")
     .replace(/\*(.*?)\*/g, "<em>$1</em>")
-    .replace(/`(.*?)`/g, "<code>$1</code>")
-    .replace(/\n/g, "<br>");
+    .replace(/`(.*?)`/g, "<code>$1</code>");
+
+  // Split by double newline -> paragraphs
+  const paragraphs = withInline.split(/\n\n/);
+  const htmlParagraphs = paragraphs.map((para) => {
+    // Inside a paragraph, single newline -> <br>
+    const withBreaks = para.replace(/\n/g, "<br>");
+    return `<div>${withBreaks}</div>`;
+  });
+  return htmlParagraphs.join("");
 }
 
 function htmlToMd(html: string): string {
   const div = document.createElement("div");
   div.innerHTML = html;
+
   div
     .querySelectorAll("strong")
     .forEach((el) => el.replaceWith(`**${el.textContent}**`));
@@ -30,15 +41,18 @@ function htmlToMd(html: string): string {
   div
     .querySelectorAll("code")
     .forEach((el) => el.replaceWith("`" + el.textContent + "`"));
+
   let text = div.innerHTML;
   text = text
-    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/div><div>/gi, "\n\n") // paragraph separator
     .replace(/<\/div>/gi, "")
-    .replace(/<div>/gi, "\n")
+    .replace(/<div>/gi, "")
+    .replace(/<br\s*\/?>/gi, "\n")
     .replace(/&nbsp;/g, " ")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&amp;/g, "&");
+
   return text.trim();
 }
 
@@ -51,7 +65,7 @@ function getTextOffset(root: Node, node: Node, offset: number): number {
   while (walker.nextNode()) {
     const textNode = walker.currentNode as Text;
     if (textNode === node) return total + offset;
-    total += textNode.textContent?.length ?? 0; // ✅ fix TS18047
+    total += textNode.textContent?.length ?? 0;
   }
   return total;
 }
@@ -61,7 +75,7 @@ function setTextOffset(root: Node, targetOffset: number): void {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   while (walker.nextNode()) {
     const textNode = walker.currentNode as Text;
-    const len = textNode.textContent?.length ?? 0; // ✅ fix TS18047
+    const len = textNode.textContent?.length ?? 0;
     if (total + len >= targetOffset) {
       const range = document.createRange();
       range.setStart(textNode, targetOffset - total);
@@ -73,7 +87,6 @@ function setTextOffset(root: Node, targetOffset: number): void {
     }
     total += len;
   }
-  // Fallback: end of last text node
   const fallbackWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   let lastNode: Text | null = null;
   while (fallbackWalker.nextNode())
@@ -89,15 +102,12 @@ function setTextOffset(root: Node, targetOffset: number): void {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Wrap guard: strips double-markers like ****text**** → **text**, etc.
+// Wrap guard: strips double-markers like ****text**** → **text**
 // ─────────────────────────────────────────────────────────────────────────────
 function cleanDoubleWraps(md: string): string {
-  // Remove doubled markers: ****x**** → **x**, ~~x~~~~ → ~~x~~ etc.
-  // For bold (**), doubled = ****; for italic (*), doubled = ** which is bold — handled via context
-  md = md.replace(/\*{4}(.*?)\*{4}/g, "**$1**"); // ****x**** → **x**
-  md = md.replace(/~{4}(.*?)~{4}/g, "~~$1~~"); // ~~~~x~~~~ → ~~x~~
-  md = md.replace(/``(.*?)``/g, "`$1`"); // ``x`` → `x`
-  // Clean up **  ** that collapse to nothing
+  md = md.replace(/\*{4}(.*?)\*{4}/g, "**$1**");
+  md = md.replace(/~{4}(.*?)~{4}/g, "~~$1~~");
+  md = md.replace(/``(.*?)``/g, "`$1`");
   md = md.replace(/\*\*\s*\*\*/g, "");
   md = md.replace(/~~\s*~~/g, "");
   md = md.replace(/``/g, "");
@@ -131,16 +141,12 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     valueRef.current = value;
   }, [onChange, value]);
 
-  // ─── Read-only sync: extract markdown and notify parent, never touch DOM ────
-  // Used by handleInput so that normal typing (space, backspace, letters) is
-  // never interrupted by a DOM replacement.
+  // ─── Read-only sync: extract markdown and notify parent
   const readMarkdown = useCallback(() => {
     if (isUpdatingRef.current || !editorRef.current) return;
     const raw = htmlToMd(editorRef.current.innerHTML);
     const cleaned = cleanDoubleWraps(raw);
 
-    // If the editor is visually empty (only a lone <br> left by the browser),
-    // hard-clear so the :empty placeholder reappears.
     const isEmpty =
       cleaned === "" &&
       editorRef.current.childNodes.length <= 1 &&
@@ -149,16 +155,15 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
     if (isEmpty) {
       isUpdatingRef.current = true;
-      while (editorRef.current.firstChild) {
-        editorRef.current.removeChild(editorRef.current.firstChild);
-      }
+      // Reset formatting completely
+      editorRef.current.innerText = "";
       isUpdatingRef.current = false;
     }
 
     onChangeRef.current(isEmpty ? "" : cleaned);
   }, []);
 
-  // ─── Write sync: re-render DOM from markdown (used after wrap operations) ──
+  // ─── Write sync: re-render DOM from markdown
   const writeMarkdown = useCallback((md: string) => {
     if (!editorRef.current) return;
     isUpdatingRef.current = true;
@@ -173,9 +178,8 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         );
       }
       if (md === "") {
-        while (editorRef.current.firstChild) {
-          editorRef.current.removeChild(editorRef.current.firstChild);
-        }
+        // Clear and reset formatting state
+        editorRef.current.innerText = "";
       } else {
         editorRef.current.innerHTML = mdToHtml(md);
         setTextOffset(editorRef.current, cursorOffset);
@@ -185,52 +189,91 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     }
   }, []);
 
-  // ─── Wrap / unwrap ─────────────────────────────────────────────────────────
+  // ─── Apply formatting on the raw Markdown string (fixes spacing & double wraps)
   const applyWrap = useCallback(
     (wrap: string) => {
       const sel = window.getSelection();
       if (!sel || sel.rangeCount === 0 || !editorRef.current) return;
       const range = sel.getRangeAt(0);
-      const text = range.toString();
-      if (!text) return;
+      const selectedText = range.toString();
+      if (!selectedText) return;
 
-      const before =
-        range.startContainer.textContent?.slice(0, range.startOffset) ?? "";
-      const after =
-        range.endContainer.textContent?.slice(range.endOffset) ?? "";
+      const fullMarkdown = htmlToMd(editorRef.current.innerHTML);
+      const startPlain = getTextOffset(
+        editorRef.current,
+        range.startContainer,
+        range.startOffset,
+      );
+      const endPlain = startPlain + selectedText.length;
 
-      if (before.endsWith(wrap) && after.startsWith(wrap)) {
-        // Unwrap
-        const newRange = document.createRange();
-        newRange.setStart(
-          range.startContainer,
-          range.startOffset - wrap.length,
-        );
-        newRange.setEnd(range.endContainer, range.endOffset + wrap.length);
-        newRange.deleteContents();
-        newRange.insertNode(document.createTextNode(text));
-      } else {
-        // Wrap — but guard against applying a wrap to already-wrapped text
-        // e.g. selecting **foo** and pressing bold should not produce ****foo****
-        const stripped =
-          text.startsWith(wrap) && text.endsWith(wrap)
-            ? text.slice(wrap.length, -wrap.length)
-            : text;
-        const wrapped = `${wrap}${stripped}${wrap}`;
-        range.deleteContents();
-        range.insertNode(document.createTextNode(wrapped));
+      let mdStart = -1,
+        mdEnd = -1;
+      let plainPos = 0;
+      for (let i = 0; i < fullMarkdown.length; i++) {
+        if (plainPos === startPlain && mdStart === -1) mdStart = i;
+        if (plainPos === endPlain) {
+          mdEnd = i;
+          break;
+        }
+        if ("*_~`".includes(fullMarkdown[i])) {
+          if (
+            (fullMarkdown[i] === "*" && fullMarkdown[i + 1] === "*") ||
+            (fullMarkdown[i] === "~" && fullMarkdown[i + 1] === "~")
+          ) {
+            i += 1;
+          }
+          continue;
+        } else {
+          plainPos++;
+        }
+      }
+      if (mdEnd === -1) mdEnd = fullMarkdown.length;
+      if (mdStart === -1) {
+        const idx = fullMarkdown.indexOf(selectedText);
+        if (idx !== -1) {
+          mdStart = idx;
+          mdEnd = idx + selectedText.length;
+        } else {
+          return;
+        }
       }
 
-      sel.removeAllRanges();
-      // Re-render from the updated markdown so formatting tags are applied
-      const md = cleanDoubleWraps(htmlToMd(editorRef.current.innerHTML));
-      onChangeRef.current(md);
-      writeMarkdown(md);
+      const beforeWrap = fullMarkdown.slice(mdStart - wrap.length, mdStart);
+      const afterWrap = fullMarkdown.slice(mdEnd, mdEnd + wrap.length);
+      let newMarkdown: string;
+      let newCursorOffset: number;
+
+      if (beforeWrap === wrap && afterWrap === wrap) {
+        // Unwrap
+        newMarkdown =
+          fullMarkdown.slice(0, mdStart - wrap.length) +
+          fullMarkdown.slice(mdStart, mdEnd) +
+          fullMarkdown.slice(mdEnd + wrap.length);
+        newCursorOffset = mdStart - wrap.length + (mdEnd - mdStart);
+      } else {
+        // Wrap
+        const stripped =
+          selectedText.startsWith(wrap) && selectedText.endsWith(wrap)
+            ? selectedText.slice(wrap.length, -wrap.length)
+            : selectedText;
+        const wrappedText = `${wrap}${stripped}${wrap}`;
+        newMarkdown =
+          fullMarkdown.slice(0, mdStart) +
+          wrappedText +
+          fullMarkdown.slice(mdEnd);
+        newCursorOffset = mdStart + wrappedText.length;
+      }
+
+      onChangeRef.current(newMarkdown);
+      writeMarkdown(newMarkdown);
+      setTimeout(() => {
+        setTextOffset(editorRef.current!, newCursorOffset);
+      }, 0);
     },
     [writeMarkdown],
   );
 
-  // ─── Toolbar positioning ───────────────────────────────────────────────────
+  // ─── Toolbar positioning
   const showToolbar = useCallback(() => {
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
@@ -267,7 +310,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     toolbarRef.current?.classList.add("opacity-0", "pointer-events-none");
   }, []);
 
-  // ─── Event handlers ────────────────────────────────────────────────────────
+  // ─── Event handlers
   const handleInput = useCallback(() => readMarkdown(), [readMarkdown]);
 
   const handlePaste = useCallback(
@@ -297,7 +340,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     [applyWrap],
   );
 
-  // ─── Sync external value → DOM ─────────────────────────────────────────────
+  // ─── Sync external value → DOM
   useEffect(() => {
     if (!editorRef.current || isUpdatingRef.current) return;
     const currentMarkdown = htmlToMd(editorRef.current.innerHTML);
@@ -306,7 +349,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     }
   }, [value, writeMarkdown]);
 
-  // ─── Global selectionchange → toolbar ─────────────────────────────────────
+  // ─── Global selectionchange → toolbar
   useEffect(() => {
     const onSelectionChange = () => {
       requestAnimationFrame(() => {
@@ -328,15 +371,14 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
       document.removeEventListener("selectionchange", onSelectionChange);
   }, [showToolbar, hideToolbar]);
 
-  // ─── Initial mount ─────────────────────────────────────────────────────────
+  // ─── Initial mount
   useEffect(() => {
     if (editorRef.current && value) {
       editorRef.current.innerHTML = mdToHtml(value);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ─── Render ────────────────────────────────────────────────────────────────
+  // ─── Render
   return (
     <div className={`relative w-full ${className}`}>
       {/* Floating toolbar */}
@@ -397,7 +439,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         ))}
       </div>
 
-      {/* Editor */}
+      {/* Editor – native selection modal suppressed */}
       <div
         ref={editorRef}
         className="
@@ -427,12 +469,14 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
           [&_code]:px-1
           [&_code]:py-px
         "
+        style={{ WebkitTouchCallout: "none" } as React.CSSProperties}
         contentEditable
         suppressContentEditableWarning
         data-placeholder={placeholder}
         onInput={handleInput}
         onPaste={handlePaste}
         onKeyDown={handleKeyDown}
+        onContextMenu={(e) => e.preventDefault()}
       />
     </div>
   );

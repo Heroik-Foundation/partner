@@ -117,6 +117,7 @@ const EventDetail = () => {
             currency={event.currency}
             eventId={id}
             tickets={event.ticketing}
+            isFundraiser={isFundraiser}
           />
           {!isFundraiser && <EventCountdown startDate={event.endTime} />}
           <Manage id={id} endDate={event.endTime} event={event} />
