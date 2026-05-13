@@ -47,7 +47,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
   const { formState, updateForm } = useEventFormStore();
   const { ticketing } = formState;
   const { data } = useCurrencyQuoteQuery();
-  const hiroekFeeGbp = 0.6;
+  const hiroekFeeGbp = 1.0;
 
   const equivalentHiroekFee = convertGbpTo(
     hiroekFeeGbp,

@@ -40,7 +40,7 @@ export const currencies: CurrencyDetails[] = [
     flag: "https://flagcdn.com/w20/us.png",
     symbol: "$",
     stripeFee: "2.9% + $0.30",
-    hiroekFee: "£0.60 (or equivalent)",
+    hiroekFee: "£1.00 (or equivalent)",
   },
   {
     value: "eur",
@@ -48,7 +48,7 @@ export const currencies: CurrencyDetails[] = [
     flag: "https://flagcdn.com/w20/eu.png",
     symbol: "€",
     stripeFee: "1.5% + €0.25",
-    hiroekFee: "£0.60 (or equivalent)",
+    hiroekFee: "£1.00 (or equivalent)",
   },
   {
     value: "aud",
@@ -56,7 +56,7 @@ export const currencies: CurrencyDetails[] = [
     flag: "https://flagcdn.com/w20/au.png",
     symbol: "A$",
     stripeFee: "1.75% + A$0.30",
-    hiroekFee: "£0.60 (or equivalent)",
+    hiroekFee: "£1.00 (or equivalent)",
   },
   {
     value: "cad",
@@ -64,7 +64,7 @@ export const currencies: CurrencyDetails[] = [
     flag: "https://flagcdn.com/w20/ca.png",
     symbol: "C$",
     stripeFee: "2.9% + CA$0.30",
-    hiroekFee: "£0.60 (or equivalent)",
+    hiroekFee: "£1.00 (or equivalent)",
   },
   {
     value: "nzd",
@@ -72,7 +72,7 @@ export const currencies: CurrencyDetails[] = [
     flag: "https://flagcdn.com/w20/nz.png",
     symbol: "NZ$",
     stripeFee: "2.65% + NZ$0.30",
-    hiroekFee: "£0.60 (or equivalent)",
+    hiroekFee: "£1.00 (or equivalent)",
   },
 ];
 

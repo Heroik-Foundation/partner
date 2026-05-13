@@ -45,7 +45,7 @@ const EditTicketType = () => {
 
   const currencySymbol = getSymbolByValue(currency) || "£";
   const equivalentHiroekFee = convertGbpTo(
-    0.6,
+    1.0,
     currency,
     currencyQuotes?.quotes,
   );
