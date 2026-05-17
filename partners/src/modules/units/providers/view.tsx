@@ -34,7 +34,9 @@ export const AuthViewProvider = ({ children }: Children) => {
     return (
       <div className="flex h-screen overflow-hidden">
         {/* Left side - Image */}
-        <div className="w-1/2 h-full overflow-y-auto p-5">{children}</div>
+        <div className="w-1/2 h-full overflow-y-auto p-5 no-scrollbar overflow-y-auto">
+          {children}
+        </div>
 
         {/* Right side - Children */}
         <div className="w-1/2 h-full relative p-5">
