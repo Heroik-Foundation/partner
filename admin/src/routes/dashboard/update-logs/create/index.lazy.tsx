@@ -39,7 +39,10 @@ function Page() {
   const [logCount, setLogCount] = useState<number>(1);
 
   const { mutate, isPending, isSuccess } = useSetAppMutation({
-    payload: { ...form, currentVersion: data ? data[0]?.currentVersion : "" },
+    payload: {
+      ...form,
+      currentVersion: data?.[0]?.currentVersion || form.version,
+    },
   });
 
   useEffect(() => {
@@ -86,7 +89,7 @@ function Page() {
                 <DropdownMenuItem
                   className={cn(
                     "text-sm font-medium flex items-center justify-between cursor-pointer",
-                    option.toLowerCase() === form.platform && "bg-neutral-100"
+                    option.toLowerCase() === form.platform && "bg-neutral-100",
                   )}
                   key={index}
                   onClick={() => {
