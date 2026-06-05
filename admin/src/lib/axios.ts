@@ -29,18 +29,16 @@ const createApiInstance = (): AxiosInstance => {
         if (sessionToken) {
           (extendedConfig.headers as AxiosHeaders).set(
             "Authorization",
-            `Bearer ${sessionToken}`
+            `Bearer ${sessionToken}`,
           );
         }
       }
 
-      // Clean up
       delete extendedConfig.authenticated;
       delete extendedConfig.admin;
-
       return extendedConfig;
     },
-    (error) => Promise.reject(error)
+    (error) => Promise.reject(error),
   );
 
   return instance;
@@ -48,45 +46,62 @@ const createApiInstance = (): AxiosInstance => {
 
 const axiosInstance = createApiInstance();
 
+const isDevelopment = import.meta.env.VITE_ENVIRONMENT === "development";
+
 const request = <T = any>(
   method: Method,
   url: string,
-  config: ExtendedAxiosRequestConfig = {}
+  config: ExtendedAxiosRequestConfig = {},
 ): Promise<AxiosResponse<T>> => {
   const { authenticated = true, admin = true, ...axiosConfig } = config;
 
+  const coreURL = isDevelopment ? "dev.hiroek.io" : "staging.hiroek.io";
   const baseURL = admin
-    ? "https://staging.hiroek.io/api/administrator"
-    : "https://staging.hiroek.io/api";
+    ? `https://${coreURL}/api/administrator`
+    : `https://${coreURL}/api`;
 
-  return axiosInstance.request<T>({
+  const requestConfig: AxiosRequestConfig = {
     ...axiosConfig,
     method,
     url: `${baseURL}${url}`,
-    // DO NOT pass authenticated/admin here — they’re handled internally
-  });
+  };
+
+  return axiosInstance.request<T>(requestConfig);
 };
 
 const api = {
   get: <T = any>(url: string, config?: ExtendedAxiosRequestConfig) =>
     request<T>("GET", url, config),
+
   post: <T = any>(
     url: string,
     data?: any,
-    config?: ExtendedAxiosRequestConfig
-  ) => request<T>("POST", url, { ...config, data }),
+    config?: ExtendedAxiosRequestConfig,
+  ) => {
+    const finalConfig = { ...config, data };
+    return request<T>("POST", url, finalConfig);
+  },
+
   put: <T = any>(
     url: string,
     data?: any,
-    config?: ExtendedAxiosRequestConfig
-  ) => request<T>("PUT", url, { ...config, data }),
+    config?: ExtendedAxiosRequestConfig,
+  ) => {
+    const finalConfig = { ...config, data };
+    return request<T>("PUT", url, finalConfig);
+  },
+
   delete: <T = any>(url: string, config?: ExtendedAxiosRequestConfig) =>
     request<T>("DELETE", url, config),
+
   patch: <T = any>(
     url: string,
     data?: any,
-    config?: ExtendedAxiosRequestConfig
-  ) => request<T>("PATCH", url, { ...config, data }),
+    config?: ExtendedAxiosRequestConfig,
+  ) => {
+    const finalConfig = { ...config, data };
+    return request<T>("PATCH", url, finalConfig);
+  },
 };
 
 export { api };

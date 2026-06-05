@@ -43,16 +43,19 @@ export function useSetAppMutation({
   return useMutation({
     mutationKey: ["app-version-mutation"],
     mutationFn: async () => {
-      const { data } = await api.post(`/users/set-app-version`, {
-        authenticated: true,
-        admin: false,
-        data: {
+      const { data } = await api.post(
+        `/users/set-app-version`,
+        {
           currentVersion: payload.version,
           minStableVersion: payload.currentVersion,
           platform: payload.platform,
           features: payload.logs,
         },
-      });
+        {
+          authenticated: true,
+          admin: true,
+        },
+      );
 
       return data;
     },
