@@ -29,7 +29,7 @@ const Onboarding = () => {
                     <img
                         key={index}
                         src={img}
-                        className={`absolute top-0 left-0 w-full h-full bg-cover object-cover object-top transition-opacity duration-500 ease-in-out ${
+                        className={`absolute top-0 left-0 w-full h-full bg-cover object-cover ${index === 1 ? " object-left " : "object-top"}  transition-opacity duration-500 ease-in-out ${
                             index === currentImageIndex
                                 ? "opacity-100"
                                 : "opacity-0"
