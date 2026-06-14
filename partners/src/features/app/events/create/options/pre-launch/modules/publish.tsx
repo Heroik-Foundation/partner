@@ -74,9 +74,9 @@ export const Publish = () => {
           })),
       }),
     ...(fundRaiser &&
-      fundRaiser.organizations && {
+      fundRaiser.recipientCharities && {
         fundRaiser: {
-          organizations: fundRaiser.organizations.map((org) => org.id),
+          recipientCharities: fundRaiser.recipientCharities.map((org) => org),
         },
       }),
   });

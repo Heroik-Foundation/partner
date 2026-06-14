@@ -203,13 +203,13 @@ const CreateEventOptions = () => {
       4: () =>
         !fundRaiser ||
         (!objectHasNullOrUndefined(fundRaiser) &&
-          (fundRaiser.organizations?.length ?? 0) > 0),
+          (fundRaiser.recipientCharities?.length ?? 0) > 0),
     };
 
     const validator = stepValidations[stepIndex];
     if (validator && !validator()) {
       const errorMessage =
-        stepIndex === 4 && (fundRaiser?.organizations?.length ?? 0) === 0
+        stepIndex === 4 && (fundRaiser?.recipientCharities?.length ?? 0) === 0
           ? "Please select a charity partner."
           : "Please complete the form before continuing.";
 
@@ -380,7 +380,7 @@ const CreateEventOptions = () => {
 
   const isTicketStep = currentStepConfig?.title.includes("Ticket");
   const hasFundraiserData = !!(
-    fundRaiser?.organizations?.length || fundRaiser?.fundRaisingGoal
+    fundRaiser?.recipientCharities?.length || fundRaiser?.fundRaisingGoal
   );
   const shouldShowDrawer =
     !isTicketStep && isActionDrawerOpen && !hasFundraiserData;

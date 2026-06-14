@@ -80,7 +80,7 @@ export type Event = {
     minimumPledge: number;
   };
   fundRaiser: {
-    organizations: EventOrganization[];
+    recipientCharities: string[];
     fundRaised: number;
     goalReached: boolean;
   };

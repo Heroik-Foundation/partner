@@ -20,7 +20,7 @@ type CreateEventBase = {
   description: string;
   fundRaiser?: {
     fundRaisingGoal?: number;
-    organizations: string[]; // array of organization IDs
+    recipientCharities: string[]; // array of organization IDs
   };
   recurrence?: {
     interval: number;

@@ -38,6 +38,9 @@ export const PreLaunch = () => {
     [formState.photo],
   );
 
+  console.log(formState.photo);
+  
+
   const eventDate = useMemo(
     () =>
       convertDateTimeInputToISOString(formState.startDate, formState.startTime),
@@ -114,7 +117,8 @@ export const PreLaunch = () => {
                 Charity Partner (s)
               </h5>
               <Link
-                to="/app/events/create/partners"
+                to="/app/events/create/options"
+                search={{ step: 4 }}
                 className="font-bold text-xs rounded-full bg-primary py-4 px-5 w-fit mx-auto text-white inline-flex items-center space-x-2.5"
               >
                 <span> View Charity Partners</span> <img src={eyeIcon} alt="" />
