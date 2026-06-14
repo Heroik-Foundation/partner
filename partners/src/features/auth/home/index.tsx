@@ -24,7 +24,7 @@ const Onboarding = () => {
 
     return (
         <div className="flex lg:flex-row flex-col items-center relative space-y-12 p-6 max-h-screen min-h-screen overflow-y-hidden text-center">
-            <div className="relative w-full overflow-hidden rounded-[30px] lg:h-[90vh] h-[60vh]">
+            <div className="relative w-full overflow-hidden rounded-[30px] lg:h-[90vh] h-[50vh]">
                 {images.map((img, index) => (
                     <img
                         key={index}
@@ -54,7 +54,7 @@ const Onboarding = () => {
                     ))}
                 </div>
             </div>
-            <div className=" w-full flex flex-col gap-6 ">
+            <div className=" w-full flex flex-col lg:h-auto h-[50vh] gap-6 ">
                 <div className="flex flex-col items-center justify-center text-center xs:pt-0 px-4">
                     <img
                         src="/logo/logo-purple.svg"
