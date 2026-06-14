@@ -73,7 +73,7 @@ export type TicketTierState = {
 
 export type FundraiserState = {
   fundRaisingGoal?: number;
-  organizations?: { name: string; id: string }[];
+  recipientCharities?: string[];
 };
 
 export const defaultValue: EventFormState = {
@@ -171,7 +171,7 @@ export const useEventFormStore = create<StaticEventFormStore>()(
         })),
       removeOrganization: (id) =>
         set((state) => {
-          const organizations = state.formState.fundRaiser?.organizations;
+          const organizations = state.formState.fundRaiser?.recipientCharities;
           if (!organizations) return state;
 
           return {
@@ -179,7 +179,7 @@ export const useEventFormStore = create<StaticEventFormStore>()(
               ...state.formState,
               fundRaiser: {
                 // ...state.formState.fundRaiser,
-                organizations: organizations.filter((org) => org.id !== id),
+                recipientCharities: organizations.filter((org) => org !== id),
               },
             },
           };

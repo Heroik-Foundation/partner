@@ -24,10 +24,10 @@ const SelectEventPartner = () => {
   ]);
 
   const { formState, updateForm } = useEventFormStore();
-  const selectedPartners = formState.fundRaiser?.organizations || [];
+  const selectedPartners = formState.fundRaiser?.recipientCharities || [];
 
   const selectedIds = useMemo(() => {
-    return selectedPartners.map((partner) => partner.id);
+    return selectedPartners.map((partner) => partner);
   }, [selectedPartners]);
 
   const sortedOrganizations = useMemo(() => {

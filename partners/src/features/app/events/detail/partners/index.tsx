@@ -13,7 +13,7 @@ const EventCharityPartners = () => {
     id,
   });
 
-  const organizations = event?.fundRaiser.organizations || [];
+  const organizations = event?.fundRaiser.recipientCharities || [];
 
   return (
     <Fragment>
@@ -31,7 +31,7 @@ const EventCharityPartners = () => {
               className="px-3 py-4 shadow rounded-2xl flex items-center justify-between space-x-2.5"
             >
               <div className="flex items-start space-x-2.5">
-                {org.logo && org.logo !== "" ? (
+                {/* {org.logo && org.logo !== "" ? (
                   <img
                     src={org.logo}
                     alt=""
@@ -41,12 +41,12 @@ const EventCharityPartners = () => {
                   <div className="w-16 h-16 min-w-16 min-h-16 bg-primary/20 text-primary rounded-xl flex items-center justify-center">
                     <Building2 />
                   </div>
-                )}
+                )} */}
                 <div>
-                  <h5 className="text-sm font-extrabold">{org.name}</h5>
-                  <p className="text-xs font-bold text-black/70">
-                    {org.description}
-                  </p>
+                  <h5 className="text-sm font-extrabold">{org}</h5>
+                  {/* <p className="text-xs font-bold text-black/70">
+                    {org}
+                  </p> */}
                 </div>
               </div>
             </li>
