@@ -1,8 +1,7 @@
 import { useParams } from "@tanstack/react-router";
 import { useEventDetailsQuery } from "../../hooks/query";
 import { Fragment } from "react/jsx-runtime";
-import { Header } from "@/features/app/global/header";
-import { Building2 } from "lucide-react";
+import { Header } from "@/features/app/global/header"; 
 
 const EventCharityPartners = () => {
   const { id } = useParams({
