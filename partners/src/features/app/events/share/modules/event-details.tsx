@@ -36,7 +36,7 @@ export const EventDetails = () => {
 
   const isFundraiser =
     event &&
-    event.fundRaiser.organizations.length >= 1 &&
+    event.fundRaiser.recipientCharities.length >= 1 &&
     event.fundRaiser.fundRaised >= 1;
 
   const minimumPledge = event?.eventPledge.minimumPledge || 0;
