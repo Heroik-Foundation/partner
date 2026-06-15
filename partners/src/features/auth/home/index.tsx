@@ -8,6 +8,7 @@ import bg2Img from "@/assets/images/auth.jpeg";
 import bg3Img from "@/assets/images/auth-2.jpg";
 
 const Onboarding = () => {
+    
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const images = [bgImg, bg2Img, bg3Img];
