@@ -52,7 +52,7 @@ const CreateEventOptions = () => {
 
   const [isCancellationDrawerOpen, setIsCancellationDrawerOpen] =
     useState(false);
-  const [isActionDrawerOpen, setIsActionDrawerOpen] = useState(true);
+  const [isActionDrawerOpen, setIsActionDrawerOpen] = useState(false);
   const [ticketStateContext, setTicketStateContext] = useState<
     "adding" | "creating"
   >("creating");
@@ -68,7 +68,7 @@ const CreateEventOptions = () => {
     pruneRedundantTickets();
     recalculateTicketIndex();
     setCurrentStepIndex(2);
-  }
+  } 
 
   const steps: StepConfig[] = useMemo(
     () => [
@@ -132,6 +132,7 @@ const CreateEventOptions = () => {
     return baseConfig;
   }, [stepIndex, steps, isAddingTicket, ticketStateContext]);
 
+  console.log(stepComponent);
   useEffect(() => {
     if (currentStepConfig?.title === "Ticket Details") {
       setTicketStateContext("creating");
@@ -139,6 +140,12 @@ const CreateEventOptions = () => {
       setTicketStateContext("adding");
     }
   }, [currentStepConfig?.title]);
+
+  useEffect(()=> {
+    if(stepIndex === 1) {
+      setIsActionDrawerOpen(true);
+    }
+  }, [stepComponent?.key])
 
   const isTicketDetailsWithTickets = useCallback(
     () => currentStepConfig?.title === "Ticket Details" && hasTickets,
@@ -245,7 +252,7 @@ const CreateEventOptions = () => {
       deleteTicketTier(currentTicketIndex);
       setTicketStateContext("creating");
     } else {
-      if (currentStepConfig?.title !== "Fundraising Details" || !hasTickets) {
+      if (!currentStepConfig?.title.includes("Ticket")) {
         setIsActionDrawerOpen(true);
       }
       previous();
@@ -292,7 +299,7 @@ const CreateEventOptions = () => {
     navigate,
     next,
     currentStepConfig?.title,
-    pruneRedundantTickets,
+    pruneRedundantTickets, 
     hasTickets,
     setCurrentStepIndex,
   ]);
@@ -379,11 +386,11 @@ const CreateEventOptions = () => {
   );
 
   const isTicketStep = currentStepConfig?.title.includes("Ticket");
-  const hasFundraiserData = !!(
-    fundRaiser?.recipientCharities?.length || fundRaiser?.fundRaisingGoal
-  );
-  const shouldShowDrawer =
-    !isTicketStep && isActionDrawerOpen && !hasFundraiserData;
+  // const hasFundraiserData = (
+  //   fundRaiser?.recipientCharities?.length || fundRaiser?.fundRaisingGoal
+  // );
+  // const shouldShowDrawer =
+  //   !isTicketStep && isActionDrawerOpen && !hasFundraiserData;
 
   return (
     <Fragment>
@@ -465,7 +472,7 @@ const CreateEventOptions = () => {
                 primary: () => setIsActionDrawerOpen(false),
                 secondary: handleNextStep,
               }}
-              open={shouldShowDrawer}
+              open={isTicketStep ? false : isActionDrawerOpen}
               setOpen={setIsActionDrawerOpen}
               title={currentStepConfig?.cta || ""}
             />

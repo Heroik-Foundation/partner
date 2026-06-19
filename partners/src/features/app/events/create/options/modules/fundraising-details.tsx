@@ -4,14 +4,16 @@ import {
     useEventFormStore,
 } from "@/features/app/global/hooks/logic";
 import { FormContent, FormField } from "@/features/auth/global/form";
-import { Button } from "@/modules/ui/button";
 import { Label } from "@/modules/ui/label";
+// import { useCurrencyStore } from "@/stores/currency";
 import { XCircle } from "lucide-react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
 export const FundraisingEventDetails = () => {
+    // const { selectedCurrency } = useCurrencyStore();
     const { formState, removeOrganization, updateForm } = useEventFormStore();
+    // const fundRaiserState = formState.fundRaiser || {};
 
     const organizations = formState.fundRaiser?.recipientCharities || [];
 
@@ -38,6 +40,25 @@ export const FundraisingEventDetails = () => {
 
     return (
         <FormContent>
+            {/* <FormField>
+                <Label>Set Minimum Pledge</Label>
+                <InputWithPrefix
+                    required
+                    prefixItem={
+                        <span className="font-bold text-primary/30">
+                            {selectedCurrency.symbol}
+                        </span>
+                    }
+                    placeholder="0"
+                    value={fundRaiserState.fundRaisingGoal}
+                    onChange={({ target }) => {
+                        updateForm("fundRaiser", {
+                            ...formState.fundRaiser,
+                            fundRaisingGoal: Number(target.value),
+                        });
+                    }}
+                />
+            </FormField> */}
             <FormField>
                 <Label>Add Charity Partner</Label>
                 {organizations.length >= 1 &&
@@ -52,7 +73,7 @@ export const FundraisingEventDetails = () => {
                                     //     {selectedCurrency.symbol}
                                     //   </span>
                                     // }
-                                    placeholder="Enter Organization name"
+                                    placeholder="Enter Organisation name"
                                     value={org}
                                     onChange={({ target }) => {
                                         updateFundraiserField(
@@ -78,10 +99,20 @@ export const FundraisingEventDetails = () => {
                             </div>
                         );
                     })}
-                    <div className=" w-full flex justify-end " >
-
-                    <Button onClick={()=> updateFundraiserField("recipientCharities", "", organizations.length + 1)} >Add Organisation</Button>
-                    </div>
+                <div className=" w-full flex justify-end ">
+                    <button
+                        className=" !text-bold px-3 text-sm h-[45px] text-primary "
+                        onClick={() =>
+                            updateFundraiserField(
+                                "recipientCharities",
+                                "",
+                                organizations.length + 1,
+                            )
+                        }
+                    >
+                        + Add Another Organisation
+                    </button>
+                </div>
             </FormField>
 
             {/* <FormField>
