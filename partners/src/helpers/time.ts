@@ -83,10 +83,10 @@ export function formatMonth(dateString: string): string {
 export function getTimeFromISO(isoString: string): string {
   const date = new Date(isoString);
 
-  const hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
 
-  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+  return `${hours}:${minutes}`;
 }
 
 export function isPastDate(dateString: string): boolean {
