@@ -45,6 +45,7 @@ export const Publish = () => {
     ...locationData,
     endTime: convertDateTimeInputToISOString(startDate, startTime),
     eventEndDate: convertDateTimeInputToISOString(endDate, endTime),
+    eventType: "in-person",
     ...(mapRecurrenceStateToMutation(recurrence) && {
       recurrence: mapRecurrenceStateToMutation(recurrence)!,
     }),
@@ -53,32 +54,32 @@ export const Publish = () => {
       promoCode.discount &&
       promoCode.discount > 0 &&
       promoCode.discount <= 100 && {
-        promoCode: {
-          code: promoCode.code,
-          discount: Number(promoCode.discount),
-        },
-      }),
+      promoCode: {
+        code: promoCode.code,
+        discount: Number(promoCode.discount),
+      },
+    }),
     ...(ticketing &&
       ticketing.length > 0 && {
-        ticketing: ticketing
-          .filter((t) => t.salesStartDate && t.salesEndDate)
-          .map((t) => ({
-            ticketType: t.ticketType,
-            ticketPrice: Math.abs(Number(t.ticketPrice) * 100),
-            signUpLimit: t.signUpLimit,
-            salesStartDate: t.salesStartDate!,
-            salesEndDate: t.salesEndDate!,
-            ...(t.ticketDetails && {
-              ticketDetails: t.ticketDetails!,
-            }),
-          })),
-      }),
+      ticketing: ticketing
+        .filter((t) => t.salesStartDate && t.salesEndDate)
+        .map((t) => ({
+          ticketType: t.ticketType,
+          ticketPrice: Math.abs(Number(t.ticketPrice) * 100),
+          signUpLimit: t.signUpLimit,
+          salesStartDate: t.salesStartDate!,
+          salesEndDate: t.salesEndDate!,
+          ...(t.ticketDetails && {
+            ticketDetails: t.ticketDetails!,
+          }),
+        })),
+    }),
     ...(fundRaiser &&
       fundRaiser.recipientCharities && {
-        fundRaiser: {
-          recipientCharities: fundRaiser.recipientCharities.map((org) => org),
-        },
-      }),
+      fundRaiser: {
+        recipientCharities: fundRaiser.recipientCharities.map((org) => org),
+      },
+    }),
   });
 
   useEffect(() => {

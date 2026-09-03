@@ -17,6 +17,7 @@ import { Carousel, CarouselContent, CarouselItem } from "@/modules/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { Link } from "@tanstack/react-router";
 import { BanknoteArrowUpIcon, LayoutGridIcon } from "lucide-react";
+import { getActiveSession } from "@/lib/session";
 
 const Home = () => {
   const { data: user } = useUserPropertiesQuery();
@@ -45,18 +46,23 @@ const Home = () => {
 
   const channels_list = channels?.pages || [];
 
+  const activeSession = getActiveSession();
+
+  const crmLink = `https://hiroek-crm.vercel.app/auth?accessToken=${activeSession?.sessionToken}`
+
   return (
     <div className="space-y-5 relative min-h-screen pb-16">
       <HomeHeader />
 
       <div className="flex flex-col space-y-3 lg:hidden">
-        <Link
-          to="/app/dashboard"
+        <a
+          href={crmLink}
+          target="_blank"
           className="h-14 rounded-xl bg-accent w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
         >
           <LayoutGridIcon strokeWidth={1.7} size={18} />
           <span>View Creator Dashboard</span>
-        </Link>
+        </a>
 
         <Link
           to="/app/revenue"
@@ -96,10 +102,10 @@ const Home = () => {
                         price={
                           event.ticketing?.length > 0
                             ? Math.min(
-                                ...event.ticketing.map(
-                                  (t) => t.ticketPrice ?? 0,
-                                ),
-                              )
+                              ...event.ticketing.map(
+                                (t) => t.ticketPrice ?? 0,
+                              ),
+                            )
                             : 0
                         }
                         hasMultipletTickets={event.ticketing.length > 1}
@@ -127,8 +133,8 @@ const Home = () => {
                     price={
                       event.ticketing?.length > 0
                         ? Math.min(
-                            ...event.ticketing.map((t) => t.ticketPrice ?? 0),
-                          )
+                          ...event.ticketing.map((t) => t.ticketPrice ?? 0),
+                        )
                         : 0
                     }
                     hasMultipletTickets={event.ticketing.length > 1}
