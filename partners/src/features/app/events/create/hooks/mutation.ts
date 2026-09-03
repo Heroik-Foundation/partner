@@ -40,6 +40,7 @@ type CreateEventBase = {
   privacy: string;
   eventEndDate: string;
   endTime: string;
+  eventType?: string;
   communityId?: string;
   photo?: string | File;
   isRefundable: boolean;
@@ -48,17 +49,17 @@ type CreateEventBase = {
 export type CreateEventMutation = CreateEventBase &
   (
     | {
-        address: string;
-        latitude: number;
-        longitude: number;
-        meetingLink?: never;
-      }
+      address: string;
+      latitude: number;
+      longitude: number;
+      meetingLink?: never;
+    }
     | {
-        meetingLink: string;
-        address?: never;
-        latitude?: never;
-        longitude?: never;
-      }
+      meetingLink: string;
+      address?: never;
+      latitude?: never;
+      longitude?: never;
+    }
   );
 
 export function useCreateEventMutation(props: CreateEventMutation) {
