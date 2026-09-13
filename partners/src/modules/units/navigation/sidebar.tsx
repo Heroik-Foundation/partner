@@ -2,11 +2,19 @@ import { Link } from "@tanstack/react-router";
 import { LayoutGrid, BanknoteArrowUpIcon } from "lucide-react";
 
 import { useMediaQuery } from "@/hooks/media-query";
+import { getActiveSession } from "@/lib/session";
 
 export const Sidebar = () => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isDev = (import.meta.env.VITE_ENVIRONMENT || "") === "development";
 
   if (isDesktop) {
+
+
+    const activeSession = getActiveSession();
+
+    const crmLink = `https://hiroek-crm.vercel.app/auth?accessToken=${activeSession?.sessionToken}`
+
     return (
       <aside className="lg:w-64 2xl:w-72 border-r fixed left-0 top-0 bottom-0 h-screen bg-white z-50 py-5">
         <div className="flex w-full h-full relative flex-col space-y-5">
@@ -21,13 +29,24 @@ export const Sidebar = () => {
           </div>
 
           <div className="flex flex-col px-5 space-y-3">
-            <Link
-              to="/app/dashboard"
-              className="h-12 rounded-xl bg-accent w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
-            >
-              <LayoutGrid strokeWidth={1.7} size={18} />
-              <span>View Creator Dashboard</span>
-            </Link>
+            {isDev && (
+              <a
+                href={crmLink}
+                className="h-12 rounded-xl bg-accent w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
+              >
+                <LayoutGrid strokeWidth={1.7} size={18} />
+                <span>View Creator Dashboard</span>
+              </a>
+            )}
+            {!isDev && (
+              <Link
+                to="/app/dashboard"
+                className="h-12 rounded-xl bg-accent w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
+              >
+                <LayoutGrid strokeWidth={1.7} size={18} />
+                <span>View Creator Dashboard</span>
+              </Link>
+            )}
 
             <Link
               to="/app/revenue"

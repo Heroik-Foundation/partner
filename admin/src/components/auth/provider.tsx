@@ -12,8 +12,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const validToken: Token = decodedJWT(sessionToken);
   const currentTimeStamp = Math.floor(Date.now() / 1000);
 
-  console.log(sessionToken);
-
   useEffect(() => {
     if (sessionToken) {
       if (currentTimeStamp > validToken.exp) {

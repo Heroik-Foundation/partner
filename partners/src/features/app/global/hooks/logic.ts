@@ -73,7 +73,7 @@ export type TicketTierState = {
 
 export type FundraiserState = {
   fundRaisingGoal?: number;
-  organizations?: { name: string; id: string }[];
+  recipientCharities?: string[];
 };
 
 export const defaultValue: EventFormState = {
@@ -139,12 +139,19 @@ export const useEventFormStore = create<StaticEventFormStore>()(
           const newTicketing = state.formState.ticketing.filter(
             (_, i) => i !== index,
           );
+          const nextIndex =
+            newTicketing.length > 0
+              ? Math.min(
+                  Math.max(0, state.formState.currentTicketIndex),
+                  newTicketing.length - 1,
+                )
+              : 0;
+
           return {
             formState: {
               ...state.formState,
               ticketing: newTicketing,
-              currentTicketIndex:
-                newTicketing.length > 0 ? newTicketing.length : 0,
+              currentTicketIndex: nextIndex,
             },
           };
         }),
@@ -171,15 +178,15 @@ export const useEventFormStore = create<StaticEventFormStore>()(
         })),
       removeOrganization: (id) =>
         set((state) => {
-          const organizations = state.formState.fundRaiser?.organizations;
+          const organizations = state.formState.fundRaiser?.recipientCharities;
           if (!organizations) return state;
 
           return {
             formState: {
               ...state.formState,
               fundRaiser: {
-                // ...state.formState.fundRaiser,
-                organizations: organizations.filter((org) => org.id !== id),
+                ...state.formState.fundRaiser,
+                recipientCharities: organizations.filter((org) => org !== id),
               },
             },
           };
@@ -191,15 +198,22 @@ export const useEventFormStore = create<StaticEventFormStore>()(
           const newTicketing = state.formState.ticketing.filter(
             (ticket) =>
               ticket.ticketType &&
-              ticket.salesStartDate !== null &&
-              ticket.salesEndDate !== null,
+              ticket.salesStartDate &&
+              ticket.salesEndDate,
           );
+          const nextIndex =
+            newTicketing.length > 0
+              ? Math.min(
+                  Math.max(0, state.formState.currentTicketIndex),
+                  newTicketing.length - 1,
+                )
+              : 0;
+
           return {
             formState: {
               ...state.formState,
               ticketing: newTicketing,
-              currentTicketIndex:
-                newTicketing.length > 0 ? newTicketing.length : 0,
+              currentTicketIndex: nextIndex,
             },
           };
         }),

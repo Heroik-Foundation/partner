@@ -1,8 +1,7 @@
-import { Event } from "@/features/app/global/types";
 import { ErrorResponse, handleUserResponseToError } from "@/helpers/error";
 import { authenticatedInstance } from "@/lib/axios";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { frmz } from "@/lib/frmz";
 import { useCurrencyStore } from "@/stores/currency";
@@ -20,7 +19,7 @@ type CreateEventBase = {
   description: string;
   fundRaiser?: {
     fundRaisingGoal?: number;
-    organizations: string[]; // array of organization IDs
+    recipientCharities: string[]; // array of organization IDs
   };
   recurrence?: {
     interval: number;
@@ -40,6 +39,7 @@ type CreateEventBase = {
   privacy: string;
   eventEndDate: string;
   endTime: string;
+  eventType?: string;
   communityId?: string;
   photo?: string | File;
   isRefundable: boolean;
@@ -48,23 +48,24 @@ type CreateEventBase = {
 export type CreateEventMutation = CreateEventBase &
   (
     | {
-        address: string;
-        latitude: number;
-        longitude: number;
-        meetingLink?: never;
-      }
+      address: string;
+      latitude: number;
+      longitude: number;
+      meetingLink?: never;
+    }
     | {
-        meetingLink: string;
-        address?: never;
-        latitude?: never;
-        longitude?: never;
-      }
+      meetingLink: string;
+      address?: never;
+      latitude?: never;
+      longitude?: never;
+    }
   );
 
 export function useCreateEventMutation(props: CreateEventMutation) {
   const { selectedCurrency } = useCurrencyStore();
   const { subcategory, ...rest } = props;
-  const { navigate } = useRouter();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const URL = rest.meetingLink
     ? "/event-partners/create-online-event"
@@ -87,14 +88,35 @@ export function useCreateEventMutation(props: CreateEventMutation) {
 
       return data;
     },
-    onSuccess: (data: { event: Event }) => {
+    onSuccess: (data: any) => {
       toast.success("Event created successfully");
-      navigate({
-        to: "/app/events/$id/success",
-        params: {
-          id: String(data.event._id),
-        },
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey.includes("user-events") ||
+          query.queryKey.includes("event-details"),
       });
+
+      const eventId =
+        data?.event?._id ||
+        data?.event?.id ||
+        data?.data?.event?._id ||
+        data?.data?.event?.id ||
+        data?.data?._id ||
+        data?._id ||
+        data?.id;
+
+      if (eventId) {
+        navigate({
+          to: "/app/events/$id/success",
+          params: {
+            id: String(eventId),
+          },
+        });
+      } else {
+        navigate({
+          to: "/app",
+        });
+      }
     },
     onError: (error: ErrorResponse) => {
       handleUserResponseToError(error);

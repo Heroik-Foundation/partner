@@ -4,10 +4,11 @@ import { useCreateEventMutation } from "../../../hooks/mutation";
 import { useEventFormStore } from "@/features/app/global/hooks/logic";
 import { convertDateTimeInputToISOString } from "@/helpers/time";
 import { mapRecurrenceStateToMutation } from "../helper/data";
-import { useEffect } from "react";
+import { isDataUrl, dataUrlToFile } from "@/helpers/file";
+import { useMemo } from "react";
 
 export const Publish = () => {
-  const { formState, reset } = useEventFormStore();
+  const { formState } = useEventFormStore();
   const {
     name,
     address,
@@ -30,21 +31,39 @@ export const Publish = () => {
     promoCode,
   } = formState;
 
+  const resolvedPhoto = useMemo(() => {
+    if (!photo) return undefined;
+    if (isDataUrl(photo)) {
+      try {
+        return dataUrlToFile(photo, "event-photo.png");
+      } catch (err) {
+        console.error("Failed to convert data URL to file:", err);
+        return photo;
+      }
+    }
+    return photo;
+  }, [photo]);
+
   const locationData = isOnlineEvent
     ? { meetingLink }
     : { address, latitude, longitude };
 
-  const { mutate, isPending, isSuccess } = useCreateEventMutation({
+  const validCharities = (fundRaiser?.recipientCharities || []).filter(
+    (org) => typeof org === "string" && org.trim().length > 0,
+  );
+
+  const { mutate, isPending } = useCreateEventMutation({
     name,
     category: category.id,
     description,
     subcategory: subCategory?.id,
     privacy: "public",
     isRefundable: Boolean(isRefundable),
-    ...(photo ? { photo: photo as string | File } : {}),
+    ...(resolvedPhoto ? { photo: resolvedPhoto as string | File } : {}),
     ...locationData,
     endTime: convertDateTimeInputToISOString(startDate, startTime),
     eventEndDate: convertDateTimeInputToISOString(endDate, endTime),
+    eventType: isOnlineEvent ? "online" : "in-person",
     ...(mapRecurrenceStateToMutation(recurrence) && {
       recurrence: mapRecurrenceStateToMutation(recurrence)!,
     }),
@@ -53,39 +72,32 @@ export const Publish = () => {
       promoCode.discount &&
       promoCode.discount > 0 &&
       promoCode.discount <= 100 && {
-        promoCode: {
-          code: promoCode.code,
-          discount: Number(promoCode.discount),
-        },
-      }),
+      promoCode: {
+        code: promoCode.code,
+        discount: Number(promoCode.discount),
+      },
+    }),
     ...(ticketing &&
       ticketing.length > 0 && {
-        ticketing: ticketing
-          .filter((t) => t.salesStartDate && t.salesEndDate)
-          .map((t) => ({
-            ticketType: t.ticketType,
-            ticketPrice: Math.abs(Number(t.ticketPrice) * 100),
-            signUpLimit: t.signUpLimit,
-            salesStartDate: t.salesStartDate!,
-            salesEndDate: t.salesEndDate!,
-            ...(t.ticketDetails && {
-              ticketDetails: t.ticketDetails!,
-            }),
-          })),
-      }),
-    ...(fundRaiser &&
-      fundRaiser.organizations && {
-        fundRaiser: {
-          organizations: fundRaiser.organizations.map((org) => org.id),
-        },
-      }),
+      ticketing: ticketing
+        .filter((t) => t.ticketType && t.salesStartDate && t.salesEndDate)
+        .map((t) => ({
+          ticketType: t.ticketType,
+          ticketPrice: Math.abs(Number(t.ticketPrice) * 100),
+          signUpLimit: t.signUpLimit,
+          salesStartDate: t.salesStartDate!,
+          salesEndDate: t.salesEndDate!,
+          ...(t.ticketDetails && {
+            ticketDetails: t.ticketDetails!,
+          }),
+        })),
+    }),
+    ...(validCharities.length > 0 && {
+      fundRaiser: {
+        recipientCharities: validCharities,
+      },
+    }),
   });
-
-  useEffect(() => {
-    if (isSuccess) {
-      reset();
-    }
-  }, [isSuccess]);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white shadow-sm flex items-center justify-center p-5">

@@ -19,6 +19,9 @@ export const Highlight = (props: HighlightProps) => {
   const { date: relativeDate, time: relativeTime } = formatISODate(date);
   const imageURL = thumbnail === "" ? "/image/input-preview.jpg" : thumbnail;
 
+  console.log(thumbnail);
+  
+
   const hasAttendees = (members || 0) > 0 && (avatars || []).length > 0;
 
   return (
