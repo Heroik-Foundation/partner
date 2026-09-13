@@ -46,6 +46,8 @@ const Home = () => {
 
   const channels_list = channels?.pages || [];
 
+  const isDev = (import.meta.env.VITE_ENVIRONMENT || "") === "development";
+
   const activeSession = getActiveSession();
 
   const crmLink = `https://hiroek-crm.vercel.app/auth?accessToken=${activeSession?.sessionToken}`
@@ -55,15 +57,25 @@ const Home = () => {
       <HomeHeader />
 
       <div className="flex flex-col space-y-3 lg:hidden">
-        <a
-          href={crmLink}
-          target="_blank"
-          className="h-14 rounded-xl bg-accent w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
-        >
-          <LayoutGridIcon strokeWidth={1.7} size={18} />
-          <span>View Creator Dashboard</span>
-        </a>
-
+        {isDev && (
+          <a
+            href={crmLink}
+            target="_blank"
+            className="h-14 rounded-xl bg-accent w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
+          >
+            <LayoutGridIcon strokeWidth={1.7} size={18} />
+            <span>View Creator Dashboard</span>
+          </a>
+        )}
+        {!isDev && (
+          <Link
+            to="/app/dashboard"
+            className="h-14 rounded-xl bg-accent w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
+          >
+            <LayoutGridIcon strokeWidth={1.7} size={18} />
+            <span>View Creator Dashboard</span>
+          </Link>
+        )}
         <Link
           to="/app/revenue"
           className="h-14 rounded-xl bg-primary w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"

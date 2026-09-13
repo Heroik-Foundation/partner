@@ -6,6 +6,7 @@ import { getActiveSession } from "@/lib/session";
 
 export const Sidebar = () => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isDev = (import.meta.env.VITE_ENVIRONMENT || "") === "development";
 
   if (isDesktop) {
 
@@ -28,13 +29,24 @@ export const Sidebar = () => {
           </div>
 
           <div className="flex flex-col px-5 space-y-3">
-            <a
-              href={crmLink}
-              className="h-12 rounded-xl bg-accent w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
-            >
-              <LayoutGrid strokeWidth={1.7} size={18} />
-              <span>View Creator Dashboard</span>
-            </a>
+            {isDev && (
+              <a
+                href={crmLink}
+                className="h-12 rounded-xl bg-accent w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
+              >
+                <LayoutGrid strokeWidth={1.7} size={18} />
+                <span>View Creator Dashboard</span>
+              </a>
+            )}
+            {!isDev && (
+              <Link
+                to="/app/dashboard"
+                className="h-12 rounded-xl bg-accent w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
+              >
+                <LayoutGrid strokeWidth={1.7} size={18} />
+                <span>View Creator Dashboard</span>
+              </Link>
+            )}
 
             <Link
               to="/app/revenue"
