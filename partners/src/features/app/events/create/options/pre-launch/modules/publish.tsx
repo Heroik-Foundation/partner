@@ -4,10 +4,11 @@ import { useCreateEventMutation } from "../../../hooks/mutation";
 import { useEventFormStore } from "@/features/app/global/hooks/logic";
 import { convertDateTimeInputToISOString } from "@/helpers/time";
 import { mapRecurrenceStateToMutation } from "../helper/data";
-import { useEffect } from "react";
+import { isDataUrl, dataUrlToFile } from "@/helpers/file";
+import { useMemo } from "react";
 
 export const Publish = () => {
-  const { formState, reset } = useEventFormStore();
+  const { formState } = useEventFormStore();
   const {
     name,
     address,
@@ -30,22 +31,39 @@ export const Publish = () => {
     promoCode,
   } = formState;
 
+  const resolvedPhoto = useMemo(() => {
+    if (!photo) return undefined;
+    if (isDataUrl(photo)) {
+      try {
+        return dataUrlToFile(photo, "event-photo.png");
+      } catch (err) {
+        console.error("Failed to convert data URL to file:", err);
+        return photo;
+      }
+    }
+    return photo;
+  }, [photo]);
+
   const locationData = isOnlineEvent
     ? { meetingLink }
     : { address, latitude, longitude };
 
-  const { mutate, isPending, isSuccess } = useCreateEventMutation({
+  const validCharities = (fundRaiser?.recipientCharities || []).filter(
+    (org) => typeof org === "string" && org.trim().length > 0,
+  );
+
+  const { mutate, isPending } = useCreateEventMutation({
     name,
     category: category.id,
     description,
     subcategory: subCategory?.id,
     privacy: "public",
     isRefundable: Boolean(isRefundable),
-    ...(photo ? { photo: photo as string | File } : {}),
+    ...(resolvedPhoto ? { photo: resolvedPhoto as string | File } : {}),
     ...locationData,
     endTime: convertDateTimeInputToISOString(startDate, startTime),
     eventEndDate: convertDateTimeInputToISOString(endDate, endTime),
-    eventType: "in-person",
+    eventType: isOnlineEvent ? "online" : "in-person",
     ...(mapRecurrenceStateToMutation(recurrence) && {
       recurrence: mapRecurrenceStateToMutation(recurrence)!,
     }),
@@ -62,7 +80,7 @@ export const Publish = () => {
     ...(ticketing &&
       ticketing.length > 0 && {
       ticketing: ticketing
-        .filter((t) => t.salesStartDate && t.salesEndDate)
+        .filter((t) => t.ticketType && t.salesStartDate && t.salesEndDate)
         .map((t) => ({
           ticketType: t.ticketType,
           ticketPrice: Math.abs(Number(t.ticketPrice) * 100),
@@ -74,19 +92,12 @@ export const Publish = () => {
           }),
         })),
     }),
-    ...(fundRaiser &&
-      fundRaiser.recipientCharities && {
+    ...(validCharities.length > 0 && {
       fundRaiser: {
-        recipientCharities: fundRaiser.recipientCharities.map((org) => org),
+        recipientCharities: validCharities,
       },
     }),
   });
-
-  useEffect(() => {
-    if (isSuccess) {
-      reset();
-    }
-  }, [isSuccess]);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white shadow-sm flex items-center justify-center p-5">

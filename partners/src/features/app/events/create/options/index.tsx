@@ -13,7 +13,6 @@ import { toast } from "sonner";
 import { Form, FormFooter } from "@/features/auth/global/form";
 import { Header } from "@/features/app/global/header";
 import { Button } from "@/modules/ui/button";
-import { objectHasNullOrUndefined } from "@/helpers/object";
 import {
     EventFormState,
     useEventFormStore,
@@ -154,48 +153,61 @@ const CreateEventOptions = () => {
         }
     }, [stepIndex]);
 
-    const isTicketDetailsWithTickets = useCallback(
-        () => currentStepConfig?.title === "Ticket Details" && hasTickets,
-        [currentStepConfig?.title, hasTickets],
-    );
-
     // Validate the current step
     const validateCurrentStep = useCallback(() => {
-        if (!recurrence && !ticketing?.[currentTicketIndex] && !fundRaiser) {
-            return true;
-        }
-
         const stepValidations: { [key: number]: () => boolean } = {
-            1: () =>
-                !recurrence ||
-                !objectHasNullOrUndefined(recurrence) ||
-                !recurrence.frequency,
-            2: () => {
+            1: () => {
+                if (!recurrence) return true;
+                if (!recurrence.frequency) return false;
                 if (
-                    !recurrence &&
-                    !ticketing?.[currentTicketIndex] &&
-                    !fundRaiser
+                    recurrence.frequency === "WEEKLY" &&
+                    (!recurrence.daysOfWeek || recurrence.daysOfWeek.length === 0)
                 ) {
-                    // Only skip validation if there are no existing tickets either
-                    if (!ticketing || ticketing.length === 0) {
-                        return true;
-                    }
+                    toast.error("Please select at least one day for weekly recurrence.");
+                    return false;
+                }
+                if (recurrence.endType === "UNTIL_DATE" && !recurrence.endDate) {
+                    toast.error("Please select an end date for recurrence.");
+                    return false;
+                }
+                if (
+                    recurrence.endType === "AFTER_OCCURRENCES" &&
+                    (!recurrence.occurrenceCount || recurrence.occurrenceCount <= 0)
+                ) {
+                    toast.error("Please specify occurrence count.");
+                    return false;
+                }
+                return true;
+            },
+            2: () => {
+                const activeTicket =
+                    ticketing?.[currentTicketIndex] || ticketing?.[0];
+
+                if (!activeTicket || !activeTicket.ticketType?.trim()) {
+                    toast.error("Please enter a ticket type name.");
+                    return false;
+                }
+
+                if (!activeTicket.salesStartDate || !activeTicket.salesEndDate) {
+                    toast.error("Please enter both ticket sales start and end dates.");
+                    return false;
+                }
+
+                if (activeTicket.salesEndDate < activeTicket.salesStartDate) {
+                    toast.error("Sales end date cannot be before sales start date.");
+                    return false;
                 }
 
                 if (ticketing && ticketing.length > 1) {
-                    const signUpLimits = ticketing
-                        .filter(
-                            (ticket) =>
-                                ticket && !objectHasNullOrUndefined(ticket),
-                        )
-                        .map((ticket) => Number(ticket.signUpLimit) || 0);
+                    const validTiers = ticketing.filter(
+                        (t) => t.ticketType && t.salesStartDate && t.salesEndDate,
+                    );
+                    const signUpLimits = validTiers.map(
+                        (ticket) => Number(ticket.signUpLimit) || 0,
+                    );
 
-                    const hasZeroLimit = signUpLimits.some(
-                        (limit) => limit <= 0,
-                    );
-                    const hasNonZeroLimit = signUpLimits.some(
-                        (limit) => limit > 0,
-                    );
+                    const hasZeroLimit = signUpLimits.some((limit) => limit <= 0);
+                    const hasNonZeroLimit = signUpLimits.some((limit) => limit > 0);
 
                     if (hasZeroLimit && hasNonZeroLimit) {
                         toast.error(
@@ -208,47 +220,35 @@ const CreateEventOptions = () => {
                 return true;
             },
             3: () => {
-                if (ticketing && ticketing.length > 1) {
-                    const signUpLimits = ticketing
-                        .filter(
-                            (ticket) =>
-                                ticket && !objectHasNullOrUndefined(ticket),
-                        )
-                        .map((ticket) => ticket.signUpLimit || 0);
-
-                    const hasZeroLimit = signUpLimits.some(
-                        (limit) => limit === 0,
-                    );
-                    const hasNonZeroLimit = signUpLimits.some(
-                        (limit) => limit > 0,
-                    );
-
-                    if (hasZeroLimit && hasNonZeroLimit) {
-                        toast.error(
-                            "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits.",
-                        );
-                        return false;
-                    }
+                const validTickets = (ticketing || []).filter(
+                    (t) => t.ticketType && t.salesStartDate && t.salesEndDate,
+                );
+                if (validTickets.length === 0) {
+                    toast.error("Please add at least one ticket.");
+                    return false;
                 }
                 return true;
             },
-            4: () =>
-                !fundRaiser ||
-                (!objectHasNullOrUndefined(fundRaiser) &&
-                    (fundRaiser?.recipientCharities?.length ?? 0) > 0),
+            4: () => {
+                if (!fundRaiser) return true;
+                const charities = (fundRaiser.recipientCharities || []).filter(
+                    (c) => c && c.trim().length > 0,
+                );
+                // If user filled in some charity names, make sure at least one is valid
+                if (
+                    fundRaiser.recipientCharities &&
+                    fundRaiser.recipientCharities.length > 0 &&
+                    charities.length === 0
+                ) {
+                    // Empty entries only
+                    return true;
+                }
+                return true;
+            },
         };
 
         const validator = stepValidations[stepIndex];
         if (validator && !validator()) {
-            const errorMessage =
-                stepIndex === 4 &&
-                (fundRaiser?.recipientCharities?.length ?? 0) === 0
-                    ? "Please select a charity partner."
-                    : "Please complete the form before continuing.";
-
-            if (!(stepIndex === 2 || stepIndex === 3)) {
-                toast.error(errorMessage);
-            }
             return false;
         }
 
@@ -256,7 +256,6 @@ const CreateEventOptions = () => {
     }, [stepIndex, recurrence, ticketing, currentTicketIndex, fundRaiser]);
 
     const handlePreviousStep = useCallback(() => {
-        pruneRedundantTickets();
         if (
             previousPath &&
             (previousPath?.includes("pre-launch") ||
@@ -265,12 +264,14 @@ const CreateEventOptions = () => {
             navigate({
                 to: "/app/events/create/pre-launch",
             });
+            return;
         }
 
         if (isFirstStep) {
             navigate({
                 to: "/app/events/create",
             });
+            return;
         }
 
         if (currentStepConfig?.title === "Add Ticket Type") {
@@ -293,17 +294,23 @@ const CreateEventOptions = () => {
         deleteTicketTier,
         currentTicketIndex,
         previous,
+        isFirstStep,
+        previousPath,
+        navigate,
     ]);
 
     const handleNextStep = useCallback(() => {
-        pruneRedundantTickets();
-
         if (isNavigatingRef.current) return;
 
         if (!validateCurrentStep()) return;
 
+        pruneRedundantTickets();
+
         if (isLastStep) {
-            if (!hasTickets) {
+            const validTickets = (formState.ticketing || []).filter(
+                (t) => t.ticketType && t.salesStartDate && t.salesEndDate,
+            );
+            if (validTickets.length === 0) {
                 toast.info("Please add a ticket to continue.");
                 setCurrentStepIndex(2);
                 return;
@@ -313,36 +320,35 @@ const CreateEventOptions = () => {
         }
 
         isNavigatingRef.current = true;
-        next();
+        if (stepIndex === 2) {
+            setCurrentStepIndex(3);
+            setTicketStateContext("creating");
+        } else {
+            next();
+        }
 
         setTimeout(() => {
             isNavigatingRef.current = false;
         }, 0);
 
-        // if (!currentStepConfig?.title.includes("Ticket")) {
-            setIsActionDrawerOpen(true);
-        // }
+        setIsActionDrawerOpen(true);
     }, [
         validateCurrentStep,
         isLastStep,
         navigate,
         next,
-        currentStepConfig?.title,
         pruneRedundantTickets,
-        hasTickets,
+        formState.ticketing,
         setCurrentStepIndex,
+        stepIndex,
     ]);
 
     const handleFormSubmit = useCallback(
         (e: React.FormEvent) => {
             e.preventDefault();
-            if (isTicketDetailsWithTickets()) {
-                return;
-            }
-
             handleNextStep();
         },
-        [handleNextStep, isTicketDetailsWithTickets],
+        [handleNextStep],
     );
 
     const handleOptionCancellation = useCallback(() => {
@@ -375,45 +381,24 @@ const CreateEventOptions = () => {
         setFormState(newState);
     }, [currentStepConfig?.title, formState, setFormState]);
 
-    const handleTicketDetailsNext = useCallback(() => {
-        if (isNavigatingRef.current) return;
-
-        isNavigatingRef.current = true;
-
-        setCurrentStepIndex(3);
-
-        setTimeout(() => {
-            isNavigatingRef.current = false;
-        }, 0);
-    }, [setCurrentStepIndex]);
-
     const buttons = useMemo(
         () => ({
             submit: (
-              <>
-              {stepIndex !== 2 && (
-                  <Button
-                      type={
-                          isTicketDetailsWithTickets()
-                              ? "button"
-                              : "submit"
-                      }
-                      className="w-full"
-                      size="lg"
-                      onClick={() => {
-                          if (isTicketDetailsWithTickets()) {
-                              handleTicketDetailsNext();
-                          }
-                      }}
-                  >
-                      <span>Save & Continue</span>
-                      <ArrowRightCircle
-                          className="fill-white stroke-primary"
-                          size={24}
-                      />
-                  </Button>
-              )}
-              </>
+                <>
+                    {stepIndex !== 2 && (
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            size="lg"
+                        >
+                            <span>Save & Continue</span>
+                            <ArrowRightCircle
+                                className="fill-white stroke-primary"
+                                size={24}
+                            />
+                        </Button>
+                    )}
+                </>
             ),
             cancel: (
                 <Button
@@ -428,7 +413,7 @@ const CreateEventOptions = () => {
                 </Button>
             ),
         }),
-        [isTicketDetailsWithTickets, handleTicketDetailsNext],
+        [stepIndex],
     );
 
     const isTicketStep = currentStepConfig?.title.includes("Ticket");
@@ -525,18 +510,9 @@ const CreateEventOptions = () => {
                         />
                         {stepIndex === 2 && (
                             <Button
-                                type={
-                                    isTicketDetailsWithTickets()
-                                        ? "button"
-                                        : "submit"
-                                }
+                                type="submit"
                                 className="w-full"
                                 size="lg"
-                                onClick={() => {
-                                    if (isTicketDetailsWithTickets()) {
-                                        handleTicketDetailsNext();
-                                    }
-                                }}
                             >
                                 <span>Save & Continue</span>
                                 <ArrowRightCircle

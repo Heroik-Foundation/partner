@@ -101,7 +101,7 @@ const MapLocationPicker = ({
   }, []);
 
   const handleInitialValues = () => {
-    if (initialValue) {
+    if (initialValue && initialValue.address) {
       if (searchValue === "") {
         setSearchValue(initialValue.address);
       }
@@ -113,7 +113,11 @@ const MapLocationPicker = ({
         });
       }
 
-      if (!selectedLocation) {
+      if (
+        !selectedLocation ||
+        !selectedLocation.address ||
+        selectedLocation.address !== initialValue.address
+      ) {
         setLocation({
           address: initialValue.address,
           lat: initialValue.lat,
@@ -264,14 +268,22 @@ const MapLocationPicker = ({
 
   // Get display value for input
   const getDisplayValue = useCallback(() => {
-    if (!selectedLocation?.address) return "";
     if (
-      selectedLocation.address === "undefined" ||
-      selectedLocation.address === undefined
-    )
-      return "";
-    return selectedLocation.address;
-  }, [selectedLocation?.address]);
+      selectedLocation?.address &&
+      selectedLocation.address !== "undefined" &&
+      selectedLocation.address.trim() !== ""
+    ) {
+      return selectedLocation.address;
+    }
+    if (
+      initialValue?.address &&
+      initialValue.address !== "undefined" &&
+      initialValue.address.trim() !== ""
+    ) {
+      return initialValue.address;
+    }
+    return "";
+  }, [selectedLocation?.address, initialValue?.address]);
 
   // Render modal content
   const renderModal = () => {
