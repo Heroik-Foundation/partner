@@ -15,7 +15,8 @@ import { Header } from "../../global/header";
 import { ChevronRight, Video } from "lucide-react";
 
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useEventFormStore, defaultValue } from "../../global/hooks/logic";
+import { useEventFormStore } from "../../global/hooks/logic";
+import { fileToDataUrl } from "@/helpers/file";
 
 import PlaceAutocomplete from "@/modules/units/form/address";
 import { useMapStore } from "@/stores/maps";
@@ -34,11 +35,21 @@ const CreateEvent = () => {
 
   const [openClosingDialog, setOpenClosingDialogState] =
     useState<boolean>(false);
-  const hasUserInput =
-    JSON.stringify(defaultValue) !== JSON.stringify(formState);
+  const hasUserInput = Boolean(
+    formState.name ||
+      formState.description ||
+      formState.photo ||
+      formState.address ||
+      formState.meetingLink ||
+      formState.category.id ||
+      formState.startDate ||
+      formState.endDate ||
+      formState.startTime ||
+      formState.endTime,
+  );
 
   const handleSubmit = () => {
-    if (!formState.category) {
+    if (!formState.category.id && !formState.category.name) {
       toast.info("Please select a category");
       return;
     }
@@ -84,12 +95,10 @@ const CreateEvent = () => {
         <FormContent className="space-y-8">
           <ImageWithPreview
             state={formState.photo}
-            handleState={(file) => {
-              updateForm("photo", file);
+            handleState={async (file) => {
+              const dataUrl = await fileToDataUrl(file);
+              updateForm("photo", dataUrl);
             }}
-            initialPreview={
-              typeof formState.photo === "string" ? formState.photo : undefined
-            }
           />
 
           <FormField>
@@ -122,7 +131,7 @@ const CreateEvent = () => {
                 required
                 pattern="https://(www\.)?(zoom\.us/j/\d+|meet\.google\.com/[a-zA-Z-]+|teams\.microsoft\.com/l/meetup-join/.+)"
                 title="Enter a Zoom, Google Meet, or Microsoft Teams meeting link"
-                value={formState.meetingLink}
+                value={formState.meetingLink || ""}
                 onChange={({ target }) => {
                   updateForm("meetingLink", String(target.value));
                 }}
@@ -133,11 +142,11 @@ const CreateEvent = () => {
                 required
                 placeholder="Type Event/Address here"
                 initialValue={
-                  formState.address && formState.latitude && formState.longitude
+                  formState.address
                     ? {
                         address: formState.address,
-                        lat: formState.latitude,
-                        lng: formState.longitude,
+                        lat: formState.latitude || 0,
+                        lng: formState.longitude || 0,
                       }
                     : undefined
                 }

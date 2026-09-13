@@ -6,7 +6,6 @@ import { decimalFormatter, trimNumber } from "@/helpers/text";
 import { Link, useNavigate } from "@tanstack/react-router";
 import eyeIcon from "@/features/app/events/detail/assets/eye.svg";
 import editIcon from "@/features/app/events/detail/assets/edit.svg";
-import { objectHasNullOrUndefined } from "@/helpers/object";
 import { useEffect, useMemo, useCallback } from "react";
 import { Publish } from "./modules/publish";
 import { toast } from "sonner";
@@ -30,16 +29,18 @@ export const PreLaunch = () => {
         [tickets],
     );
 
-    const thumbnailUrl = useMemo(
-        () =>
-            typeof formState.photo !== "undefined" &&
-            formState.photo instanceof File
-                ? URL.createObjectURL(formState.photo)
-                : formState.photo,
-        [formState.photo],
-    );
-
-    console.log(formState.photo);
+    const thumbnailUrl = useMemo(() => {
+        if (!formState.photo) return "";
+        if (typeof formState.photo === "string") return formState.photo;
+        if (
+            typeof formState.photo === "object" &&
+            formState.photo !== null &&
+            formState.photo instanceof Blob
+        ) {
+            return URL.createObjectURL(formState.photo);
+        }
+        return "";
+    }, [formState.photo]);
 
     const eventDate = useMemo(
         () =>
@@ -52,27 +53,29 @@ export const PreLaunch = () => {
 
     const validatePreLaunchProps = useCallback(() => {
         const {
-            recurrence,
-            fundRaiser,
             endDate,
             startDate,
             name,
             description,
+            isOnlineEvent,
+            meetingLink,
+            address,
+            ticketing,
         } = formState;
 
-        const hasInvalidRecurrence =
-            recurrence && objectHasNullOrUndefined(recurrence);
-        const hasInvalidFundraiser =
-            fundRaiser && objectHasNullOrUndefined(fundRaiser);
         const hasMissingRequired =
-            !endDate || !startDate || !name || !description;
+            !name?.trim() ||
+            !description?.trim() ||
+            !startDate ||
+            !endDate ||
+            (isOnlineEvent ? !meetingLink?.trim() : !address?.trim());
 
-        if (
-            hasInvalidRecurrence ||
-            hasInvalidFundraiser ||
-            hasMissingRequired
-        ) {
-            toast.info("Please complete event details to access this page", {
+        const validTickets = (ticketing || []).filter(
+            (t) => t.ticketType && t.salesStartDate && t.salesEndDate,
+        );
+
+        if (hasMissingRequired || validTickets.length === 0) {
+            toast.info("Please complete required event details before continuing.", {
                 id: "pre-launch-invalid-details-info",
             });
             navigate({ to: "/app/events/create" });
@@ -81,7 +84,7 @@ export const PreLaunch = () => {
 
     useEffect(() => {
         validatePreLaunchProps();
-    }, []);
+    }, [validatePreLaunchProps]);
 
     const handleEditTicket = useCallback(
         (index: number) => {
@@ -101,6 +104,12 @@ export const PreLaunch = () => {
                     position: "inline",
                 }}
                 previousButtonVariant="backlight"
+                previousRouteCallback={() => {
+                    navigate({
+                        to: "/app/events/create/options",
+                        search: { step: 3 },
+                    });
+                }}
             />
 
             <Highlight

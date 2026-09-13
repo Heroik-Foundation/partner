@@ -32,6 +32,7 @@ export const CharityOrganization = (props: CharityOrganizationProps) => {
       : [...initialData, id];
 
     updateForm("fundRaiser", {
+      ...formState.fundRaiser,
       recipientCharities: newData,
     });
   };

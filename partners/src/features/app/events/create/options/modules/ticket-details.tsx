@@ -21,8 +21,6 @@ import {
 import infoIcon from "../../../edit/edit-ticket-type/assets/info.svg";
 import { Switch } from "@/modules/ui/switch";
 import { sanitizeNumericInput } from "@/helpers/input";
-import { getValidTicketCount } from "../helper/ticket";
-import { useState, useEffect } from "react";
 import { CurrencySelect } from "@/modules/units/form/currency";
 import { useCurrencyStore } from "@/stores/currency";
 import { convertGbpTo } from "@/helpers/text";
@@ -42,7 +40,7 @@ const DEFAULT_TICKET_STATE: TicketTierState = {
   ticketDetails: "",
 };
 
-export const TicketEventDetails = ({ ticketStateContext }: Props) => {
+export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: Props) => {
   const { selectedCurrency, getStripeFee } = useCurrencyStore();
   const { formState, updateForm } = useEventFormStore();
   const { ticketing } = formState;
@@ -55,46 +53,31 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
     data?.quotes,
   );
 
-  const currentIndex =
-    ticketStateContext === "creating"
-      ? Math.abs(
-          getValidTicketCount(ticketing) -
-            (getValidTicketCount(ticketing) === 0 ? 0 : 1),
-        ) || 0
-      : formState.currentTicketIndex;
+  const currentIndex = formState.currentTicketIndex ?? 0;
 
-  const getCurrentTicketState = (): TicketTierState => {
-    const hasExistingTickets = ticketing && ticketing.length > 0;
-    const ticketExistsAtIndex = hasExistingTickets && ticketing[currentIndex];
+  const activeTicket: TicketTierState =
+    ticketing && ticketing[currentIndex]
+      ? ticketing[currentIndex]
+      : DEFAULT_TICKET_STATE;
 
-    if (ticketStateContext !== "adding" && ticketExistsAtIndex) {
-      return ticketing[currentIndex];
+  const updateActiveTicket = (updates: Partial<TicketTierState>) => {
+    const currentTiers = ticketing ? [...ticketing] : [];
+    const baseTicket = currentTiers[currentIndex] || { ...DEFAULT_TICKET_STATE };
+    const newTicket: TicketTierState = {
+      ...baseTicket,
+      ...updates,
+    };
+
+    while (currentTiers.length <= currentIndex) {
+      currentTiers.push({ ...DEFAULT_TICKET_STATE });
     }
+    currentTiers[currentIndex] = newTicket;
 
-    if (ticketStateContext !== "adding" && !ticketExistsAtIndex) {
-      return DEFAULT_TICKET_STATE;
-    }
-
-    if (ticketStateContext === "adding" && ticketExistsAtIndex) {
-      return ticketing[currentIndex];
-    }
-
-    return DEFAULT_TICKET_STATE;
+    updateForm("ticketing", currentTiers);
   };
 
-  const currentIndexState = getCurrentTicketState();
-
-  // Local state for managing ticket data before dates are set
-  const [localTicketState, setLocalTicketState] =
-    useState<TicketTierState>(currentIndexState);
-
-  // Sync local state with form state when currentIndex changes or ticket exists
-  useEffect(() => {
-    setLocalTicketState(currentIndexState);
-  }, [currentIndex]);
-
   const feeBreakdown = calculateFees(
-    localTicketState.ticketPrice,
+    activeTicket.ticketPrice || 0,
     formState.absorbFees,
     Number(equivalentHiroekFee),
   );
@@ -105,68 +88,17 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
     Number(ticketing[0].signUpLimit) === 0;
 
   const isSignUpLimitDisabled =
-    firstTicketHasUnlimitedSignup && currentIndex > 1;
-
-  const updateSpecificTicketTier = (
-    index: number,
-    updates: Partial<TicketTierState>,
-  ) => {
-    const currentTiers = formState.ticketing || [];
-
-    if (
-      index < 0 ||
-      index >= currentTiers.length ||
-      currentTiers.length === 0
-    ) {
-      const newTier: TicketTierState = {
-        ...DEFAULT_TICKET_STATE,
-        ...updates,
-      };
-
-      let updatedTiers: TicketTierState[];
-
-      if (index >= currentTiers.length) {
-        updatedTiers = [...currentTiers];
-
-        while (updatedTiers.length <= index) {
-          updatedTiers.push({ ...DEFAULT_TICKET_STATE });
-        }
-        updatedTiers[index] = newTier;
-      } else {
-        updatedTiers = [...currentTiers, newTier];
-      }
-
-      updateForm("ticketing", updatedTiers);
-      return;
-    }
-
-    const updatedTiers = currentTiers.map((tier, i) =>
-      i === index ? { ...tier, ...updates } : tier,
-    );
-
-    updateForm("ticketing", updatedTiers);
-  };
-
-  // Update local state and sync to form if dates are present
-  const updateLocalState = (updates: Partial<TicketTierState>) => {
-    const newState = { ...localTicketState, ...updates };
-    setLocalTicketState(newState);
-
-    // If both dates are present, update the form state
-    if (newState.salesStartDate && newState.salesEndDate) {
-      updateSpecificTicketTier(currentIndex, newState);
-    }
-  };
+    firstTicketHasUnlimitedSignup && currentIndex > 0;
 
   const handleSignUpLimitChange = (value: number) => {
     if (firstTicketHasUnlimitedSignup && currentIndex > 0) {
-      updateLocalState({
+      updateActiveTicket({
         signUpLimit: 0,
       });
       return;
     }
 
-    updateLocalState({
+    updateActiveTicket({
       signUpLimit: value,
     });
   };
@@ -193,13 +125,13 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           placeholder="0"
           type="number"
           value={
-            localTicketState.ticketPrice === 0
-              ? undefined
-              : localTicketState.ticketPrice
+            activeTicket.ticketPrice === 0
+              ? ""
+              : activeTicket.ticketPrice
           }
           onChange={({ target }) => {
-            updateLocalState({
-              ticketPrice: Number(target.value),
+            updateActiveTicket({
+              ticketPrice: Number(target.value) || 0,
             });
           }}
         />
@@ -221,7 +153,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
                 </span>
               </div>
             }
-            value={formState.promoCode?.code}
+            value={formState.promoCode?.code || ""}
             onChange={({ target }) => {
               updateForm("promoCode", {
                 code: target.value,
@@ -250,7 +182,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
             inputMode="numeric"
             pattern="[0-9]*"
             maxLength={3}
-            value={formState.promoCode?.discount || ""}
+            value={formState.promoCode?.discount ? String(formState.promoCode.discount) : ""}
             onChange={({ target }) => {
               // Allow empty string
               if (target.value === "") {
@@ -298,7 +230,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           <span className="font-bold text-sm">Ticket Price</span>
           <span className="font-black text-primary">
             {selectedCurrency.symbol}
-            {formatter.format(localTicketState.ticketPrice)}
+            {formatter.format(activeTicket.ticketPrice || 0)}
           </span>
         </div>
         <hr className="w-full border-primary/30" />
@@ -306,7 +238,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           <span className="font-semibold text-sm">Hiroek Fee:</span>
           <span className="font-black text-primary">
             {selectedCurrency.symbol}
-            {Math.abs(localTicketState.ticketPrice || 0) > 0
+            {Math.abs(activeTicket.ticketPrice || 0) > 0
               ? Number(equivalentHiroekFee || 0).toFixed(2)
               : "0"}
           </span>
@@ -314,7 +246,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         <div className="flex items-center justify-between">
           <span className="font-semibold text-sm">Payment Processing Fee:</span>
           <span className="font-black text-primary">
-            {localTicketState.ticketPrice > 0
+            {activeTicket.ticketPrice > 0
               ? getStripeFee(selectedCurrency.value)
               : `${selectedCurrency.symbol}0`}
           </span>
@@ -352,10 +284,10 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         <Label>Ticket Type Name</Label>
         <Input
           required
-          value={localTicketState.ticketType}
+          value={activeTicket.ticketType || ""}
           placeholder="Enter Ticket Type Name"
           onChange={({ target }) => {
-            updateLocalState({
+            updateActiveTicket({
               ticketType: target.value,
             });
           }}
@@ -367,12 +299,12 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
               <li
                 className={cn(
                   "px-4 py-2 text-xs font-bold bg-primary text-white rounded-full cursor-pointer transition-all",
-                  localTicketState.ticketType === option &&
+                  activeTicket.ticketType === option &&
                     "text-primary bg-primary/10 border border-primary",
                 )}
                 key={index}
                 onClick={() => {
-                  updateLocalState({
+                  updateActiveTicket({
                     ticketType: option,
                   });
                 }}
@@ -387,9 +319,9 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
       <FormField>
         <Label>Ticket Details</Label>
         <MarkdownEditor
-          value={localTicketState.ticketDetails || ""}
+          value={activeTicket.ticketDetails || ""}
           onChange={(markdownContent) => {
-            updateLocalState({
+            updateActiveTicket({
               ticketDetails: markdownContent,
             });
           }}
@@ -401,7 +333,7 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
         <FormCounter
           required
           disabled={isSignUpLimitDisabled}
-          value={localTicketState.signUpLimit}
+          value={activeTicket.signUpLimit ?? 0}
           onChange={({ target }) => {
             //@ts-ignore
             handleSignUpLimitChange(sanitizeNumericInput(target.value));
@@ -409,12 +341,12 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           decrement={() => {
             const newValue = Math.max(
               0,
-              Number(localTicketState.signUpLimit) - 1,
+              Number(activeTicket.signUpLimit || 0) - 1,
             );
             handleSignUpLimitChange(newValue);
           }}
           increment={() => {
-            handleSignUpLimitChange(Number(localTicketState.signUpLimit) + 1);
+            handleSignUpLimitChange(Number(activeTicket.signUpLimit || 0) + 1);
           }}
         />
       </FormField>
@@ -424,9 +356,9 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           <Label>Sale Starts</Label>
           <Input
             required
-            value={localTicketState.salesStartDate || ""}
+            value={activeTicket.salesStartDate || ""}
             onChange={({ target }) => {
-              updateLocalState({
+              updateActiveTicket({
                 salesStartDate: target.value,
               });
             }}
@@ -438,9 +370,9 @@ export const TicketEventDetails = ({ ticketStateContext }: Props) => {
           <Label>Sale Ends</Label>
           <Input
             required
-            value={localTicketState.salesEndDate || ""}
+            value={activeTicket.salesEndDate || ""}
             onChange={({ target }) => {
-              updateLocalState({
+              updateActiveTicket({
                 salesEndDate: target.value,
               });
             }}

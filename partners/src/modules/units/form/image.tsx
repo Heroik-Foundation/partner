@@ -343,9 +343,10 @@ export const ImageWithPreview = ({
   buttonText?: string;
 }) => {
   const { form, setForm } = useAuthStore();
-  const [preview, setPreview] = useState(
-    initialPreview || "/image/input-preview.jpg",
-  );
+  const [preview, setPreview] = useState<string>(() => {
+    if (typeof state === "string" && state) return state;
+    return initialPreview || "/image/input-preview.jpg";
+  });
   const inputRef = useRef<HTMLInputElement>(null);
 
   const crop = useCropEditor();
@@ -372,8 +373,29 @@ export const ImageWithPreview = ({
   };
 
   useEffect(() => {
-    if (initialPreview && !state) setPreview(initialPreview);
-  }, [initialPreview]);
+    if (!state) {
+      if (initialPreview) {
+        setPreview(initialPreview);
+      } else {
+        setPreview("/image/input-preview.jpg");
+      }
+      return;
+    }
+
+    if (typeof state === "string" && state.trim().length > 0) {
+      setPreview(state);
+    } else if (
+      typeof state === "object" &&
+      state !== null &&
+      state instanceof Blob
+    ) {
+      const url = URL.createObjectURL(state);
+      setPreview(url);
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    }
+  }, [state, initialPreview]);
 
   return (
     <>
