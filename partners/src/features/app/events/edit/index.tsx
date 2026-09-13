@@ -60,20 +60,20 @@ const EditEvent = () => {
     }, [event, id]);
 
     useEffect(() => {
-      if(formState.startTime) {
+        if (formState.startTime) {
 
-        console.log(formState);
-        
+            console.log(formState);
 
-    const date = new Date(formState.startTime);
 
-    console.log(date);
-    console.log(formState.startTime);
-    console.log(date.getHours());
-    console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
-    console.log(new Date().getTimezoneOffset());
-      }
-    },[formState.startTime])
+            const date = new Date(formState.startTime);
+
+            console.log(date);
+            console.log(formState.startTime);
+            console.log(date.getHours());
+            console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+            console.log(new Date().getTimezoneOffset());
+        }
+    }, [formState.startTime])
 
     return (
         <Fragment>
@@ -97,7 +97,7 @@ const EditEvent = () => {
                         //@ts-ignore
                         initialPreview={event?.photo}
                     />
-                    <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
+                    {/* <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
                         <div className="flex items-center justify-between">
                             <span className="font-semibold text-sm text-primary">
                                 Do you want to absorb all the ticket fees?
@@ -109,7 +109,7 @@ const EditEvent = () => {
                                 }}
                             />
                         </div>
-                    </div>
+                    </div> */}
                     <FormField>
                         <Label>Event Name</Label>
                         <Input
@@ -188,7 +188,7 @@ const EditEvent = () => {
                                         "font-bold whitespace-nowrap text-primary/50",
                                         (formState?.subCategory?.name ||
                                             formState.category.name) &&
-                                            "text-primary",
+                                        "text-primary",
                                     )}
                                 >
                                     {formState?.subCategory?.name ||
