@@ -21,9 +21,6 @@ const EventDetail = () => {
   });
   const { data: event } = useEventDetailsQuery({ id });
 
-  console.log(event);
-  
-
   const { previousPath } = useRouteStore();
   const backRoute = previousPath === "/app/events" ? "/app/events" : "/app";
 
@@ -44,7 +41,7 @@ const EventDetail = () => {
 
   const isFundraiser =
     (
-      event?.fundRaiser.recipientCharities.map(
+      event?.fundRaiser?.organizations?.map(
         (organization) => organization,
       ) || []
     ).length >= 1;
@@ -111,7 +108,7 @@ const EventDetail = () => {
             startDate={event.endTime}
             description={event.description}
             id={id}
-            organizations={event.fundRaiser.recipientCharities.map(
+            organizations={event?.fundRaiser?.organizations?.map(
               (organization) => organization,
             )}
           />

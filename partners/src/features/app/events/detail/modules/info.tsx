@@ -76,38 +76,12 @@ export default function Info(props: InfoProps) {
                     <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex">
                         About Event
                     </h5>
-
-                    {/* <div className="absolute right-0">
-            <Select value={fontSize} onValueChange={setFontSize}>
-              <SelectTrigger
-                className="w-fit gap-1.5 text-xs border-primary/20 text-primary font-semibold border-2 focus:ring-primary h-7 px-2.5 rounded-md cursor-pointer"
-                aria-label="Select description font size"
-              >
-                <SelectValue placeholder="Size" />
-              </SelectTrigger>
-              <SelectContent>
-                {FONT_SIZE_OPTIONS.map((option) => (
-                  <SelectItem
-                    key={option.value}
-                    value={option.value}
-                    className="text-xs font-semibold cursor-pointer"
-                  >
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div> */}
                 </div>
 
-                <p
-                    className={cn(
-                        "whitespace-pre-wrap text-primary",
-                        "text-start",
-                    )}
-                >
-                    <MarkdownPreview content={description} />
-                </p>
+                <MarkdownPreview
+                    content={description}
+                    className="text-start text-sm text-primary leading-relaxed"
+                />
             </div>
 
             {isFundraiser && (

@@ -13,12 +13,13 @@ interface MarkdownPreviewProps extends React.HTMLAttributes<HTMLDivElement> {
 type InlineNode =
   | { type: "text"; value: string }
   | { type: "bold"; value: string }
-  | { type: "italic"; value: string };
+  | { type: "italic"; value: string }
+  | { type: "strike"; value: string }
+  | { type: "code"; value: string };
 
 // ─── Linear inline parser (no backtracking) ──────────────────────────────────
 // Scans left-to-right in a single pass. Never revisits a character.
-// Incomplete markers (e.g. a lone `*` at end-of-string) are emitted as
-// plain text so partial input never stalls.
+// Incomplete markers are emitted as plain text so partial input never stalls.
 
 function parseInline(text: string): InlineNode[] {
   const nodes: InlineNode[] = [];
@@ -34,9 +35,6 @@ function parseInline(text: string): InlineNode[] {
 
   while (i < text.length) {
     // Try **bold** first (must check before single *)
-    if (text[i] === "*" && text[i + 1] === "**") {
-      // Actually: check for "**"
-    }
     if (text[i] === "*" && text[i + 1] === "*") {
       const closeIdx = text.indexOf("**", i + 2);
       if (closeIdx !== -1 && closeIdx > i + 2) {
@@ -47,7 +45,29 @@ function parseInline(text: string): InlineNode[] {
       }
     }
 
-    // Try *italic* (single star, length > 2 to avoid empty **)
+    // Try ~~strike~~
+    if (text[i] === "~" && text[i + 1] === "~") {
+      const closeIdx = text.indexOf("~~", i + 2);
+      if (closeIdx !== -1 && closeIdx > i + 2) {
+        flush();
+        nodes.push({ type: "strike", value: text.slice(i + 2, closeIdx) });
+        i = closeIdx + 2;
+        continue;
+      }
+    }
+
+    // Try `code`
+    if (text[i] === "`") {
+      const closeIdx = text.indexOf("`", i + 1);
+      if (closeIdx !== -1 && closeIdx > i + 1) {
+        flush();
+        nodes.push({ type: "code", value: text.slice(i + 1, closeIdx) });
+        i = closeIdx + 1;
+        continue;
+      }
+    }
+
+    // Try *italic* (single star)
     if (text[i] === "*" && text[i + 1] !== "*") {
       const closeIdx = text.indexOf("*", i + 1);
       if (closeIdx !== -1 && closeIdx > i + 1) {
@@ -107,13 +127,23 @@ export function MarkdownPreview({
   if (!stable) return null;
 
   return (
-    <div className={cn("prose max-w-none", className)} {...props}>
+    <div className={cn("space-y-2", className)} {...props}>
       {paragraphs.map((nodes, pIdx) => (
-        <p key={pIdx} className={paragraphClassName}>
+        <p key={pIdx} className={cn("whitespace-pre-wrap", paragraphClassName)}>
           {nodes.map((node, nIdx) => {
             if (node.type === "bold")
               return <strong key={nIdx}>{node.value}</strong>;
             if (node.type === "italic") return <em key={nIdx}>{node.value}</em>;
+            if (node.type === "strike") return <del key={nIdx}>{node.value}</del>;
+            if (node.type === "code")
+              return (
+                <code
+                  key={nIdx}
+                  className="font-mono text-[13px] bg-black/5 dark:bg-white/10 rounded px-1 py-0.5"
+                >
+                  {node.value}
+                </code>
+              );
             return node.value; // plain text — no wrapper element needed
           })}
         </p>

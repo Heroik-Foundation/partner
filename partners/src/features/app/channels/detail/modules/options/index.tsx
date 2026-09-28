@@ -148,7 +148,7 @@ function DescriptionDialog({
           <DialogTitle className="text-center text-sm font-bold text-primary">
             Channel Description
           </DialogTitle>
-          <DialogDescription className="text-primary text-sm font-semibold">
+          <DialogDescription asChild className="text-primary text-sm font-semibold">
             <MarkdownPreview content={description} />
           </DialogDescription>
         </DialogHeader>

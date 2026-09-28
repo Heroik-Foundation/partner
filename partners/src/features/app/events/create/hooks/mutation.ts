@@ -39,7 +39,6 @@ type CreateEventBase = {
   privacy: string;
   eventEndDate: string;
   endTime: string;
-  eventType?: string;
   communityId?: string;
   photo?: string | File;
   isRefundable: boolean;

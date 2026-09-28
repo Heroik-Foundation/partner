@@ -10,7 +10,7 @@ import { useEffect, useMemo, useCallback } from "react";
 import { Publish } from "./modules/publish";
 import { toast } from "sonner";
 import { useCurrencyStore } from "@/stores/currency";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
 import { MarkdownPreview } from "@/modules/ui/markdown-preview";
 
 export const PreLaunch = () => {
@@ -128,19 +128,15 @@ export const PreLaunch = () => {
                     <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex">
                         About Event
                     </h5>
-                    <p
-                        className={cn(
-                            "text-sm font-semibold text-primary",
-                            "text-start",
-                        )}
-                    >
-                        <MarkdownPreview content={formState.description} />
-                    </p>
+                    <MarkdownPreview
+                        content={formState.description}
+                        className="text-start text-sm font-semibold text-primary leading-relaxed"
+                    />
                 </div>
 
                 {formState.fundRaiser?.recipientCharities && (
                     <>
-                        {formState.fundRaiser?.recipientCharities[0]!== "" && (
+                        {formState.fundRaiser?.recipientCharities[0] !== "" && (
                             <div className="flex items-start justify-around">
                                 <div className="space-y-2.5 flex flex-col items-center">
                                     <h5 className="text-sm px-2.5 py-1 rounded-lg bg-primary/15 text-primary font-extrabold inline-flex w-fit">

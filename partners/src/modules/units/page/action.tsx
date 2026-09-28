@@ -1,14 +1,14 @@
 // components/action-drawer.tsx
 import { useState, useEffect, useCallback } from "react";
 import { Button, Loader } from "@/modules/ui/button";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/modules/ui/drawer";
+// import {
+//   Drawer,
+//   DrawerContent,
+//   DrawerDescription,
+//   DrawerHeader,
+//   DrawerTitle,
+//   DrawerTrigger,
+// } from "@/modules/ui/drawer";
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,7 @@ import { ReactNode } from "react";
 import { CheckCircle, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/hooks/media-query";
+// import { useMediaQuery } from "@/hooks/media-query";
 
 type DrawerState = "initial" | "step" | "pending" | "success" | "error";
 
@@ -80,7 +80,7 @@ export const ActionDrawer = (props: DrawerProps) => {
   const [currentState, setCurrentState] = useState<DrawerState>("initial");
   // Which extra step we're on (0-indexed)
   const [stepIndex, setStepIndex] = useState(0);
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  // const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const hasSteps = extraSteps.length > 0;
 
@@ -283,45 +283,45 @@ export const ActionDrawer = (props: DrawerProps) => {
   );
 
   // ── Mobile: Drawer ──────────────────────────────────────────────────────────
-  if (!isDesktop) {
-    return (
-      <Drawer open={open} onOpenChange={handleOpenChange}>
-        {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
-        <DrawerContent>
-          <motion.div
-            variants={contentVariants}
-            initial="initial"
-            animate="animate"
-          >
-            <DrawerHeader>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentState === "step" ? "step-header" : currentState}
-                  variants={contentVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                >
-                  {/* Title hidden on extra steps */}
-                  {currentState !== "step" && (
-                    <DrawerTitle className="text-primary text-lg font-extrabold text-center">
-                      {getCurrentTitle()}
-                    </DrawerTitle>
-                  )}
-                  {currentState === "initial" && (
-                    <DrawerDescription className="text-primary/50 text-sm font-semibold text-center">
-                      {description}
-                    </DrawerDescription>
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </DrawerHeader>
-            <ContentBody />
-          </motion.div>
-        </DrawerContent>
-      </Drawer>
-    );
-  }
+  // if (!isDesktop) {
+  //   return (
+  //     <Drawer open={open} onOpenChange={handleOpenChange}>
+  //       {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
+  //       <DrawerContent>
+  //         <motion.div
+  //           variants={contentVariants}
+  //           initial="initial"
+  //           animate="animate"
+  //         >
+  //           <DrawerHeader>
+  //             <AnimatePresence mode="wait">
+  //               <motion.div
+  //                 key={currentState === "step" ? "step-header" : currentState}
+  //                 variants={contentVariants}
+  //                 initial="initial"
+  //                 animate="animate"
+  //                 exit="exit"
+  //               >
+  //                 {/* Title hidden on extra steps */}
+  //                 {currentState !== "step" && (
+  //                   <DrawerTitle className="text-primary text-lg font-extrabold text-center">
+  //                     {getCurrentTitle()}
+  //                   </DrawerTitle>
+  //                 )}
+  //                 {currentState === "initial" && (
+  //                   <DrawerDescription className="text-primary/50 text-sm font-semibold text-center">
+  //                     {description}
+  //                   </DrawerDescription>
+  //                 )}
+  //               </motion.div>
+  //             </AnimatePresence>
+  //           </DrawerHeader>
+  //           <ContentBody />
+  //         </motion.div>
+  //       </DrawerContent>
+  //     </Drawer>
+  //   );
+  // }
 
   // ── Desktop: Dialog ─────────────────────────────────────────────────────────
   return (

@@ -81,6 +81,7 @@ export type Event = {
   };
   fundRaiser: {
     recipientCharities: string[];
+    organizations: any[];
     fundRaised: number;
     goalReached: boolean;
   };
@@ -106,7 +107,7 @@ export type Event = {
 
   updatedAt: string;
 } & (
-  | {
+    | {
       address: string;
       loc: {
         type: "Point";
@@ -114,12 +115,12 @@ export type Event = {
       };
       meetingLink?: never;
     }
-  | {
+    | {
       meetingLink: string;
       address?: never;
       loc?: never;
     }
-);
+  );
 
 export type Channel = {
   adminType: string;
@@ -658,19 +659,19 @@ export type Notification = {
   message: string;
   title: string;
   type:
-    | "FOLLOW"
-    | "EVENT_INVITE"
-    | "EVENT_UPDATE"
-    | "EVENT_STARTED"
-    | "COMMUNITY_INVITE"
-    | "NEW_LIKE"
-    | "NEW_COMMENT"
-    | "POST_REPORT"
-    | "COMMUNITY_REPORT"
-    | "NEW_PAYMENT"
-    | "NEW_CHAT"
-    | "NEW_DONATION"
-    | "NEW_POST";
+  | "FOLLOW"
+  | "EVENT_INVITE"
+  | "EVENT_UPDATE"
+  | "EVENT_STARTED"
+  | "COMMUNITY_INVITE"
+  | "NEW_LIKE"
+  | "NEW_COMMENT"
+  | "POST_REPORT"
+  | "COMMUNITY_REPORT"
+  | "NEW_PAYMENT"
+  | "NEW_CHAT"
+  | "NEW_DONATION"
+  | "NEW_POST";
   actionId: string;
   isRead: boolean;
   createdAt: string;

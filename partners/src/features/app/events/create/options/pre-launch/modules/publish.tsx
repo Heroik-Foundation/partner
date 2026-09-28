@@ -63,7 +63,6 @@ export const Publish = () => {
     ...locationData,
     endTime: convertDateTimeInputToISOString(startDate, startTime),
     eventEndDate: convertDateTimeInputToISOString(endDate, endTime),
-    eventType: isOnlineEvent ? "online" : "in-person",
     ...(mapRecurrenceStateToMutation(recurrence) && {
       recurrence: mapRecurrenceStateToMutation(recurrence)!,
     }),
