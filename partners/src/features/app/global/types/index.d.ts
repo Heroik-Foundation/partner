@@ -23,6 +23,12 @@ export type EventOrganization = {
   totalDonations: number;
 };
 
+export type EventSubcategory = {
+  _id: string;
+  name: string;
+  image?: string;
+};
+
 export type EventCategory = {
   _id: string;
   name: string;
@@ -69,6 +75,8 @@ export type Event = {
   } | null;
   adminType: string;
   category: EventCategory;
+  subcategory?: EventSubcategory | null;
+  subCategory?: EventSubcategory | null;
   createdAt: string;
   description: string;
   endTime: string;

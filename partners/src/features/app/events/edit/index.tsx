@@ -21,7 +21,6 @@ import PlaceAutocomplete from "@/modules/units/form/address";
 import { useEventFormStore } from "../../global/hooks/logic";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/modules/ui/switch";
-import { useMapStore } from "@/stores/maps";
 import { InputWithPrefix } from "../../global/form";
 import MarkdownEditor from "@/modules/ui/markdown-editor";
 
@@ -33,47 +32,20 @@ const EditEvent = () => {
         id,
     });
 
-    const { resetStore } = useMapStore();
-
-    const { formState, updateForm, setFormState, reset } = useEventFormStore();
+    const { formState, updateForm, setFormState } = useEventFormStore();
 
     const { mutate, isPending, isSuccess, isError } = useUpdateEventMutation({
         mode: "diff",
-        //@ts-ignore
         event: event,
         ...formState,
+        eventId: id as string,
     });
 
-    const handleInitialEventDataUpdate = () => {
-        if (event && (formState.name === "" || formState.name !== event.name)) {
+    useEffect(() => {
+        if (event && formState.eventId !== id) {
             setFormState(getInitialEventState(event) as any);
         }
-    };
-
-    useEffect(() => {
-        handleInitialEventDataUpdate();
-
-        return () => {
-            reset();
-            resetStore();
-        };
-    }, [event, id]);
-
-    useEffect(() => {
-        if (formState.startTime) {
-
-            console.log(formState);
-
-
-            const date = new Date(formState.startTime);
-
-            console.log(date);
-            console.log(formState.startTime);
-            console.log(date.getHours());
-            console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
-            console.log(new Date().getTimezoneOffset());
-        }
-    }, [formState.startTime])
+    }, [event, id, formState.eventId, setFormState]);
 
     return (
         <Fragment>
@@ -176,23 +148,26 @@ const EditEvent = () => {
                         <Label>Event Category</Label>
                         <Link
                             to="/app/events/create/category"
-                            className=" text-primary h-14 rounded-xl font-bold ring-primary flex items-center justify-between p-2.5 border-2 border-pirmary/15"
+                            className=" text-primary h-14 rounded-xl font-bold ring-primary flex items-center justify-between p-2.5 border-2 border-primary/15"
                         >
                             <div className="flex items-center space-x-2.5 w-6 h-6">
-                                <img
-                                    src={formState.category.image}
-                                    className=""
-                                />
+                                {formState.category?.image && (
+                                    <img
+                                        src={formState.category.image}
+                                        className=""
+                                        alt=""
+                                    />
+                                )}
                                 <span
                                     className={cn(
                                         "font-bold whitespace-nowrap text-primary/50",
                                         (formState?.subCategory?.name ||
-                                            formState.category.name) &&
+                                            formState.category?.name) &&
                                         "text-primary",
                                     )}
                                 >
                                     {formState?.subCategory?.name ||
-                                        formState.category.name ||
+                                        formState.category?.name ||
                                         "Select Event Category"}
                                 </span>
                             </div>

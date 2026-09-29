@@ -14,19 +14,19 @@ import { useNavigate } from "@tanstack/react-router";
 
 type EventLocation =
   | {
-      isOnlineEvent: true;
-      meetingLink: string;
-      address?: never;
-      latitude?: never;
-      longitude?: never;
-    }
+    isOnlineEvent: true;
+    meetingLink: string;
+    address?: never;
+    latitude?: never;
+    longitude?: never;
+  }
   | {
-      isOnlineEvent: false;
-      address: string;
-      latitude: number;
-      longitude: number;
-      meetingLink?: never;
-    };
+    isOnlineEvent: false;
+    address: string;
+    latitude: number;
+    longitude: number;
+    meetingLink?: never;
+  };
 
 type EventDateTimeFields = {
   startDate: string;
@@ -43,6 +43,8 @@ type EventCoreFields = {
   currency?: string;
   privacy: string;
   photo?: File | string;
+  isRefundable?: boolean;
+  absorbFees?: boolean;
 };
 
 // Diff mode — compares against original event
@@ -50,7 +52,7 @@ type DiffModeProps = EventCoreFields &
   EventDateTimeFields &
   EventLocation & {
     mode: "diff";
-    event: Event;
+    event?: Event | null;
   };
 
 // Direct mode — pass only the fields you want to update
@@ -60,37 +62,40 @@ type DirectModeProps = {
 };
 
 type UpdateEventMutationProps = (DiffModeProps | DirectModeProps) & {
-  eventId: string;
+  eventId?: string;
 };
 
 // --- Hook ---
 
 export function useUpdateEventMutation(props: UpdateEventMutationProps) {
-  const { eventId } = props;
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  // Kept outside mutationFn so onSuccess can reference it
-  let resolvedFields: Record<string, any> = {};
-
   return useMutation({
     mutationFn: async () => {
-      resolvedFields =
+      const targetEventId =
+        props.eventId ||
+        (props as any).id ||
+        (props.mode === "diff" ? props.event?._id : undefined);
+
+      if (!targetEventId) {
+        throw new Error("Event ID is required to update event");
+      }
+
+      const resolvedFields =
         props.mode === "direct" ? props.updatedFields : buildDiffFields(props);
 
       if (Object.keys(resolvedFields).length === 0) return;
 
       const { getFormData } = frmz(resolvedFields);
       const { data } = await authenticatedInstance.patch(
-        `/event-partners/update-event/${eventId}`,
+        `/event-partners/update-event/${targetEventId}`,
         getFormData(),
       );
 
       return data;
     },
     onSuccess: () => {
-      if (Object.keys(resolvedFields).length === 0) return;
-
       toast.success("Event updated successfully", {
         id: "completed-event-edit",
       });
@@ -100,12 +105,19 @@ export function useUpdateEventMutation(props: UpdateEventMutationProps) {
           query.queryKey.includes("user-events"),
       });
 
-      navigate({
-        to: "/app/events/$id",
-        params: {
-          id: eventId,
-        },
-      });
+      const targetEventId =
+        props.eventId ||
+        (props as any).id ||
+        (props.mode === "diff" ? props.event?._id : undefined);
+
+      if (targetEventId) {
+        navigate({
+          to: "/app/events/$id",
+          params: {
+            id: targetEventId,
+          },
+        });
+      }
     },
     onError: (error: ErrorResponse) => {
       handleUserResponseToError(error);
@@ -131,21 +143,44 @@ function buildDiffFields(props: DiffModeProps): Record<string, any> {
     endDate,
     startTime,
     endTime,
+    isRefundable,
+    absorbFees,
   } = props;
 
   const fields: Record<string, any> = {};
 
-  if (name !== event.name) fields.name = name;
-  if (description !== event.description) fields.description = description;
-  if (privacy !== event.privacy) fields.privacy = privacy;
+  if (!event) return fields;
+
+  if (name !== undefined && name !== event.name) fields.name = name;
+  if (description !== undefined && description !== event.description) fields.description = description;
+  if (privacy !== undefined && privacy !== event.privacy) fields.privacy = privacy;
   if (currency && currency !== event.currency) fields.currency = currency;
-  if (category.id !== event.category._id) fields.category = category.id;
-  if (subCategory?.id) fields.subCategory = subCategory.id;
+  if (category?.id && category.id !== (event.category?._id || (event.category as any)?.id)) {
+    fields.category = category.id;
+  }
+  const currentSubcategoryId =
+    event.subcategory?._id ||
+    event.subCategory?._id ||
+    (event.subcategory as any)?.id ||
+    (event.subCategory as any)?.id;
+  if (subCategory?.id && subCategory.id !== currentSubcategoryId) {
+    fields.subcategory = subCategory.id;
+  }
+  if (isRefundable !== undefined && isRefundable !== event.isRefundable) {
+    fields.isRefundable = isRefundable;
+  }
+  if (absorbFees !== undefined && absorbFees !== event.absorbFees) {
+    fields.absorbFees = absorbFees;
+  }
 
   if (!isOnlineEvent) {
-    if (props.address !== event.address) fields.address = props.address;
+    if (props.address !== undefined && props.address !== event.address) {
+      fields.address = props.address;
+    }
     if (
       event.loc &&
+      props.latitude !== undefined &&
+      props.longitude !== undefined &&
       (props.latitude !== event.loc.coordinates[1] ||
         props.longitude !== event.loc.coordinates[0])
     ) {
@@ -154,25 +189,24 @@ function buildDiffFields(props: DiffModeProps): Record<string, any> {
     }
   }
 
-  if (isOnlineEvent && props.meetingLink !== event.meetingLink) {
+  if (isOnlineEvent && props.meetingLink !== undefined && props.meetingLink !== event.meetingLink) {
     fields.meetingLink = props.meetingLink;
   }
 
-  const newStartISO = convertDateTimeInputToISOString(startDate, startTime);
-  const newEndISO = convertDateTimeInputToISOString(endDate, endTime);
-
-  if (
-    event.endTime.split("T")[0] !== startDate ||
-    startTime !== getTimeFromISO(event.endTime)
-  ) {
-    fields.endTime = newStartISO;
+  if (startDate && startTime && event.endTime) {
+    const eventStartDate = event.endTime.split("T")[0];
+    const eventStartTime = getTimeFromISO(event.endTime);
+    if (eventStartDate !== startDate || eventStartTime !== startTime) {
+      fields.endTime = convertDateTimeInputToISOString(startDate, startTime);
+    }
   }
 
-  if (
-    event.eventEndDate.split("T")[0] !== endDate ||
-    endTime !== getTimeFromISO(event.eventEndDate)
-  ) {
-    fields.eventEndDate = newEndISO;
+  if (endDate && endTime && event.eventEndDate) {
+    const eventEndDate = event.eventEndDate.split("T")[0];
+    const eventEndTime = getTimeFromISO(event.eventEndDate);
+    if (eventEndDate !== endDate || eventEndTime !== endTime) {
+      fields.eventEndDate = convertDateTimeInputToISOString(endDate, endTime);
+    }
   }
 
   if (photo instanceof File) fields.photo = photo;

@@ -34,8 +34,23 @@ export const getInitialEventState = (eventData: Event | null | undefined) => {
 
   const category = {
     name: eventData?.category?.name || "",
-    id: eventData?.category?._id || eventData?.category?._id || "",
+    id: eventData?.category?._id || "",
     image: eventData?.category?.image || "",
+  };
+
+  const subCategory = {
+    name:
+      eventData?.subcategory?.name ||
+      eventData?.subCategory?.name ||
+      "",
+    id:
+      eventData?.subcategory?._id ||
+      eventData?.subCategory?._id ||
+      "",
+    image:
+      eventData?.subcategory?.image ||
+      eventData?.subCategory?.image ||
+      "",
   };
 
   const isOnlineEvent = eventData.meetingLink ? true : false;
@@ -56,7 +71,7 @@ export const getInitialEventState = (eventData: Event | null | undefined) => {
     isOnlineEvent,
 
     category,
-    subCategory: { name: "", id: "", image: "" },
+    subCategory,
     startDate,
     endDate,
     startTime,
