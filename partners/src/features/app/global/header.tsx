@@ -4,6 +4,12 @@ import { UserCircle2Icon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useConversationsQuery, useUserPropertiesQuery } from "./hooks/query";
 import { useUserNotificationsQuery } from "../notifications/hooks/query";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/modules/ui/popover";
+import { textLimit } from "@/lib/textlimit";
 
 type HeaderProps = {
   header: {
@@ -125,11 +131,33 @@ export function HomeHeader() {
 
   return (
     <header className="w-full flex justify-between items-center py-2 gap-3">
-      <div className="flex items-center space-x-2.5">
-        <div className="flex flex-col">
-          <span className="text-sm md:text-base font-black text-primary font-axiforma truncate">
-            Welcome {user?.name || "Partner"},
+      <div className=" lg:max-w-[500px] max-w-[300px] flex items-center space-x-2.5">
+        <div className="flex flex-col min-w-0">
+          <span className="text-sm md:text-base font-black text-primary text-wrap font-axiforma truncate">
+            Welcome
           </span>
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="text-left text-sm md:text-base font-black text-primary text-wrap font-axiforma truncate cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
+                title={user?.name || "Partner"}
+              >
+                {textLimit(user?.name ?? "", 40) || "Partner"},
+              </button>
+            </PopoverTrigger>
+            <PopoverContent
+              align="start"
+              sideOffset={6}
+              className="w-auto max-w-[280px] sm:max-w-sm p-3 bg-white shadow-lg border border-primary/15 rounded-xl text-primary font-axiforma"
+            >
+              <div className="space-y-1">
+                <p className="text-sm font-bold text-primary break-words">
+                  {user?.name || "Partner"}
+                </p>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
