@@ -255,8 +255,8 @@ const CreateEvent = () => {
                 minDate={formState.startDate || formatDateToISO(new Date())}
                 placeholder="Select end date"
               />
-            </FormField>
-          </div>
+            </FormField >
+          </div >
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField>
               <Label>Start Time</Label>
@@ -282,8 +282,8 @@ const CreateEvent = () => {
                 }
                 placeholder="Select end time"
               />
-            </FormField>
-          </div>
+            </FormField >
+          </div >
           <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary">
             <div className="flex items-center justify-between">
               <span className="font-semibold text-sm text-primary">
@@ -297,13 +297,13 @@ const CreateEvent = () => {
               />
             </div>
           </div>
-        </FormContent>
+        </FormContent >
         <FormFooter>
           <Button className="w-full" size="lg">
             Continue
           </Button>
         </FormFooter>
-      </Form>
+      </Form >
 
       {hasUserInput && openClosingDialog && (
         <ActionDialog
@@ -316,7 +316,7 @@ const CreateEvent = () => {
           }}
         />
       )}
-    </Fragment>
+    </Fragment >
   );
 };
 
