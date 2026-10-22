@@ -239,8 +239,8 @@ const EditEvent = () => {
                                 onChange={(time) => updateForm("endTime", time)}
                                 minTime={
                                     formState.startDate &&
-                                    formState.endDate &&
-                                    formState.startDate === formState.endDate
+                                        formState.endDate &&
+                                        formState.startDate === formState.endDate
                                         ? formState.startTime
                                         : undefined
                                 }

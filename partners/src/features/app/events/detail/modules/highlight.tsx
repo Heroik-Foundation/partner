@@ -21,7 +21,6 @@ export const Highlight = (props: HighlightProps) => {
 
   console.log(thumbnail);
 
-
   const hasAttendees = (members || 0) > 0 && (avatars || []).length > 0;
 
   return (

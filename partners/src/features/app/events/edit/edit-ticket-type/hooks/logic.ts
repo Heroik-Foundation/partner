@@ -61,8 +61,8 @@ export const useUpdateEventTicketTypeForm = ({
         currentTicketDetails.ticketType || DEFAULT_FORM_STATE.ticketType,
       ...(currentTicketDetails.ticketDetails &&
         currentTicketDetails.ticketDetails.length >= 1 && {
-          ticketDetails: currentTicketDetails.ticketDetails,
-        }),
+        ticketDetails: currentTicketDetails.ticketDetails,
+      }),
     };
   }, [currentTicketDetails]);
 
