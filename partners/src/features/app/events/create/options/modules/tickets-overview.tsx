@@ -65,11 +65,10 @@ export const TicketsOverview = ({ previousStep }: Props) => {
               onDrop={() => handleDrop(index)}
               onDragEnd={handleDragEnd}
               className={`border rounded-xl w-full transition-all cursor-grab active:cursor-grabbing select-none
-              ${
-                isDraggingOver
+              ${isDraggingOver
                   ? "border-primary border-2 scale-[1.01] opacity-80"
                   : "border-primary/25"
-              }`}
+                }`}
             >
               <div className="bg-primary text-white px-4 py-5 rounded-t-xl w-full flex items-center justify-between">
                 <h4 className="text-sm font-extrabold">{ticketType} Ticket</h4>

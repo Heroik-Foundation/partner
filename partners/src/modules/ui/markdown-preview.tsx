@@ -30,6 +30,8 @@ export type BlockNode =
 // ─── Linear inline parser ─────────────────────────────────────────────────────
 
 export function parseInline(text: string): InlineNode[] {
+  // Normalize &nbsp; and other space entities to non-breaking spaces so they never render as literal text
+  const cleanText = text.replace(/&(?:amp;)?(?:nbsp|#160|#x0*a0);/gi, "\u00A0");
   const nodes: InlineNode[] = [];
   let i = 0;
   let plain = "";
@@ -41,16 +43,16 @@ export function parseInline(text: string): InlineNode[] {
     }
   };
 
-  while (i < text.length) {
+  while (i < cleanText.length) {
     // Links: [text](url)
-    if (text[i] === "[") {
-      const closeBracket = text.indexOf("]", i + 1);
-      if (closeBracket !== -1 && text[closeBracket + 1] === "(") {
-        const closeParen = text.indexOf(")", closeBracket + 2);
+    if (cleanText[i] === "[") {
+      const closeBracket = cleanText.indexOf("]", i + 1);
+      if (closeBracket !== -1 && cleanText[closeBracket + 1] === "(") {
+        const closeParen = cleanText.indexOf(")", closeBracket + 2);
         if (closeParen !== -1) {
           flush();
-          const linkText = text.slice(i + 1, closeBracket);
-          const linkHref = text.slice(closeBracket + 2, closeParen);
+          const linkText = cleanText.slice(i + 1, closeBracket);
+          const linkHref = cleanText.slice(closeBracket + 2, closeParen);
           nodes.push({ type: "link", text: linkText, href: linkHref });
           i = closeParen + 1;
           continue;
@@ -59,50 +61,50 @@ export function parseInline(text: string): InlineNode[] {
     }
 
     // Bold: **text**
-    if (text[i] === "*" && text[i + 1] === "*") {
-      const closeIdx = text.indexOf("**", i + 2);
+    if (cleanText[i] === "*" && cleanText[i + 1] === "*") {
+      const closeIdx = cleanText.indexOf("**", i + 2);
       if (closeIdx !== -1 && closeIdx > i + 2) {
         flush();
-        nodes.push({ type: "bold", value: text.slice(i + 2, closeIdx) });
+        nodes.push({ type: "bold", value: cleanText.slice(i + 2, closeIdx) });
         i = closeIdx + 2;
         continue;
       }
     }
 
     // Strike: ~~text~~
-    if (text[i] === "~" && text[i + 1] === "~") {
-      const closeIdx = text.indexOf("~~", i + 2);
+    if (cleanText[i] === "~" && cleanText[i + 1] === "~") {
+      const closeIdx = cleanText.indexOf("~~", i + 2);
       if (closeIdx !== -1 && closeIdx > i + 2) {
         flush();
-        nodes.push({ type: "strike", value: text.slice(i + 2, closeIdx) });
+        nodes.push({ type: "strike", value: cleanText.slice(i + 2, closeIdx) });
         i = closeIdx + 2;
         continue;
       }
     }
 
     // Code: `text`
-    if (text[i] === "`") {
-      const closeIdx = text.indexOf("`", i + 1);
+    if (cleanText[i] === "`") {
+      const closeIdx = cleanText.indexOf("`", i + 1);
       if (closeIdx !== -1 && closeIdx > i + 1) {
         flush();
-        nodes.push({ type: "code", value: text.slice(i + 1, closeIdx) });
+        nodes.push({ type: "code", value: cleanText.slice(i + 1, closeIdx) });
         i = closeIdx + 1;
         continue;
       }
     }
 
     // Italic: *text* (single star)
-    if (text[i] === "*" && text[i + 1] !== "*") {
-      const closeIdx = text.indexOf("*", i + 1);
+    if (cleanText[i] === "*" && cleanText[i + 1] !== "*") {
+      const closeIdx = cleanText.indexOf("*", i + 1);
       if (closeIdx !== -1 && closeIdx > i + 1) {
         flush();
-        nodes.push({ type: "italic", value: text.slice(i + 1, closeIdx) });
+        nodes.push({ type: "italic", value: cleanText.slice(i + 1, closeIdx) });
         i = closeIdx + 1;
         continue;
       }
     }
 
-    plain += text[i];
+    plain += cleanText[i];
     i++;
   }
 
@@ -113,8 +115,9 @@ export function parseInline(text: string): InlineNode[] {
 // ─── Block parser ─────────────────────────────────────────────────────────────
 
 export function parseBlocks(markdown: string): BlockNode[] {
+  const normalized = markdown.replace(/&(?:amp;)?(?:nbsp|#160|#x0*a0);/gi, "\u00A0");
   const blocks: BlockNode[] = [];
-  const lines = markdown.split(/\r?\n/);
+  const lines = normalized.split(/\r?\n/);
   let i = 0;
 
   while (i < lines.length) {
@@ -288,6 +291,31 @@ export function RenderInline({ nodes }: { nodes: InlineNode[] }) {
   );
 }
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+/**
+ * Checks if the markdown or HTML content is effectively empty
+ * (i.e. contains only whitespace, HTML tags without visible text/media, or &nbsp; entities).
+ */
+export function isContentEmpty(content?: string | null): boolean {
+  if (!content) return true;
+
+  // Preserve media void elements or markdown void elements that don't have text
+  if (/<(img|iframe|video|audio|svg|hr)\b/i.test(content)) {
+    return false;
+  }
+  if (/!\[.*?\]\(.*?\)/.test(content) || /^(---|___|\*\*\*)$/m.test(content)) {
+    return false;
+  }
+
+  const stripped = content
+    .replace(/<[^>]*>/g, "") // strip all HTML tags
+    .replace(/&(?:amp;)?(?:nbsp|#160|#x0*a0);/gi, "") // strip &nbsp; entities
+    .replace(/[\s\u00A0\u200B-\u200D\uFEFF]/g, ""); // strip whitespace & unicode spaces
+
+  return stripped.length === 0;
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function MarkdownPreview({
@@ -308,10 +336,20 @@ export function MarkdownPreview({
     return () => window.clearTimeout(id);
   }, [content, debounceMs]);
 
+  const isEmpty = React.useMemo(() => isContentEmpty(stable), [stable]);
   const isHtml = React.useMemo(() => /<[a-z][\s\S]*>/i.test(stable), [stable]);
-  const blocks = React.useMemo(() => (isHtml ? [] : parseBlocks(stable)), [stable, isHtml]);
 
-  if (!stable.trim()) return null;
+  const sanitizedHtml = React.useMemo(() => {
+    if (!isHtml) return "";
+    return stable.replace(/&amp;nbsp;/gi, "&nbsp;");
+  }, [stable, isHtml]);
+
+  const blocks = React.useMemo(
+    () => (isHtml || isEmpty ? [] : parseBlocks(stable)),
+    [stable, isHtml, isEmpty],
+  );
+
+  if (isEmpty) return null;
 
   if (isHtml) {
     return (
@@ -330,7 +368,7 @@ export function MarkdownPreview({
           "[&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:pl-3.5 [&_blockquote]:py-1 [&_blockquote]:italic [&_blockquote]:text-primary/80 [&_blockquote]:bg-primary/5 [&_blockquote]:rounded-r-lg [&_blockquote]:my-2",
           className,
         )}
-        dangerouslySetInnerHTML={{ __html: stable }}
+        dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
         {...props}
       />
     );
