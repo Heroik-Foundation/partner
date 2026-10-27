@@ -1,9 +1,7 @@
-import { InputWithPrefix } from "@/features/app/global/form";
 import { Header } from "@/features/app/global/header";
 import {
   Form,
   FormContent,
-  FormCounter,
   FormField,
   FormFooter,
 } from "@/features/auth/global/form";
@@ -22,7 +20,6 @@ import { Button } from "@/modules/ui/button";
 import { useEditEventTicketMutation } from "./hooks/mutation";
 import { convertDateTimeInputToISOString } from "@/helpers/time";
 import { cn } from "@/lib/utils";
-import { sanitizeNumericInput } from "@/helpers/input";
 import { useCurrencyStore } from "@/stores/currency";
 import { useCurrencyQuoteQuery } from "@/features/app/global/hooks/query";
 import { convertGbpTo } from "@/helpers/text";
@@ -31,6 +28,8 @@ import { useUpdateEventMutation } from "../hooks/mutation";
 import { useEffect } from "react";
 import MarkdownEditor from "@/modules/ui/markdown-editor";
 import { DatePicker, formatDateToISO } from "@/modules/ui/date-picker";
+import { TicketQuantitySelect } from "@/modules/units/form/ticket-quantity";
+import { TicketPriceSelect } from "@/modules/units/form/ticket-price";
 
 const EditTicketType = () => {
   const { id, ticketTypeId } = useParams({ strict: false });
@@ -56,8 +55,6 @@ const EditTicketType = () => {
     updateFormField,
     absorbFees,
   } = useUpdateEventTicketTypeForm({ id, ticketTypeId });
-
-  const isUnlimited = Number(formState.signUpLimit ?? 0) === 0;
 
   const handleSignUpLimitChange = (value: number) => {
 
@@ -144,75 +141,71 @@ const EditTicketType = () => {
           </FormField>
 
           <FormField>
-            <Label>Event Ticket Price</Label>
-            <InputWithPrefix
-              prefixItemClassName="text-primary font-bold"
-              prefixItem={currencySymbol}
-              placeholder="0"
-              type="text"
+            <TicketPriceSelect
               value={formState.ticketPrice}
-              onChange={({ target }) => {
-                updateFormField(
-                  "ticketPrice",
-                  sanitizeNumericInput(target.value),
-                );
+              currencySymbol={currencySymbol}
+              returnType="string"
+              onChange={(value) => {
+                updateFormField("ticketPrice", String(value));
               }}
             />
           </FormField>
 
-          <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary space-y-4">
-            <div className="flex items-end justify-end w-full">
-              <img src={infoIcon} alt="" className="w-fit" />
+          {ticketPrice > 0 && (
+            <div className="w-full px-3 py-4 bg-primary/10 rounded-xl text-primary space-y-4">
+              <div className="flex items-end justify-end w-full">
+                <img src={infoIcon} alt="" className="w-fit" />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-sm">Ticket Price</span>
+                <span className="font-black text-primary">
+                  {currencySymbol}
+                  {formatter.format(ticketPrice)}
+                </span>
+              </div>
+              <hr className="w-full border-primary/30" />
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-sm">Hiroek Fee:</span>
+                <span className="font-black text-primary">
+                  {Math.abs(ticketPrice || 0) > 0
+                    ? `${currencySymbol}${Number(equivalentHiroekFee || 0).toFixed(2)}`
+                    : `${currencySymbol}0`}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-sm">
+                  Payment Processing Fee:
+                </span>
+                <span className="font-black text-primary">
+                  {ticketPrice > 0
+                    ? getStripeFee(currency)
+                    : `${currencySymbol}0`}
+                </span>
+              </div>
+              <hr className="w-full border-primary/30" />
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-sm">Buyers Pay:</span>
+                <span className="font-black text-primary">
+                  {currencySymbol}
+                  {formatter.format(feeBreakdown.buyersPay)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-sm">You Receive:</span>
+                <span className="font-black text-primary">
+                  {currencySymbol}
+                  {formatter.format(feeBreakdown.youReceive)}
+                </span>
+              </div>
+              <hr className="w-full border-primary/30" />
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-sm">
+                  Do you want to absorb all the fees?
+                </span>
+                <Switch checked={absorbFees} disabled />
+              </div>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-sm">Ticket Price</span>
-              <span className="font-black text-primary">
-                {currencySymbol}
-                {formatter.format(ticketPrice)}
-              </span>
-            </div>
-            <hr className="w-full border-primary/30" />
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-sm">Hiroek Fee:</span>
-              <span className="font-black text-primary">
-                {Math.abs(ticketPrice || 0) > 0
-                  ? `${currencySymbol}${Number(equivalentHiroekFee || 0).toFixed(2)}`
-                  : `${currencySymbol}0`}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-sm">
-                Payment Processing Fee:
-              </span>
-              <span className="font-black text-primary">
-                {ticketPrice > 0
-                  ? getStripeFee(currency)
-                  : `${currencySymbol}0`}
-              </span>
-            </div>
-            <hr className="w-full border-primary/30" />
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-sm">Buyers Pay:</span>
-              <span className="font-black text-primary">
-                {currencySymbol}
-                {formatter.format(feeBreakdown.buyersPay)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-sm">You Receive:</span>
-              <span className="font-black text-primary">
-                {currencySymbol}
-                {formatter.format(feeBreakdown.youReceive)}
-              </span>
-            </div>
-            <hr className="w-full border-primary/30" />
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-sm">
-                Do you want to absorb all the fees?
-              </span>
-              <Switch checked={absorbFees} disabled />
-            </div>
-          </div>
+          )}
 
           <FormField>
             <Label>Ticket Type Name</Label>
@@ -258,58 +251,16 @@ const EditTicketType = () => {
           </FormField>
 
           <FormField>
-            <div className="flex items-center justify-between">
-              <Label>No of Tickets Available</Label>
-              <div className="flex items-center space-x-2">
-                <span
-                  onClick={() => handleToggleUnlimited(!isUnlimited)}
-                  className="text-xs font-semibold text-primary cursor-pointer select-none"
-                >
-                  Unlimited Tickets
-                </span>
-                <Switch
-                  checked={isUnlimited}
-                  onCheckedChange={handleToggleUnlimited}
-                />
-              </div>
-            </div>
-
-
-            {isUnlimited ? (
-              <div className="w-full py-3.5 px-4 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-between text-primary">
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold">Unlimited Sign-ups</span>
-                  <span className="text-xs text-primary/70">
-                    Attendees can register without capacity restrictions.
-                  </span>
-                </div>
-                <span className="px-3 py-1 text-xs font-extrabold bg-primary text-white rounded-full">
-                  Unlimited (0)
-                </span>
-              </div>
-            ) : (
-              <FormCounter
-                required
-                value={
-                  formState.signUpLimit && formState.signUpLimit > 0
-                    ? formState.signUpLimit
-                    : 1
+            <TicketQuantitySelect
+              value={formState.signUpLimit ?? 1}
+              onChange={(newLimit) => {
+                if (newLimit === 0) {
+                  handleToggleUnlimited(true);
+                } else {
+                  handleSignUpLimitChange(newLimit);
                 }
-                onChange={({ target }) => {
-                  const cleaned = sanitizeNumericInput(target.value);
-                  const val = Number(cleaned);
-                  handleSignUpLimitChange(val <= 0 ? 1 : val);
-                }}
-                decrement={() => {
-                  const currentVal = Number(formState.signUpLimit || 1);
-                  handleSignUpLimitChange(Math.max(1, currentVal - 1));
-                }}
-                increment={() => {
-                  const currentVal = Number(formState.signUpLimit || 1);
-                  handleSignUpLimitChange(Math.max(1, currentVal + 1));
-                }}
-              />
-            )}
+              }}
+            />
           </FormField>
 
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-5">

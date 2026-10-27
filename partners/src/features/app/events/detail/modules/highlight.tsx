@@ -20,7 +20,7 @@ export const Highlight = (props: HighlightProps) => {
   const imageURL = thumbnail === "" ? "/image/input-preview.jpg" : thumbnail;
 
   console.log(thumbnail);
-  
+
 
   const hasAttendees = (members || 0) > 0 && (avatars || []).length > 0;
 
@@ -128,7 +128,7 @@ export const Highlight = (props: HighlightProps) => {
           >
             <img src={ticketIcon} alt="" className="w-2.5" />
             <span className="font-extrabold text-xs whitespace-nowrap md:text-sm">
-              {availableTickets > 0 ? `${availableTickets} ` : ""}Tickets
+              {availableTickets > 0 ? ` ` : ""}Tickets
               available
             </span>
           </div>

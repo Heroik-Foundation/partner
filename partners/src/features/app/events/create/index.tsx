@@ -39,23 +39,19 @@ const CreateEvent = () => {
     useState<boolean>(false);
   const hasUserInput = Boolean(
     formState.name ||
-      formState.description ||
-      formState.photo ||
-      formState.address ||
-      formState.meetingLink ||
-      formState.category.id ||
-      formState.startDate ||
-      formState.endDate ||
-      formState.startTime ||
-      formState.endTime,
+    formState.description ||
+    formState.photo ||
+    formState.address ||
+    formState.meetingLink ||
+    formState.category.id ||
+    formState.startDate ||
+    formState.endDate ||
+    formState.startTime ||
+    formState.endTime,
   );
 
   const handleStartDateChange = (date: string) => {
     updateForm("startDate", date);
-    // If endDate is empty or before the new startDate, automatically adjust endDate
-    if (!formState.endDate || formState.endDate < date) {
-      updateForm("endDate", date);
-    }
   };
 
   const handleEndDateChange = (date: string) => {
@@ -64,19 +60,6 @@ const CreateEvent = () => {
 
   const handleStartTimeChange = (time: string) => {
     updateForm("startTime", time);
-    // If event is on the same day and endTime is before/equal to startTime, adjust endTime to 1 hour later
-    if (
-      formState.startDate &&
-      formState.endDate &&
-      formState.startDate === formState.endDate
-    ) {
-      if (formState.endTime && formState.endTime <= time) {
-        const [h, m] = time.split(":").map(Number);
-        const nextHour = (h + 1) % 24;
-        const autoEndTime = `${String(nextHour).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-        updateForm("endTime", autoEndTime);
-      }
-    }
   };
 
   const handleSubmit = () => {
@@ -213,10 +196,10 @@ const CreateEvent = () => {
                 initialValue={
                   formState.address
                     ? {
-                        address: formState.address,
-                        lat: formState.latitude || 0,
-                        lng: formState.longitude || 0,
-                      }
+                      address: formState.address,
+                      lat: formState.latitude || 0,
+                      lng: formState.longitude || 0,
+                    }
                     : undefined
                 }
                 callback={(value) => {
@@ -240,7 +223,7 @@ const CreateEvent = () => {
                   className={cn(
                     "font-bold whitespace-nowrap text-primary/50",
                     (formState?.subCategory?.name || formState.category.name) &&
-                      "text-primary",
+                    "text-primary",
                   )}
                 >
                   {formState?.subCategory?.name ||
@@ -292,8 +275,8 @@ const CreateEvent = () => {
                 onChange={(time) => updateForm("endTime", time)}
                 minTime={
                   formState.startDate &&
-                  formState.endDate &&
-                  formState.startDate === formState.endDate
+                    formState.endDate &&
+                    formState.startDate === formState.endDate
                     ? formState.startTime
                     : undefined
                 }

@@ -1,12 +1,9 @@
-import { InputWithPrefix } from "@/features/app/global/form";
 import { Header } from "@/features/app/global/header";
 import {
   Form,
   FormContent,
-  FormCounter,
   FormField,
 } from "@/features/auth/global/form";
-import { sanitizeNumericInput } from "@/helpers/input";
 import { cn } from "@/lib/utils";
 import { Button } from "@/modules/ui/button";
 import { Input } from "@/modules/ui/input";
@@ -14,8 +11,9 @@ import { Label } from "@/modules/ui/label";
 import MarkdownEditor from "@/modules/ui/markdown-editor";
 import { CurrencySelect } from "@/modules/units/form/currency";
 import { useCurrencyStore } from "@/stores/currency";
-import { Switch } from "@/modules/ui/switch";
 import { DatePicker, formatDateToISO } from "@/modules/ui/date-picker";
+import { TicketQuantitySelect } from "@/modules/units/form/ticket-quantity";
+import { TicketPriceSelect } from "@/modules/units/form/ticket-price";
 
 import { Fragment, useState } from "react";
 import { useAddEventTicketMutation } from "./hooks/mutation";
@@ -45,8 +43,6 @@ const AddTicketType = () => {
     salesStartDate: null,
     salesEndDate: null,
   });
-
-  const isUnlimited = Number(form.signUpLimit ?? 0) === 0;
 
   const handleSignUpLimitChange = (value: number) => {
 
@@ -112,18 +108,14 @@ const AddTicketType = () => {
           </FormField>
 
           <FormField>
-            <Label>Event Ticket Price</Label>
-            <InputWithPrefix
-              required
-              prefixItemClassName="text-primary font-bold"
-              prefixItem={selectedCurrency.symbol}
-              placeholder="0"
-              type="text"
+            <TicketPriceSelect
               value={form.ticketPrice}
-              onChange={({ target }) => {
+              currencySymbol={selectedCurrency.symbol}
+              returnType="string"
+              onChange={(value) => {
                 setForm((prev) => ({
                   ...prev,
-                  ticketPrice: sanitizeNumericInput(target.value),
+                  ticketPrice: String(value),
                 }));
               }}
             />
@@ -182,57 +174,16 @@ const AddTicketType = () => {
           </FormField>
 
           <FormField>
-            <div className="flex items-center justify-between">
-              <Label>No of Tickets Available</Label>
-              <div className="flex items-center space-x-2">
-                <span
-                  onClick={() => handleToggleUnlimited(!isUnlimited)}
-                  className="text-xs font-semibold text-primary cursor-pointer select-none"
-                >
-                  Unlimited Tickets
-                </span>
-                <Switch
-                  checked={isUnlimited}
-                  onCheckedChange={handleToggleUnlimited}
-                />
-              </div>
-            </div>
-
-            {isUnlimited ? (
-              <div className="w-full py-3.5 px-4 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-between text-primary">
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold">Unlimited Sign-ups</span>
-                  <span className="text-xs text-primary/70">
-                    Attendees can register without capacity restrictions.
-                  </span>
-                </div>
-                <span className="px-3 py-1 text-xs font-extrabold bg-primary text-white rounded-full">
-                  Unlimited (0)
-                </span>
-              </div>
-            ) : (
-              <FormCounter
-                required
-                value={
-                  form.signUpLimit && form.signUpLimit > 0
-                    ? form.signUpLimit
-                    : 1
+            <TicketQuantitySelect
+              value={form.signUpLimit ?? 1}
+              onChange={(newLimit) => {
+                if (newLimit === 0) {
+                  handleToggleUnlimited(true);
+                } else {
+                  handleSignUpLimitChange(newLimit);
                 }
-                onChange={({ target }) => {
-                  const cleaned = sanitizeNumericInput(target.value);
-                  const val = Number(cleaned);
-                  handleSignUpLimitChange(val <= 0 ? 1 : val);
-                }}
-                decrement={() => {
-                  const currentVal = Number(form.signUpLimit || 1);
-                  handleSignUpLimitChange(Math.max(1, currentVal - 1));
-                }}
-                increment={() => {
-                  const currentVal = Number(form.signUpLimit || 1);
-                  handleSignUpLimitChange(Math.max(1, currentVal + 1));
-                }}
-              />
-            )}
+              }}
+            />
           </FormField>
 
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -244,9 +195,6 @@ const AddTicketType = () => {
                 onChange={(date) => {
                   setForm((prev) => {
                     const updates = { ...prev, salesStartDate: date };
-                    if (!prev.salesEndDate || prev.salesEndDate < date) {
-                      updates.salesEndDate = date;
-                    }
                     return updates;
                   });
                 }}
