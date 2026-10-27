@@ -13,6 +13,8 @@ const Switch = forwardRef<SwitchRef, SwitchProps>(
         "peer inline-flex h-6 w-12 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-zinc-200",
         className,
       )}
+      checked={checked}
+      defaultChecked={defaultChecked}
       {...props}
       ref={ref}
     >

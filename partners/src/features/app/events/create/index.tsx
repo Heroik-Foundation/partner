@@ -27,6 +27,8 @@ import { useState } from "react";
 import { InputWithPrefix } from "../../global/form";
 import { Switch } from "@/modules/ui/switch";
 import MarkdownEditor from "@/modules/ui/markdown-editor";
+import { DatePicker, formatDateToISO } from "@/modules/ui/date-picker";
+import { TimePicker } from "@/modules/ui/time-picker";
 
 const CreateEvent = () => {
   const { formState, updateForm, reset } = useEventFormStore();
@@ -48,9 +50,76 @@ const CreateEvent = () => {
       formState.endTime,
   );
 
+  const handleStartDateChange = (date: string) => {
+    updateForm("startDate", date);
+    // If endDate is empty or before the new startDate, automatically adjust endDate
+    if (!formState.endDate || formState.endDate < date) {
+      updateForm("endDate", date);
+    }
+  };
+
+  const handleEndDateChange = (date: string) => {
+    updateForm("endDate", date);
+  };
+
+  const handleStartTimeChange = (time: string) => {
+    updateForm("startTime", time);
+    // If event is on the same day and endTime is before/equal to startTime, adjust endTime to 1 hour later
+    if (
+      formState.startDate &&
+      formState.endDate &&
+      formState.startDate === formState.endDate
+    ) {
+      if (formState.endTime && formState.endTime <= time) {
+        const [h, m] = time.split(":").map(Number);
+        const nextHour = (h + 1) % 24;
+        const autoEndTime = `${String(nextHour).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+        updateForm("endTime", autoEndTime);
+      }
+    }
+  };
+
   const handleSubmit = () => {
+    if (!formState.name?.trim()) {
+      toast.info("Please enter an event name");
+      return;
+    }
+
     if (!formState.category.id && !formState.category.name) {
       toast.info("Please select a category");
+      return;
+    }
+
+    if (!formState.startDate) {
+      toast.info("Please select a start date");
+      return;
+    }
+
+    if (!formState.endDate) {
+      toast.info("Please select an end date");
+      return;
+    }
+
+    if (formState.endDate < formState.startDate) {
+      toast.error("End date cannot be earlier than start date");
+      return;
+    }
+
+    if (!formState.startTime) {
+      toast.info("Please select a start time");
+      return;
+    }
+
+    if (!formState.endTime) {
+      toast.info("Please select an end time");
+      return;
+    }
+
+    if (
+      formState.startDate === formState.endDate &&
+      formState.endTime <= formState.startTime
+    ) {
+      toast.error("End time must be after start time");
       return;
     }
 
@@ -183,55 +252,52 @@ const CreateEvent = () => {
             </Link>
           </FormField>
 
-          <div className="w-full space-x-5 flex items-center justify-between">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField>
               <Label>Start Date</Label>
-              <Input
+              <DatePicker
                 required
                 value={formState.startDate}
-                onChange={({ target }) => {
-                  updateForm("startDate", target.value);
-                }}
-                className="text-primary border-none bg-primary/5"
-                type="date"
+                onChange={handleStartDateChange}
+                minDate={formatDateToISO(new Date())}
+                placeholder="Select start date"
               />
             </FormField>
             <FormField>
               <Label>End Date</Label>
-              <Input
+              <DatePicker
                 required
                 value={formState.endDate}
-                onChange={({ target }) => {
-                  updateForm("endDate", target.value);
-                }}
-                className="text-primary border-none bg-primary/5"
-                type="date"
+                onChange={handleEndDateChange}
+                minDate={formState.startDate || formatDateToISO(new Date())}
+                placeholder="Select end date"
               />
             </FormField>
           </div>
-          <div className="w-full space-x-5 flex items-center justify-between">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField>
               <Label>Start Time</Label>
-              <Input
+              <TimePicker
                 required
-                className="text-primary border-none bg-primary/5"
-                type="time"
                 value={formState.startTime}
-                onChange={({ target }) => {
-                  updateForm("startTime", target.value);
-                }}
+                onChange={handleStartTimeChange}
+                placeholder="Select start time"
               />
             </FormField>
             <FormField>
               <Label>End Time</Label>
-              <Input
+              <TimePicker
                 required
-                className="text-primary border-none bg-primary/5"
-                type="time"
                 value={formState.endTime}
-                onChange={({ target }) => {
-                  updateForm("endTime", target.value);
-                }}
+                onChange={(time) => updateForm("endTime", time)}
+                minTime={
+                  formState.startDate &&
+                  formState.endDate &&
+                  formState.startDate === formState.endDate
+                    ? formState.startTime
+                    : undefined
+                }
+                placeholder="Select end time"
               />
             </FormField>
           </div>

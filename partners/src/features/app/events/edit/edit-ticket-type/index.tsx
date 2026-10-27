@@ -30,6 +30,7 @@ import { CurrencySelect } from "@/modules/units/form/currency";
 import { useUpdateEventMutation } from "../hooks/mutation";
 import { useEffect } from "react";
 import MarkdownEditor from "@/modules/ui/markdown-editor";
+import { DatePicker, formatDateToISO } from "@/modules/ui/date-picker";
 
 const EditTicketType = () => {
   const { id, ticketTypeId } = useParams({ strict: false });
@@ -50,8 +51,32 @@ const EditTicketType = () => {
     currencyQuotes?.quotes,
   );
 
-  const { formState, updateFormField, absorbFees } =
-    useUpdateEventTicketTypeForm({ id, ticketTypeId });
+  const {
+    formState,
+    updateFormField,
+    absorbFees,
+  } = useUpdateEventTicketTypeForm({ id, ticketTypeId });
+
+  const isUnlimited = Number(formState.signUpLimit ?? 0) === 0;
+
+  const handleSignUpLimitChange = (value: number) => {
+
+    // When limited, ticket can't be zero
+    const limitedValue = Math.max(1, value);
+    updateFormField("signUpLimit", limitedValue);
+  };
+
+  const handleToggleUnlimited = (unlimited: boolean) => {
+    if (unlimited) {
+      updateFormField("signUpLimit", 0);
+    } else {
+      const newLimit =
+        formState.signUpLimit && formState.signUpLimit > 0
+          ? formState.signUpLimit
+          : 1;
+      updateFormField("signUpLimit", newLimit);
+    }
+  };
 
   const ticketPrice = Number(formState.ticketPrice);
   const feeBreakdown = calculateFees(
@@ -68,13 +93,13 @@ const EditTicketType = () => {
     ticketType: formState.ticketType.toLowerCase(),
     ...(formState.salesEndDate !== null &&
       formState.salesStartDate !== null && {
-        salesEndDate: convertDateTimeInputToISOString(
-          String(formState.salesEndDate),
-        ),
-        salesStartDate: convertDateTimeInputToISOString(
-          String(formState.salesStartDate),
-        ),
-      }),
+      salesEndDate: convertDateTimeInputToISOString(
+        String(formState.salesEndDate),
+      ),
+      salesStartDate: convertDateTimeInputToISOString(
+        String(formState.salesStartDate),
+      ),
+    }),
   });
 
   const {
@@ -207,7 +232,7 @@ const EditTicketType = () => {
                       className={cn(
                         "px-4 py-2 text-xs font-bold bg-primary text-white rounded-full cursor-pointer transition-all",
                         formState.ticketType === option &&
-                          "text-primary bg-primary/10 border border-primary",
+                        "text-primary bg-primary/10 border border-primary",
                       )}
                       key={index}
                       onClick={() => {
@@ -233,49 +258,94 @@ const EditTicketType = () => {
           </FormField>
 
           <FormField>
-            <Label>No of Tickets Available</Label>
-            <FormCounter
-              value={formState.signUpLimit}
-              onChange={({ target }) => {
-                updateFormField("signUpLimit", Number(target.value));
-              }}
-              increment={() => {
-                updateFormField(
-                  "signUpLimit",
-                  Math.abs(Number(formState.signUpLimit + 1)),
-                );
-              }}
-              decrement={() => {
-                updateFormField(
-                  "signUpLimit",
-                  Math.abs(Number(formState.signUpLimit - 1)),
-                );
-              }}
-            />
+            <div className="flex items-center justify-between">
+              <Label>No of Tickets Available</Label>
+              <div className="flex items-center space-x-2">
+                <span
+                  onClick={() => handleToggleUnlimited(!isUnlimited)}
+                  className="text-xs font-semibold text-primary cursor-pointer select-none"
+                >
+                  Unlimited Tickets
+                </span>
+                <Switch
+                  checked={isUnlimited}
+                  onCheckedChange={handleToggleUnlimited}
+                />
+              </div>
+            </div>
+
+
+            {isUnlimited ? (
+              <div className="w-full py-3.5 px-4 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-between text-primary">
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold">Unlimited Sign-ups</span>
+                  <span className="text-xs text-primary/70">
+                    Attendees can register without capacity restrictions.
+                  </span>
+                </div>
+                <span className="px-3 py-1 text-xs font-extrabold bg-primary text-white rounded-full">
+                  Unlimited (0)
+                </span>
+              </div>
+            ) : (
+              <FormCounter
+                required
+                value={
+                  formState.signUpLimit && formState.signUpLimit > 0
+                    ? formState.signUpLimit
+                    : 1
+                }
+                onChange={({ target }) => {
+                  const cleaned = sanitizeNumericInput(target.value);
+                  const val = Number(cleaned);
+                  handleSignUpLimitChange(val <= 0 ? 1 : val);
+                }}
+                decrement={() => {
+                  const currentVal = Number(formState.signUpLimit || 1);
+                  handleSignUpLimitChange(Math.max(1, currentVal - 1));
+                }}
+                increment={() => {
+                  const currentVal = Number(formState.signUpLimit || 1);
+                  handleSignUpLimitChange(Math.max(1, currentVal + 1));
+                }}
+              />
+            )}
           </FormField>
 
-          <div className="flex items-center space-x-2.5">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField>
               <Label>Sale Starts</Label>
-              <Input
-                value={formState.salesStartDate as any}
-                type="date"
-                onChange={({ target }) => {
-                  updateFormField("salesStartDate", target.value);
+              <DatePicker
+                required
+                value={formState.salesStartDate || ""}
+                onChange={(date) => {
+                  updateFormField("salesStartDate", date);
+                  if (
+                    !formState.salesEndDate ||
+                    formState.salesEndDate < date
+                  ) {
+                    updateFormField("salesEndDate", date);
+                  }
                 }}
-                className="text-primary"
+                minDate={formatDateToISO(new Date())}
+                placeholder="Select sale start date"
               />
             </FormField>
 
             <FormField>
               <Label>Sale Ends</Label>
-              <Input
-                value={formState.salesEndDate as any}
-                onChange={({ target }) => {
-                  updateFormField("salesEndDate", target.value);
+              <DatePicker
+                required
+                value={formState.salesEndDate || ""}
+                onChange={(date) => {
+                  updateFormField("salesEndDate", date);
                 }}
-                type="date"
-                className="text-primary"
+                minDate={
+                  formState.salesStartDate
+                    ? String(formState.salesStartDate)
+                    : formatDateToISO(new Date())
+                }
+                placeholder="Select sale end date"
               />
             </FormField>
           </div>
@@ -293,7 +363,7 @@ const EditTicketType = () => {
             className="w-full"
             disabled={
               formState.salesStartDate === null ||
-              formState.salesStartDate === null
+              formState.salesEndDate === null
             }
             size={"lg"}
             type="button"

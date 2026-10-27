@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   InputWithPrefix,
   InputWithPrefixSuffix,
@@ -26,6 +27,7 @@ import { useCurrencyStore } from "@/stores/currency";
 import { convertGbpTo } from "@/helpers/text";
 import { useCurrencyQuoteQuery } from "@/features/app/global/hooks/query";
 import MarkdownEditor from "@/modules/ui/markdown-editor";
+import { DatePicker, formatDateToISO } from "@/modules/ui/date-picker";
 
 type Props = {
   ticketStateContext: "adding" | "creating";
@@ -34,7 +36,7 @@ type Props = {
 const DEFAULT_TICKET_STATE: TicketTierState = {
   salesEndDate: null,
   salesStartDate: null,
-  signUpLimit: 0,
+  signUpLimit: 1,
   ticketPrice: 0,
   ticketType: "Standard",
   ticketDetails: "",
@@ -82,25 +84,72 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
     Number(equivalentHiroekFee),
   );
 
-  const firstTicketHasUnlimitedSignup =
-    ticketing &&
-    ticketing.length >= 1 &&
-    Number(ticketing[0].signUpLimit) === 0;
+  const firstTicket = ticketing && ticketing[0];
+  const firstTicketIsUnlimited =
+    Boolean(firstTicket && Number(firstTicket.signUpLimit) === 0);
+  const firstTicketIsLimited =
+    Boolean(firstTicket && Number(firstTicket.signUpLimit) > 0);
 
-  const isSignUpLimitDisabled =
-    firstTicketHasUnlimitedSignup && currentIndex > 0;
+  const isLockedToFirstTicket = currentIndex > 0 && Boolean(firstTicket);
+  const isUnlimited = Number(activeTicket.signUpLimit ?? 0) === 0;
+
+  useEffect(() => {
+    if (currentIndex > 0) {
+      if (firstTicketIsLimited && Number(activeTicket.signUpLimit) === 0) {
+        updateActiveTicket({ signUpLimit: 1 });
+      } else if (
+        firstTicketIsUnlimited &&
+        Number(activeTicket.signUpLimit) !== 0
+      ) {
+        updateActiveTicket({ signUpLimit: 0 });
+      }
+    }
+  }, [
+    firstTicketIsLimited,
+    firstTicketIsUnlimited,
+    currentIndex,
+    activeTicket.signUpLimit,
+  ]);
 
   const handleSignUpLimitChange = (value: number) => {
-    if (firstTicketHasUnlimitedSignup && currentIndex > 0) {
+    if (firstTicketIsUnlimited && currentIndex > 0) {
       updateActiveTicket({
         signUpLimit: 0,
       });
       return;
     }
 
+    // When limited, ticket can't be zero
+    const limitedValue = Math.max(1, value);
     updateActiveTicket({
-      signUpLimit: value,
+      signUpLimit: limitedValue,
     });
+  };
+
+  const handleToggleUnlimited = (unlimited: boolean) => {
+    if (unlimited) {
+      if (currentIndex === 0 && ticketing && ticketing.length > 1) {
+        const updated = ticketing.map((t) => ({ ...t, signUpLimit: 0 }));
+        updateForm("ticketing", updated);
+      } else {
+        updateActiveTicket({ signUpLimit: 0 });
+      }
+    } else {
+      const newLimit =
+        activeTicket.signUpLimit && activeTicket.signUpLimit > 0
+          ? activeTicket.signUpLimit
+          : 1;
+      if (currentIndex === 0 && ticketing && ticketing.length > 1) {
+        const updated = ticketing.map((t, idx) => ({
+          ...t,
+          signUpLimit:
+            idx === 0 ? newLimit : t.signUpLimit > 0 ? t.signUpLimit : 1,
+        }));
+        updateForm("ticketing", updated);
+      } else {
+        updateActiveTicket({ signUpLimit: newLimit });
+      }
+    }
   };
 
   return (
@@ -300,7 +349,7 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
                 className={cn(
                   "px-4 py-2 text-xs font-bold bg-primary text-white rounded-full cursor-pointer transition-all",
                   activeTicket.ticketType === option &&
-                    "text-primary bg-primary/10 border border-primary",
+                  "text-primary bg-primary/10 border border-primary",
                 )}
                 key={index}
                 onClick={() => {
@@ -329,55 +378,108 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
       </FormField>
 
       <FormField>
-        <Label>No of Tickets Available</Label>
-        <FormCounter
-          required
-          disabled={isSignUpLimitDisabled}
-          value={activeTicket.signUpLimit ?? 0}
-          onChange={({ target }) => {
-            //@ts-ignore
-            handleSignUpLimitChange(sanitizeNumericInput(target.value));
-          }}
-          decrement={() => {
-            const newValue = Math.max(
-              0,
-              Number(activeTicket.signUpLimit || 0) - 1,
-            );
-            handleSignUpLimitChange(newValue);
-          }}
-          increment={() => {
-            handleSignUpLimitChange(Number(activeTicket.signUpLimit || 0) + 1);
-          }}
-        />
+        <div className="flex items-center justify-between">
+          <Label>No of Tickets Available</Label>
+          <div className="flex items-center space-x-2">
+            <span
+              onClick={() => {
+                if (!isLockedToFirstTicket) handleToggleUnlimited(!isUnlimited);
+              }}
+              className={cn(
+                "text-xs font-semibold text-primary select-none",
+                !isLockedToFirstTicket && "cursor-pointer",
+              )}
+            >
+              Unlimited Tickets
+            </span>
+            <Switch
+              checked={isUnlimited}
+              onCheckedChange={handleToggleUnlimited}
+              disabled={isLockedToFirstTicket}
+            />
+          </div>
+        </div>
+
+        {isLockedToFirstTicket && (
+          <p className="text-xs text-primary/70 italic">
+            Ticket tiers must match the first ticket's limit type (
+            {firstTicketIsUnlimited ? "Unlimited" : "Limited"}).
+          </p>
+        )}
+
+        {isUnlimited ? (
+          <div className="w-full py-3.5 px-4 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-between text-primary">
+            <div className="flex flex-col">
+              <span className="text-sm font-bold">Unlimited Sign-ups</span>
+              <span className="text-xs text-primary/70">
+                Attendees can register without capacity restrictions.
+              </span>
+            </div>
+            <span className="px-3 py-1 text-xs font-extrabold bg-primary text-white rounded-full">
+              Unlimited (0)
+            </span>
+          </div>
+        ) : (
+          <FormCounter
+            required
+            value={
+              activeTicket.signUpLimit && activeTicket.signUpLimit > 0
+                ? activeTicket.signUpLimit
+                : 1
+            }
+            onChange={({ target }) => {
+              const cleaned = sanitizeNumericInput(target.value);
+              const val = Number(cleaned);
+              handleSignUpLimitChange(val <= 0 ? 1 : val);
+            }}
+            decrement={() => {
+              const currentVal = Number(activeTicket.signUpLimit || 1);
+              handleSignUpLimitChange(Math.max(1, currentVal - 1));
+            }}
+            increment={() => {
+              const currentVal = Number(activeTicket.signUpLimit || 1);
+              handleSignUpLimitChange(Math.max(1, currentVal + 1));
+            }}
+          />
+        )}
       </FormField>
 
-      <div className="space-x-2.5 flex items-center">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-5">
         <FormField>
           <Label>Sale Starts</Label>
-          <Input
+          <DatePicker
             required
             value={activeTicket.salesStartDate || ""}
-            onChange={({ target }) => {
-              updateActiveTicket({
-                salesStartDate: target.value,
-              });
+            onChange={(date) => {
+              const updates: Partial<TicketTierState> = {
+                salesStartDate: date,
+              };
+              if (
+                !activeTicket.salesEndDate ||
+                activeTicket.salesEndDate < date
+              ) {
+                updates.salesEndDate = date;
+              }
+              updateActiveTicket(updates);
             }}
-            className="placeholder:text-primary/50"
-            type="date"
+            minDate={formatDateToISO(new Date())}
+            placeholder="Select sale start date"
           />
         </FormField>
         <FormField>
           <Label>Sale Ends</Label>
-          <Input
+          <DatePicker
             required
             value={activeTicket.salesEndDate || ""}
-            onChange={({ target }) => {
+            onChange={(date) => {
               updateActiveTicket({
-                salesEndDate: target.value,
+                salesEndDate: date,
               });
             }}
-            className="placeholder:text-primary/50"
-            type="date"
+            minDate={
+              activeTicket.salesStartDate || formatDateToISO(new Date())
+            }
+            placeholder="Select sale end date"
           />
         </FormField>
       </div>

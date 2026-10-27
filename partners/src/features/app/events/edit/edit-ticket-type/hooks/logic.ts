@@ -104,5 +104,7 @@ export const useUpdateEventTicketTypeForm = ({
     isDirty,
     hasTicketData: !!currentTicketDetails,
     absorbFees: event?.absorbFees || false,
+    event,
+    currentTicketDetails,
   };
 };
