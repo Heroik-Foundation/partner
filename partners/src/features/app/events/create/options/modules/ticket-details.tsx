@@ -119,7 +119,6 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
       return;
     }
 
-    // When limited, ticket can't be zero
     const limitedValue = Math.max(1, value);
     updateActiveTicket({
       signUpLimit: limitedValue,
