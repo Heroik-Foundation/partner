@@ -27,11 +27,11 @@ import { useRouteStore } from "@/hooks/router";
 
 interface StepConfig {
     title:
-        | "Event Recurrence"
-        | "Add Ticket Type"
-        | "Ticket Details"
-        | "Ticket Details Preview"
-        | "Fundraising Details";
+    | "Event Recurrence"
+    | "Add Ticket Type"
+    | "Ticket Details"
+    | "Ticket Details Preview"
+    | "Fundraising Details";
     description: string;
     component: JSX.Element;
     cta: string;
@@ -196,25 +196,6 @@ const CreateEventOptions = () => {
                 if (activeTicket.salesEndDate < activeTicket.salesStartDate) {
                     toast.error("Sales end date cannot be before sales start date.");
                     return false;
-                }
-
-                if (ticketing && ticketing.length > 1) {
-                    const validTiers = ticketing.filter(
-                        (t) => t.ticketType && t.salesStartDate && t.salesEndDate,
-                    );
-                    const signUpLimits = validTiers.map(
-                        (ticket) => Number(ticket.signUpLimit) || 0,
-                    );
-
-                    const hasZeroLimit = signUpLimits.some((limit) => limit <= 0);
-                    const hasNonZeroLimit = signUpLimits.some((limit) => limit > 0);
-
-                    if (hasZeroLimit && hasNonZeroLimit) {
-                        toast.error(
-                            "All tickets must have the same signup limit type. Either all unlimited (0) or all with limits.",
-                        );
-                        return false;
-                    }
                 }
 
                 return true;
@@ -434,47 +415,47 @@ const CreateEventOptions = () => {
                 addOns={{
                     content: currentStepConfig.title ===
                         "Ticket Details Preview" && (
-                        <div className="absolute top-[96px] left-[calc(100%-12px)] xs:left-[430px]">
-                            <svg
-                                width="11"
-                                height="14"
-                                viewBox="0 0 11 14"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <rect
-                                    x="3.32275"
-                                    width="1.66146"
-                                    height="13.2917"
-                                    rx="0.830729"
-                                    fill="#37137F"
-                                />
-                                <rect
-                                    width="4.85657"
-                                    height="1.52698"
-                                    rx="0.763491"
-                                    transform="matrix(0.68421 -0.729285 0.942293 0.33479 0 3.54199)"
-                                    fill="#37137F"
-                                />
-                                <rect
-                                    x="7.67725"
-                                    y="13.2915"
-                                    width="1.66146"
-                                    height="13.2917"
-                                    rx="0.830729"
-                                    transform="rotate(-180 7.67725 13.2915)"
-                                    fill="#37137F"
-                                />
-                                <rect
-                                    width="4.85657"
-                                    height="1.52698"
-                                    rx="0.763491"
-                                    transform="matrix(-0.684211 0.729285 -0.942293 -0.33479 11 9.74951)"
-                                    fill="#37137F"
-                                />
-                            </svg>
-                        </div>
-                    ),
+                            <div className="absolute top-[96px] left-[calc(100%-12px)] xs:left-[430px]">
+                                <svg
+                                    width="11"
+                                    height="14"
+                                    viewBox="0 0 11 14"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <rect
+                                        x="3.32275"
+                                        width="1.66146"
+                                        height="13.2917"
+                                        rx="0.830729"
+                                        fill="#37137F"
+                                    />
+                                    <rect
+                                        width="4.85657"
+                                        height="1.52698"
+                                        rx="0.763491"
+                                        transform="matrix(0.68421 -0.729285 0.942293 0.33479 0 3.54199)"
+                                        fill="#37137F"
+                                    />
+                                    <rect
+                                        x="7.67725"
+                                        y="13.2915"
+                                        width="1.66146"
+                                        height="13.2917"
+                                        rx="0.830729"
+                                        transform="rotate(-180 7.67725 13.2915)"
+                                        fill="#37137F"
+                                    />
+                                    <rect
+                                        width="4.85657"
+                                        height="1.52698"
+                                        rx="0.763491"
+                                        transform="matrix(-0.684211 0.729285 -0.942293 -0.33479 11 9.74951)"
+                                        fill="#37137F"
+                                    />
+                                </svg>
+                            </div>
+                        ),
                 }}
             />
             <Form onSubmit={handleFormSubmit}>
