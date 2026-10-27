@@ -56,9 +56,9 @@ export function TicketQuantitySelect({
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen((prev) => !prev)}
-        className="w-full h-12 px-4 rounded-xl border border-primary/50 bg-white flex items-center justify-between text-left transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-4 px-4 rounded-xl border border-primary/50 bg-white gap-4 flex items-center justify-between text-left transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <span className="text-sm font-medium text-zinc-600 truncate">
+        <span className="text-sm font-medium text-zinc-600">
           {isOpen
             ? "Choose how many tickets can be sold for this event"
             : isUnlimited

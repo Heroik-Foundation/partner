@@ -94,11 +94,11 @@ export function TicketPriceSelect({
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen((prev) => !prev)}
-        className="w-full h-12 px-4 rounded-xl border border-primary/50 bg-white flex items-center justify-between text-left transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-4 px-4 rounded-xl gap-4 border border-primary/50 bg-white flex items-center justify-between text-left transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <span className="text-sm font-medium text-zinc-600 truncate">
+        <span className="text-sm font-medium text-zinc-600">
           {isOpen
-            ? "Choose whether this ticket is free or paid"
+            ? "Choose the price for this event ticket"
             : isFree
               ? "Free"
               : `Paid (${currencySymbol}${rawInputValue || numValue || 0})`}
