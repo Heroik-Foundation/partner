@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+
 import {
   InputWithPrefix,
   InputWithPrefixSuffix,
@@ -84,40 +84,7 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
     Number(equivalentHiroekFee),
   );
 
-  const firstTicket = ticketing && ticketing[0];
-  const firstTicketIsUnlimited =
-    Boolean(firstTicket && Number(firstTicket.signUpLimit) === 0);
-  const firstTicketIsLimited =
-    Boolean(firstTicket && Number(firstTicket.signUpLimit) > 0);
-
-  const isLockedToFirstTicket = currentIndex > 0 && Boolean(firstTicket);
-
-  useEffect(() => {
-    if (currentIndex > 0) {
-      if (firstTicketIsLimited && Number(activeTicket.signUpLimit) === 0) {
-        updateActiveTicket({ signUpLimit: 1 });
-      } else if (
-        firstTicketIsUnlimited &&
-        Number(activeTicket.signUpLimit) !== 0
-      ) {
-        updateActiveTicket({ signUpLimit: 0 });
-      }
-    }
-  }, [
-    firstTicketIsLimited,
-    firstTicketIsUnlimited,
-    currentIndex,
-    activeTicket.signUpLimit,
-  ]);
-
   const handleSignUpLimitChange = (value: number) => {
-    if (firstTicketIsUnlimited && currentIndex > 0) {
-      updateActiveTicket({
-        signUpLimit: 0,
-      });
-      return;
-    }
-
     const limitedValue = Math.max(1, value);
     updateActiveTicket({
       signUpLimit: limitedValue,
@@ -379,12 +346,6 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
               handleSignUpLimitChange(newLimit);
             }
           }}
-          disabled={isLockedToFirstTicket}
-          helperText={
-            isLockedToFirstTicket
-              ? `Ticket tiers must match the first ticket's limit type (${firstTicketIsUnlimited ? "Unlimited" : "Limited"}).`
-              : undefined
-          }
         />
       </FormField>
 
