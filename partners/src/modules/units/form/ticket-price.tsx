@@ -87,7 +87,7 @@ export function TicketPriceSelect({
 
   return (
     <div className={cn("w-full space-y-2", className)}>
-      {label && <Label className="text-base font-bold text-zinc-900">{label}</Label>}
+      {label && <Label className="text-base font-bold">{label}</Label>}
 
       {/* Trigger Box matching the Design Pattern */}
       <button
