@@ -15,9 +15,11 @@ import { DatePicker, formatDateToISO } from "@/modules/ui/date-picker";
 import { TicketQuantitySelect } from "@/modules/units/form/ticket-quantity";
 import { TicketPriceSelect } from "@/modules/units/form/ticket-price";
 
-import { Fragment, useState } from "react";
+import { Fragment, useState, useMemo, useEffect } from "react";
 import { useAddEventTicketMutation } from "./hooks/mutation";
+import { useEventDetailsQuery } from "../../hooks/query";
 import { useParams } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 type FormState = {
   ticketType: string;
@@ -33,7 +35,28 @@ const AddTicketType = () => {
     strict: false,
   });
 
+  const { data: event } = useEventDetailsQuery({
+    id: id,
+  });
+
   const { selectedCurrency } = useCurrencyStore();
+
+  const existingTickets = useMemo(
+    () => event?.ticketing || [],
+    [event?.ticketing],
+  );
+  const hasExistingTickets = existingTickets.length > 0;
+  const firstTicket = existingTickets[0];
+  const isFirstTicketPaid = Number(firstTicket?.ticketPrice ?? 0) > 0;
+  const isFirstTicketFree = hasExistingTickets && !isFirstTicketPaid;
+
+  const defaultPaidPrice = useMemo(() => {
+    const firstPaid = existingTickets.find((t) => Number(t.ticketPrice) > 0);
+    if (firstPaid && firstPaid.ticketPrice) {
+      return String(firstPaid.ticketPrice / 100);
+    }
+    return "10";
+  }, [existingTickets]);
 
   const [form, setForm] = useState<FormState>({
     ticketType: "standard",
@@ -43,6 +66,50 @@ const AddTicketType = () => {
     salesStartDate: null,
     salesEndDate: null,
   });
+
+  useEffect(() => {
+    if (!event || !hasExistingTickets) return;
+
+    if (isFirstTicketPaid) {
+      setForm((prev) => {
+        if (!prev.ticketPrice || Number(prev.ticketPrice) <= 0) {
+          return { ...prev, ticketPrice: defaultPaidPrice };
+        }
+        return prev;
+      });
+    } else if (isFirstTicketFree) {
+      setForm((prev) => {
+        if (prev.ticketPrice !== "0") {
+          return { ...prev, ticketPrice: "0" };
+        }
+        return prev;
+      });
+    }
+  }, [event, hasExistingTickets, isFirstTicketPaid, isFirstTicketFree, defaultPaidPrice]);
+
+  const allowType = hasExistingTickets
+    ? isFirstTicketPaid
+      ? "paid"
+      : "free"
+    : "all";
+
+  const helperText = hasExistingTickets
+    ? isFirstTicketFree
+      ? "The first ticket is free, so additional tickets cannot be paid."
+      : "The first ticket is a paid ticket, so additional tickets cannot be free."
+    : undefined;
+
+  const handleDisabledClick = (attemptedType: "free" | "paid") => {
+    if (attemptedType === "paid") {
+      toast.error(
+        "The first ticket is free, so additional tickets cannot be paid.",
+      );
+    } else {
+      toast.error(
+        "The first ticket is a paid ticket, so additional tickets cannot be free.",
+      );
+    }
+  };
 
   const handleSignUpLimitChange = (value: number) => {
 
@@ -94,10 +161,37 @@ const AddTicketType = () => {
         onSubmit={(event) => {
           event.preventDefault();
 
+          if (
+            isFirstTicketPaid &&
+            (!form.ticketPrice || Number(form.ticketPrice) <= 0)
+          ) {
+            toast.error(
+              "The first ticket is a paid ticket, so this ticket must have a valid price.",
+            );
+            return;
+          }
+
+          if (isFirstTicketFree && Number(form.ticketPrice) > 0) {
+            toast.error(
+              "The first ticket is free, so additional tickets cannot be paid.",
+            );
+            return;
+          }
+
           mutate();
         }}
       >
         <FormContent>
+          {hasExistingTickets && (
+            <div className="flex items-center gap-2.5 p-3.5 text-xs font-semibold rounded-xl bg-primary/10 text-primary border border-primary/20">
+              <span>
+                {isFirstTicketFree
+                  ? "The first ticket is free, so additional tickets cannot be paid."
+                  : "The first ticket is a paid ticket, so additional tickets cannot be free."}
+              </span>
+            </div>
+          )}
+
           <FormField>
             <Label>Choose Currency</Label>
             <CurrencySelect
@@ -112,6 +206,9 @@ const AddTicketType = () => {
               value={form.ticketPrice}
               currencySymbol={selectedCurrency.symbol}
               returnType="string"
+              allowType={allowType}
+              helperText={helperText}
+              onDisabledClick={handleDisabledClick}
               onChange={(value) => {
                 setForm((prev) => ({
                   ...prev,

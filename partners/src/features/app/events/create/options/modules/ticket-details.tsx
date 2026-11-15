@@ -1,4 +1,6 @@
 
+import { useEffect, useMemo } from "react";
+import { toast } from "sonner";
 import {
   InputWithPrefix,
   InputWithPrefixSuffix,
@@ -56,26 +58,170 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
   );
 
   const currentIndex = formState.currentTicketIndex ?? 0;
+  const isFirstTicket = currentIndex === 0;
+
+  // The first ticket dictates the price type for all subsequent tickets
+  const firstTicket = ticketing?.[0];
+  const isFirstTicketPaid = Number(firstTicket?.ticketPrice ?? 0) > 0;
+  const isFirstTicketFree = !isFirstTicketPaid;
+
+  const defaultPaidPrice = useMemo(
+    () =>
+      ticketing?.find((t) => (t.ticketPrice ?? 0) > 0)?.ticketPrice || 10,
+    [ticketing],
+  );
+
+  const defaultTicketForIndex: TicketTierState = useMemo(
+    () => ({
+      ...DEFAULT_TICKET_STATE,
+      ticketPrice: !isFirstTicket && isFirstTicketPaid ? defaultPaidPrice : 0,
+    }),
+    [isFirstTicket, isFirstTicketPaid, defaultPaidPrice],
+  );
 
   const activeTicket: TicketTierState =
     ticketing && ticketing[currentIndex]
       ? ticketing[currentIndex]
-      : DEFAULT_TICKET_STATE;
+      : defaultTicketForIndex;
+
+  // Ensure all tickets are synchronized if state was previously mixed
+  useEffect(() => {
+    if (!ticketing || ticketing.length <= 1) return;
+
+    const firstPrice = Number(ticketing[0]?.ticketPrice ?? 0);
+    const shouldBePaid = firstPrice > 0;
+    const hasMismatch = ticketing.some((t, i) =>
+      i > 0 ? (shouldBePaid ? (t.ticketPrice ?? 0) <= 0 : (t.ticketPrice ?? 0) > 0) : false,
+    );
+
+    if (hasMismatch) {
+      const fallbackPrice =
+        ticketing.find((t) => (t.ticketPrice ?? 0) > 0)?.ticketPrice || 10;
+
+      const normalized = ticketing.map((t, idx) => {
+        if (idx === 0) return t;
+        return {
+          ...t,
+          ticketPrice: shouldBePaid
+            ? t.ticketPrice > 0
+              ? t.ticketPrice
+              : fallbackPrice
+            : 0,
+        };
+      });
+      updateForm("ticketing", normalized);
+    }
+  }, []);
 
   const updateActiveTicket = (updates: Partial<TicketTierState>) => {
     const currentTiers = ticketing ? [...ticketing] : [];
-    const baseTicket = currentTiers[currentIndex] || { ...DEFAULT_TICKET_STATE };
+    const baseTicket =
+      currentTiers[currentIndex] || { ...defaultTicketForIndex };
     const newTicket: TicketTierState = {
       ...baseTicket,
       ...updates,
     };
 
     while (currentTiers.length <= currentIndex) {
-      currentTiers.push({ ...DEFAULT_TICKET_STATE });
+      currentTiers.push({ ...defaultTicketForIndex });
     }
     currentTiers[currentIndex] = newTicket;
 
     updateForm("ticketing", currentTiers);
+  };
+
+  const handlePriceChange = (val: number | string, mode?: "free" | "paid") => {
+    const newPrice = Math.max(0, Number(val) || 0);
+    const isFree = mode === "free" || (mode !== "paid" && newPrice === 0);
+    const currentTiers = ticketing ? [...ticketing] : [];
+
+    while (currentTiers.length <= currentIndex) {
+      currentTiers.push({ ...defaultTicketForIndex });
+    }
+
+    if (!isFirstTicket) {
+      // Subsequent tickets are locked to match the first ticket
+      if (isFirstTicketFree && !isFree) {
+        toast.error(
+          "The first ticket is free, so additional tickets cannot be paid.",
+        );
+        return;
+      }
+      if (isFirstTicketPaid && isFree) {
+        toast.error(
+          "The first ticket is a paid ticket, so additional tickets cannot be free.",
+        );
+        return;
+      }
+
+      currentTiers[currentIndex] = {
+        ...currentTiers[currentIndex],
+        ticketPrice: newPrice,
+      };
+      updateForm("ticketing", currentTiers);
+      return;
+    }
+
+    // Changing the first ticket updates all other tickets to match
+    if (isFree) {
+      const updatedTiers = currentTiers.map((ticket) => ({
+        ...ticket,
+        ticketPrice: 0,
+      }));
+      updateForm("ticketing", updatedTiers);
+      if (currentTiers.length > 1) {
+        toast.info(
+          "The first ticket is set to Free. All other tickets are now free.",
+        );
+      }
+    } else {
+      const fallbackPrice = newPrice > 0 ? newPrice : 10;
+      const updatedTiers = currentTiers.map((ticket, idx) => {
+        if (idx === 0) {
+          return {
+            ...ticket,
+            ticketPrice: newPrice,
+          };
+        }
+        return {
+          ...ticket,
+          ticketPrice:
+            ticket.ticketPrice && ticket.ticketPrice > 0
+              ? ticket.ticketPrice
+              : fallbackPrice,
+        };
+      });
+      updateForm("ticketing", updatedTiers);
+      if (currentTiers.length > 1) {
+        toast.info(
+          "The first ticket is set to Paid. All other tickets are now paid.",
+        );
+      }
+    }
+  };
+
+  const allowType = isFirstTicket
+    ? "all"
+    : isFirstTicketPaid
+      ? "paid"
+      : "free";
+
+  const helperText = !isFirstTicket
+    ? isFirstTicketFree
+      ? "The first ticket is free, so additional tickets cannot be paid."
+      : "The first ticket is a paid ticket, so additional tickets cannot be free."
+    : undefined;
+
+  const handleDisabledClick = (attemptedType: "free" | "paid") => {
+    if (attemptedType === "paid") {
+      toast.error(
+        "The first ticket is free, so additional tickets cannot be paid.",
+      );
+    } else {
+      toast.error(
+        "The first ticket is a paid ticket, so additional tickets cannot be free.",
+      );
+    }
   };
 
   const feeBreakdown = calculateFees(
@@ -119,6 +265,17 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
 
   return (
     <FormContent>
+      {!isFirstTicket && (
+        <div className="flex items-center gap-2.5 p-3.5 text-xs font-semibold rounded-xl bg-primary/10 text-primary border border-primary/20">
+          <img src={infoIcon} alt="" className="w-4 h-4 shrink-0" />
+          <span>
+            {isFirstTicketFree
+              ? "The first ticket is free, so additional tickets cannot be paid."
+              : "The first ticket is a paid ticket, so additional tickets cannot be free."}
+          </span>
+        </div>
+      )}
+
       <FormField>
         <Label>Choose Currency</Label>
         <CurrencySelect
@@ -133,11 +290,10 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
           value={activeTicket.ticketPrice ?? 0}
           currencySymbol={selectedCurrency.symbol}
           returnType="number"
-          onChange={(val) => {
-            updateActiveTicket({
-              ticketPrice: Number(val) || 0,
-            });
-          }}
+          allowType={allowType}
+          helperText={helperText}
+          onDisabledClick={handleDisabledClick}
+          onChange={handlePriceChange}
         />
       </FormField>
 
