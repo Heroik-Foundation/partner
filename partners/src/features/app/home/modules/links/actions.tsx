@@ -30,6 +30,7 @@ import {
   DrawerTrigger,
 } from "@/modules/ui/drawer";
 import { useEventFormStore } from "@/features/app/global/hooks/logic";
+import { usePermissions } from "@/hooks/use-permissions";
 
 export function Actions() {
   const [extended, setExtended] = useState<boolean>(false);
@@ -37,28 +38,45 @@ export function Actions() {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const { updateForm } = useEventFormStore();
   const navigate = useNavigate();
+  const { canCreateEvent, canCreateChannel, canScanTickets } = usePermissions();
 
-  const actions = [
-    {
-      path: "/app/tickets/scan",
-      title: "Scan Ticket",
-      icon: Ticket,
-      id: 1,
-    },
-    {
-      path: "/app/events/create",
-      title: "Create Event",
-      icon: CalendarPlus2,
-      id: 2,
-      isDialogTrigger: true,
-    },
-    {
-      path: "/app/channels/create",
-      title: "Create Channel",
-      icon: Hash,
-      id: 3,
-    },
+  const allActions = [
+    ...(canScanTickets
+      ? [
+          {
+            path: "/app/tickets/scan",
+            title: "Scan Ticket",
+            icon: Ticket,
+            id: 1,
+          },
+        ]
+      : []),
+    ...(canCreateEvent
+      ? [
+          {
+            path: "/app/events/create",
+            title: "Create Event",
+            icon: CalendarPlus2,
+            id: 2,
+            isDialogTrigger: true,
+          },
+        ]
+      : []),
+    ...(canCreateChannel
+      ? [
+          {
+            path: "/app/channels/create",
+            title: "Create Channel",
+            icon: Hash,
+            id: 3,
+          },
+        ]
+      : []),
   ];
+
+  if (allActions.length === 0) {
+    return null;
+  }
 
   const eventTypeOptions = [
     {
@@ -172,7 +190,7 @@ export function Actions() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {actions.map((action) => {
+            {allActions.map((action) => {
               // Special handling for Create Event button (opens dialog instead of direct link)
               if (action.isDialogTrigger) {
                 return (

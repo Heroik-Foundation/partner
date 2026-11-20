@@ -5,6 +5,7 @@ import type {
   Charity,
   Conversation,
   Event,
+  MembershipInfo,
   NestedPaginatedResponse,
   PaginatedResponse,
   User,
@@ -65,6 +66,25 @@ export function useUserPropertiesQuery() {
     },
     staleTime: timeInMinutes(60),
     retry: 5,
+  });
+}
+
+export function useUserMembershipQuery() {
+  return useQuery({
+    queryKey: ["user-membership"],
+    queryFn: async () => {
+      try {
+        const { data } = await authenticatedInstance.get<any>(
+          "/event-partners/me/membership"
+        );
+        const resolved = data?.membership ?? data?.data ?? data;
+        return resolved as MembershipInfo;
+      } catch (error) {
+        return null;
+      }
+    },
+    staleTime: timeInMinutes(15),
+    retry: 2,
   });
 }
 

@@ -701,3 +701,65 @@ export type PaginatedResponse<T> = {
   totalCount: number;
   totalPages: number;
 };
+
+export type MembershipRole =
+  | "owner"
+  | "admin"
+  | "viewer"
+  | "view"
+  | "user"
+  | string;
+
+export type MembershipPermission =
+  | "events.create"
+  | "events.update"
+  | "events.delete"
+  | "analytics.view"
+  | "donations.view"
+  | "team.remove"
+  | "team.add"
+  | "ticket.scan"
+  | "community.create"
+  | "community.edit"
+  | "community.delete"
+  | "community.announcement"
+  | "billing.manage"
+  | "profile.manage"
+  | "client.*"
+  | string;
+
+export type MembershipInfo = {
+  accountType?: "Organization" | "EventPartner" | string;
+  role?: MembershipRole;
+  permissions?: MembershipPermission[];
+  user?: {
+    _id?: string;
+    fullname?: string;
+    username?: string;
+    email?: string;
+    phone?: string;
+    photo?: string;
+    birthDate?: string;
+    callingCode?: string;
+    isAdmin?: boolean;
+    role?: string;
+    address?: string;
+    [key: string]: any;
+  };
+  account?: {
+    _id?: string;
+    name?: string;
+    logo?: string;
+    bio?: string;
+    address?: string;
+    email?: string;
+    telephone?: string;
+    eventsPerYear?: number;
+    pinSet?: boolean;
+    currentPlan?: string;
+    subscription?: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+};
+

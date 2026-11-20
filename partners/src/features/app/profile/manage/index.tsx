@@ -29,6 +29,8 @@ import { motion, PanInfo } from "motion/react";
 import { ManageProfileMenu } from "./modules/menu";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
+import { usePermissions } from "@/hooks/use-permissions";
+import { RoleBadge } from "@/modules/units/badge/role-badge";
 
 interface SwipeableSessionItemProps {
   session: {
@@ -141,6 +143,12 @@ export function ManageProfiles() {
   const activeSession = getActiveSession();
   const { mutate: addSession, isPending } = useAddSessionMutation();
   const { navigate } = useRouter();
+  const {
+    displayName,
+    roleTag,
+    canUpdateUserInfo,
+    canManagePassword,
+  } = usePermissions();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -221,21 +229,30 @@ export function ManageProfiles() {
           alt="User avatar"
           className="w-20 h-20 rounded-full object-fit object-center"
         />
-        <p className="text-lg font-semibold text-primary">
-          Hi, {truncateText(String(activeSession?.name || "User"))}!
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-lg font-semibold text-primary">
+            Hi, {truncateText(String(displayName || activeSession?.name || "User"))}!
+          </p>
+          <RoleBadge role={roleTag} size="sm" />
+        </div>
 
-        <Button
-          onClick={() => {
-            navigate({
-              to: "/app/profile",
-            });
-          }}
-          variant={"accent"}
-          className="rounded-full"
-        >
-          Manage Your Creator Account
-        </Button>
+        {canUpdateUserInfo ? (
+          <Button
+            onClick={() => {
+              navigate({
+                to: "/app/profile",
+              });
+            }}
+            variant={"accent"}
+            className="rounded-full"
+          >
+            Manage Your Creator Account
+          </Button>
+        ) : (
+          <div className="text-xs font-semibold text-primary/50 bg-primary/5 px-4 py-2 rounded-full border border-primary/10">
+            Account details are managed by the account owner
+          </div>
+        )}
       </div>
 
       <div className="rounded-2xl bg-primary/10">
@@ -274,18 +291,20 @@ export function ManageProfiles() {
           </ul>
         )}
 
-        <button
-          onClick={() => {
-            setDrawerOpen(true);
-          }}
-          className="border p-5 bg-white rounded-b-2xl w-full flex items-center gap-2"
-        >
-          <PlusCircle className="fill-primary stroke-white" />
+        {canManagePassword && (
+          <button
+            onClick={() => {
+              setDrawerOpen(true);
+            }}
+            className="border p-5 bg-white rounded-b-2xl w-full flex items-center gap-2"
+          >
+            <PlusCircle className="fill-primary stroke-white" />
 
-          <span className="text-primary font-semibold">
-            Add Another Creator Account
-          </span>
-        </button>
+            <span className="text-primary font-semibold">
+              Add Another Creator Account
+            </span>
+          </button>
+        )}
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
