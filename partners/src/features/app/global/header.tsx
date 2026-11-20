@@ -10,6 +10,8 @@ import {
   PopoverTrigger,
 } from "@/modules/ui/popover";
 import { textLimit } from "@/lib/textlimit";
+import { usePermissions } from "@/hooks/use-permissions";
+import { RoleBadge } from "@/modules/units/badge/role-badge";
 
 type HeaderProps = {
   header: {
@@ -116,6 +118,7 @@ export function HomeHeader() {
   const { data: user } = useUserPropertiesQuery();
   const { data: messages } = useConversationsQuery({});
   const { data: notifications } = useUserNotificationsQuery();
+  const { displayName, roleTag, membership } = usePermissions();
 
   const unSeenNotifications =
     notifications?.pages
@@ -127,37 +130,52 @@ export function HomeHeader() {
       .flat()
       .filter((message) => message.lastMessage.status === "unread").length || 0;
 
-  const profileImage = user && user.logo ? user.logo : undefined;
+  const profileImage =
+    membership?.user?.photo || (user && user.logo ? user.logo : undefined);
 
   return (
     <header className="w-full flex justify-between items-center py-2 gap-3">
-      <div className=" lg:max-w-[500px] max-w-[300px] flex items-center space-x-2.5">
+      <div className="lg:max-w-[500px] max-w-[320px] flex items-center space-x-2.5">
         <div className="flex flex-col min-w-0">
-          <span className="text-sm md:text-base font-black text-primary text-wrap font-axiforma truncate">
+          <span className="text-xs md:text-sm font-bold text-primary/70 font-axiforma">
             Welcome
           </span>
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                className="text-left text-sm md:text-base font-black text-primary text-wrap font-axiforma truncate cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
-                title={user?.name || "Partner"}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className="text-left text-sm md:text-base font-black text-primary font-axiforma truncate cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
+                  title={displayName}
+                >
+                  {textLimit(displayName, 24) || "Partner"},
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="start"
+                sideOffset={6}
+                className="w-auto max-w-[280px] sm:max-w-sm p-3 bg-white shadow-lg border border-primary/15 rounded-xl text-primary font-axiforma space-y-2"
               >
-                {textLimit(user?.name ?? "", 40) || "Partner"},
-              </button>
-            </PopoverTrigger>
-            <PopoverContent
-              align="start"
-              sideOffset={6}
-              className="w-auto max-w-[280px] sm:max-w-sm p-3 bg-white shadow-lg border border-primary/15 rounded-xl text-primary font-axiforma"
-            >
-              <div className="space-y-1">
-                <p className="text-sm font-bold text-primary break-words">
-                  {user?.name || "Partner"}
-                </p>
-              </div>
-            </PopoverContent>
-          </Popover>
+                <div className="flex items-center justify-between gap-2 border-b border-primary/10 pb-2">
+                  <p className="text-sm font-bold text-primary break-words">
+                    {displayName}
+                  </p>
+                  <RoleBadge role={roleTag} size="sm" />
+                </div>
+                {membership?.user?.email && (
+                  <p className="text-xs text-primary/70 break-all">
+                    {membership.user.email}
+                  </p>
+                )}
+                {user?.name && user.name !== displayName && (
+                  <p className="text-xs text-primary/50">
+                    Organization: <span className="font-semibold text-primary">{user.name}</span>
+                  </p>
+                )}
+              </PopoverContent>
+            </Popover>
+            <RoleBadge role={roleTag} size="sm" />
+          </div>
         </div>
       </div>
 

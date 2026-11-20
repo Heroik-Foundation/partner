@@ -18,9 +18,11 @@ import Autoplay from "embla-carousel-autoplay";
 import { Link } from "@tanstack/react-router";
 import { BanknoteArrowUpIcon, LayoutGridIcon } from "lucide-react";
 import { getActiveSession } from "@/lib/session";
+import { usePermissions } from "@/hooks/use-permissions";
 
 const Home = () => {
   const { data: user } = useUserPropertiesQuery();
+  const { canAccessWallet } = usePermissions();
 
   const { data: presentEvents, isPending: isFetchingPresentEvents } =
     useUserEventsQuery({
@@ -47,10 +49,11 @@ const Home = () => {
   const channels_list = channels?.pages || [];
 
   const isDev = (import.meta.env.VITE_ENVIRONMENT || "") === "development";
+  const url = (import.meta.env.VITE_CRM);
 
   const activeSession = getActiveSession();
 
-  const crmLink = `https://hiroek-crm.vercel.app/auth?accessToken=${activeSession?.sessionToken}`
+  const crmLink = `${url}auth?accessToken=${activeSession?.sessionToken}`
 
   return (
     <div className="space-y-5 relative min-h-screen pb-16">
@@ -76,13 +79,15 @@ const Home = () => {
             <span>View Creator Dashboard</span>
           </Link>
         )}
-        <Link
-          to="/app/revenue"
-          className="h-14 rounded-xl bg-primary w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
-        >
-          <BanknoteArrowUpIcon strokeWidth={1.7} size={18} />
-          <span>Manage Event Revenue</span>
-        </Link>
+        {canAccessWallet && (
+          <Link
+            to="/app/revenue"
+            className="h-14 rounded-xl bg-primary w-full p-2 flex items-center justify-center space-x-1.5 text-xs font-extrabold text-white"
+          >
+            <BanknoteArrowUpIcon strokeWidth={1.7} size={18} />
+            <span>Manage Event Revenue</span>
+          </Link>
+        )}
       </div>
 
       <Actions />
