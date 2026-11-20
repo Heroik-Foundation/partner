@@ -4,9 +4,16 @@ import { Link } from "@tanstack/react-router";
 import { Plus, X, Mic } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
+import { usePermissions } from "@/hooks/use-permissions";
 
 export function Actions({ id }: { id: string }) {
   const [extended, setExtended] = useState<boolean>(false);
+  const { isViewer, hasPermission } = usePermissions();
+  const canAnnounce = !isViewer || hasPermission("community.announcement");
+
+  if (!canAnnounce) {
+    return null;
+  }
 
   const actions = [
     // {

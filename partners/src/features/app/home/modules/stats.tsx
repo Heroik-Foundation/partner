@@ -8,12 +8,14 @@ import {
 } from "../../global/hooks/query";
 
 import { formatCurrency } from "@/helpers/text";
+import { usePermissions } from "@/hooks/use-permissions";
 
 export function Stats() {
   const { data: user } = useUserPropertiesQuery();
   const { data: stats } = usePartnerStatsQuery({ userId: user?._id });
+  const { canAccessWallet } = usePermissions();
 
-  const detail = [
+  const allDetails = [
     {
       label: "Total Events",
       value: stats?.eventsCreated || 0,
@@ -26,12 +28,16 @@ export function Stats() {
       icon: UsersRoundIcon,
       bg: "bg-secondary text-white",
     },
-    {
-      label: "Balance",
-      value: formatCurrency(Number(stats?.walletBalance || 0), "gbp"),
-      icon: CoinsIcon,
-      bg: "bg-accent text-white",
-    },
+    ...(canAccessWallet
+      ? [
+          {
+            label: "Balance",
+            value: formatCurrency(Number(stats?.walletBalance || 0), "gbp"),
+            icon: CoinsIcon,
+            bg: "bg-accent text-white",
+          },
+        ]
+      : []),
     {
       label: "Ticket Sales",
       value: formatCurrency(Number(stats?.ticketSales || 0), "gbp"),
@@ -42,7 +48,7 @@ export function Stats() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
-      {detail.map((item, index, list) => {
+      {allDetails.map((item, index, list) => {
         return (
           <div
             className={cn(
