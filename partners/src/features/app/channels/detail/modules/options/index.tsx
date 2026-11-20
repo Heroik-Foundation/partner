@@ -24,6 +24,7 @@ import { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ShareDialog } from "@/modules/units/page/share";
 import { MarkdownPreview } from "@/modules/ui/markdown-preview";
+import { usePermissions } from "@/hooks/use-permissions";
 
 interface Props {
   id: string;
@@ -33,6 +34,8 @@ interface Props {
 }
 
 export function ChannelOptions({ privacy, id, description }: Props) {
+  const { canEditChannel, canDeleteChannel } = usePermissions();
+
   const options = [
     {
       title: `Channel Access (${privacy === "invite-only" ? "Private" : "Public"})`,
@@ -46,27 +49,35 @@ export function ChannelOptions({ privacy, id, description }: Props) {
       title: "Channel Description",
       variant: "default",
       icon: channelDescriptionIcon,
-      dialog: true, // ✅ mark this one as dialog-enabled
+      dialog: true,
     },
-    {
-      title: "Edit Channel",
-      variant: "default",
-      icon: channelEditIcon,
-      link: {
-        path: "/app/channels/$id/edit",
-      },
-    },
+    ...(canEditChannel
+      ? [
+          {
+            title: "Edit Channel",
+            variant: "default",
+            icon: channelEditIcon,
+            link: {
+              path: "/app/channels/$id/edit",
+            },
+          },
+        ]
+      : []),
     {
       title: "Share Channel",
       variant: "default",
       icon: channelShareIcon,
       share: true,
     },
-    {
-      title: "Delete Channel",
-      variant: "destructive",
-      icon: channelDeleteIcon,
-    },
+    ...(canDeleteChannel
+      ? [
+          {
+            title: "Delete Channel",
+            variant: "destructive",
+            icon: channelDeleteIcon,
+          },
+        ]
+      : []),
   ];
 
   return (

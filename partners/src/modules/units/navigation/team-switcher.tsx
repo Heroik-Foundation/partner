@@ -22,9 +22,12 @@ import {
 } from "@/lib/session";
 import { Avatar, AvatarFallback, AvatarImage } from "@/modules/ui/avatar";
 import { truncateText } from "@/helpers/text";
+import { usePermissions } from "@/hooks/use-permissions";
+import { RoleBadge } from "@/modules/units/badge/role-badge";
 
 export function TeamSwitcher() {
   const { navigate } = useRouter();
+  const { roleTag, displayName } = usePermissions();
   const [activeTeam, setActiveTeam] = React.useState(() => {
     const active = getActiveSession();
     return active || null;
@@ -79,9 +82,12 @@ export function TeamSwitcher() {
             </AvatarFallback>
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold text-primary">
-              {truncateText(activeTeam.name || "User", 20)}
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="truncate font-semibold text-primary">
+                {truncateText(displayName || activeTeam.name || "User", 14)}
+              </span>
+              <RoleBadge role={roleTag} size="sm" />
+            </div>
             <span className="truncate text-xs font-medium text-primary/50">
               {truncateText(activeTeam.email, 25)}
             </span>

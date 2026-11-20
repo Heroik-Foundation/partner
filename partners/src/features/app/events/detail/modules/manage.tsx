@@ -10,6 +10,7 @@ import { getSafeCoordinate } from "../../edit/helpers/location";
 import { useCurrencyStore } from "@/stores/currency";
 import { ActionDrawer } from "@/modules/units/page/action";
 import { useEventTerminationByIDMutation } from "../hooks/mutation";
+import { usePermissions } from "@/hooks/use-permissions";
 
 export const Manage = ({
   id,
@@ -19,6 +20,7 @@ export const Manage = ({
   endDate: string;
   event: Event;
 }) => {
+  const { canEditEvent, canDeleteEvent, canCreateEvent } = usePermissions();
   const issueRefund = isAtLeast7DaysAhead(event.endTime);
   const { mutate, isPending, isSuccess, isError } =
     useEventTerminationByIDMutation({
@@ -113,9 +115,17 @@ export const Manage = ({
     });
   };
 
+  const showEdit = canEditEvent && (dateState === "present" || dateState === "upcoming");
+  const showDelete = canDeleteEvent && dateState === "upcoming";
+  const showDuplicate = canCreateEvent && dateState === "past";
+
+  if (!showEdit && !showDelete && !showDuplicate) {
+    return null;
+  }
+
   return (
     <div className="space-y-2.5 sm:space-y-0 flex flex-col sm:flex-row items-center sm:space-x-2.5">
-      {(dateState === "present" || dateState === "upcoming") && (
+      {showEdit && (
         <Link
           to={"/app/events/$id/edit"}
           className={cn(
@@ -133,7 +143,7 @@ export const Manage = ({
         </Link>
       )}
 
-      {dateState === "upcoming" && (
+      {showDelete && (
         <ActionDrawer
           trigger={
             <Button size="lg" variant="destructive" className="w-full">
@@ -188,7 +198,7 @@ export const Manage = ({
         />
       )}
 
-      {dateState === "past" && (
+      {showDuplicate && (
         <Button
           onClick={handleEventDuplication}
           className="w-full"
