@@ -49,11 +49,11 @@ const Home = () => {
   const channels_list = channels?.pages || [];
 
   const isDev = (import.meta.env.VITE_ENVIRONMENT || "") === "development";
-  const url = (import.meta.env.VITE_CRM);
+  // const url = (import.meta.env.VITE_CRM);
 
   const activeSession = getActiveSession();
 
-  const crmLink = `${url}auth?accessToken=${activeSession?.sessionToken}`
+  const crmLink = `https://hiroek-crm.vercel.app/auth?accessToken=${activeSession?.sessionToken}`
 
   return (
     <div className="space-y-5 relative min-h-screen pb-16">
