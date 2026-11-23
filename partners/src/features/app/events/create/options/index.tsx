@@ -183,8 +183,53 @@ const CreateEventOptions = () => {
                 const activeTicket =
                     ticketing?.[currentTicketIndex] || ticketing?.[0];
 
-                if (!activeTicket || !activeTicket.ticketType?.trim()) {
+                if (!activeTicket) return false;
+
+                // Validate price: if paid ticket, price must be greater than 0
+                const isPaidMode =
+                    activeTicket.priceType === "paid" ||
+                    (activeTicket.priceType !== "free" &&
+                        (Number(ticketing?.[0]?.ticketPrice || 0) > 0 ||
+                            ticketing?.[0]?.priceType === "paid"));
+
+                if (isPaidMode && Number(activeTicket.ticketPrice || 0) <= 0) {
+                    toast.error(
+                        "Ticket price must be greater than 0 for a paid ticket. Please enter a valid price or select Free.",
+                    );
+                    const priceInput = document.getElementById("ticket-price-input");
+                    if (priceInput) {
+                        priceInput.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                        });
+                        (priceInput as HTMLElement).focus();
+                    }
+                    return false;
+                }
+
+                if (!activeTicket.ticketType?.trim()) {
                     toast.error("Please enter a ticket type name.");
+                    return false;
+                }
+
+                // Validate quantity: if limited/set number, quantity must be greater than 0
+                if (
+                    activeTicket.quantityType === "limited" &&
+                    Number(activeTicket.signUpLimit || 0) <= 0
+                ) {
+                    toast.error(
+                        "Ticket quantity must be greater than 0 for a set number. Please enter a valid quantity or select Unlimited.",
+                    );
+                    const quantityInput = document.getElementById(
+                        "ticket-quantity-input",
+                    );
+                    if (quantityInput) {
+                        quantityInput.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                        });
+                        (quantityInput as HTMLElement).focus();
+                    }
                     return false;
                 }
 

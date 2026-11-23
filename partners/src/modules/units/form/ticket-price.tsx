@@ -5,11 +5,14 @@ import { sanitizeNumericInput } from "@/helpers/input";
 import { Label } from "@/modules/ui/label";
 
 export interface TicketPriceSelectProps {
-  value: number | string; // 0 or "0" for free, > 0 for paid
+  value: number | string; // 0 or "0" for free, > 0 for paid (or 0 if user explicitly typed 0 in paid mode)
   currencySymbol?: string;
   onChange: (value: number | string, mode?: "free" | "paid") => void;
   disabled?: boolean;
   allowType?: "all" | "free" | "paid";
+  priceType?: "free" | "paid";
+  hasError?: boolean;
+  id?: string;
   onDisabledClick?: (attemptedType: "free" | "paid") => void;
   label?: string;
   helperText?: string;
@@ -24,6 +27,9 @@ export function TicketPriceSelect({
   onChange,
   disabled = false,
   allowType = "all",
+  priceType,
+  hasError = false,
+  id = "ticket-price-input",
   onDisabledClick,
   label = "Event Ticket Price",
   helperText,
@@ -35,17 +41,21 @@ export function TicketPriceSelect({
 
   const numValue = Number(value || 0);
   const initialMode =
-    allowType === "free"
-      ? "free"
-      : allowType === "paid"
-        ? "paid"
-        : numValue > 0
+    priceType
+      ? priceType
+      : allowType === "free"
+        ? "free"
+        : allowType === "paid"
           ? "paid"
-          : "free";
+          : numValue > 0
+            ? "paid"
+            : "free";
 
   const [mode, setMode] = useState<"free" | "paid">(initialMode);
   const [rawInputValue, setRawInputValue] = useState<string>(() =>
-    numValue > 0 ? String(value) : "",
+    value !== undefined && value !== null && (priceType === "paid" || numValue > 0)
+      ? String(value)
+      : "",
   );
 
   // Track the last paid price so switching back to "Paid" remembers it
@@ -60,16 +70,20 @@ export function TicketPriceSelect({
 
     if (allowType === "paid") {
       setMode("paid");
-      const currentNum = Number(value || 0);
-      if (currentNum > 0) {
-        lastPaidPrice.current = String(value);
+      if (value !== undefined && value !== null) {
         setRawInputValue(String(value));
+        if (Number(value) > 0) lastPaidPrice.current = String(value);
+      }
+      return;
+    }
+
+    if (priceType) {
+      setMode(priceType);
+      if (priceType === "paid") {
+        setRawInputValue(value !== undefined && value !== null ? String(value) : "");
+        if (Number(value) > 0) lastPaidPrice.current = String(value);
       } else {
-        const fallback =
-          lastPaidPrice.current && Number(lastPaidPrice.current) > 0
-            ? lastPaidPrice.current
-            : "10";
-        setRawInputValue(fallback);
+        setRawInputValue("");
       }
       return;
     }
@@ -79,11 +93,8 @@ export function TicketPriceSelect({
       setMode("paid");
       lastPaidPrice.current = String(value);
       setRawInputValue(String(value));
-    } else {
-      setMode("free");
-      setRawInputValue("");
     }
-  }, [value, allowType]);
+  }, [value, allowType, priceType]);
 
   const isFreeDisabled = disabled || allowType === "paid";
   const isPaidDisabled = disabled || allowType === "free";
@@ -120,6 +131,9 @@ export function TicketPriceSelect({
   const handlePriceInput = (rawValue: string) => {
     const cleaned = sanitizeNumericInput(rawValue);
     setRawInputValue(cleaned);
+    if (cleaned !== "" && Number(cleaned) > 0) {
+      lastPaidPrice.current = cleaned;
+    }
     if (returnType === "number") {
       onChange(cleaned === "" ? 0 : Number(cleaned), "paid");
     } else {
@@ -128,13 +142,11 @@ export function TicketPriceSelect({
   };
 
   const handleBlur = () => {
-    if (mode === "paid" && (!rawInputValue || Number(rawInputValue) <= 0)) {
-      const fallback = lastPaidPrice.current || "10";
-      setRawInputValue(fallback);
-      onChange(
-        returnType === "number" ? Number(fallback) : fallback,
-        "paid",
-      );
+    // Keep user's input without resetting 0 to fallback 10.
+    // If input is completely empty in paid mode, set to "0"
+    if (mode === "paid" && rawInputValue.trim() === "") {
+      setRawInputValue("0");
+      onChange(returnType === "number" ? 0 : "0", "paid");
     }
   };
 
@@ -257,6 +269,7 @@ export function TicketPriceSelect({
                       {currencySymbol}
                     </span>
                     <input
+                      id={id}
                       type="text"
                       inputMode="decimal"
                       disabled={disabled || isPaidDisabled}
@@ -264,7 +277,12 @@ export function TicketPriceSelect({
                       placeholder="0.00"
                       onChange={(e) => handlePriceInput(e.target.value)}
                       onBlur={handleBlur}
-                      className="w-full h-11 pl-9 pr-4 rounded-xl bg-white border border-zinc-200 shadow-xs font-bold text-zinc-900 text-base focus:outline-hidden focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                      className={cn(
+                        "w-full h-11 pl-9 pr-4 rounded-xl bg-white border shadow-xs font-bold text-zinc-900 text-base focus:outline-hidden transition-all",
+                        hasError
+                          ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                          : "border-zinc-200 focus:border-primary focus:ring-2 focus:ring-primary/20",
+                      )}
                     />
                   </div>
                 </div>
