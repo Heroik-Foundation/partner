@@ -62,7 +62,8 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
 
   // The first ticket dictates the price type for all subsequent tickets
   const firstTicket = ticketing?.[0];
-  const isFirstTicketPaid = Number(firstTicket?.ticketPrice ?? 0) > 0;
+  const isFirstTicketPaid =
+    firstTicket?.priceType === "paid" || Number(firstTicket?.ticketPrice ?? 0) > 0;
   const isFirstTicketFree = !isFirstTicketPaid;
 
   const defaultPaidPrice = useMemo(
@@ -75,6 +76,7 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
     () => ({
       ...DEFAULT_TICKET_STATE,
       ticketPrice: !isFirstTicket && isFirstTicketPaid ? defaultPaidPrice : 0,
+      priceType: !isFirstTicket && isFirstTicketPaid ? "paid" : "free",
     }),
     [isFirstTicket, isFirstTicketPaid, defaultPaidPrice],
   );
@@ -88,22 +90,28 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
   useEffect(() => {
     if (!ticketing || ticketing.length <= 1) return;
 
-    const firstPrice = Number(ticketing[0]?.ticketPrice ?? 0);
-    const shouldBePaid = firstPrice > 0;
+    const firstTicket = ticketing[0];
+    const shouldBePaid =
+      firstTicket?.priceType === "paid" || Number(firstTicket?.ticketPrice ?? 0) > 0;
     const hasMismatch = ticketing.some((t, i) =>
-      i > 0 ? (shouldBePaid ? (t.ticketPrice ?? 0) <= 0 : (t.ticketPrice ?? 0) > 0) : false,
+      i > 0
+        ? shouldBePaid
+          ? (t.priceType === "free" && Number(t.ticketPrice ?? 0) === 0)
+          : (t.priceType === "paid" || Number(t.ticketPrice ?? 0) > 0)
+        : false,
     );
 
     if (hasMismatch) {
       const fallbackPrice =
-        ticketing.find((t) => (t.ticketPrice ?? 0) > 0)?.ticketPrice || 10;
+        ticketing.find((t) => (t.ticketPrice ?? 0) > 0)?.ticketPrice || 0;
 
       const normalized = ticketing.map((t, idx) => {
         if (idx === 0) return t;
         return {
           ...t,
+          priceType: shouldBePaid ? ("paid" as const) : ("free" as const),
           ticketPrice: shouldBePaid
-            ? t.ticketPrice > 0
+            ? t.ticketPrice !== undefined
               ? t.ticketPrice
               : fallbackPrice
             : 0,
@@ -132,7 +140,8 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
 
   const handlePriceChange = (val: number | string, mode?: "free" | "paid") => {
     const newPrice = Math.max(0, Number(val) || 0);
-    const isFree = mode === "free" || (mode !== "paid" && newPrice === 0);
+    const resolvedMode = mode || (newPrice > 0 ? "paid" : "free");
+    const isFree = resolvedMode === "free";
     const currentTiers = ticketing ? [...ticketing] : [];
 
     while (currentTiers.length <= currentIndex) {
@@ -157,6 +166,7 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
       currentTiers[currentIndex] = {
         ...currentTiers[currentIndex],
         ticketPrice: newPrice,
+        priceType: isFree ? "free" : "paid",
       };
       updateForm("ticketing", currentTiers);
       return;
@@ -167,6 +177,7 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
       const updatedTiers = currentTiers.map((ticket) => ({
         ...ticket,
         ticketPrice: 0,
+        priceType: "free" as const,
       }));
       updateForm("ticketing", updatedTiers);
       if (currentTiers.length > 1) {
@@ -175,20 +186,20 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
         );
       }
     } else {
-      const fallbackPrice = newPrice > 0 ? newPrice : 10;
+      const fallbackPrice = newPrice > 0 ? newPrice : 0;
       const updatedTiers = currentTiers.map((ticket, idx) => {
         if (idx === 0) {
           return {
             ...ticket,
             ticketPrice: newPrice,
+            priceType: "paid" as const,
           };
         }
         return {
           ...ticket,
           ticketPrice:
-            ticket.ticketPrice && ticket.ticketPrice > 0
-              ? ticket.ticketPrice
-              : fallbackPrice,
+            ticket.ticketPrice !== undefined ? ticket.ticketPrice : fallbackPrice,
+          priceType: "paid" as const,
         };
       });
       updateForm("ticketing", updatedTiers);
@@ -230,20 +241,28 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
     Number(equivalentHiroekFee),
   );
 
-  const handleSignUpLimitChange = (value: number) => {
-    const limitedValue = Math.max(1, value);
+  const handleSignUpLimitChange = (
+    value: number,
+    quantityType: "unlimited" | "limited" = "limited",
+  ) => {
+    const limitedValue = Math.max(0, value);
     updateActiveTicket({
       signUpLimit: limitedValue,
+      quantityType,
     });
   };
 
   const handleToggleUnlimited = (unlimited: boolean) => {
     if (unlimited) {
       if (currentIndex === 0 && ticketing && ticketing.length > 1) {
-        const updated = ticketing.map((t) => ({ ...t, signUpLimit: 0 }));
+        const updated = ticketing.map((t) => ({
+          ...t,
+          signUpLimit: 0,
+          quantityType: "unlimited" as const,
+        }));
         updateForm("ticketing", updated);
       } else {
-        updateActiveTicket({ signUpLimit: 0 });
+        updateActiveTicket({ signUpLimit: 0, quantityType: "unlimited" });
       }
     } else {
       const newLimit =
@@ -255,10 +274,11 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
           ...t,
           signUpLimit:
             idx === 0 ? newLimit : t.signUpLimit > 0 ? t.signUpLimit : 1,
+          quantityType: "limited" as const,
         }));
         updateForm("ticketing", updated);
       } else {
-        updateActiveTicket({ signUpLimit: newLimit });
+        updateActiveTicket({ signUpLimit: newLimit, quantityType: "limited" });
       }
     }
   };
@@ -286,8 +306,10 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
       </FormField>
       <FormField>
         <TicketPriceSelect
+          id="ticket-price-input"
           key={`ticket-price-${currentIndex}`}
           value={activeTicket.ticketPrice ?? 0}
+          priceType={activeTicket.priceType || (isFirstTicketPaid ? "paid" : "free")}
           currencySymbol={selectedCurrency.symbol}
           returnType="number"
           allowType={allowType}
@@ -297,7 +319,7 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
         />
       </FormField>
 
-      {activeTicket.ticketPrice > 0 && (
+      {(activeTicket.priceType === "paid" || (activeTicket.ticketPrice ?? 0) > 0) && (
         <>
           <div className="flex items-center space-x-5">
             <FormField>
@@ -494,12 +516,22 @@ export const TicketEventDetails = ({ ticketStateContext: _ticketStateContext }: 
 
       <FormField>
         <TicketQuantitySelect
-          value={activeTicket.signUpLimit ?? 1}
-          onChange={(newLimit) => {
-            if (newLimit === 0) {
+          id="ticket-quantity-input"
+          value={activeTicket.signUpLimit ?? 0}
+          quantityType={
+            activeTicket.quantityType ||
+            (Number(activeTicket.signUpLimit ?? 0) === 0
+              ? "unlimited"
+              : "limited")
+          }
+          onChange={(newLimit, qtyType) => {
+            if (
+              qtyType === "unlimited" ||
+              (qtyType === undefined && newLimit === 0)
+            ) {
               handleToggleUnlimited(true);
             } else {
-              handleSignUpLimitChange(newLimit);
+              handleSignUpLimitChange(newLimit, "limited");
             }
           }}
         />

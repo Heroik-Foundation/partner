@@ -5,8 +5,11 @@ import { sanitizeNumericInput } from "@/helpers/input";
 import { Label } from "@/modules/ui/label";
 
 export interface TicketQuantitySelectProps {
-  value: number; // 0 for unlimited, > 0 for set number
-  onChange: (value: number) => void;
+  value: number; // 0 for unlimited, > 0 for set number (or 0 if user explicitly typed 0 in limited mode)
+  onChange: (value: number, quantityType?: "unlimited" | "limited") => void;
+  quantityType?: "unlimited" | "limited";
+  hasError?: boolean;
+  id?: string;
   disabled?: boolean;
   label?: string;
   helperText?: string;
@@ -17,6 +20,9 @@ export interface TicketQuantitySelectProps {
 export function TicketQuantitySelect({
   value,
   onChange,
+  quantityType,
+  hasError = false,
+  id = "ticket-quantity-input",
   disabled = false,
   label = "Ticket Quantity",
   helperText,
@@ -24,27 +30,65 @@ export function TicketQuantitySelect({
   className,
 }: TicketQuantitySelectProps) {
   const [isOpen, setIsOpen] = useState(defaultExpanded);
-  const isUnlimited = Number(value ?? 0) === 0;
+
+  const initialMode =
+    quantityType
+      ? quantityType
+      : Number(value ?? 0) === 0
+        ? "unlimited"
+        : "limited";
+
+  const [mode, setMode] = useState<"unlimited" | "limited">(initialMode);
+  const [rawInputValue, setRawInputValue] = useState<string>(() =>
+    initialMode === "limited" ? String(value ?? 1) : "",
+  );
 
   // Track the last non-zero number so switching back to "Set number" remembers it
-  const lastNonZeroCount = useRef<number>(value > 0 ? value : 1);
+  const lastNonZeroCount = useRef<number>(value > 0 ? value : 250);
 
   useEffect(() => {
+    if (quantityType) {
+      setMode(quantityType);
+      if (quantityType === "limited") {
+        setRawInputValue(String(value ?? 0));
+        if (value > 0) lastNonZeroCount.current = value;
+      } else {
+        setRawInputValue("");
+      }
+      return;
+    }
+
     if (value > 0) {
       lastNonZeroCount.current = value;
+      setRawInputValue(String(value));
     }
-  }, [value]);
+  }, [value, quantityType]);
+
+  const isUnlimited = mode === "unlimited";
 
   const handleSelectUnlimited = () => {
     if (disabled) return;
-    onChange(0);
+    setMode("unlimited");
+    setRawInputValue("");
+    onChange(0, "unlimited");
   };
 
   const handleSelectSetNumber = () => {
     if (disabled) return;
-    if (isUnlimited) {
-      onChange(lastNonZeroCount.current || 250);
+    setMode("limited");
+    const val = lastNonZeroCount.current || 250;
+    setRawInputValue(String(val));
+    onChange(val, "limited");
+  };
+
+  const handleQuantityInput = (rawValue: string) => {
+    const cleaned = sanitizeNumericInput(rawValue);
+    setRawInputValue(cleaned);
+    const num = cleaned === "" ? 0 : Number(cleaned);
+    if (num > 0) {
+      lastNonZeroCount.current = num;
     }
+    onChange(num, "limited");
   };
 
   return (
@@ -63,7 +107,7 @@ export function TicketQuantitySelect({
             ? "Choose how many tickets can be sold for this event"
             : isUnlimited
               ? "Unlimited"
-              : `Set number (${value} tickets)`}
+              : `Set number (${rawInputValue !== "" ? rawInputValue : value} tickets)`}
         </span>
         <ChevronDown
           size={18}
@@ -161,32 +205,46 @@ export function TicketQuantitySelect({
                 >
                   <button
                     type="button"
-                    disabled={disabled || value <= 1}
-                    onClick={() => onChange(Math.max(1, value - 1))}
+                    disabled={disabled || Number(rawInputValue || value) <= 0}
+                    onClick={() => {
+                      const current = Number(rawInputValue || value || 0);
+                      const nextVal = Math.max(0, current - 1);
+                      setRawInputValue(String(nextVal));
+                      if (nextVal > 0) lastNonZeroCount.current = nextVal;
+                      onChange(nextVal, "limited");
+                    }}
                     className="w-11 h-11 rounded-xl bg-white border border-zinc-200 shadow-xs flex items-center justify-center text-zinc-800 hover:bg-zinc-50 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                   >
                     <Minus size={16} strokeWidth={2.5} />
                   </button>
 
                   <input
+                    id={id}
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]*"
                     disabled={disabled}
-                    value={value > 0 ? value : ""}
-                    placeholder="1"
-                    onChange={(e) => {
-                      const cleaned = sanitizeNumericInput(e.target.value);
-                      const val = Number(cleaned);
-                      onChange(val <= 0 ? 1 : val);
-                    }}
-                    className="w-24 h-11 rounded-xl bg-white border border-zinc-200 shadow-xs text-center font-bold text-zinc-900 text-lg focus:outline-hidden focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                    value={rawInputValue}
+                    placeholder="0"
+                    onChange={(e) => handleQuantityInput(e.target.value)}
+                    className={cn(
+                      "w-24 h-11 rounded-xl bg-white border shadow-xs text-center font-bold text-zinc-900 text-lg focus:outline-hidden transition-all",
+                      hasError
+                        ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                        : "border-zinc-200 focus:border-primary focus:ring-2 focus:ring-primary/20",
+                    )}
                   />
 
                   <button
                     type="button"
                     disabled={disabled}
-                    onClick={() => onChange(Math.max(1, (value || 0) + 1))}
+                    onClick={() => {
+                      const current = Number(rawInputValue || value || 0);
+                      const nextVal = current + 1;
+                      setRawInputValue(String(nextVal));
+                      lastNonZeroCount.current = nextVal;
+                      onChange(nextVal, "limited");
+                    }}
                     className="w-11 h-11 rounded-xl bg-white border border-zinc-200 shadow-xs flex items-center justify-center text-zinc-800 hover:bg-zinc-50 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                   >
                     <Plus size={16} strokeWidth={2.5} />
