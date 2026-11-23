@@ -30,7 +30,7 @@ export default function DonationPage() {
   const formik = useFormik({
     initialValues: { name: "", email: "", phone: "" },
     validationSchema: formSchema,
-    onSubmit: () => {},
+    onSubmit: () => { },
   });
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export default function DonationPage() {
         </span>{" "}
       </p>
 
-      <img src={event} />
+      <img src={event} alt="event" />
 
       <p className="text-center py-5 font-medium text-purple-700">
         Secure your spot now by making a meaningful donation and join us in

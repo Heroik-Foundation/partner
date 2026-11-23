@@ -50,7 +50,7 @@ function App() {
                   <a
                     href="https://khayafoundation.org"
                     target="_blank"
-                    rel="noopener"
+                    rel="noreferrer"
                     className="bg-orange-200 border-orange-300 text-orange-500 px-4 py-1 border rounded-full text-sm  sm:text-base"
                   >
                     Khaya Foundation
@@ -58,7 +58,7 @@ function App() {
                   <a
                     href="https://khayafoundation.org"
                     target="_blank"
-                    rel="noopener"
+                    rel="noreferrer"
                     className="bg-orange-200 border-orange-300 text-orange-500 px-4 py-1 border rounded-full"
                   >
                     <svg

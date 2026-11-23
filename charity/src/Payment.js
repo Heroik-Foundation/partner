@@ -66,7 +66,7 @@ const CheckoutForm = (props) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <img src={banner} alt="banner image" className="w-full rounded-md" />
+      <img src={banner} alt="banner" className="w-full rounded-md" />
       <div className="mb-4">
         <div className="flex justify-between border-gray-300 border-b">
           <div className="w-full py-5 px-1">Donation Amount: </div>
