@@ -69,6 +69,8 @@ export type TicketTierState = {
   salesStartDate: string | null;
   salesEndDate: string | null;
   ticketDetails?: string;
+  priceType?: "free" | "paid";
+  quantityType?: "unlimited" | "limited";
 };
 
 export type FundraiserState = {
